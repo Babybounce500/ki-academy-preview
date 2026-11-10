@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORBITRON VIBE CODING — Redline Workspace</title>
+    <meta name="description" content="Redline Workspace: der rote Desktop für den Vibe-Coding-Kurs mit allen lokalen Modulen.">
+    <meta name="theme-color" content="#160608">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="apple-touch-icon" href="../academy/assets/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../academy/assets/icons/favicon-32.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --desktop-bg: #160608;
+            --desktop-bg-deep: #090304;
+            --desktop-panel: rgba(31, 9, 14, .94);
+            --desktop-panel-soft: rgba(47, 13, 21, .78);
+            --desktop-border: rgba(251, 113, 133, .22);
+            --desktop-border-strong: rgba(251, 113, 133, .64);
+            --desktop-accent: #fb7185;
+            --desktop-accent-hot: #ef4444;
+            --desktop-accent-deep: #991b1b;
+            --desktop-gold: #fbbf24;
+            --desktop-text: #fff1f2;
+            --desktop-muted: #c597a1;
+            --desktop-dim: #7c4b57;
+            --taskbar-height: 48px;
+            --font-display: 'Segoe UI Semibold', 'Segoe UI', system-ui, sans-serif;
+        }
+        * { box-sizing: border-box; }
+        html, body { min-width: 0; min-height: 100%; }
+        body {
+            margin: 0;
+            overflow: hidden;
+            color: var(--desktop-text);
+            background: var(--desktop-bg-deep);
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        }
+        button, input { font: inherit; }
+        button { color: inherit; }
+        button:focus-visible, input:focus-visible, a:focus-visible {
+            outline: 2px solid var(--desktop-gold);
+            outline-offset: 2px;
+        }
+        .desktop-shell {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            min-height: 560px;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 66% 13%, rgba(239, 68, 68, .2), transparent 31%),
+                radial-gradient(circle at 9% 88%, rgba(153, 27, 27, .25), transparent 38%),
+                linear-gradient(135deg, var(--desktop-bg) 0%, #260b12 50%, var(--desktop-bg-deep) 100%);
+        }
+        .desktop-shell::before {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            content: "";
+            opacity: .28;
+            background-image:
+                linear-gradient(rgba(251, 113, 133, .08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(251, 113, 133, .08) 1px, transparent 1px);
+            background-size: 48px 48px;
+            mask-image: linear-gradient(to bottom, black, transparent 90%);
+        }
+        .desktop-canvas {
+            position: absolute;
+            inset: 0 0 var(--taskbar-height);
+            overflow: hidden;
+        }
+        #matrixCanvas {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .desktop-brand {
+            position: absolute;
+            top: 24px;
+            left: 30px;
+            z-index: 2;
+            pointer-events: none;
+            text-shadow: 0 0 24px rgba(239, 68, 68, .42);
+        }
+        .desktop-brand h1 {
+            margin: 0;
+            font: 800 clamp(18px, 2vw, 28px)/1 var(--font-display);
+            letter-spacing: .14em;
+        }
+        .brand-accent { color: var(--desktop-accent); }
+        .desktop-brand p {
+            margin: 7px 0 0;
+            color: var(--desktop-muted);
+            font-size: 10px;
+            letter-spacing: .22em;
+            text-transform: uppercase;
+        }
+        .desktop-shell-links { display: flex; gap: 8px; pointer-events: auto; }
+        .desktop-shell-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            margin-top: 12px;
+            padding: 7px 10px;
+            border: 1px solid var(--desktop-border);
+            border-radius: 7px;
+            color: var(--desktop-accent);
+            background: rgba(26, 5, 10, .72);
+            font: 700 10px/1 var(--font-display);
+            letter-spacing: .06em;
+            text-decoration: none;
+            text-transform: uppercase;
+            transition: background .2s, border-color .2s, box-shadow .2s;
+        }
+        .desktop-shell-link:hover {
+            border-color: var(--desktop-border-strong);
+            background: rgba(127, 29, 45, .44);
+            box-shadow: 0 0 18px rgba(239, 68, 68, .23);
+        }
+        .desktop-shortcuts {
+            position: absolute;
+            top: 140px;
+            right: 28px;
+            bottom: 14px;
+            left: 28px;
+            z-index: 2;
+            display: grid;
+            align-content: start;
+            grid-auto-rows: min-content;
+            gap: 12px;
+            overflow-y: auto;
+            padding: 2px 2px 18px;
+            scrollbar-width: thin;
+        }
+        .desktop-shortcuts::-webkit-scrollbar { width: 6px; }
+        .desktop-shortcuts::-webkit-scrollbar-thumb { border-radius: 999px; background: rgba(251, 113, 133, .3); }
+        .desktop-shortcut-section { min-width: 0; }
+        .desktop-shortcut-section-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 3px 0 7px;
+            padding: 5px 8px;
+            border-left: 2px solid var(--desktop-accent);
+            color: var(--desktop-accent);
+            background: rgba(47, 13, 21, .48);
+            font: 700 10px/1.2 var(--font-display);
+            letter-spacing: .12em;
+            text-transform: uppercase;
+        }
+        .desktop-shortcut-section-title::after {
+            height: 1px;
+            flex: 1;
+            content: "";
+            background: linear-gradient(90deg, rgba(251, 113, 133, .34), transparent);
+        }
+        .desktop-shortcut-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(82px, 1fr));
+            gap: 9px;
+        }
+        .desktop-shortcut {
+            width: 100%;
+            min-height: 94px;
+            padding: 7px 5px;
+            border: 1px solid rgba(251, 113, 133, .12);
+            border-radius: 11px;
+            color: var(--desktop-text);
+            background: rgba(26, 5, 10, .3);
+            cursor: pointer;
+            text-align: center;
+            transition: transform .18s ease, background .18s ease, border-color .18s ease;
+        }
+        .desktop-shortcut:hover, .desktop-shortcut:focus-visible {
+            border-color: var(--desktop-border-strong);
+            background: rgba(127, 29, 45, .4);
+            outline: none;
+            transform: translateY(-2px);
+        }
+        .shortcut-icon {
+            display: grid;
+            place-items: center;
+            width: 54px;
+            height: 54px;
+            margin: 0 auto 6px;
+            border: 1px solid rgba(251, 113, 133, .62);
+            border-radius: 15px;
+            color: #fff1f2;
+            background: linear-gradient(145deg, #be123c, #7f1d1d);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 0 20px rgba(239, 68, 68, .25);
+            font-size: 21px;
+            text-shadow: 0 1px 4px rgba(2, 6, 23, .7);
+        }
+        .desktop-shortcut-label {
+            display: block;
+            overflow: hidden;
+            color: var(--desktop-text);
+            font-size: 10px;
+            font-weight: 600;
+            line-height: 1.2;
+            text-overflow: ellipsis;
+            white-space: normal;
+            word-break: break-word;
+        }
+        .desktop-shortcut-meta {
+            display: block;
+            overflow: hidden;
+            margin-top: 3px;
+            color: var(--desktop-dim);
+            font-size: 8px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .window-frame {
+            position: absolute;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            min-width: 340px;
+            min-height: 240px;
+            overflow: hidden;
+            border: 1px solid var(--desktop-border-strong);
+            border-radius: 13px;
+            background: var(--desktop-panel);
+            box-shadow: 0 24px 70px rgba(0, 0, 0, .52), 0 0 35px rgba(239, 68, 68, .14);
+        }
+        .window-frame.active {
+            border-color: rgba(254, 205, 211, .86);
+            box-shadow: 0 26px 76px rgba(0, 0, 0, .58), 0 0 38px rgba(239, 68, 68, .25);
+        }
+        .window-frame.maximized {
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            border-radius: 0 !important;
+        }
+        .window-frame.mobile-hidden { display: none !important; }
+        .window-titlebar {
+            display: flex;
+            align-items: center;
+            flex: 0 0 auto;
+            gap: 11px;
+            height: 42px;
+            padding: 0 9px 0 14px;
+            border-bottom: 1px solid var(--desktop-border);
+            background: linear-gradient(180deg, rgba(58, 17, 27, .98), rgba(29, 8, 14, .98));
+            cursor: grab;
+            user-select: none;
+            touch-action: none;
+        }
+        .window-titlebar:active { cursor: grabbing; }
+        .window-title-icon { color: var(--desktop-accent); font-size: 14px; }
+        .window-title {
+            min-width: 0;
+            overflow: hidden;
+            color: var(--desktop-text);
+            font: 700 11px var(--font-display);
+            letter-spacing: .08em;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .window-address {
+            display: flex;
+            align-items: center;
+            flex: 1 1 240px;
+            min-width: 0;
+            height: 26px;
+            gap: 8px;
+            padding: 0 9px;
+            overflow: hidden;
+            border: 1px solid var(--desktop-border);
+            border-radius: 7px;
+            color: var(--desktop-muted);
+            background: rgba(9, 3, 5, .64);
+            font: 10px "Courier New", monospace;
+        }
+        .window-address input {
+            width: 100%;
+            min-width: 0;
+            padding: 0;
+            overflow: hidden;
+            border: 0;
+            outline: 0;
+            color: inherit;
+            background: transparent;
+            text-overflow: ellipsis;
+        }
+        .window-address-open {
+            flex: 0 0 auto;
+            color: var(--desktop-accent);
+            text-decoration: none;
+        }
+        .window-controls { display: flex; align-items: center; gap: 4px; }
+        .window-control, .tray-icon-btn, .view-button, .folder-button, .start-button {
+            display: grid;
+            place-items: center;
+            border: 1px solid transparent;
+            border-radius: 7px;
+            color: var(--desktop-muted);
+            background: transparent;
+            cursor: pointer;
+        }
+        .window-control { width: 28px; height: 26px; }
+        .window-control:hover, .window-control:focus-visible, .tray-icon-btn:hover, .tray-icon-btn.active {
+            border-color: var(--desktop-border-strong);
+            color: var(--desktop-accent);
+            background: rgba(127, 29, 45, .38);
+            outline: none;
+        }
+        .window-control.close:hover { color: #fff; background: rgba(220, 38, 38, .72); }
+        .window-body { min-height: 0; flex: 1; overflow: hidden; background: #0d0306; }
+        .window-body iframe { display: block; width: 100%; height: 100%; border: 0; background: #0d0306; }
+        .resize-handle { position: absolute; z-index: 5; }
+        .resize-handle[data-direction="n"] { top: -4px; right: 10px; left: 10px; height: 8px; cursor: n-resize; }
+        .resize-handle[data-direction="s"] { right: 10px; bottom: -4px; left: 10px; height: 8px; cursor: s-resize; }
+        .resize-handle[data-direction="e"] { top: 10px; right: -4px; bottom: 10px; width: 8px; cursor: e-resize; }
+        .resize-handle[data-direction="w"] { top: 10px; bottom: 10px; left: -4px; width: 8px; cursor: w-resize; }
+        .resize-handle[data-direction="se"] { right: -4px; bottom: -4px; width: 16px; height: 16px; cursor: se-resize; }
+        .statusbar {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 220;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            height: var(--taskbar-height);
+            padding: 0 12px;
+            border-top: 1px solid var(--desktop-border);
+            background: rgba(18, 4, 8, .92);
+            backdrop-filter: blur(16px);
+        }
+        .start-button, .tray-icon-btn { flex: 0 0 34px; width: 34px; height: 34px; font-size: 13px; }
+        .start-button {
+            border-color: var(--desktop-border);
+            color: #fff;
+            background: linear-gradient(145deg, #be123c, #7f1d1d);
+        }
+        .taskbar-search {
+            position: relative;
+            display: flex;
+            align-items: center;
+            flex: 0 1 270px;
+            min-width: 130px;
+            height: 34px;
+            gap: 8px;
+            padding: 0 10px;
+            border: 1px solid var(--desktop-border);
+            border-radius: 8px;
+            color: var(--desktop-muted);
+            background: rgba(47, 13, 21, .58);
+        }
+        .taskbar-search input { width: 100%; border: 0; outline: 0; color: var(--desktop-text); background: transparent; font-size: 11px; }
+        .taskbar-search-results {
+            position: absolute;
+            right: 0;
+            bottom: 42px;
+            width: min(390px, 80vw);
+            max-height: 410px;
+            overflow-y: auto;
+            padding: 6px;
+            border: 1px solid var(--desktop-border-strong);
+            border-radius: 11px;
+            background: rgba(24, 6, 11, .98);
+            box-shadow: 0 18px 44px rgba(0, 0, 0, .5);
+        }
+        .taskbar-search-results[hidden] { display: none; }
+        .search-result {
+            display: grid;
+            grid-template-columns: 28px 1fr auto;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            padding: 8px;
+            border: 1px solid transparent;
+            border-radius: 7px;
+            color: var(--desktop-text);
+            background: transparent;
+            cursor: pointer;
+            text-align: left;
+        }
+        .search-result:hover { border-color: var(--desktop-border); background: rgba(127, 29, 45, .35); }
+        .search-result i { color: var(--desktop-accent); }
+        .search-result small { display: block; overflow: hidden; color: var(--desktop-muted); font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
+        .taskbar-windows { display: flex; flex: 1; min-width: 0; gap: 5px; overflow-x: auto; scrollbar-width: none; }
+        .taskbar-item {
+            display: inline-flex;
+            align-items: center;
+            max-width: 200px;
+            gap: 7px;
+            padding: 7px 10px;
+            overflow: hidden;
+            border: 1px solid transparent;
+            border-radius: 7px;
+            color: var(--desktop-muted);
+            background: rgba(47, 13, 21, .5);
+            cursor: pointer;
+            font-size: 10px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .taskbar-item.active { border-color: var(--desktop-border-strong); color: var(--desktop-text); background: rgba(127, 29, 45, .4); }
+        .taskbar-clock { display: flex; flex-direction: column; align-items: flex-end; padding: 2px 4px; line-height: 1.2; cursor: default; }
+        .tb-time { font-size: 11px; font-weight: 600; letter-spacing: .05em; }
+        .tb-date { color: var(--desktop-muted); font-size: 9px; }
+        .tool-tray, .appearance-popup {
+            position: fixed;
+            right: 12px;
+            bottom: calc(var(--taskbar-height) + 9px);
+            z-index: 400;
+            display: none;
+            padding: 10px;
+            border: 1px solid var(--desktop-border-strong);
+            border-radius: 12px;
+            background: rgba(24, 6, 11, .97);
+            box-shadow: 0 18px 44px rgba(0, 0, 0, .5);
+        }
+        .tool-tray { left: 12px; right: 12px; gap: 7px; overflow-x: auto; }
+        .tool-tray.open, .appearance-popup.open { display: flex; }
+        .tray-chip {
+            display: inline-flex;
+            align-items: center;
+            flex: 0 0 auto;
+            gap: 7px;
+            padding: 7px 9px;
+            border: 1px solid var(--desktop-border);
+            border-radius: 999px;
+            color: var(--desktop-text);
+            background: rgba(47, 13, 21, .72);
+            cursor: pointer;
+            font-size: 10px;
+        }
+        .tray-chip i:first-child { color: var(--desktop-accent); }
+        .appearance-popup { flex-direction: column; min-width: 210px; gap: 8px; }
+        .appearance-popup strong { color: var(--desktop-accent); font: 700 10px var(--font-display); letter-spacing: .12em; text-transform: uppercase; }
+        .appearance-note { color: var(--desktop-muted); font-size: 10px; }
+        .appearance-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            border: 1px solid var(--desktop-border-strong);
+            border-radius: 8px;
+            color: var(--desktop-text);
+            background: rgba(127, 29, 45, .35);
+            cursor: pointer;
+            text-align: left;
+        }
+        .appearance-option i { color: var(--desktop-accent); }
+        .appearance-option small { margin-left: auto; color: var(--desktop-muted); }
+        .explorer-layout { display: grid; grid-template-columns: 205px minmax(0, 1fr); height: 100%; min-height: 0; }
+        .explorer-sidebar { min-width: 0; overflow-y: auto; padding: 14px 10px; border-right: 1px solid var(--desktop-border); background: rgba(24, 6, 11, .86); }
+        .explorer-sidebar h2 { margin: 0 8px 10px; color: var(--desktop-muted); font-size: 9px; letter-spacing: .16em; text-transform: uppercase; }
+        .folder-button { display: flex; align-items: center; width: 100%; gap: 8px; margin-bottom: 3px; padding: 8px; border-color: transparent; text-align: left; font-size: 10px; }
+        .folder-button i { width: 15px; color: var(--desktop-accent); text-align: center; }
+        .folder-button.active, .folder-button:hover { border-color: var(--desktop-border); background: rgba(127, 29, 45, .3); }
+        .explorer-content { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+        .explorer-toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; padding: 10px 13px; border-bottom: 1px solid var(--desktop-border); background: rgba(47, 13, 21, .48); }
+        .explorer-path { flex: 1; min-width: 140px; overflow: hidden; color: var(--desktop-accent); font: 700 10px var(--font-display); text-overflow: ellipsis; white-space: nowrap; }
+        .explorer-search { flex: 1 1 180px; min-width: 120px; padding: 7px 9px; border: 1px solid var(--desktop-border); border-radius: 7px; outline: 0; color: var(--desktop-text); background: rgba(9, 3, 5, .7); font-size: 10px; }
+        .explorer-view-controls { display: flex; gap: 3px; }
+        .view-button { width: 28px; height: 26px; border-color: var(--desktop-border); font-size: 10px; }
+        .view-button.active, .view-button:hover { color: var(--desktop-accent); background: rgba(127, 29, 45, .35); }
+        .explorer-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 9px; overflow-y: auto; padding: 12px; }
+        .file-card {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            min-height: 136px;
+            padding: 11px;
+            border: 1px solid var(--desktop-border);
+            border-radius: 10px;
+            color: var(--desktop-text);
+            background: rgba(47, 13, 21, .36);
+            cursor: pointer;
+            text-align: left;
+        }
+        .file-card:hover { border-color: var(--desktop-border-strong); background: rgba(127, 29, 45, .32); }
+        .file-card-icon { display: grid; place-items: center; width: 35px; height: 35px; border-radius: 9px; color: var(--desktop-accent); background: rgba(127, 29, 45, .45); }
+        .file-card-name { margin-top: 10px; font-size: 11px; font-weight: 600; }
+        .file-card-meta { margin-top: 4px; overflow: hidden; color: var(--desktop-muted); font-size: 9px; line-height: 1.35; text-overflow: ellipsis; }
+        .file-card-url { margin-top: auto; overflow: hidden; padding-top: 7px; color: var(--desktop-dim); font: 8px "Courier New", monospace; text-overflow: ellipsis; white-space: nowrap; }
+        .empty-state { display: grid; place-items: center; min-height: 180px; color: var(--desktop-muted); font-size: 11px; }
+        @media (max-width: 768px) {
+            .desktop-shell { min-height: 0; }
+            .desktop-canvas { inset: 0 0 var(--taskbar-height); overflow-y: auto; padding: 12px; }
+            .desktop-brand { position: relative; top: auto; left: auto; padding: 7px 3px 16px; }
+            .desktop-shell-links { flex-wrap: wrap; }
+            .desktop-shortcuts { position: relative; top: auto; right: auto; bottom: auto; left: auto; padding: 0 0 16px; }
+            .desktop-shortcut-row { grid-template-columns: repeat(4, minmax(64px, 1fr)); gap: 6px; }
+            .desktop-shortcut { min-height: 78px; }
+            .shortcut-icon { width: 39px; height: 39px; margin-bottom: 4px; font-size: 15px; }
+            .desktop-shortcut-meta { display: none; }
+            .window-frame:not(.mobile-hidden) { position: fixed !important; inset: 0 0 var(--taskbar-height) !important; z-index: 150 !important; width: 100vw !important; height: calc(100dvh - var(--taskbar-height)) !important; min-width: 0 !important; min-height: 0 !important; border-radius: 0 !important; }
+            .window-title { display: none; }
+            .window-address { display: none; }
+            .window-controls { margin-left: auto; }
+            .window-control[data-action="minimize"], .window-control[data-action="maximize"] { display: none; }
+            .resize-handle { display: none; }
+            .explorer-layout { grid-template-columns: 1fr; }
+            .explorer-sidebar { display: flex; gap: 5px; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--desktop-border); }
+            .explorer-sidebar h2 { display: none; }
+            .folder-button { width: auto; min-width: max-content; margin: 0; }
+            .taskbar-search { flex: 0 0 34px; min-width: 34px; padding: 0 9px; overflow: hidden; }
+            .taskbar-search input { opacity: 0; pointer-events: none; }
+            .taskbar-search:focus-within { flex: 1 1 180px; overflow: visible; }
+            .taskbar-search:focus-within input { opacity: 1; pointer-events: auto; }
+            .taskbar-windows { display: none; }
+            .statusbar { gap: 4px; padding: 0 8px; }
+            .tray-icon-btn { width: 29px; height: 29px; flex-basis: 29px; font-size: 11px; }
+            .taskbar-clock { margin-left: auto; }
+        }
+        @media (max-width: 390px) {
+            .desktop-shortcut-row { grid-template-columns: repeat(3, minmax(64px, 1fr)); }
+            .tray-icon-btn:nth-of-type(n+5) { display: none; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+        }
+
+        :root[data-theme="contrast"] {
+            --desktop-bg: #000; --desktop-bg-deep: #000; --desktop-panel: rgba(12, 0, 2, .98);
+            --desktop-border: rgba(254, 205, 211, .55); --desktop-border-strong: #fecdd3;
+            --desktop-text: #fff; --desktop-muted: #fecdd3; --desktop-dim: #fda4af;
+        }
+        .desktop-shell-link.primary { color: #fff; border-color: rgba(254, 205, 211, .8); background: linear-gradient(145deg, #be123c, #7f1d1d); font-size: 11px; padding: 9px 13px; box-shadow: 0 0 16px rgba(239, 68, 68, .35); }
+        .desktop-shell-link.primary i { color: #67e8f9; }
+        .tray-link { display: grid; place-items: center; flex: 0 0 34px; width: 34px; height: 34px; border: 1px solid var(--desktop-border); border-radius: 7px; color: #67e8f9; background: rgba(8, 47, 73, .35); text-decoration: none; font-size: 13px; }
+        .tray-link:hover { border-color: #67e8f9; }
+        .shortcut-icon.colored { background: linear-gradient(145deg, #3a1019, #1c070c); }
+        .skip-link { position: absolute; left: -999px; top: 6px; z-index: 900; padding: 8px 12px; border-radius: 6px; color: #000; background: var(--desktop-gold); }
+        .skip-link:focus { left: 8px; }
+        .window-control.active-pin { color: var(--desktop-gold); }
+        .desktop-shortcut-label { font-size: 11px; }
+        .desktop-shortcuts { top: 150px; }
+        @media (max-width: 768px) { .desktop-shortcuts { top: auto; } .desktop-shortcut-label { font-size: 10px; } .window-control { width: 38px; height: 32px; } .window-titlebar { height: 46px; } .window-title { display: block; flex: 1; } .window-controls { margin-left: 0; } .window-address { display: none; } .desktop-shortcut-meta { display: none; } }
+
+    </style>
+</head>
+<body data-orbitron-shell="redline">
+    <a class="skip-link" href="#desktopShortcuts">Zu den Modulen springen</a>
+    <div class="desktop-shell" id="desktopShell">
+        <main class="desktop-canvas" id="desktopCanvas">
+            <canvas id="matrixCanvas" aria-hidden="true"></canvas>
+            <div class="desktop-brand">
+                <h1>ORBITRON <span class="brand-accent">VIBE CODING</span></h1>
+                <p>Redline Workspace // alle Kursmodule lokal</p>
+                <div class="desktop-shell-links">
+                    <a class="desktop-shell-link primary" href="../academy/" title="Zur cyan-farbigen Workshell wechseln" aria-label="Zur Cyan-Workshell wechseln"><i class="fa-solid fa-repeat" aria-hidden="true"></i> Cyan-Workshell</a>
+                </div>
+            </div>
+            <nav class="desktop-shortcuts" id="desktopShortcuts" aria-label="Kursmodule"></nav>
+            <div id="windowLayer"></div>
+        </main>
+        <footer class="statusbar">
+            <button class="start-button" id="startButton" type="button" title="Explorer öffnen" aria-label="Explorer öffnen"><i class="fa-solid fa-atom" aria-hidden="true"></i></button>
+            <div class="taskbar-search" id="taskbarSearch">
+                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                <input id="taskbarSearchInput" type="search" placeholder="Module suchen …" autocomplete="off" spellcheck="false" aria-label="Kursmodule durchsuchen">
+                <div class="taskbar-search-results" id="taskbarSearchResults" hidden></div>
+            </div>
+            <div class="taskbar-windows" id="taskbarWindows"></div>
+            <a class="tray-link" href="../academy/" title="Cyan-Workshell" aria-label="Zur Cyan-Workshell wechseln"><i class="fa-solid fa-repeat" aria-hidden="true"></i></a>
+            <button class="tray-icon-btn" id="trayToggleBtn" type="button" title="Angeheftete Module" aria-label="Angeheftete Module ein-/ausblenden"><i class="fa-solid fa-thumbtack" aria-hidden="true"></i></button>
+            <button class="tray-icon-btn" id="themeToggleBtn" type="button" title="Darstellung" aria-label="Darstellung öffnen"><i class="fa-solid fa-palette" aria-hidden="true"></i></button>
+            <button class="tray-icon-btn" id="explorerToggleBtn" type="button" title="Explorer" aria-label="Explorer öffnen"><i class="fa-solid fa-folder-tree" aria-hidden="true"></i></button>
+            <div class="taskbar-clock" title="Lokale Zeit">
+                <span class="tb-time" id="tbTime">--:--</span>
+                <span class="tb-date" id="tbDate">--.--.----</span>
+            </div>
+        </footer>
+        <div class="tool-tray" id="toolTray" role="region" aria-label="Angeheftete Module"></div>
+        <div class="appearance-popup" id="appearancePopup" role="region" aria-label="Darstellung">
+            <strong><i class="fa-solid fa-fire" aria-hidden="true"></i> Darstellung</strong>
+            <span class="appearance-note">Wird in diesem Browser gespeichert.</span>
+            <button class="appearance-option" type="button" data-theme-choice="redline"><i class="fa-solid fa-circle-check" aria-hidden="true"></i><span>Redline Standard</span><small></small></button>
+            <button class="appearance-option" type="button" data-theme-choice="contrast"><i class="fa-solid fa-circle-half-stroke" aria-hidden="true"></i><span>Hoher Kontrast</span><small></small></button>
+        </div>
+    </div>
+    <script>
+        window.REDLINE_SECTIONS = [{"name":"Start hier","icon":"fa-solid fa-rocket"},{"name":"Reihe 1 · Anfänger","icon":"fa-solid fa-seedling"},{"name":"Reihe 2 · Advanced","icon":"fa-solid fa-bolt"},{"name":"Reihe 3 · Expert","icon":"fa-solid fa-crown"},{"name":"Slides und Prompts","icon":"fa-solid fa-display"},{"name":"Tools und Bots","icon":"fa-solid fa-code"}];
+        window.REDLINE_CATALOG = [{"id":"chatroom","name":"Chatroom (KI-Mentor)","description":"Fragen stellen, Antworten vom KI-Mentor","category":"Start hier","url":"../chatroom/index.html","icon":"fa-solid fa-comments","color":"#fb7185"},{"id":"ki-check","name":"KI-Check","description":"Finde heraus, wo du stehst","category":"Start hier","url":"../academy/modules/start/ki-readiness-check.html","icon":"fa-solid fa-clipboard-check","color":"#10b981"},{"id":"r1-vc","name":"Vibe Coding Grundlagen","description":"Einstieg für Sachbearbeiter und Berufstätige","category":"Reihe 1 · Anfänger","url":"../academy/modules/r1/vibe-coding-grundlagen.html","icon":"fa-solid fa-book-open","color":"#06b6d4"},{"id":"r1-guide","name":"Ultimate Vibe Coding Guide","description":"Der komplette Leitfaden","category":"Reihe 1 · Anfänger","url":"../academy/modules/r1/ultimate-vibe-coding-guide.html","icon":"fa-solid fa-compass","color":"#3b82f6"},{"id":"r1-ebook","name":"E-Book: AI to Web Developer (EN)","description":"Kursbuch HTML, CSS, JS mit KI","category":"Reihe 1 · Anfänger","url":"../academy/modules/r1/ebook-ai-to-web-developer-en.html","icon":"fa-solid fa-book","color":"#8b5cf6"},{"id":"r1-tasks","name":"Aufgaben und Challenges","description":"Praxisaufgaben zum Kurs","category":"Reihe 1 · Anfänger","url":"../academy/modules/r1/aufgaben-challenges.html","icon":"fa-solid fa-list-check","color":"#06b6d4"},{"id":"r1-challenge","name":"Challenge Guide (EN)","description":"10 Kapitel mit Aufgaben und Quiz","category":"Reihe 1 · Anfänger","url":"../academy/modules/r1/challenge-guide-en.html","icon":"fa-solid fa-flag-checkered","color":"#ec4899"},{"id":"r1-quiz","name":"Quiz mit 50 Fragen","description":"Teste dein Wissen","category":"Reihe 1 · Anfänger","url":"../academy/modules/r1/quiz-40-fragen.html","icon":"fa-solid fa-circle-question","color":"#fbbf24"},{"id":"r2-praxis","name":"Vibe Coding Praxiskurs","description":"Praxiskurs","category":"Reihe 2 · Advanced","url":"../academy/modules/r2/vibe-coding-praxiskurs.html","icon":"fa-solid fa-hammer","color":"#06b6d4"},{"id":"r2-agents","name":"Agent-Workflows","description":"Agent-Workflows für Power-User","category":"Reihe 2 · Advanced","url":"../academy/modules/r2/agent-workflows.html","icon":"fa-solid fa-diagram-project","color":"#ec4899"},{"id":"r2-adv","name":"Advanced Vibe Engineering","description":"Fortgeschrittene Techniken","category":"Reihe 2 · Advanced","url":"../academy/modules/r2/advanced-vibe-engineering.html","icon":"fa-solid fa-gears","color":"#3b82f6"},{"id":"r2-pe","name":"Prompt Engineering eBook","description":"Das große Prompt-Buch","category":"Reihe 2 · Advanced","url":"../academy/modules/r2/prompt-engineering-ebook.html","icon":"fa-solid fa-wand-magic-sparkles","color":"#8b5cf6"},{"id":"r2-toolkit","name":"Prompt Engineering Toolkit","description":"Prompt-Sammlung zum Arbeiten","category":"Reihe 2 · Advanced","url":"../academy/modules/r2/prompt-engineering-toolkit.html","icon":"fa-solid fa-toolbox","color":"#fbbf24"},{"id":"r2-guide","name":"Prompt Engineering Guide","description":"Systematisch prompten","category":"Reihe 2 · Advanced","url":"../academy/modules/r2/prompt-engineering-guide.html","icon":"fa-solid fa-bolt","color":"#06b6d4"},{"id":"r2-train","name":"Praxis-Training","description":"Training Modul","category":"Reihe 2 · Advanced","url":"../academy/modules/r2/praxis-training.html","icon":"fa-solid fa-graduation-cap","color":"#10b981"},{"id":"r2-stripe","name":"Zahlungen mit Stripe","description":"Stripe in Web-Apps einbauen","category":"Reihe 2 · Advanced","url":"../academy/modules/r2/stripe-zahlungen.html","icon":"fa-solid fa-credit-card","color":"#ec4899"},{"id":"r3-reasoning","name":"Reasoning Mode","description":"Wie KI wirklich denkt","category":"Reihe 3 · Expert","url":"../academy/modules/r3/reasoning-mode.html","icon":"fa-solid fa-brain","color":"#8b5cf6"},{"id":"s-web","name":"Verkaufswebinar","description":"In 60 Minuten zur ersten KI-gebauten Web-App","category":"Slides und Prompts","url":"../academy/modules/slides/verkaufswebinar.html","icon":"fa-solid fa-bullhorn","color":"#ec4899"},{"id":"s-m0","name":"R1 Modul 0: Start und Setup","description":"Arbeitsplatz einrichten","category":"Slides und Prompts","url":"../academy/modules/slides/r1-m0-start-und-setup.html","icon":"fa-solid fa-flag-checkered","color":"#06b6d4"},{"id":"s-m1","name":"R1 Modul 1: HTML","description":"Gerüst jeder Webseite, mit Live-Code","category":"Slides und Prompts","url":"../academy/modules/slides/r1-m1-html.html","icon":"fa-solid fa-code","color":"#06b6d4"},{"id":"s-m2","name":"R1 Modul 2: CSS","description":"Gestaltung und Layout, mit Live-Code","category":"Slides und Prompts","url":"../academy/modules/slides/r1-m2-css.html","icon":"fa-solid fa-palette","color":"#3b82f6"},{"id":"s-m3","name":"R1 Modul 3: JavaScript","description":"Interaktion, mit Live-Code","category":"Slides und Prompts","url":"../academy/modules/slides/r1-m3-javascript.html","icon":"fa-solid fa-bolt","color":"#fbbf24"},{"id":"s-m4","name":"R1 Modul 4: Prompting","description":"KI präzise steuern","category":"Slides und Prompts","url":"../academy/modules/slides/r1-m4-prompting.html","icon":"fa-solid fa-wand-magic-sparkles","color":"#8b5cf6"},{"id":"s-m5","name":"R1 Modul 5: Portfolio und Hosting","description":"Portfolio online stellen","category":"Slides und Prompts","url":"../academy/modules/slides/r1-m5-portfolio-und-hosting.html","icon":"fa-solid fa-rocket","color":"#10b981"},{"id":"s-agent","name":"Agentic AI Einführung","description":"Agentenschleife live ausprobieren","category":"Slides und Prompts","url":"../academy/modules/slides/agentic-ai-einfuehrung.html","icon":"fa-solid fa-diagram-project","color":"#ec4899"},{"id":"s-prompts","name":"Prompt-Bibliothek Reihe 1","description":"Kopierfertige Prompts","category":"Slides und Prompts","url":"../academy/modules/slides/promptbibliothek-reihe-1.html","icon":"fa-solid fa-clipboard-list","color":"#fbbf24"},{"id":"gamma-pdfs","name":"Gamma-Slides-Bibliothek","description":"Alle Gamma-Folien als Bibliothek","category":"Slides und Prompts","url":"../gamma-pdfs/index.html","icon":"fa-solid fa-images","color":"#fbbf24"},{"id":"t-lecode","name":"LeCODE Studio","description":"KI-Entwicklungsumgebung","category":"Tools und Bots","url":"../academy/modules/tools/lecode-studio.html","icon":"fa-solid fa-terminal","color":"#06b6d4"},{"id":"t-claude","name":"Claude IDE","description":"Neural Terminal","category":"Tools und Bots","url":"../academy/modules/tools/claude-ide.html","icon":"fa-solid fa-brain","color":"#10b981"},{"id":"t-html","name":"AI HTML Studio","description":"Editor mit Live-Vorschau und KI","category":"Tools und Bots","url":"../academy/modules/tools/ai-html-studio.html","icon":"fa-solid fa-wand-magic-sparkles","color":"#3b82f6"},{"id":"t-htmlfree","name":"AI HTML Studio Free","description":"Schlanke Version","category":"Tools und Bots","url":"../academy/modules/tools/ai-html-studio-free.html","icon":"fa-solid fa-feather","color":"#94a3b8"},{"id":"t-rag","name":"RAG und Vector IDE","description":"IDE mit Vektor-Suche","category":"Tools und Bots","url":"../academy/modules/tools/rag-vector-ide.html","icon":"fa-solid fa-database","color":"#8b5cf6"},{"id":"t-python","name":"Python IDE","description":"Python im Browser","category":"Tools und Bots","url":"../academy/modules/tools/python-ide.html","icon":"fa-solid fa-terminal","color":"#fbbf24"},{"id":"t-vision","name":"Vision Bot","description":"Bildanalyse-Chatbot","category":"Tools und Bots","url":"../academy/modules/tools/vision-bot.html","icon":"fa-solid fa-eye","color":"#ec4899"},{"id":"t-batch","name":"Batch-Prozessor","description":"Massenverarbeitung per API","category":"Tools und Bots","url":"../academy/modules/tools/batch-prozessor.html","icon":"fa-solid fa-server","color":"#06b6d4"},{"id":"t-css","name":"CSS Stripper","description":"Stylesheets bereinigen","category":"Tools und Bots","url":"../academy/modules/tools/css-stripper.html","icon":"fa-solid fa-scissors","color":"#ec4899"}];
+    </script>
+    <script src="./redline.js"></script>
+</body>
+</html>

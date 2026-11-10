@@ -1,1047 +1,296 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KI-Check | Domvs Avrea O.P.N GmbH</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #00D4AA;
-            --secondary: #0066FF;
-            --accent: #FF3366;
-            --dark: #0A0E27;
-            --darker: #050813;
-            --light: #F8F9FA;
-            --gradient-1: linear-gradient(135deg, #0066FF 0%, #00D4AA 100%);
-            --gradient-2: linear-gradient(135deg, #FF3366 0%, #FF9933 100%);
-            --gradient-3: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Outfit', sans-serif;
-            background: var(--darker);
-            color: #ffffff;
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        /* Animated Background */
-        .bg-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.4;
-        }
-
-        .bg-animation::before {
-            content: '';
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 20% 50%, rgba(0, 102, 255, 0.15) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 80%, rgba(0, 212, 170, 0.15) 0%, transparent 50%),
-                        radial-gradient(circle at 40% 20%, rgba(255, 51, 102, 0.1) 0%, transparent 50%);
-            animation: rotate 20s linear infinite;
-        }
-
-        @keyframes rotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Container */
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        /* Header */
-        .header {
-            text-align: center;
-            padding: 3rem 0;
-            position: relative;
-        }
-
-        .logo {
-            font-size: 2.5rem;
-            font-weight: 900;
-            background: var(--gradient-1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 1rem;
-            letter-spacing: -1px;
-        }
-
-        .header h1 {
-            font-size: 3rem;
-            font-weight: 900;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, #ffffff 0%, var(--primary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .header p {
-            font-size: 1.2rem;
-            color: rgba(255, 255, 255, 0.7);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        /* Progress Bar */
-        .progress-container {
-            background: rgba(255, 255, 255, 0.05);
-            height: 8px;
-            border-radius: 20px;
-            margin: 2rem 0;
-            overflow: hidden;
-            border: 1px solid rgba(0, 212, 170, 0.2);
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: var(--gradient-1);
-            width: 0%;
-            transition: width 0.5s ease;
-            border-radius: 20px;
-            box-shadow: 0 0 20px rgba(0, 212, 170, 0.5);
-        }
-
-        .progress-text {
-            text-align: center;
-            margin-top: 0.5rem;
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.6);
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        /* Question Card */
-        .question-card {
-            background: rgba(20, 30, 60, 0.6);
-            border: 2px solid rgba(0, 212, 170, 0.3);
-            border-radius: 20px;
-            padding: 3rem;
-            margin: 2rem 0;
-            backdrop-filter: blur(20px);
-            transform: translateY(20px);
-            opacity: 0;
-            animation: slideIn 0.5s ease forwards;
-        }
-
-        @keyframes slideIn {
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .question-number {
-            display: inline-block;
-            background: var(--gradient-1);
-            padding: 0.5rem 1rem;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-
-        .question-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            color: #ffffff;
-        }
-
-        .question-subtitle {
-            font-size: 1rem;
-            color: rgba(255, 255, 255, 0.6);
-            margin-bottom: 2rem;
-        }
-
-        /* Answer Options */
-        .answer-options {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .answer-option {
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 1.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .answer-option::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: var(--gradient-1);
-            opacity: 0;
-            transition: all 0.3s ease;
-            z-index: 0;
-        }
-
-        .answer-option:hover {
-            border-color: var(--primary);
-            transform: translateX(10px);
-        }
-
-        .answer-option:hover::before {
-            left: 0;
-            opacity: 0.1;
-        }
-
-        .answer-option.selected {
-            border-color: var(--primary);
-            background: rgba(0, 212, 170, 0.15);
-            box-shadow: 0 0 30px rgba(0, 212, 170, 0.3);
-        }
-
-        .answer-option.selected::before {
-            left: 0;
-            opacity: 0.2;
-        }
-
-        .answer-content {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .answer-icon {
-            width: 24px;
-            height: 24px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            flex-shrink: 0;
-            position: relative;
-        }
-
-        .answer-option.selected .answer-icon {
-            border-color: var(--primary);
-            background: var(--primary);
-        }
-
-        .answer-option.selected .answer-icon::after {
-            content: '✓';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            font-weight: 700;
-            font-size: 0.9rem;
-        }
-
-        .answer-text {
-            flex: 1;
-        }
-
-        .answer-label {
-            font-weight: 600;
-            font-size: 1.1rem;
-            margin-bottom: 0.25rem;
-            color: #ffffff;
-        }
-
-        .answer-description {
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        /* Buttons */
-        .button-group {
-            display: flex;
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-
-        .btn {
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Outfit', sans-serif;
-        }
-
-        .btn-primary {
-            background: var(--gradient-1);
-            color: white;
-            flex: 1;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(0, 212, 170, 0.4);
-        }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: rgba(255, 255, 255, 0.3);
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-
-        /* Results Section */
-        .results-container {
-            display: none;
-        }
-
-        .results-container.active {
-            display: block;
-            animation: slideIn 0.5s ease forwards;
-        }
-
-        .score-card {
-            background: var(--gradient-1);
-            border-radius: 20px;
-            padding: 3rem;
-            text-align: center;
-            margin: 2rem 0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .score-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            animation: pulse 3s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 0.5; }
-            50% { transform: scale(1.1); opacity: 0.8; }
-        }
-
-        .score-number {
-            font-size: 5rem;
-            font-weight: 900;
-            color: white;
-            position: relative;
-            z-index: 1;
-        }
-
-        .score-label {
-            font-size: 1.5rem;
-            color: white;
-            font-weight: 600;
-            position: relative;
-            z-index: 1;
-        }
-
-        .result-section {
-            background: rgba(20, 30, 60, 0.6);
-            border: 2px solid rgba(0, 212, 170, 0.3);
-            border-radius: 20px;
-            padding: 2rem;
-            margin: 2rem 0;
-            backdrop-filter: blur(20px);
-        }
-
-        .result-section h3 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: var(--primary);
-        }
-
-        .result-section p {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        .recommendation-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .recommendation-list li {
-            padding: 1rem;
-            margin: 0.5rem 0;
-            background: rgba(0, 212, 170, 0.1);
-            border-left: 4px solid var(--primary);
-            border-radius: 8px;
-            color: #ffffff;
-            font-weight: 500;
-        }
-
-        .category-scores {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin: 2rem 0;
-        }
-
-        .category-card {
-            background: rgba(20, 30, 60, 0.6);
-            border: 2px solid rgba(0, 212, 170, 0.2);
-            border-radius: 16px;
-            padding: 1.5rem;
-            backdrop-filter: blur(20px);
-        }
-
-        .category-name {
-            font-size: 1rem;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 0.5rem;
-        }
-
-        .category-score {
-            font-size: 2rem;
-            font-weight: 900;
-            color: var(--primary);
-        }
-
-        .category-bar {
-            height: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            margin-top: 0.5rem;
-            overflow: hidden;
-        }
-
-        .category-bar-fill {
-            height: 100%;
-            background: var(--gradient-1);
-            border-radius: 10px;
-            transition: width 1s ease;
-        }
-
-        /* CTA Section */
-        .cta-section {
-            background: var(--gradient-2);
-            border-radius: 20px;
-            padding: 3rem;
-            text-align: center;
-            margin: 3rem 0;
-        }
-
-        .cta-section h3 {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: white;
-        }
-
-        .cta-section p {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        .cta-button {
-            display: inline-block;
-            background: white;
-            color: var(--dark);
-            padding: 1.2rem 3rem;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 1.1rem;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Contact Form */
-        .contact-form {
-            background: rgba(20, 30, 60, 0.6);
-            border: 2px solid rgba(0, 212, 170, 0.3);
-            border-radius: 20px;
-            padding: 2rem;
-            margin: 2rem 0;
-            backdrop-filter: blur(20px);
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: var(--primary);
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 1rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            color: white;
-            font-size: 1rem;
-            font-family: 'Outfit', sans-serif;
-            transition: all 0.3s ease;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            background: rgba(255, 255, 255, 0.08);
-        }
-
-        .form-input::placeholder {
-            color: rgba(255, 255, 255, 0.4);
-        }
-
-        textarea.form-input {
-            resize: vertical;
-            min-height: 120px;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2rem;
-            }
-
-            .question-card {
-                padding: 2rem;
-            }
-
-            .score-number {
-                font-size: 3.5rem;
-            }
-
-            .category-scores {
-                grid-template-columns: 1fr;
-            }
-
-            .button-group {
-                flex-direction: column;
-            }
-        }
-
-        /* Hidden Class */
-        .hidden {
-            display: none !important;
-        }
-
-        /* Loading Animation */
-        .loading {
-            text-align: center;
-            padding: 3rem;
-        }
-
-        .loading-spinner {
-            width: 60px;
-            height: 60px;
-            border: 4px solid rgba(0, 212, 170, 0.2);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KI-Check</title>
+<style>
+:root{--bg:#0a0a0f;--card:#151522;--line:rgba(148,163,184,.2);--text:#f1f5f9;--muted:#94a3b8;--cyan:#06b6d4;--pink:#ec4899;--gold:#fbbf24;--ok:#10b981;--bad:#ef4444;--btn-text:#04141a}
+@media (prefers-color-scheme:light){:root{--bg:#f6f8fc;--card:#fff;--line:rgba(15,23,42,.14);--text:#0f172a;--muted:#475569;--cyan:#0e7490;--pink:#be185d;--gold:#b45309;--ok:#047857;--bad:#b91c1c;--btn-text:#fff}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:24px 16px 40px}
+h1,h2,h3{line-height:1.25;margin:0 0 .5em}
+h1{font-size:clamp(1.6rem,5vw,2.2rem)}
+h2{font-size:1.35rem}
+h3{font-size:1.05rem}
+.grad{color:var(--cyan);background:linear-gradient(90deg,var(--cyan),var(--pink));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+p{margin:0 0 1em}
+.muted{color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin:0 0 16px}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+[tabindex="-1"]:focus{outline:none}
+button,a{font:inherit}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 20px;border:0;border-radius:12px;background:linear-gradient(90deg,var(--cyan),var(--pink));color:var(--btn-text);font-weight:700;cursor:pointer;text-decoration:none}
+.btn:hover{filter:brightness(1.08)}
+.btn[disabled]{opacity:.45;cursor:not-allowed;filter:none}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
+.btn.ghost:hover{border-color:var(--cyan)}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.row.end{justify-content:space-between}
+[hidden]{display:none!important}
+.bar{height:10px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--pink));transition:width .3s}
+.meta{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:.92rem;margin:8px 0 14px}
+.chip{display:inline-block;padding:2px 10px;border:1px solid var(--line);border-radius:99px;color:var(--cyan);font-size:.85rem;font-weight:600}
+.qtext{font-size:1.2rem;font-weight:700;margin:10px 0 4px;overflow-wrap:anywhere}
+.sub{color:var(--muted);margin:0 0 16px}
+.opts{display:grid;gap:10px;margin:0 0 16px}
+.opt{display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;min-height:44px;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:transparent;color:var(--text);cursor:pointer;overflow-wrap:anywhere}
+.opt:hover{border-color:var(--cyan)}
+.opt .n{flex:none;display:inline-grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--line);font-weight:700;font-size:.85rem}
+.opt strong{display:block}
+.opt small{display:block;color:var(--muted)}
+.opt[aria-checked="true"]{border-color:var(--cyan);box-shadow:inset 0 0 0 1px var(--cyan);background:color-mix(in srgb,var(--cyan) 10%,transparent)}
+.hint{color:var(--muted);font-size:.85rem;margin-top:8px}
+kbd{border:1px solid var(--line);border-radius:5px;padding:0 5px;font-size:.85em}
+ul.plain{margin:0 0 1em;padding-left:1.2em}
+ul.plain li{margin:0 0 .4em}
+.score{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.score b{font-size:2.8rem;line-height:1}
+.level{display:inline-block;margin:6px 0 10px;padding:4px 12px;border-radius:99px;border:1px solid var(--gold);color:var(--gold);font-weight:700}
+.steps{display:grid;gap:10px;margin:0 0 12px}
+.step{border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.step.on{border-color:var(--cyan);background:color-mix(in srgb,var(--cyan) 10%,transparent)}
+.step strong{display:block}
+.catrow{padding:10px 0;border-top:1px solid var(--line)}
+.catrow:first-child{border-top:0}
+.catrow .row{justify-content:space-between;margin-bottom:6px}
+.note{border-left:3px solid var(--gold);padding:4px 0 4px 12px;color:var(--muted);font-size:.92rem}
+@media (max-width:480px){.card{padding:16px}.btn{width:100%}.row.end .btn{width:auto;flex:1}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+@media print{body{background:#fff;color:#000}.btn,.hint,#vQuiz{display:none!important}.card{border-color:#999}}
+</style>
 </head>
 <body>
-    <div class="bg-animation"></div>
+<main class="wrap">
+  <header>
+    <h1 class="grad">KI-Check</h1>
+    <p class="muted">Eine kurze Selbsteinschätzung: Wie weit bist du schon mit KI im Alltag, und welcher Einstieg im Kurs passt dazu?</p>
+  </header>
 
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <div class="logo">DOMVS AVREA</div>
-            <h1>KI-Readiness Check</h1>
-            <p>Finden Sie heraus, wie KI Ihr Unternehmen transformieren kann und welche Tools am besten zu Ihnen passen.</p>
-        </div>
+  <section id="vIntro" class="card" aria-label="Einführung">
+    <h2>So funktioniert der Check</h2>
+    <ul class="plain">
+      <li>13 Fragen, etwa 3 Minuten.</li>
+      <li>Es gibt keine richtigen oder falschen Antworten. Wähle, was am ehesten auf dich zutrifft.</li>
+      <li>Am Ende bekommst du eine Einordnung in vier Stufen und Hinweise, womit du im Kurs weitermachen kannst.</li>
+      <li>Deine Antworten bleiben in deinem Browser. Es wird nichts gesendet.</li>
+    </ul>
+    <p class="note">Das Ergebnis ist eine grobe Orientierung auf Basis deiner Selbsteinschätzung. Es ist keine Beratung und keine Prognose.</p>
+    <div class="row">
+      <button type="button" class="btn" id="startBtn">Check starten</button>
+      <span class="muted" id="lastInfo"></span>
+    </div>
+  </section>
 
-        <!-- Progress Bar -->
-        <div class="progress-container">
-            <div class="progress-bar" id="progressBar"></div>
-        </div>
-        <div class="progress-text" id="progressText">Frage 0 von 12</div>
+  <section id="vQuiz" hidden aria-label="Fragebogen">
+    <div class="card">
+      <div class="bar" role="progressbar" id="pbar" aria-label="Fortschritt" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="pfill"></i></div>
+      <div class="meta"><span id="pText"></span><span id="pPct"></span></div>
+      <span class="chip" id="cat"></span>
+      <h2 class="qtext" id="qText"></h2>
+      <p class="sub" id="qSub"></p>
+      <div class="opts" id="opts" role="radiogroup" aria-labelledby="qText"></div>
+      <div class="row end">
+        <button type="button" class="btn ghost" id="backBtn">Zurück</button>
+        <button type="button" class="btn" id="nextBtn" disabled>Weiter</button>
+      </div>
+      <p class="hint">Tastatur: <kbd>1</kbd> bis <kbd>4</kbd> wählt eine Antwort, <kbd>Enter</kbd> geht weiter.</p>
+      <div id="live" class="hint" role="status" aria-live="polite"></div>
+    </div>
+  </section>
 
-        <!-- Quiz Container -->
-        <div id="quizContainer"></div>
-
-        <!-- Results Container -->
-        <div class="results-container" id="resultsContainer">
-            <!-- Results will be inserted here -->
-        </div>
+  <section id="vRes" hidden aria-label="Auswertung">
+    <div class="card">
+      <h2 id="resH" tabindex="-1">Deine Auswertung</h2>
+      <div class="score"><b class="grad" id="resPct"></b><span class="muted" id="resPts"></span></div>
+      <div class="bar" style="margin:12px 0"><i id="resBar"></i></div>
+      <span class="level" id="resLevel"></span>
+      <p id="resText"></p>
     </div>
 
-    <script>
-        // Questions Database
-        const questions = [
-            {
-                id: 1,
-                category: 'Aktueller Status',
-                question: 'Wie würden Sie Ihren aktuellen KI-Einsatz beschreiben?',
-                subtitle: 'Seien Sie ehrlich - es gibt keine falschen Antworten',
-                options: [
-                    { text: 'Keine Erfahrung', description: 'Wir nutzen aktuell keine KI-Tools', score: 0 },
-                    { text: 'Experimentierphase', description: 'Wir testen einzelne Tools wie ChatGPT', score: 2 },
-                    { text: 'Punktueller Einsatz', description: 'KI wird in 1-2 Bereichen eingesetzt', score: 4 },
-                    { text: 'Systematischer Einsatz', description: 'KI ist fester Bestandteil unserer Prozesse', score: 6 }
-                ]
-            },
-            {
-                id: 2,
-                category: 'Automatisierung',
-                question: 'Wie viel Zeit verbringen Sie mit repetitiven Aufgaben?',
-                subtitle: 'Denken Sie an Dateneingabe, Berichte, E-Mails, etc.',
-                options: [
-                    { text: 'Sehr viel (>50%)', description: 'Die Hälfte meiner Zeit geht für Routine drauf', score: 6 },
-                    { text: 'Einiges (30-50%)', description: 'Etwa ein Drittel sind wiederkehrende Tasks', score: 4 },
-                    { text: 'Wenig (10-30%)', description: 'Nur gelegentlich repetitive Arbeit', score: 2 },
-                    { text: 'Kaum (<10%)', description: 'Fast nur strategische Arbeit', score: 0 }
-                ]
-            },
-            {
-                id: 3,
-                category: 'Datennutzung',
-                question: 'Wie nutzen Sie Ihre Geschäftsdaten?',
-                subtitle: 'Finanzen, Kunden, Märkte, etc.',
-                options: [
-                    { text: 'Gar nicht strukturiert', description: 'Daten liegen verstreut, kaum Auswertung', score: 6 },
-                    { text: 'Excel & manuelle Auswertung', description: 'Ich erstelle selbst Tabellen und Reports', score: 4 },
-                    { text: 'Basis-Tools', description: 'Wir nutzen einfache Analyse-Software', score: 2 },
-                    { text: 'Professionelle BI-Tools', description: 'Dashboards und automatische Analysen', score: 0 }
-                ]
-            },
-            {
-                id: 4,
-                category: 'Entscheidungsfindung',
-                question: 'Wie treffen Sie geschäftliche Entscheidungen?',
-                subtitle: 'Investitionen, Strategien, Personalentscheidungen',
-                options: [
-                    { text: 'Bauchgefühl', description: 'Hauptsächlich auf Erfahrung basiert', score: 6 },
-                    { text: 'Mix aus Intuition & Daten', description: 'Ich schaue mir Zahlen an, entscheide aber intuitiv', score: 4 },
-                    { text: 'Datengestützt', description: 'Ich analysiere erst, dann entscheide ich', score: 2 },
-                    { text: 'KI-unterstützt', description: 'Predictive Analytics & Szenarien-Modellierung', score: 0 }
-                ]
-            },
-            {
-                id: 5,
-                category: 'Kommunikation',
-                question: 'Wie viel Zeit geht für E-Mails und Kommunikation drauf?',
-                subtitle: 'Täglich',
-                options: [
-                    { text: 'Sehr viel (>3h)', description: 'E-Mails und Meetings fressen meine Zeit', score: 6 },
-                    { text: 'Viel (2-3h)', description: 'Deutlicher Teil meines Tages', score: 4 },
-                    { text: 'Moderat (1-2h)', description: 'Überschaubar', score: 2 },
-                    { text: 'Wenig (<1h)', description: 'Sehr effizient organisiert', score: 0 }
-                ]
-            },
-            {
-                id: 6,
-                category: 'Content-Erstellung',
-                question: 'Erstellen Sie regelmäßig Inhalte?',
-                subtitle: 'Social Media, Berichte, Präsentationen, Marketing',
-                options: [
-                    { text: 'Ja, sehr viel', description: 'Das ist ein großer Teil meiner Arbeit', score: 6 },
-                    { text: 'Ja, regelmäßig', description: 'Mehrmals pro Woche', score: 4 },
-                    { text: 'Gelegentlich', description: 'Ab und zu', score: 2 },
-                    { text: 'Nein', description: 'Kaum Content-Arbeit', score: 0 }
-                ]
-            },
-            {
-                id: 7,
-                category: 'Finanzplanung',
-                question: 'Wie gut haben Sie Ihre Finanzen im Blick?',
-                subtitle: 'Cashflow, Forecasts, Budgets',
-                options: [
-                    { text: 'Chaos', description: 'Ich habe keinen echten Überblick', score: 6 },
-                    { text: 'Grundlagen', description: 'Ich weiß was reinkommt und rausgeht', score: 4 },
-                    { text: 'Strukturiert', description: 'Regelmäßige Reports und Planung', score: 2 },
-                    { text: 'Perfekt optimiert', description: 'Echtzeitdaten, Forecasts, Szenarien', score: 0 }
-                ]
-            },
-            {
-                id: 8,
-                category: 'Wettbewerb',
-                question: 'Wie gut kennen Sie Ihren Markt?',
-                subtitle: 'Konkurrenz, Trends, Opportunities',
-                options: [
-                    { text: 'Wenig Einblick', description: 'Ich reagiere meist, statt zu agieren', score: 6 },
-                    { text: 'Basis-Wissen', description: 'Ich kenne die Hauptakteure', score: 4 },
-                    { text: 'Guter Überblick', description: 'Ich beobachte den Markt aktiv', score: 2 },
-                    { text: 'Datengetriebene Insights', description: 'Automatische Marktanalysen & Alerts', score: 0 }
-                ]
-            },
-            {
-                id: 9,
-                category: 'Skalierung',
-                question: 'Was hindert Sie aktuell am Wachstum?',
-                subtitle: 'Ehrliche Selbsteinschätzung',
-                options: [
-                    { text: 'Zeit & Kapazität', description: 'Ich bin der Flaschenhals', score: 6 },
-                    { text: 'Fehlende Prozesse', description: 'Alles ist zu manuell und chaotisch', score: 5 },
-                    { text: 'Mangelnde Insights', description: 'Ich weiß nicht, wo ich ansetzen soll', score: 4 },
-                    { text: 'Nichts Gravierendes', description: 'Wir skalieren bereits gut', score: 0 }
-                ]
-            },
-            {
-                id: 10,
-                category: 'Team-Effizienz',
-                question: 'Wie produktiv ist Ihr Team?',
-                subtitle: 'Falls Sie Mitarbeiter haben',
-                options: [
-                    { text: 'Viel Leerlauf', description: 'Ineffiziente Prozesse, viel Doppelarbeit', score: 6 },
-                    { text: 'Geht so', description: 'Könnte besser laufen', score: 4 },
-                    { text: 'Gut organisiert', description: 'Klare Prozesse und Verantwortlichkeiten', score: 2 },
-                    { text: 'Kein Team / Nicht relevant', description: 'Solo oder bereits optimiert', score: 0 }
-                ]
-            },
-            {
-                id: 11,
-                category: 'Technologie-Offenheit',
-                question: 'Wie stehen Sie zu neuen Technologien?',
-                subtitle: 'Ihre persönliche Einstellung',
-                options: [
-                    { text: 'Early Adopter', description: 'Ich teste alles Neue sofort', score: 6 },
-                    { text: 'Interessiert', description: 'Ich probiere gern aus, wenn es Sinn macht', score: 4 },
-                    { text: 'Abwartend', description: 'Lieber erst sehen, was sich bewährt', score: 2 },
-                    { text: 'Skeptisch', description: 'Ich bleibe bei bewährten Methoden', score: 0 }
-                ]
-            },
-            {
-                id: 12,
-                category: 'Investitionsbereitschaft',
-                question: 'Wie viel würden Sie monatlich in KI-Tools investieren?',
-                subtitle: 'Wenn der ROI stimmt',
-                options: [
-                    { text: '€50-100', description: 'Kleine Investition zum Testen', score: 2 },
-                    { text: '€100-300', description: 'Moderates Budget für echten Nutzen', score: 4 },
-                    { text: '€300-1000', description: 'Ernsthaftes Investment in Produktivität', score: 6 },
-                    { text: '>€1000', description: 'Was nötig ist für maximalen Impact', score: 8 }
-                ]
-            }
-        ];
+    <div class="card">
+      <h2>Nächster Schritt im Kurs</h2>
+      <p class="muted">Reine Orientierung. Du kannst jederzeit an anderer Stelle einsteigen.</p>
+      <div class="steps" id="steps"></div>
+      <ul class="plain" id="recs"></ul>
+    </div>
 
-        // State Management
-        let currentQuestion = 0;
-        let answers = [];
-        let categoryScores = {};
+    <div class="card">
+      <h2>Deine Bereiche</h2>
+      <div id="catRes"></div>
+      <h3 style="margin-top:14px">Hier lohnt sich ein genauerer Blick</h3>
+      <ul class="plain" id="tips"></ul>
+    </div>
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            showQuestion(0);
-            updateProgress();
-        });
+    <p class="note">Hinweis: Der KI-Check ist eine Selbsteinschätzung und dient nur der Orientierung. Er enthält keine Garantie für Lernerfolg, Ergebnisse oder berufliche und finanzielle Entwicklung.</p>
+    <div class="row" style="margin-top:16px">
+      <button type="button" class="btn" id="redo">Check wiederholen</button>
+      <button type="button" class="btn ghost" id="editBtn">Antworten ändern</button>
+      <button type="button" class="btn ghost" id="printBtn">Drucken oder als PDF sichern</button>
+    </div>
+  </section>
+</main>
 
-        function showQuestion(index) {
-            const question = questions[index];
-            const container = document.getElementById('quizContainer');
-            
-            container.innerHTML = `
-                <div class="question-card">
-                    <div class="question-number">Frage ${index + 1} von ${questions.length}</div>
-                    <h2 class="question-title">${question.question}</h2>
-                    <p class="question-subtitle">${question.subtitle}</p>
-                    
-                    <div class="answer-options">
-                        ${question.options.map((option, i) => `
-                            <div class="answer-option" onclick="selectAnswer(${i})">
-                                <div class="answer-content">
-                                    <div class="answer-icon"></div>
-                                    <div class="answer-text">
-                                        <div class="answer-label">${option.text}</div>
-                                        <div class="answer-description">${option.description}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                    
-                    <div class="button-group">
-                        ${index > 0 ? `<button class="btn btn-secondary" onclick="previousQuestion()">← Zurück</button>` : ''}
-                        <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" disabled>
-                            ${index < questions.length - 1 ? 'Weiter →' : 'Auswertung anzeigen'}
-                        </button>
-                    </div>
-                </div>
-            `;
-        }
+<script>
+(function(){
+"use strict";
+function $(id){return document.getElementById(id);}
+function el(tag,cls,txt){var n=document.createElement(tag);if(cls)n.className=cls;if(txt!=null)n.textContent=txt;return n;}
+function sget(k){try{return window.localStorage.getItem(k);}catch(e){return null;}}
+function sset(k,v){try{window.localStorage.setItem(k,v);}catch(e){}}
 
-        function selectAnswer(optionIndex) {
-            // Remove previous selections
-            document.querySelectorAll('.answer-option').forEach(opt => opt.classList.remove('selected'));
-            
-            // Select new option
-            document.querySelectorAll('.answer-option')[optionIndex].classList.add('selected');
-            
-            // Store answer
-            answers[currentQuestion] = {
-                questionId: questions[currentQuestion].id,
-                category: questions[currentQuestion].category,
-                optionIndex: optionIndex,
-                score: questions[currentQuestion].options[optionIndex].score
-            };
-            
-            // Enable next button
-            document.getElementById('nextBtn').disabled = false;
-        }
+/* Jede Antwort zählt 0 bis 3 Punkte: mehr Punkte = mehr Praxis und Routine mit KI und digitalen Abläufen. */
+var Q=[
+{c:"Aktueller Stand",t:"Wie würdest du deinen bisherigen Umgang mit KI beschreiben?",s:"Sei ehrlich, es gibt keine falschen Antworten.",
+ tip:"Probiere ein KI-Tool gezielt für eine kleine, echte Aufgabe aus und halte fest, was gut und was schlecht funktioniert hat.",
+ o:[["Noch keine Erfahrung","Ich nutze bisher keine KI-Tools."],["Ausprobiert","Ich habe einzelne Tools getestet, zum Beispiel einen Chatbot."],["Regelmäßig in einzelnen Aufgaben","Ich nutze KI in ein bis zwei Bereichen."],["Fester Bestandteil","KI gehört zu meinen Abläufen, und ich prüfe die Ergebnisse."]]},
+{c:"Routineaufgaben",t:"Wie gehst du mit wiederkehrenden Aufgaben um?",s:"Denke an Dateneingabe, Berichte oder Standard-E-Mails.",
+ tip:"Sammle zwei Wochen lang, welche Aufgaben sich wiederholen. Daraus lassen sich Vorlagen, Checklisten oder erste Automatisierungen ableiten.",
+ o:[["Alles von Hand","Jede Aufgabe mache ich jedes Mal neu."],["Mit Vorlagen und Checklisten","Ich habe feste Muster, aber noch keine Automatisierung."],["Teilweise automatisiert","Einzelne Schritte laufen mit Tools oder Regeln."],["Bewusst automatisiert","Ich automatisiere gezielt, KI hilft mir bei Entwürfen und prüfe sie."]]},
+{c:"Datennutzung",t:"Wie nutzt du deine Daten, zum Beispiel Zahlen, Kontakte oder Notizen?",s:"Es geht um den Umgang, nicht um die Menge.",
+ tip:"Bringe deine Daten an einen Ort und lege eine einheitliche Struktur fest. Gib dabei keine sensiblen Daten in öffentliche KI-Tools ein.",
+ o:[["Verstreut","Die Daten liegen an vielen Orten, kaum Auswertung."],["Eigene Tabellen","Ich pflege Tabellen und werte manuell aus."],["Einfache Auswertungs-Tools","Ich nutze Tools mit Filtern oder Diagrammen."],["Regelmäßige Auswertung","Ich habe feste Berichte oder Dashboards und prüfe die Datenqualität."]]},
+{c:"Entscheidungen",t:"Wie triffst du wichtige Entscheidungen?",s:"Zum Beispiel zu Projekten, Anschaffungen oder Prioritäten.",
+ tip:"Schreibe vor einer Entscheidung Optionen und Kriterien auf. Eine KI kann dabei als Zweitmeinung dienen, die Entscheidung bleibt bei dir.",
+ o:[["Nach Bauchgefühl","Vor allem Erfahrung und Intuition."],["Zahlen ansehen, dann Intuition","Ich schaue Daten an, entscheide aber nach Gefühl."],["Erst analysieren","Ich vergleiche Optionen anhand von Kriterien."],["Analyse und Zweitmeinung","Ich nutze Daten und auch KI als Zweitmeinung, prüfe aber selbst nach."]]},
+{c:"Kommunikation",t:"Wie gehst du mit E-Mails und Nachrichten um?",s:"Täglicher Aufwand und Arbeitsweise.",
+ tip:"Lass dir von einer KI Entwürfe für Standardantworten schreiben, passe sie an und speichere gute Ergebnisse als Vorlage. Lies immer gegen, bevor du sendest.",
+ o:[["Alles selbst, jedes Mal neu","Ich formuliere jede Nachricht von Grund auf."],["Mit Textbausteinen","Ich nutze eigene Vorlagen."],["KI-Entwürfe","Ich lasse Entwürfe erstellen und überarbeite sie."],["Fester Ablauf","Vorlagen, KI-Entwürfe und eine Prüfung vor dem Senden sind Routine."]]},
+{c:"Inhalte erstellen",t:"Wie erstellst du Texte, Präsentationen oder andere Inhalte?",s:"Zum Beispiel Beiträge, Berichte oder Folien.",
+ tip:"Arbeite mit einem festen Prompt-Aufbau aus Rolle, Kontext, Aufgabe, Format und Grenzen. Das verbessert Entwürfe spürbar.",
+ o:[["Ganz selbst","Ohne Hilfsmittel, von Grund auf."],["Mit Vorlagen","Ich nutze Layouts und Muster."],["Gelegentlich mit KI","Ich lasse mir Entwürfe oder Ideen geben."],["Fester Ablauf","Ich arbeite mit KI-Entwurf, eigener Prüfung und Quellenkontrolle."]]},
+{c:"Finanzüberblick",t:"Wie gut hast du deine Finanzen oder dein Budget im Blick?",s:"Einnahmen, Ausgaben, Planung.",
+ tip:"Eine einfache Übersicht über Einnahmen und Ausgaben genügt als Start. Gib dafür keine Kontodaten oder Zugangsdaten in KI-Tools ein.",
+ o:[["Kaum Überblick","Ich weiß nicht genau, was rein- und rausgeht."],["Grundüberblick","Ich kenne die wichtigsten Posten."],["Strukturiert","Ich führe eine Übersicht und plane regelmäßig."],["Laufend geplant","Ich plane voraus und prüfe regelmäßig Abweichungen."]]},
+{c:"Marktwissen",t:"Wie gut kennst du dein Umfeld, etwa Mitbewerber, Trends oder Zielgruppe?",s:"Gilt für Beruf, Selbstständigkeit oder ein eigenes Projekt.",
+ tip:"Notiere drei vergleichbare Angebote und was sie anders machen. Eine KI kann beim Strukturieren helfen, belegt Aussagen aber nicht automatisch richtig.",
+ o:[["Wenig Einblick","Ich reagiere eher, als dass ich beobachte."],["Grundwissen","Ich kenne die Hauptakteure."],["Guter Überblick","Ich beobachte mein Umfeld regelmäßig."],["Systematisch","Ich sammle und bewerte Informationen nach festem Muster."]]},
+{c:"Planung und Ziele",t:"Wie klar ist dein nächster Schritt für dein Vorhaben?",s:"Zum Beispiel dein Portfolio, ein Projekt oder ein berufliches Ziel.",
+ tip:"Formuliere ein Ziel für die nächsten vier Wochen und teile es in drei kleine Schritte. Kleine Schritte lassen sich leichter umsetzen.",
+ o:[["Unklar","Ich weiß noch nicht, wo ich ansetzen soll."],["Ideen, aber kein Plan","Ich habe Ideen, aber keine Reihenfolge."],["Plan, wenig Zeit","Ich weiß, was zu tun ist, komme aber kaum dazu."],["Klarer Plan mit Zeit","Ich habe Ziel, Schritte und feste Zeiten."]]},
+{c:"Organisation",t:"Wie sind deine Abläufe organisiert, allein oder im Team?",s:"Wenn du allein arbeitest, bewerte deine eigene Arbeitsorganisation.",
+ tip:"Halte einen wiederkehrenden Ablauf in fünf Schritten schriftlich fest. Dann lässt sich leichter erkennen, wo Tools helfen.",
+ o:[["Eher chaotisch","Viel Doppelarbeit oder Suchen."],["Grobe Absprachen","Es läuft, aber ohne feste Struktur."],["Klare Abläufe","Verantwortlichkeiten und Schritte sind festgelegt."],["Dokumentiert und verbessert","Abläufe sind dokumentiert, und ich verbessere sie laufend."]]},
+{c:"Offenheit für Technik",t:"Wie stehst du zu neuen Technologien?",s:"Deine persönliche Haltung.",
+ tip:"Wähle pro Monat ein neues Werkzeug und teste es an einer realen Aufgabe. Lies vorher kurz, wie es mit deinen Daten umgeht.",
+ o:[["Skeptisch","Ich bleibe bei bewährten Methoden."],["Abwartend","Ich warte, was sich bewährt."],["Interessiert","Ich probiere aus, wenn es sinnvoll erscheint."],["Neugierig und vorsichtig","Ich teste aktiv und prüfe dabei Nutzen und Risiken."]]},
+{c:"Lernzeit",t:"Wie viel Zeit planst du pro Woche zum Lernen ein?",s:"Eine realistische Schätzung hilft mehr als eine ehrgeizige.",
+ tip:"Feste, kleine Lernfenster von 30 bis 45 Minuten sind oft leichter durchzuhalten als seltene lange Sitzungen.",
+ o:[["Unter 1 Stunde","Es ist wenig Zeit da."],["1 bis 2 Stunden","Ein kleines festes Fenster."],["3 bis 5 Stunden","Regelmäßig mehrere Einheiten."],["Mehr als 5 Stunden","Viel Zeit, ich kann tiefer einsteigen."]]},
+{c:"Datenschutz",t:"Wie gehst du mit sensiblen Daten in KI-Tools um?",s:"Zum Beispiel Passwörter, Kundendaten, Gesundheits- oder Finanzdaten.",
+ tip:"Gib keine Passwörter, Schlüssel oder personenbezogenen Daten Dritter in Online-KI-Tools ein. Arbeite mit Platzhaltern und anonymisierten Beispielen.",
+ o:[["Darüber habe ich nicht nachgedacht","Ich gebe ein, was ich gerade brauche."],["Ich weiß, dass es ein Thema ist","Ich bin aber unsicher, was erlaubt ist."],["Ich vermeide es meist","Ich lasse sensible Angaben in der Regel weg."],["Feste Regeln","Ich nutze Platzhalter, prüfe Einstellungen und halte mich an klare Regeln."]]}
+];
+var N=Q.length,MAXP=N*3;
+var LEVELS=[
+{min:0,name:"Stufe 1: Orientierung",txt:"Du stehst am Anfang. Das ist ein guter Ausgangspunkt, weil du ohne Altlasten lernen kannst. Wichtig sind zuerst ein funktionierendes Setup und ein sicherer Umgang mit KI-Tools.",step:0,recs:["Starte mit dem Bereich Start hier und richte deine Arbeitsumgebung ein.","Probiere ein KI-Tool an einer kleinen, ungefährlichen Aufgabe aus.","Lege fest, wie viel Zeit du pro Woche einplanst."]},
+{min:25,name:"Stufe 2: Erste Schritte",txt:"Du hast erste Berührungspunkte mit KI und digitalen Abläufen. Jetzt hilft ein strukturierter Rahmen, damit aus einzelnen Versuchen eine Routine wird.",step:1,recs:["Gehe Start hier kurz durch, falls dein Setup noch nicht steht.","Beginne Reihe 1: HTML, CSS, JavaScript, Prompting, Portfolio und Hosting.","Übe den Prompt-Aufbau aus Rolle, Kontext, Aufgabe, Format und Grenzen."]},
+{min:50,name:"Stufe 3: Anwenden",txt:"Du nutzt KI und feste Abläufe bereits. Jetzt geht es darum, Ergebnisse zu prüfen, Abläufe sauber zu gestalten und ein eigenes Ergebnis fertigzustellen.",step:2,recs:["Reihe 1 eignet sich, um Grundlagen zu festigen und ein eigenes Portfolio zu veröffentlichen.","Mit Reihe 2 kannst du dich orientieren, wie es danach weitergeht.","Prüfe KI-Ergebnisse systematisch, vor allem Code, Fakten und Zahlen."]},
+{min:75,name:"Stufe 4: Vertiefen",txt:"Du arbeitest bereits routiniert mit KI. Mehr Nutzen entsteht jetzt vor allem durch Vertiefung, saubere Dokumentation und kritisches Prüfen.",step:3,recs:["Sieh dir Reihe 2 und Reihe 3 an und wähle, was zu deinem Vorhaben passt.","Nutze Reihe 1 als Wiederholung, wenn dir einzelne Grundlagen fehlen.","Halte fest, welche Abläufe sich bewährt haben, und teile sie nachvollziehbar."]}
+];
+var STEPS=[
+["Start hier","Setup, Orientierung und erste Schritte."],
+["Reihe 1","KI-Webentwickler in 10 Stunden: Start und Setup, HTML, CSS, JavaScript, Prompting, Portfolio und Hosting."],
+["Reihe 2","Weiterführende Reihe. Prüfe im Kursbereich, welche Themen sie abdeckt."],
+["Reihe 3","Weiterführende Reihe. Prüfe im Kursbereich, welche Themen sie abdeckt."]
+];
 
-        function nextQuestion() {
-            if (currentQuestion < questions.length - 1) {
-                currentQuestion++;
-                showQuestion(currentQuestion);
-                updateProgress();
-            } else {
-                showResults();
-            }
-        }
+var S={i:0,a:new Array(N),done:false};
+var views={intro:$("vIntro"),quiz:$("vQuiz"),res:$("vRes")};
+function show(v){for(var k in views)views[k].hidden=(k!==v);}
 
-        function previousQuestion() {
-            if (currentQuestion > 0) {
-                currentQuestion--;
-                showQuestion(currentQuestion);
-                updateProgress();
-                
-                // Restore previous selection
-                if (answers[currentQuestion]) {
-                    setTimeout(() => {
-                        document.querySelectorAll('.answer-option')[answers[currentQuestion].optionIndex].classList.add('selected');
-                        document.getElementById('nextBtn').disabled = false;
-                    }, 100);
-                }
-            }
-        }
+function render(){
+  var q=Q[S.i];
+  var answered=S.a.filter(function(x){return x!=null;}).length;
+  var pct=Math.round(100*answered/N);
+  $("pText").textContent="Frage "+(S.i+1)+" von "+N;
+  $("pPct").textContent=pct+" % beantwortet";
+  $("pfill").style.width=pct+"%";
+  var pb=$("pbar");pb.setAttribute("aria-valuenow",pct);pb.setAttribute("aria-valuetext",answered+" von "+N+" beantwortet");
+  $("cat").textContent=q.c;$("qText").textContent=q.t;$("qSub").textContent=q.s;
+  var box=$("opts");box.textContent="";
+  q.o.forEach(function(o,i){
+    var b=el("button","opt");b.type="button";b.setAttribute("role","radio");
+    b.setAttribute("aria-checked",S.a[S.i]===i?"true":"false");
+    b.appendChild(el("span","n",String(i+1)));
+    var d=el("span");d.appendChild(el("strong","",o[0]));d.appendChild(el("small","",o[1]));b.appendChild(d);
+    b.addEventListener("click",function(){choose(i);});
+    box.appendChild(b);
+  });
+  $("backBtn").hidden=S.i===0;
+  $("nextBtn").textContent=S.i===N-1?"Auswertung anzeigen":"Weiter";
+  $("nextBtn").disabled=S.a[S.i]==null;
+  $("live").textContent="";
+  var f=box.querySelector('[aria-checked="true"]')||box.querySelector(".opt");if(f)f.focus({preventScroll:true});
+}
+function choose(i){
+  if(i<0||i>=Q[S.i].o.length)return;
+  S.a[S.i]=i;
+  var b=$("opts").children;for(var k=0;k<b.length;k++)b[k].setAttribute("aria-checked",k===i?"true":"false");
+  $("nextBtn").disabled=false;
+  var answered=S.a.filter(function(x){return x!=null;}).length,pct=Math.round(100*answered/N);
+  $("pfill").style.width=pct+"%";$("pPct").textContent=pct+" % beantwortet";
+  $("pbar").setAttribute("aria-valuenow",pct);
+  $("live").textContent="Antwort "+(i+1)+" gewählt: "+Q[S.i].o[i][0]+".";
+}
+function next(){if(S.a[S.i]==null)return;if(S.i<N-1){S.i++;render();}else result();}
+function back(){if(S.i>0){S.i--;render();}}
 
-        function updateProgress() {
-            const progress = ((currentQuestion + 1) / questions.length) * 100;
-            document.getElementById('progressBar').style.width = progress + '%';
-            document.getElementById('progressText').textContent = `Frage ${currentQuestion + 1} von ${questions.length}`;
-        }
-
-        function calculateResults() {
-            // Calculate total score
-            const totalScore = answers.reduce((sum, answer) => sum + answer.score, 0);
-            const maxScore = questions.reduce((sum, q) => sum + Math.max(...q.options.map(o => o.score)), 0);
-            const percentScore = Math.round((totalScore / maxScore) * 100);
-
-            // Calculate category scores
-            categoryScores = {};
-            answers.forEach(answer => {
-                if (!categoryScores[answer.category]) {
-                    categoryScores[answer.category] = { total: 0, count: 0 };
-                }
-                categoryScores[answer.category].total += answer.score;
-                categoryScores[answer.category].count++;
-            });
-
-            // Determine profile
-            let profile = '';
-            let recommendations = [];
-            let consultationType = '';
-
-            if (percentScore >= 70) {
-                profile = 'KI-Power-User 🚀';
-                recommendations = [
-                    'Sie haben massives Automatisierungs-Potenzial',
-                    'Individuelle KI-Workflows für Ihre spezifischen Prozesse',
-                    'Fortgeschrittene Tools: GPT-4, Automation-Chains, Custom Bots',
-                    'ROI-Fokus: 10-20h Zeitersparnis/Woche realistisch',
-                    'Enterprise-Lösungen mit API-Integration'
-                ];
-                consultationType = 'Elite / Advisory Paket (499-2.000€/Monat)';
-            } else if (percentScore >= 50) {
-                profile = 'KI-Ready 💎';
-                recommendations = [
-                    'Sie sind bereit für den nächsten Schritt',
-                    'Systematische Tool-Integration in Ihre Workflows',
-                    'Pro-Tools für Daten, Content & Kommunikation',
-                    'Erwartete Zeitersparnis: 5-10h/Woche',
-                    'Persönliches Onboarding und regelmäßige Check-ins'
-                ];
-                consultationType = 'Pro Paket (79-149€/Monat)';
-            } else if (percentScore >= 30) {
-                profile = 'KI-Einsteiger ⭐';
-                recommendations = [
-                    'Perfekter Zeitpunkt zum Einstieg',
-                    'Fokus auf Quick-Wins und einfache Automatisierung',
-                    'Starter-Tools für die wichtigsten Bereiche',
-                    'Erwartete Zeitersparnis: 2-5h/Woche',
-                    'Schritt-für-Schritt Begleitung'
-                ];
-                consultationType = 'Starter Paket (19-39€/Monat)';
-            } else {
-                profile = 'KI-Neuling 🌱';
-                recommendations = [
-                    'Entdecken Sie das Potenzial von KI',
-                    'Kostenlose Einführungs-Session',
-                    'Einfache Tools für den Alltag',
-                    'Keine Vorkenntnisse nötig',
-                    'Risikofrei ausprobieren'
-                ];
-                consultationType = 'Kostenloser KI-Check + Starter (19-39€/Monat)';
-            }
-
-            return {
-                totalScore,
-                maxScore,
-                percentScore,
-                profile,
-                recommendations,
-                consultationType,
-                categoryScores
-            };
-        }
-
-        function showResults() {
-            const results = calculateResults();
-            
-            document.getElementById('quizContainer').style.display = 'none';
-            document.querySelector('.progress-container').style.display = 'none';
-            document.querySelector('.progress-text').style.display = 'none';
-            
-            const resultsContainer = document.getElementById('resultsContainer');
-            resultsContainer.innerHTML = `
-                <div class="score-card">
-                    <div class="score-number">${results.percentScore}%</div>
-                    <div class="score-label">${results.profile}</div>
-                </div>
-
-                <div class="result-section">
-                    <h3>📊 Ihre Analyse</h3>
-                    <p>Basierend auf Ihren Antworten haben Sie <strong>${results.totalScore} von ${results.maxScore} Punkten</strong> erreicht. 
-                    Das zeigt: Sie haben erhebliches Potenzial für KI-gestützte Prozessoptimierung!</p>
-                </div>
-
-                <div class="result-section">
-                    <h3>🎯 Unsere Empfehlungen für Sie</h3>
-                    <ul class="recommendation-list">
-                        ${results.recommendations.map(rec => `<li>${rec}</li>`).join('')}
-                    </ul>
-                </div>
-
-                <div class="category-scores">
-                    ${Object.entries(results.categoryScores).map(([category, data]) => {
-                        const categoryPercent = Math.round((data.total / (data.count * 6)) * 100);
-                        return `
-                            <div class="category-card">
-                                <div class="category-name">${category}</div>
-                                <div class="category-score">${categoryPercent}%</div>
-                                <div class="category-bar">
-                                    <div class="category-bar-fill" style="width: ${categoryPercent}%"></div>
-                                </div>
-                            </div>
-                        `;
-                    }).join('')}
-                </div>
-
-                <div class="result-section">
-                    <h3>💡 Passend für Sie: ${results.consultationType}</h3>
-                    <p>Diese Analyse zeigt, dass dieses Paket optimal zu Ihrem aktuellen Setup und Ihren Zielen passt. 
-                    In einem kostenlosen Erstgespräch schauen wir uns Ihre spezifische Situation an und entwickeln einen konkreten Umsetzungsplan.</p>
-                </div>
-
-                <div class="cta-section">
-                    <h3>🚀 Bereit für den nächsten Schritt?</h3>
-                    <p>Buchen Sie jetzt Ihr kostenloses 30-minütiges Beratungsgespräch und lassen Sie uns gemeinsam Ihr KI-Setup planen.</p>
-                    <a href="#contact" class="cta-button" onclick="showContactForm()">Jetzt Termin vereinbaren</a>
-                </div>
-
-                <div class="contact-form hidden" id="contactForm">
-                    <h3 style="color: var(--primary); margin-bottom: 1.5rem;">📞 Kontaktieren Sie uns</h3>
-                    <form onsubmit="submitForm(event)">
-                        <div class="form-group">
-                            <label class="form-label">Name *</label>
-                            <input type="text" class="form-input" placeholder="Ihr vollständiger Name" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">E-Mail *</label>
-                            <input type="email" class="form-input" placeholder="ihre@email.de" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Telefon</label>
-                            <input type="tel" class="form-input" placeholder="+49 123 456789">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Unternehmen / Branche</label>
-                            <input type="text" class="form-input" placeholder="Ihre Firma oder Selbstständigkeit">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Nachricht</label>
-                            <textarea class="form-input" placeholder="Was möchten Sie konkret mit KI erreichen?"></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary" style="width: 100%;">Anfrage senden</button>
-                    </form>
-                </div>
-
-                <div class="result-section">
-                    <h3>📄 Ihre Ergebnisse als PDF</h3>
-                    <p>Möchten Sie diese Analyse als PDF erhalten? Klicken Sie auf den Button unten.</p>
-                    <button class="btn btn-secondary" onclick="window.print()" style="margin-top: 1rem;">
-                        📥 Als PDF speichern
-                    </button>
-                </div>
-            `;
-            
-            resultsContainer.classList.add('active');
-            
-            // Animate category bars
-            setTimeout(() => {
-                document.querySelectorAll('.category-bar-fill').forEach(bar => {
-                    const width = bar.style.width;
-                    bar.style.width = '0%';
-                    setTimeout(() => bar.style.width = width, 100);
-                });
-            }, 500);
-        }
-
-        function showContactForm() {
-            document.getElementById('contactForm').classList.remove('hidden');
-            document.getElementById('contactForm').scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-
-        function submitForm(e) {
-            e.preventDefault();
-            alert('Vielen Dank für Ihre Anfrage! Wir melden uns innerhalb von 24 Stunden bei Ihnen.\n\nIn der finalen Version würde hier eine echte Integration zu Ihrem CRM/E-Mail-System erfolgen.');
-        }
-    </script>
+function result(){
+  var total=0,pc=[];
+  Q.forEach(function(q,i){var p=S.a[i]||0;total+=p;pc.push({c:q.c,p:p,tip:q.tip});});
+  var pct=Math.round(100*total/MAXP);
+  var lv=LEVELS[0];LEVELS.forEach(function(l){if(pct>=l.min)lv=l;});
+  $("resPct").textContent=pct+" %";
+  $("resPts").textContent=total+" von "+MAXP+" Punkten (Selbsteinschätzung)";
+  $("resBar").style.width=pct+"%";
+  $("resLevel").textContent=lv.name;
+  $("resText").textContent=lv.txt;
+  var st=$("steps");st.textContent="";
+  STEPS.forEach(function(s,i){
+    var d=el("div","step"+(i===lv.step?" on":""));
+    d.appendChild(el("strong","",s[0]+(i===lv.step?" (passt zu deiner Stufe)":"")));
+    d.appendChild(el("span","muted",s[1]));st.appendChild(d);
+  });
+  var rc=$("recs");rc.textContent="";lv.recs.forEach(function(r){rc.appendChild(el("li","",r));});
+  var cr=$("catRes");cr.textContent="";
+  pc.forEach(function(x){
+    var row=el("div","catrow"),top=el("div","row");
+    top.appendChild(el("span","",x.c));top.appendChild(el("span","muted",x.p+" von 3"));
+    var bar=el("div","bar"),f=el("i");f.style.width=Math.round(100*x.p/3)+"%";bar.appendChild(f);
+    row.appendChild(top);row.appendChild(bar);cr.appendChild(row);
+  });
+  var weak=pc.slice().sort(function(a,b){return a.p-b.p;}).filter(function(x){return x.p<3;}).slice(0,3);
+  var tp=$("tips");tp.textContent="";
+  if(!weak.length)tp.appendChild(el("li","","Du hast überall die höchste Stufe gewählt. Prüfe trotzdem regelmäßig, ob deine Abläufe noch passen."));
+  weak.forEach(function(x){var li=el("li");li.appendChild(el("strong","",x.c+": "));li.appendChild(document.createTextNode(x.tip));tp.appendChild(li);});
+  sset("kicheck_last",JSON.stringify({t:Date.now(),pct:pct,level:lv.name}));
+  show("res");var h=$("resH");h.focus();
+}
+function lastInfo(){
+  var r=sget("kicheck_last");if(!r)return;
+  try{var o=JSON.parse(r);if(o&&o.level)$("lastInfo").textContent="Letztes Ergebnis auf diesem Gerät: "+o.level+" ("+o.pct+" %)";}catch(e){}
+}
+$("startBtn").addEventListener("click",function(){S.i=0;S.a=new Array(N);show("quiz");render();});
+$("nextBtn").addEventListener("click",next);
+$("backBtn").addEventListener("click",back);
+$("redo").addEventListener("click",function(){S.i=0;S.a=new Array(N);show("intro");lastInfo();window.scrollTo(0,0);});
+$("editBtn").addEventListener("click",function(){S.i=0;show("quiz");render();});
+$("printBtn").addEventListener("click",function(){try{window.print();}catch(e){}});
+document.addEventListener("keydown",function(e){
+  if(views.quiz.hidden||e.ctrlKey||e.metaKey||e.altKey)return;
+  var t=e.target;
+  if(e.key>="1"&&e.key<="4"){choose(parseInt(e.key,10)-1);e.preventDefault();return;}
+  if(e.key==="Enter"){
+    var isOpt=t&&t.classList&&t.classList.contains("opt");
+    if(!t||t===document.body||isOpt){e.preventDefault();next();}
+  }
+});
+lastInfo();
+})();
+</script>
 </body>
 </html>

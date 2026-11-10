@@ -1,770 +1,445 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Cooles Quiz – 40 Fragen</title>
-  <style>
-    /* Grundlegendes Styling */
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(45deg, #1c92d2, #f2fcfe);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .quiz-container {
-      background-color: rgba(255, 255, 255, 0.9);
-      width: 90%;
-      max-width: 600px;
-      border-radius: 8px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-      padding: 20px;
-      position: relative;
-      overflow: hidden;
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 8px;
-    }
-    .api-key {
-      text-align: center;
-      font-size: 0.8rem;
-      margin-bottom: 10px;
-      color: #555;
-    }
-    .progress {
-      text-align: center;
-      font-size: 0.9rem;
-      margin-bottom: 4px;
-      color: #333;
-    }
-    .score {
-      text-align: center;
-      font-size: 0.9rem;
-      margin-bottom: 10px;
-      color: #333;
-    }
-    .quiz-question {
-      margin-bottom: 15px;
-      font-weight: bold;
-      font-size: 1.1rem;
-      transition: opacity 0.8s ease-in-out;
-    }
-    .answers {
-      margin-bottom: 10px;
-    }
-    .answers label {
-      display: block;
-      background-color: #eef1f7;
-      margin: 6px 0;
-      padding: 8px;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background 0.3s, transform 0.2s;
-    }
-    .answers label:hover {
-      background-color: #d0d7e3;
-      transform: scale(1.02);
-    }
-    .answers input {
-      margin-right: 8px;
-    }
-    .navigation-buttons {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 20px;
-    }
-    .navigation-buttons button {
-      padding: 10px 15px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 1rem;
-      color: #fff;
-      background-color: #0072ee;
-      transition: background 0.2s ease, transform 0.2s ease;
-    }
-    .navigation-buttons button:hover {
-      background-color: #005bb5;
-      transform: scale(1.05);
-    }
-    .hidden {
-      display: none;
-    }
-    .fade {
-      animation: fadeIn 0.8s;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    /* Feedback Styling */
-    .feedback {
-      position: absolute;
-      top: 20%;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: rgba(0,0,0,0.75);
-      color: #fff;
-      padding: 12px 24px;
-      border-radius: 8px;
-      font-size: 1.2rem;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.5s ease, transform 0.5s ease;
-      z-index: 10;
-    }
-    .feedback.show {
-      opacity: 1;
-      transform: translateX(-50%) scale(1.05);
-    }
-    /* Auswertungsbox */
-    .result-box {
-      text-align: center;
-      margin-top: 20px;
-      padding: 15px;
-      border-radius: 6px;
-      background-color: #eef1f7;
-      animation: fadeIn 0.8s;
-    }
-    .result-box h2 {
-      margin-bottom: 10px;
-    }
-    .footer {
-      text-align: center;
-      margin-top: 15px;
-      font-size: 0.8rem;
-      color: #666;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quiz – 50 Fragen</title>
+<style>
+:root{--bg:#0a0a0f;--card:#151522;--line:rgba(148,163,184,.2);--text:#f1f5f9;--muted:#94a3b8;--cyan:#06b6d4;--pink:#ec4899;--gold:#fbbf24;--ok:#10b981;--bad:#ef4444;--btn-text:#04141a}
+@media (prefers-color-scheme:light){:root{--bg:#f6f8fc;--card:#fff;--line:rgba(15,23,42,.14);--text:#0f172a;--muted:#475569;--cyan:#0e7490;--pink:#be185d;--gold:#b45309;--ok:#047857;--bad:#b91c1c;--btn-text:#fff}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:24px 16px 40px}
+h1,h2,h3{line-height:1.25;margin:0 0 .5em}
+h1{font-size:clamp(1.6rem,5vw,2.2rem)}
+h2{font-size:1.35rem}
+h3{font-size:1.05rem}
+.grad{color:var(--cyan);background:linear-gradient(90deg,var(--cyan),var(--pink));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+p{margin:0 0 1em}
+.muted{color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin:0 0 16px}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+[tabindex="-1"]:focus{outline:none}
+button,input,a{font:inherit}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 20px;border:0;border-radius:12px;background:linear-gradient(90deg,var(--cyan),var(--pink));color:var(--btn-text);font-weight:700;cursor:pointer;text-decoration:none}
+.btn:hover{filter:brightness(1.08)}
+.btn[disabled]{opacity:.45;cursor:not-allowed;filter:none}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
+.btn.ghost:hover{border-color:var(--cyan)}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.row.end{justify-content:space-between}
+[hidden]{display:none!important}
+/* Auswahl */
+fieldset{border:0;padding:0;margin:0 0 18px;min-width:0}
+legend{font-weight:700;margin-bottom:8px;padding:0}
+.choice{display:flex;gap:10px;align-items:flex-start;min-height:44px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;margin:0 0 8px;cursor:pointer}
+.choice:hover{border-color:var(--cyan)}
+.choice input{margin:4px 0 0;width:18px;height:18px;flex:none;accent-color:var(--cyan)}
+.choice:has(input:focus-visible){outline:3px solid var(--gold);outline-offset:2px}
+.choice small{display:block;color:var(--muted)}
+.cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0 12px}
+/* Quiz */
+.bar{height:10px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--pink));transition:width .3s}
+.meta{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:.92rem;margin:8px 0 14px}
+.chip{display:inline-block;padding:2px 10px;border:1px solid var(--line);border-radius:99px;color:var(--cyan);font-size:.85rem;font-weight:600}
+.qtext{font-size:1.2rem;font-weight:700;margin:10px 0 16px;overflow-wrap:anywhere}
+.opts{display:grid;gap:10px;margin:0 0 16px}
+.opt{display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;min-height:44px;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:transparent;color:var(--text);cursor:pointer;overflow-wrap:anywhere}
+.opt:hover:not([disabled]){border-color:var(--cyan)}
+.opt .n{flex:none;display:inline-grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--line);font-weight:700;font-size:.85rem}
+.opt[aria-checked="true"]{border-color:var(--cyan);box-shadow:inset 0 0 0 1px var(--cyan)}
+.opt.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 15%,transparent)}
+.opt.bad{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 15%,transparent)}
+.opt[disabled]{cursor:default;color:var(--text)}
+.fb{border-radius:12px;padding:12px 14px;margin:0 0 16px;border:1px solid var(--line);background:color-mix(in srgb,var(--cyan) 8%,transparent)}
+.fb:empty{display:none}
+.fb.ok{border-color:var(--ok)}
+.fb.bad{border-color:var(--bad)}
+.fb strong{display:block}
+.hint{color:var(--muted);font-size:.85rem;margin-top:8px}
+kbd{border:1px solid var(--line);border-radius:5px;padding:0 5px;font-size:.85em}
+/* Ergebnis */
+.score{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.score b{font-size:2.8rem;line-height:1}
+.catrow{padding:12px 0;border-top:1px solid var(--line)}
+.catrow:first-child{border-top:0}
+.catrow .row{margin-bottom:6px}
+.catrow .name{font-weight:700;flex:1 1 140px}
+.catrow a{color:var(--cyan);font-size:.92rem;min-height:44px;display:inline-flex;align-items:center}
+.hist{list-style:none;margin:0;padding:0}
+.hist li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid var(--line);font-size:.95rem;flex-wrap:wrap}
+.hist li:first-child{border-top:0}
+details{border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:0 0 10px}
+summary{cursor:pointer;font-weight:600;min-height:28px}
+details p{margin:8px 0 0}
+.good{color:var(--ok);font-weight:600}
+.wrong{color:var(--bad);font-weight:600}
+@media (max-width:480px){.card{padding:16px}.btn{width:100%}.row.end .btn{width:auto;flex:1}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+</style>
 </head>
 <body>
+<main class="wrap">
+  <header>
+    <h1 class="grad">Quiz: 50 Fragen</h1>
+    <p class="muted">Web-Grundlagen, KI und Prompting, Hosting und Sicherheit. Wähle einen Modus und starte.</p>
+  </header>
 
-<div class="quiz-container fade">
-  <h1>Final Quiz Webentwicklung – 40 Fragen</h1>
- 
-  <p class="progress" id="progressText"></p>
-  <p class="score" id="scoreDisplay">Punkte: 0</p>
-  
-  <!-- Feedback Message -->
-  <div id="feedback" class="feedback"></div>
+  <!-- Startansicht -->
+  <section id="vStart" aria-label="Quiz einrichten">
+    <form id="form" class="card" autocomplete="off">
+      <fieldset>
+        <legend>Modus</legend>
+        <label class="choice"><input type="radio" name="mode" value="learn" checked><span><strong>Lernmodus</strong><small>Sofortiges Feedback mit Erklärung nach jeder Antwort.</small></span></label>
+        <label class="choice"><input type="radio" name="mode" value="exam"><span><strong>Prüfungsmodus</strong><small>Kein Feedback während des Quiz, Ergebnis am Ende.</small></span></label>
+      </fieldset>
+      <fieldset>
+        <legend>Kategorien</legend>
+        <div class="cats" id="catBox"></div>
+        <p class="hint" id="catHint" role="status"></p>
+      </fieldset>
+      <fieldset>
+        <legend>Reihenfolge</legend>
+        <label class="choice"><input type="checkbox" id="shQ" checked><span>Fragen mischen</span></label>
+        <label class="choice"><input type="checkbox" id="shA" checked><span>Antworten mischen</span></label>
+      </fieldset>
+      <div class="row">
+        <button type="submit" class="btn" id="startBtn">Quiz starten</button>
+        <span class="muted" id="countInfo"></span>
+      </div>
+    </form>
 
-  <!-- Frage und Antworten -->
-  <div id="questionContainer">
-    <div id="questionText" class="quiz-question"></div>
-    <div id="answersContainer" class="answers"></div>
-  </div>
+    <section class="card" aria-labelledby="histH">
+      <h2 id="histH">Letzte Ergebnisse</h2>
+      <ul class="hist" id="hist"></ul>
+      <p class="muted" id="histEmpty">Noch keine Ergebnisse gespeichert.</p>
+      <p class="hint" id="storeNote" hidden>Speichern ist in diesem Browser nicht verfügbar. Das Quiz funktioniert trotzdem, der Verlauf bleibt aber nicht erhalten.</p>
+      <div class="row" style="margin-top:12px">
+        <button type="button" class="btn ghost" id="resetBtn">Zurücksetzen</button>
+        <span class="muted" id="resetMsg" role="status"></span>
+      </div>
+    </section>
+  </section>
 
-  <!-- Navigations-Buttons -->
-  <div class="navigation-buttons">
-    <button id="prevBtn" onclick="prevQuestion()">Zurück</button>
-    <button id="nextBtn" onclick="nextQuestion()">Weiter</button>
-  </div>
+  <!-- Quizansicht -->
+  <section id="vQuiz" hidden aria-label="Quiz">
+    <div class="card">
+      <div class="bar" role="progressbar" id="pbar" aria-label="Fortschritt" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="pfill"></i></div>
+      <div class="meta"><span id="pText"></span><span id="modeText"></span></div>
+      <span class="chip" id="cat"></span>
+      <h2 class="qtext" id="qText"></h2>
+      <div class="opts" id="opts" role="radiogroup" aria-labelledby="qText"></div>
+      <div class="fb" id="fb" role="status" aria-live="polite" aria-atomic="true"></div>
+      <div class="row end">
+        <button type="button" class="btn ghost" id="backBtn">Zurück</button>
+        <button type="button" class="btn" id="nextBtn" disabled>Weiter</button>
+      </div>
+      <p class="hint">Tastatur: <kbd>1</kbd> bis <kbd>4</kbd> wählt eine Antwort, <kbd>Enter</kbd> geht weiter.</p>
+      <div class="row" style="margin-top:8px"><button type="button" class="btn ghost" id="quitBtn">Abbrechen</button></div>
+    </div>
+  </section>
 
-  <!-- Auswertung -->
-  <div id="resultBox" class="result-box hidden">
-    <h2>Auswertung</h2>
-    <p id="scoreText"></p>
-    <p id="noteText"></p>
-    <button onclick="restartQuiz()">Nochmal versuchen</button>
-  </div>
-</div>
-
-
+  <!-- Ergebnisansicht -->
+  <section id="vRes" hidden aria-label="Ergebnis">
+    <div class="card">
+      <h2 id="resH" tabindex="-1">Ergebnis</h2>
+      <div class="score"><b class="grad" id="resScore"></b><span id="resPct" class="muted"></span></div>
+      <div class="bar" style="margin:12px 0"><i id="resBar"></i></div>
+      <p id="resMsg"></p>
+      <div class="row">
+        <button type="button" class="btn" id="retryWrong">Falsche Fragen wiederholen</button>
+        <button type="button" class="btn ghost" id="again">Neu einrichten</button>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Aufschlüsselung nach Kategorie</h2>
+      <div id="catRes"></div>
+      <p class="muted">Allgemeine Grundlagen findest du im Slide-Modul <a href="../slides/r1-m0-start-und-setup.html" style="color:var(--cyan)">Start und Setup</a>.</p>
+    </div>
+    <div class="card" id="wrongCard">
+      <h2>Falsch beantwortete Fragen</h2>
+      <div id="wrongList"></div>
+    </div>
+  </section>
+</main>
 
 <script>
-  // ***** Fragen-Array (40 Fragen) *****
-  const questions = [
-    {
-      question: "Welche Aussage trifft auf die empfohlene Software-Ausstattung für Webentwicklung zu?",
-      answers: [
-        "Notepad reicht vollkommen aus",
-        "Moderne Browser, Code-Editor (z. B. VS Code) & aktuelles Betriebssystem sind vorteilhaft",
-        "Nur ein virtuelles Linux-Image ist nötig",
-        "Alles direkt in Microsoft Paint programmieren"
-      ],
-      correct: 1
-    },
-    {
-      question: "Welcher Browser wird im Kurs als besonders datenschutzfreundlich herausgestellt?",
-      answers: [
-        "Chrome",
-        "Firefox",
-        "Brave",
-        "Opera"
-      ],
-      correct: 2
-    },
-    {
-      question: "Welches dieser Tags ist kein semantisches HTML-Tag?",
-      answers: [
-        "<article>",
-        "<nav>",
-        "<div>",
-        "<section>"
-      ],
-      correct: 2
-    },
-    {
-      question: "Wofür ist HTML in erster Linie zuständig?",
-      answers: [
-        "Optische Gestaltung von Webseiten",
-        "Strukturierung und Auszeichnung von Inhalten",
-        "Ausführung von Server-Logik",
-        "Rendern von 3D-Grafiken im Browser"
-      ],
-      correct: 1
-    },
-    {
-      question: "Was zeichnet ein Utility-First-Framework wie Tailwind CSS aus?",
-      answers: [
-        "Es ersetzt HTML vollständig",
-        "Vorwiegend aussagekräftige Klassen wie p-4 oder text-center",
-        "Keine Klassen, da alles inline geschrieben wird",
-        "Nur für JavaScript-Entwicklung"
-      ],
-      correct: 1
-    },
-    {
-      question: "Welche Tailwind-Klasse sorgt standardmäßig für einen äußeren Abstand (Margin) von 1rem?",
-      answers: [
-        "m-4",
-        "mx-2",
-        "p-4",
-        "mt-2"
-      ],
-      correct: 0
-    },
-    {
-      question: "Was ist laut Kurs ein 'Prompt'?",
-      answers: [
-        "Ein Browser-Plug-in",
-        "Eine Fehlermeldung bei Syntaxfehlern",
-        "Eine spezifische Anweisung an eine KI",
-        "Ein Git-Befehl"
-      ],
-      correct: 2
-    },
-    {
-      question: "In welchem Bereich können KI-Tools nicht sinnvoll unterstützen?",
-      answers: [
-        "Automatisierte Code-Vervollständigung",
-        "Vorschläge für Bugfixes",
-        "Kreative Ideen fürs Webdesign",
-        "Stromversorgung des Rechners"
-      ],
-      correct: 3
-    },
-    {
-      question: "Welches Tool wird ausdrücklich für Browser-Debugging empfohlen?",
-      answers: [
-        "Photoshop",
-        "Chrome DevTools",
-        "Windows Media Player",
-        "Excel"
-      ],
-      correct: 1
-    },
-    {
-      question: "Welche Methode ist am effektivsten zur Fehlersuche in JavaScript?",
-      answers: [
-        "Nur console.log nutzen",
-        "Code in Paint einfügen & durchlesen",
-        "Style-Attribute anpassen",
-        "Mix aus Breakpoints, Logs & Code-Review"
-      ],
-      correct: 3
-    },
-    {
-      question: "Wofür sind sogenannte Media Queries in CSS verantwortlich?",
-      answers: [
-        "Datenbankabfragen zur Website hinzufügen",
-        "Gerätespezifische Gestaltung (Mobile, Tablet, Desktop)",
-        "Automatisches KI-Bilder-Rendering",
-        "Ersetzen alle JavaScript-Funktionen"
-      ],
-      correct: 1
-    },
-    {
-      question: "Was ist ein Kerngedanke des Mobile-First-Ansatzes?",
-      answers: [
-        "Erst Desktop-Layout erstellen & dann verkleinern",
-        "Mit kleinen Viewports starten & zu größeren übergehen",
-        "Smartphone neu starten vor jeder Programmierung",
-        "Nur auf großen Monitoren testen"
-      ],
-      correct: 1
-    },
-    {
-      question: "Was bewirkt 'git add .' gefolgt von 'git commit -m \"...\"'?",
-      answers: [
-        "Alle Dateien werden gelöscht",
-        "Änderungen werden vorgemerkt & als Commit gesichert",
-        "Neue Branch wird erstellt & gemergt",
-        "Nur lokal im RAM gespeichert, nach Ausschalten weg"
-      ],
-      correct: 1
-    },
-    {
-      question: "Welche Aussage beschreibt KEINEN Vorteil von GitHub Pages?",
-      answers: [
-        "Kostenloses Hosting statischer Seiten",
-        "Automatische Bereitstellung per Git",
-        "Eigene Subdomain *.github.io",
-        "Serverseitiges PHP & Datenbank möglich"
-      ],
-      correct: 3
-    },
-    {
-      question: "Mit welchem Befehl zeigt man alle bisherigen Commits an?",
-      answers: [
-        "git log",
-        "git status",
-        "git branch",
-        "git revert"
-      ],
-      correct: 0
-    },
-    {
-      question: "Wofür ist JavaScript in Kombination mit HTML & CSS hauptsächlich zuständig?",
-      answers: [
-        "Struktur von Webseiten",
-        "Dynamische & interaktive Funktionen im Frontend",
-        "Bildbearbeitung",
-        "Datenbankabfragen mit SQL"
-      ],
-      correct: 1
-    },
-    {
-      question: "Wo sollte man den <script>-Tag idealerweise platzieren?",
-      answers: [
-        "Am Ende des <body> (Blockierung verhindern)",
-        "Ganz oben im <head> ohne Attribute",
-        "Erstes Element nach <!DOCTYPE html>",
-        "Niemals verwenden"
-      ],
-      correct: 0
-    },
-    {
-      question: "Welcher Schritt gehört NICHT zum systematischen Debugging?",
-      answers: [
-        "Problem definieren",
-        "Hypothesen & Breakpoints setzen",
-        "Ungesichert deployen ohne Tests",
-        "Testergebnisse analysieren & anpassen"
-      ],
-      correct: 2
-    },
-    {
-      question: "Welche Kombi ist besonders effizient für schnelle Prototypen?",
-      answers: [
-        "MS Paint + WordPad",
-        "HTML, Tailwind & KI-Codegenerator",
-        "Excel + KI",
-        "DOS-Eingabe ohne Editor"
-      ],
-      correct: 1
-    },
-    {
-      question: "Erster Schritt, wenn KI, GitHub Pages & Responsive Design vereint werden sollen?",
-      answers: [
-        "Planlos Code kopieren & deployen",
-        "Strukturiertes Repo, GitHub Pages, responsives Layout",
-        "Warten auf Warren Buffetts Invest",
-        "Excel-Datei hochladen statt HTML"
-      ],
-      correct: 1
-    },
-    {
-      question: "Welche Datei-Endung ist typisch für ein CSS-Stylesheet?",
-      answers: [
-        ".html",
-        ".js",
-        ".txt",
-        ".css"
-      ],
-      correct: 3
-    },
-    {
-      question: "Welcher Befehl legt ein neues lokales Git-Repository an?",
-      answers: [
-        "git clone .",
-        "git init",
-        "git newrepo",
-        "git local"
-      ],
-      correct: 1
-    },
-    {
-      question: "Welche Klasse in Tailwind sorgt für zentrierten Text?",
-      answers: [
-        "text-center",
-        "mx-auto",
-        "justify-center",
-        "text-middle"
-      ],
-      correct: 0
-    },
-    {
-      question: "Wie setzt man in JavaScript die Variable userName auf den Wert 'Max'?",
-      answers: [
-        "var userName = 'Max';",
-        "<var userName='Max'>",
-        "userName: 'Max';",
-        "username => 'Max';"
-      ],
-      correct: 0
-    },
-    {
-      question: "Welche Aussage ist falsch?",
-      answers: [
-        "HTML kann Struktur verbessern (Semantik)",
-        "CSS kümmert sich um das Aussehen der Seite",
-        "JavaScript erzeugt Dynamik",
-        "GitHub Pages erlaubt PHP-Server-Skripte"
-      ],
-      correct: 3
-    },
-    {
-      question: "Was bewirkt 'git push' (vereinfacht betrachtet)?",
-      answers: [
-        "Änderungen vom Remote kommen ins Lokale",
-        "Änderungen vom Lokalen gehen ins Remote",
-        "Löscht alle Dateien auf dem Remote",
-        "Erzeugt einen neuen Branch"
-      ],
-      correct: 1
-    },
-    {
-      question: "Welches Meta-Tag definiert UTF-8 als Zeichencodierung?",
-      answers: [
-        "<meta name='viewport' content='width=device-width, initial-scale=1.0'>",
-        "<meta charset='UTF-8'>",
-        "<meta name='description' content='...'>",
-        "<meta http-equiv='refresh' content='5'>"
-      ],
-      correct: 1
-    },
-    {
-      question: "Welche Aussage zu Git ist richtig?",
-      answers: [
-        "Git ist ein Bildbearbeitungsprogramm",
-        "Git ist ein verteiltes Versionskontrollsystem",
-        "Git nur für Minecraft-Mods",
-        "Git nur auf macOS einsetzbar"
-      ],
-      correct: 1
-    },
-    {
-      question: "Was ist ein 'Merge-Konflikt' in Git?",
-      answers: [
-        "Wenn 'git merge' gelöscht wurde",
-        "Kollision von Änderungen an derselben Stelle",
-        "Ein Fehler in JavaScript",
-        "Repo ist zu groß"
-      ],
-      correct: 1
-    },
-    {
-      question: "Welche Schleife ist in JavaScript NICHT existent?",
-      answers: [
-        "for",
-        "while",
-        "do-while",
-        "repeat-until"
-      ],
-      correct: 3
-    },
-    {
-      question: "Welche Datei-Endung ist typisch für JavaScript-Dateien?",
-      answers: [
-        ".js",
-        ".jsc",
-        ".css",
-        ".html"
-      ],
-      correct: 0
-    },
-    {
-      question: "Welche Farbe hat der Hex-Code #FF0000?",
-      answers: [
-        "Grün",
-        "Rot",
-        "Blau",
-        "Gelb"
-      ],
-      correct: 1
-    },
-    {
-      question: "Welche Reihenfolge im klassischen Web-Stack ist korrekt?",
-      answers: [
-        "HTML (Struktur), CSS (Design), JS (Interaktivität)",
-        "CSS (Struktur), HTML (Design), JS (Interaktivität)",
-        "JS (Layout), HTML (Interaktivität), CSS (Struktur)",
-        "HTML (Interaktivität), CSS (Datenbank), JS (Struktur)"
-      ],
-      correct: 0
-    },
-    {
-      question: "Was versteht man unter 'responsive Bildern'?",
-      answers: [
-        "Bilder passen sich automatisch an Gerätegröße an",
-        "Bilder nur in HD",
-        "Bilder in externer Datenbank",
-        "Bilder gehen nicht ohne JavaScript"
-      ],
-      correct: 0
-    },
-    {
-      question: "Welche CSS-Eigenschaft bestimmt den Innenabstand eines Elements?",
-      answers: [
-        "margin",
-        "padding",
-        "border",
-        "content"
-      ],
-      correct: 1
-    },
-    {
-      question: "Welcher Git-Befehl holt Änderungen vom Remote ins Lokale?",
-      answers: [
-        "git pull",
-        "git fetchall",
-        "git gather",
-        "git refresh"
-      ],
-      correct: 0
-    },
-    {
-      question: "Was ist ein 'Fork' auf GitHub?",
-      answers: [
-        "Eine Gabel, die Tastatureingaben abfängt",
-        "Kopie eines fremden Repos in den eigenen Account",
-        "Kryptische Fehlermeldung in JS",
-        "Datenbankfunktion"
-      ],
-      correct: 1
-    },
-    {
-      question: "Welche Tailwind-Klasse fügt einen Rahmen (border) hinzu?",
-      answers: [
-        "outline-2",
-        "border",
-        "rd-1",
-        "bg-border"
-      ],
-      correct: 1
-    },
-    {
-      question: "Welches Element umschließt semantisch den Hauptinhalt?",
-      answers: [
-        "<article>",
-        "<main>",
-        "<header>",
-        "<aside>"
-      ],
-      correct: 1
-    },
-    {
-      question: "Wie zeigt man am einfachsten eine Alert-Box in JavaScript an?",
-      answers: [
-        "alert('Hallo');",
-        "console.log('Hallo');",
-        "prompt('Hallo');",
-        "infoDialog('Hallo');"
-      ],
-      correct: 0
-    }
-  ];
+(function(){
+"use strict";
 
-  let currentQuestion = 0;          // Aktueller Fragen-Index
-  let userAnswers = new Array(questions.length).fill(null); // Array für gewählte Antworten
+/* Kategorien und Slide-Links (relativ) */
+var SLIDES={
+ "HTML":"../slides/r1-m1-html.html",
+ "CSS":"../slides/r1-m2-css.html",
+ "JavaScript":"../slides/r1-m3-javascript.html",
+ "KI und Prompting":"../slides/r1-m4-prompting.html",
+ "Tools und Hosting":"../slides/r1-m5-portfolio-und-hosting.html",
+ "Sicherheit und Recht":"../slides/r1-m4-prompting.html"
+};
+var CATS=Object.keys(SLIDES);
 
-  // Beim Laden der Seite: Fragen mischen, dann erste Frage anzeigen
-  window.addEventListener("DOMContentLoaded", () => {
-    shuffleArray(questions);
-    renderQuestion(currentQuestion);
-    updateProgress();
+/* Fragen: [Kategorie, Frage, [Antworten], Index richtig, Erklärung] */
+var Q=[
+["Tools und Hosting","Welche Ausstattung ist für den Einstieg in die Webentwicklung sinnvoll?",["Ein einfacher Texteditor wie Notepad genügt für jedes Projekt","Ein aktueller Browser und ein Code-Editor wie VS Code","Ausschließlich ein virtuelles Linux-Image","Ein Bildbearbeitungsprogramm wie Paint"],1,"Der Browser dient zum Testen, ein Code-Editor liefert Syntaxfarben und Hilfen. Ein reiner Texteditor geht technisch, ist aber unbequem."],
+["Tools und Hosting","Warum solltest du deine Seite in mehr als einem Browser testen?",["Browser stellen Standards teils unterschiedlich dar","Jeder Browser verlangt eine andere HTML-Version","Nur Chrome zeigt CSS korrekt an","Das ist nie nötig, alle Browser verhalten sich identisch"],0,"Browser setzen Webstandards sehr ähnlich, aber nicht in jedem Detail gleich um. Ein kurzer Test in zwei oder drei Browsern deckt Abweichungen auf."],
+["HTML","Welches dieser Elemente ist KEIN semantisches HTML-Element?",["<article>","<nav>","<div>","<section>"],2,"<div> ist ein neutraler Container ohne Bedeutung. <article>, <nav> und <section> beschreiben, was der Inhalt ist."],
+["HTML","Wofür ist HTML in erster Linie zuständig?",["Optische Gestaltung von Webseiten","Strukturierung und Auszeichnung von Inhalten","Ausführung von Server-Logik","Berechnung von Animationen"],1,"HTML legt Struktur und Bedeutung fest (Überschriften, Absätze, Links). Das Aussehen übernimmt CSS."],
+["CSS","Was zeichnet ein Utility-First-Framework wie Tailwind CSS aus?",["Es ersetzt HTML vollständig","Du gestaltest mit vielen kleinen Hilfsklassen wie p-4 oder text-center direkt im HTML","Es kommt ganz ohne Klassen aus","Es dient nur der JavaScript-Entwicklung"],1,"Tailwind stellt viele kleine Klassen bereit, die du im HTML kombinierst, statt eigene CSS-Regeln zu schreiben."],
+["CSS","Welche Tailwind-Klasse setzt standardmäßig einen äußeren Abstand (Margin) von 1rem?",["m-4","mx-2","p-4","mt-2"],0,"m steht für margin, die Stufe 4 entspricht in der Standardkonfiguration 1rem. p-4 wäre der Innenabstand (padding)."],
+["KI und Prompting","Was ist ein Prompt?",["Ein Browser-Plug-in","Eine Fehlermeldung bei Syntaxfehlern","Eine Anweisung oder Eingabe an ein KI-Modell","Ein Git-Befehl"],2,"Ein Prompt ist die Eingabe, mit der du einem KI-Modell sagst, was es tun soll. Je klarer, desto brauchbarer die Antwort."],
+["KI und Prompting","Was gilt für Code, den dir eine KI erzeugt?",["Er ist immer fehlerfrei und kann ungeprüft veröffentlicht werden","Du solltest ihn lesen, testen und verstehen, bevor du ihn nutzt","Er muss nie getestet werden, weil KI nicht irrt","Er funktioniert nur in einem bestimmten Browser"],1,"KI-Modelle können plausibel klingenden, aber fehlerhaften Code liefern. Prüfen und Testen bleibt deine Aufgabe."],
+["Tools und Hosting","Welches Werkzeug ist direkt im Browser eingebaut und eignet sich zur Fehlersuche?",["Die Entwicklerwerkzeuge (DevTools, meist mit F12)","Der Windows Media Player","Excel","Ein Foto-Editor"],0,"Die DevTools zeigen Konsole, HTML, CSS, Netzwerk und Breakpoints. Sie sind in allen großen Browsern enthalten."],
+["JavaScript","Welche Vorgehensweise ist zur Fehlersuche in JavaScript am wirkungsvollsten?",["Ausschließlich console.log nutzen","Den Code ausdrucken und nur durchlesen","Zufällig Style-Attribute ändern","Eine Mischung aus Breakpoints, Konsolenausgaben und Code-Durchsicht"],3,"Breakpoints zeigen den Zustand an einer Stelle, Logs den Verlauf, ein Code-Review findet Denkfehler. Die Kombination ist am zuverlässigsten."],
+["CSS","Wofür sind Media Queries in CSS zuständig?",["Sie fragen Datenbanken ab","Sie ändern Styles abhängig von Eigenschaften wie der Viewport-Breite","Sie erzeugen Bilder mit KI","Sie ersetzen JavaScript-Funktionen"],1,"Mit @media wendest du Regeln nur an, wenn eine Bedingung zutrifft, zum Beispiel ab einer bestimmten Breite. So passt sich das Layout an Handy, Tablet und Desktop an."],
+["CSS","Was ist der Kerngedanke von Mobile-First?",["Erst das Desktop-Layout bauen und dann verkleinern","Mit dem kleinen Viewport starten und für größere Bildschirme erweitern","Das Smartphone vor jeder Arbeit neu starten","Nur auf großen Monitoren testen"],1,"Du entwirfst zuerst für schmale Bildschirme und ergänzt mit min-width-Media-Queries größere Layouts. Das hält das Basis-CSS schlank."],
+["Tools und Hosting","Was bewirken git add . gefolgt von git commit -m \"...\"?",["Alle Dateien werden gelöscht","Änderungen werden vorgemerkt und lokal als Commit gespeichert","Ein neuer Branch wird erstellt und gemergt","Die Änderungen liegen nur im Arbeitsspeicher"],1,"git add . merkt Änderungen vor, git commit speichert sie als Schnappschuss im lokalen Repository. Auf GitHub landen sie erst nach git push."],
+["Tools und Hosting","Was kann GitHub Pages NICHT?",["Statische Seiten kostenlos hosten","Seiten automatisch aus einem Git-Repository bereitstellen","Eine Adresse der Form *.github.io bereitstellen","Serverseitiges PHP und Datenbanken ausführen"],3,"GitHub Pages liefert nur statische Dateien aus. Serverseitiger Code wie PHP oder eine Datenbank braucht einen anderen Hosting-Dienst."],
+["Tools und Hosting","Mit welchem Befehl zeigst du die bisherigen Commits an?",["git log","git status","git branch","git revert"],0,"git log listet die Commit-Historie. git status zeigt den aktuellen Zustand der Arbeitskopie."],
+["JavaScript","Wofür wird JavaScript zusammen mit HTML und CSS hauptsächlich eingesetzt?",["Für die Struktur der Seite","Für dynamische und interaktive Funktionen im Browser","Für Bildbearbeitung","Für SQL-Datenbankabfragen im Frontend"],1,"JavaScript reagiert auf Klicks, verändert die Seite und lädt Daten nach. Struktur ist HTML, Aussehen ist CSS."],
+["JavaScript","Wo platzierst du ein klassisches <script>-Element am besten?",["Am Ende des <body> oder im <head> mit dem Attribut defer","Im <head> ohne Attribute, damit es zuerst lädt","Als erstes Element vor <!DOCTYPE html>","Nie, JavaScript gehört in CSS-Dateien"],0,"Ein Skript ohne defer blockiert das Parsen der Seite. Am Ende des body oder mit defer ist das DOM fertig, wenn der Code läuft."],
+["JavaScript","Welcher Schritt gehört NICHT zum systematischen Debugging?",["Das Problem genau beschreiben","Hypothesen aufstellen und Breakpoints setzen","Ungetestet veröffentlichen","Ergebnisse auswerten und die Annahme anpassen"],2,"Systematisches Debugging heißt: Problem eingrenzen, vermuten, prüfen, auswerten. Ungetestetes Veröffentlichen ersetzt kein Prüfen."],
+["Tools und Hosting","Womit entsteht schnell ein Prototyp einer statischen Seite?",["Mit Paint und WordPad","Mit HTML, CSS (z. B. Tailwind) und KI-Unterstützung im Editor","Nur mit Excel","Mit der Eingabeaufforderung ohne Editor"],1,"Für einen Prototyp reichen HTML und CSS im Editor. Eine KI kann Entwürfe liefern, die du prüfst und anpasst."],
+["Tools und Hosting","Du willst eine Seite mit KI-Hilfe bauen, responsiv gestalten und auf GitHub Pages veröffentlichen. Was ist ein sinnvoller Ablauf?",["Code planlos kopieren und sofort veröffentlichen","Repository anlegen, Seite mit responsivem Layout bauen, testen, dann veröffentlichen","Zuerst eine Excel-Datei hochladen","Erst veröffentlichen und danach überlegen, was auf die Seite soll"],1,"Erst Struktur und Repository, dann bauen und im Browser testen, danach veröffentlichen. So findest du Fehler vor deinen Besuchern."],
+["CSS","Welche Dateiendung ist typisch für ein CSS-Stylesheet?",[".html",".js",".txt",".css"],3,"Stylesheets haben die Endung .css. HTML-Seiten enden auf .html, JavaScript-Dateien auf .js."],
+["Tools und Hosting","Welcher Befehl legt ein neues lokales Git-Repository an?",["git clone .","git init","git newrepo","git local"],1,"git init erstellt im aktuellen Ordner das versteckte .git-Verzeichnis. git clone kopiert ein bestehendes Repository."],
+["CSS","Welche Tailwind-Klasse zentriert Text?",["text-center","mx-auto","justify-center","text-middle"],0,"text-center setzt text-align: center. mx-auto zentriert ein Block-Element mit fester Breite, justify-center wirkt in Flexbox oder Grid."],
+["JavaScript","Wie deklarierst du in modernem JavaScript die Variable userName mit dem Wert 'Max', die nicht neu zugewiesen wird?",["const userName = 'Max';","<var userName='Max'>","userName: 'Max';","userName => 'Max';"],0,"const und let sind die heutige Standardwahl. var gibt es noch, ist aber durch seinen Funktionsbereich fehleranfälliger. Die anderen Schreibweisen sind in JavaScript keine Variablendeklaration."],
+["HTML","Welche Aussage ist FALSCH?",["HTML beschreibt Struktur und Bedeutung von Inhalten","CSS legt das Aussehen einer Seite fest","JavaScript macht Seiten interaktiv","CSS speichert Formulardaten auf dem Server"],3,"CSS ist reine Gestaltung und speichert nichts. Daten auf einem Server verarbeitet ein Backend."],
+["Tools und Hosting","Was bewirkt git push (vereinfacht)?",["Änderungen vom Remote holen","Lokale Commits ins Remote-Repository hochladen","Alle Dateien im Remote löschen","Einen neuen Branch anlegen"],1,"git push sendet deine lokalen Commits zum Remote, zum Beispiel GitHub. Das Gegenstück zum Holen ist git pull."],
+["HTML","Welches Element legt UTF-8 als Zeichencodierung fest?",["<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">","<meta charset=\"UTF-8\">","<meta name=\"description\" content=\"...\">","<meta http-equiv=\"refresh\" content=\"5\">"],1,"<meta charset=\"UTF-8\"> gehört in den <head>, damit Umlaute und Sonderzeichen richtig angezeigt werden."],
+["Tools und Hosting","Welche Aussage zu Git ist richtig?",["Git ist ein Bildbearbeitungsprogramm","Git ist ein verteiltes Versionskontrollsystem","Git läuft nur unter macOS","Git dient nur zur Verwaltung von Spielen"],1,"Git speichert die Versionen eines Projekts und läuft auf Windows, macOS und Linux. Jede Kopie enthält die komplette Historie."],
+["Tools und Hosting","Was ist ein Merge-Konflikt in Git?",["Ein Fehler, weil git merge fehlt","Ein Konflikt, wenn Änderungen dieselbe Stelle betreffen und Git nicht automatisch zusammenführen kann","Ein Syntaxfehler in JavaScript","Ein Hinweis, dass das Repository zu groß ist"],1,"Git markiert die Stellen in der Datei. Du entscheidest, welche Fassung bleibt, und schließt den Merge mit einem Commit ab."],
+["JavaScript","Welche Schleife gibt es in JavaScript NICHT?",["for","while","do...while","repeat-until"],3,"JavaScript kennt for, while, do...while sowie for...of und for...in. Ein repeat-until gibt es nicht."],
+["JavaScript","Welche Dateiendung ist typisch für JavaScript-Dateien?",[".js",".java",".css",".html"],0,"JavaScript-Dateien enden auf .js. Die Endung .java gehört zu einer anderen Sprache (Java)."],
+["CSS","Welche Farbe hat der Hex-Code #FF0000?",["Grün","Rot","Blau","Gelb"],1,"Die drei Paare stehen für Rot, Grün und Blau. FF bei Rot und 00 bei den anderen ergibt reines Rot."],
+["HTML","Welche Aufgabenverteilung im klassischen Web-Stack ist korrekt?",["HTML (Struktur), CSS (Design), JavaScript (Interaktivität)","CSS (Struktur), HTML (Design), JavaScript (Interaktivität)","JavaScript (Layout), HTML (Interaktivität), CSS (Struktur)","HTML (Interaktivität), CSS (Datenbank), JavaScript (Struktur)"],0,"Merkhilfe: HTML ist das Skelett, CSS die Kleidung, JavaScript das Verhalten."],
+["CSS","Was sind responsive Bilder?",["Bilder, die sich an die Breite des Bildschirms anpassen oder in passender Größe geladen werden","Bilder, die nur in HD verfügbar sind","Bilder, die in einer externen Datenbank liegen müssen","Bilder, die ohne JavaScript nicht angezeigt werden"],0,"Mit max-width: 100% und height: auto oder srcset und sizes passen sich Bilder dem Gerät an. JavaScript ist dafür nicht nötig."],
+["CSS","Welche CSS-Eigenschaft bestimmt den Innenabstand eines Elements?",["margin","padding","border","content"],1,"padding ist der Abstand zwischen Inhalt und Rand, margin der Abstand nach außen."],
+["Tools und Hosting","Welcher Git-Befehl holt Änderungen vom Remote und führt sie lokal zusammen?",["git pull","git fetchall","git gather","git refresh"],0,"git pull ist die Kombination aus git fetch (holen) und git merge (zusammenführen)."],
+["Tools und Hosting","Was ist ein Fork auf GitHub?",["Ein Tool, das Tastatureingaben abfängt","Eine Kopie eines fremden Repositories in deinem eigenen Account","Eine Fehlermeldung in JavaScript","Eine Datenbankfunktion"],1,"Mit einem Fork arbeitest du an einer eigenen Kopie weiter und kannst Änderungen per Pull Request vorschlagen."],
+["CSS","Welche Tailwind-Klasse fügt einem Element einen Rahmen hinzu?",["outline-2","border","rd-1","bg-border"],1,"border setzt einen 1px-Rahmen. Mit rounded-* rundest du Ecken ab."],
+["HTML","Welches Element umschließt semantisch den Hauptinhalt einer Seite?",["<article>","<main>","<header>","<aside>"],1,"<main> kennzeichnet den zentralen Inhalt und sollte pro Seite nur einmal vorkommen."],
+["JavaScript","Wie zeigst du am einfachsten ein Hinweisfenster in JavaScript an?",["alert('Hallo');","console.log('Hallo');","prompt('Hallo');","infoDialog('Hallo');"],0,"alert() öffnet ein Hinweisfenster. console.log schreibt nur in die Konsole, prompt fragt eine Eingabe ab, infoDialog existiert nicht."],
+/* Neu: Prompting, Sicherheit, Hosting */
+["KI und Prompting","Aus welchen fünf Bausteinen besteht ein gut strukturierter Prompt?",["Ziel, Budget, Deadline, Team, Tool","Rolle, Kontext, Aufgabe, Format, Grenzen","Frage, Antwort, Beispiel, Fazit, Quelle","Begrüßung, Bitte, Danke, Gruß, Signatur"],1,"Rolle (wer soll die KI sein), Kontext (Hintergrund), Aufgabe (was genau), Format (wie die Antwort aussieht) und Grenzen (was gilt oder wegbleibt)."],
+["KI und Prompting","Was legst du im Baustein „Grenzen“ fest?",["Was die KI beachten oder weglassen soll, z. B. Länge, Stil oder keine erfundenen Fakten","Welche Rolle die KI einnimmt","In welchem Dateiformat die Antwort kommt","Welches Hintergrundwissen du mitgibst"],0,"Grenzen sind Leitplanken: Umfang, Tonalität, Verbote oder die Anweisung, bei Unsicherheit nachzufragen statt zu raten."],
+["KI und Prompting","Du schreibst: „Antworte als Tabelle mit drei Spalten.“ Zu welchem Baustein gehört das?",["Format","Rolle","Kontext","Aufgabe"],0,"Das Format bestimmt die Form der Antwort, etwa Tabelle, Liste, Codeblock oder Fließtext."],
+["KI und Prompting","Welcher Prompt eignet sich am besten für den Entwurf einer Portfolio-Startseite?",["Mach mir eine Webseite.","Du bist ein erfahrener Frontend-Entwickler. Ich baue ein Portfolio. Erstelle eine Startseite mit Titelbereich, Projektgalerie und Kontaktbereich als eine HTML-Datei mit CSS. Nutze keine externen Bibliotheken und halte den Code verständlich.","Webseite bitte schnell und gut!","HTML"],1,"Der zweite Prompt enthält Rolle, Kontext, Aufgabe, Format und Grenzen. Je genauer die Vorgaben, desto weniger Nacharbeit."],
+["Sicherheit und Recht","Warum gehört ein API-Schlüssel nicht in den Frontend-Code einer Webseite?",["Jeder Besucher kann den Code im Browser einsehen und den Schlüssel auslesen","JavaScript kann keine Texte speichern","Schlüssel im Frontend sind zu langsam","Der Browser löscht Schlüssel automatisch"],0,"Alles, was im Browser ankommt, ist einsehbar. Geheime Schlüssel gehören in ein Backend oder in Umgebungsvariablen, nie in ein öffentliches Repository."],
+["Sicherheit und Recht","Was gehört NICHT in einen Prompt an ein Online-KI-Tool?",["Passwörter, API-Schlüssel oder personenbezogene Daten Dritter","Eine allgemeine Beschreibung deiner Aufgabe","Ein erfundenes Beispiel mit Platzhaltern","Ein Fehlertext, aus dem du Zugangsdaten entfernt hast"],0,"Eingaben können gespeichert und verarbeitet werden. Verwende Platzhalter statt echter sensibler Daten."],
+["Sicherheit und Recht","Darfst du beliebige Bilder aus einer Bildersuche auf deiner öffentlichen Portfolio-Seite verwenden?",["Nein, Bilder sind meist urheberrechtlich geschützt. Nutze eigene Bilder oder Material mit passender Lizenz","Ja, alles im Internet ist frei nutzbar","Ja, wenn die Seite kostenlos ist","Ja, wenn du die Quelle klein schreibst"],0,"Prüfe die Lizenz und halte dich an deren Bedingungen. Das ist ein Hinweis zur Orientierung, keine Rechtsberatung."],
+["Tools und Hosting","Was kennzeichnet eine statische Webseite?",["Sie besteht aus fertigen Dateien (HTML, CSS, JavaScript, Bilder), die unverändert ausgeliefert werden","Sie benötigt immer eine Datenbank","Der Server führt bei jedem Aufruf PHP aus","Sie kann keine Interaktion im Browser enthalten"],0,"Der Server liefert die Dateien nur aus. Interaktivität ist trotzdem möglich, weil JavaScript im Browser läuft."],
+["Tools und Hosting","Wie lautet bei einem GitHub-Pages-Projekt typischerweise die Adresse?",["https://benutzername.github.io/repository-name/","https://github.com/benutzername.html","ftp://benutzername.github.io","http://localhost:3000"],0,"Projektseiten liegen unter dem Repository-Namen. Eine Benutzerseite entsteht mit einem Repository namens benutzername.github.io und hat keinen Pfad."],
+["Tools und Hosting","Was bewirkt HTTPS?",["Die Verbindung zwischen Browser und Server wird verschlüsselt","Die Seite lädt immer doppelt so schnell","Der Code wird automatisch fehlerfrei","Die Seite erscheint garantiert auf Platz 1 bei Google"],0,"HTTPS schützt die Übertragung vor Mitlesen und Veränderung. GitHub Pages bietet es an. Eine eigene Domain richtest du über DNS-Einträge bei deinem Domain-Anbieter ein."]
+].map(function(r,i){return {id:i,c:r[0],q:r[1],a:r[2],k:r[3],e:r[4]};});
+
+/* Hilfen */
+function $(id){return document.getElementById(id);}
+function el(tag,cls,txt){var n=document.createElement(tag);if(cls)n.className=cls;if(txt!=null)n.textContent=txt;return n;}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+var storeOk=true;
+function sget(k){try{return window.localStorage.getItem(k);}catch(e){storeOk=false;return null;}}
+function sset(k,v){try{window.localStorage.setItem(k,v);return true;}catch(e){storeOk=false;return false;}}
+function sdel(k){try{window.localStorage.removeItem(k);}catch(e){storeOk=false;}}
+function loadHist(){var r=sget("quiz_history");if(!r)return [];try{var a=JSON.parse(r);return Array.isArray(a)?a:[];}catch(e){return [];}}
+function pushHist(e){var h=loadHist();h.unshift(e);sset("quiz_history",JSON.stringify(h.slice(0,10)));}
+
+/* Zustand */
+var S={mode:"learn",items:[],i:0,locked:false,shA:true,shQ:true,cfgCats:CATS.slice(),retry:false};
+var views={start:$("vStart"),quiz:$("vQuiz"),res:$("vRes")};
+function show(v){for(var k in views)views[k].hidden=(k!==v);}
+
+/* Startansicht */
+function buildCats(){
+  var box=$("catBox");box.textContent="";
+  var saved=null;try{saved=JSON.parse(sget("quiz_prefs")||"null");}catch(e){}
+  CATS.forEach(function(c,i){
+    var n=Q.filter(function(q){return q.c===c;}).length;
+    var l=el("label","choice"),inp=document.createElement("input");
+    inp.type="checkbox";inp.value=c;inp.checked=!saved||!saved.cats||saved.cats.indexOf(c)>-1;
+    inp.addEventListener("change",updCount);
+    var sp=el("span");sp.appendChild(document.createTextNode(c+" "));sp.appendChild(el("small","","("+n+" Fragen)"));
+    l.appendChild(inp);l.appendChild(sp);box.appendChild(l);
   });
+  if(saved){$("shQ").checked=saved.shQ!==false;$("shA").checked=saved.shA!==false;
+    var r=document.querySelector('input[name=mode][value='+(saved.mode==="exam"?"exam":"learn")+']');if(r)r.checked=true;}
+  updCount();
+}
+function selCats(){return Array.prototype.map.call(document.querySelectorAll("#catBox input:checked"),function(i){return i.value;});}
+function updCount(){
+  var cs=selCats(),n=Q.filter(function(q){return cs.indexOf(q.c)>-1;}).length;
+  $("countInfo").textContent=n+" Fragen ausgewählt";
+  $("startBtn").disabled=n===0;
+  $("catHint").textContent=n===0?"Wähle mindestens eine Kategorie.":"";
+}
+function fmtDate(t){try{return new Date(t).toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit",year:"numeric"})+" "+new Date(t).toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"});}catch(e){return "";}}
+function renderHist(){
+  var h=loadHist(),ul=$("hist");ul.textContent="";
+  h.forEach(function(e){
+    var li=el("li");
+    li.appendChild(el("span","",fmtDate(e.t)+" · "+(e.m==="exam"?"Prüfung":"Lernen")+(e.r?" (Wiederholung)":"")));
+    li.appendChild(el("strong","",e.s+" / "+e.n+" ("+Math.round(100*e.s/e.n)+" %)"));
+    ul.appendChild(li);
+  });
+  $("histEmpty").hidden=h.length>0;
+  $("storeNote").hidden=storeOk;
+}
 
-  // Fisher-Yates Shuffle
-  function shuffleArray(arr) {
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
+/* Quiz starten */
+function begin(list,retry){
+  S.mode=document.querySelector("input[name=mode]:checked").value;
+  S.shA=$("shA").checked;S.shQ=$("shQ").checked;
+  var pool=S.shQ?shuffle(list):list.slice();
+  S.items=pool.map(function(q){
+    var order=q.a.map(function(_,i){return i;});
+    if(S.shA)order=shuffle(order);
+    return {q:q,order:order,pick:null};
+  });
+  S.i=0;S.retry=!!retry;
+  $("modeText").textContent=S.mode==="learn"?"Lernmodus":"Prüfungsmodus";
+  show("quiz");renderQ();
+}
+function renderQ(){
+  var it=S.items[S.i],n=S.items.length;
+  S.locked=S.mode==="learn"&&it.pick!==null;
+  $("pText").textContent="Frage "+(S.i+1)+" von "+n;
+  var done=S.items.filter(function(x){return x.pick!==null;}).length;
+  var pct=Math.round(100*done/n);
+  $("pfill").style.width=pct+"%";
+  var pb=$("pbar");pb.setAttribute("aria-valuenow",pct);pb.setAttribute("aria-valuetext",done+" von "+n+" beantwortet");
+  $("cat").textContent=it.q.c;
+  $("qText").textContent=it.q.q;
+  var box=$("opts");box.textContent="";
+  it.order.forEach(function(oi,pos){
+    var b=el("button","opt");b.type="button";b.setAttribute("role","radio");
+    b.setAttribute("aria-checked",it.pick===oi?"true":"false");
+    b.dataset.orig=oi;
+    b.appendChild(el("span","n",String(pos+1)));
+    b.appendChild(el("span","",it.q.a[oi]));
+    b.addEventListener("click",function(){pick(pos);});
+    box.appendChild(b);
+  });
+  var fb=$("fb");fb.textContent="";fb.className="fb";
+  if(S.locked)reveal(it,false);
+  $("backBtn").hidden=S.mode==="learn"||S.i===0;
+  $("nextBtn").textContent=S.i===n-1?"Auswerten":"Weiter";
+  $("nextBtn").disabled=it.pick===null;
+  var first=box.querySelector(".opt");if(first&&!S.locked)first.focus({preventScroll:true});
+}
+function pick(pos){
+  var it=S.items[S.i];if(S.locked||pos<0||pos>=it.order.length)return;
+  it.pick=it.order[pos];
+  var btns=$("opts").children;
+  if(S.mode==="learn"){S.locked=true;reveal(it,true);}
+  else{
+    for(var i=0;i<btns.length;i++)btns[i].setAttribute("aria-checked",i===pos?"true":"false");
+    var fb=$("fb");fb.className="fb";fb.textContent="Antwort "+(pos+1)+" gespeichert.";
+    var d=S.items.filter(function(x){return x.pick!==null;}).length;
+    $("pfill").style.width=Math.round(100*d/S.items.length)+"%";
+    $("pbar").setAttribute("aria-valuenow",Math.round(100*d/S.items.length));
   }
-
-  // Rendert die aktuelle Frage in den DOM
-  function renderQuestion(index) {
-    const questionText = document.getElementById("questionText");
-    const answersContainer = document.getElementById("answersContainer");
-
-    // Ergebnis-Box verbergen
-    document.getElementById("resultBox").classList.add("hidden");
-
-    // Frage anzeigen
-    questionText.textContent = `Frage ${index+1}: ${questions[index].question}`;
-
-    // Antworten generieren
-    answersContainer.innerHTML = "";
-    questions[index].answers.forEach((answer, i) => {
-      const label = document.createElement("label");
-      const radio = document.createElement("input");
-      radio.type = "radio";
-      radio.name = `quiz_answer_${index}`;
-      radio.value = i;
-
-      // Falls bereits ausgewählt, setzen
-      if (userAnswers[index] === i) {
-        radio.checked = true;
-      }
-
-      label.appendChild(radio);
-      label.appendChild(document.createTextNode(" " + answer));
-      answersContainer.appendChild(label);
-    });
-
-    // Navigation anpassen
-    document.getElementById("prevBtn").style.display = index === 0 ? "none" : "inline-block";
-    document.getElementById("nextBtn").textContent = (index === questions.length - 1) ? "Abschließen" : "Weiter";
+  $("nextBtn").disabled=false;
+}
+function reveal(it,focusNext){
+  var ok=it.pick===it.q.k,btns=$("opts").children;
+  for(var i=0;i<btns.length;i++){
+    var oi=it.order[i];btns[i].disabled=true;
+    btns[i].setAttribute("aria-checked",it.pick===oi?"true":"false");
+    if(oi===it.q.k)btns[i].classList.add("ok");
+    else if(oi===it.pick)btns[i].classList.add("bad");
   }
+  var fb=$("fb");fb.className="fb "+(ok?"ok":"bad");fb.textContent="";
+  fb.appendChild(el("strong","",ok?"Richtig.":"Nicht ganz. Richtig ist: "+it.q.a[it.q.k]));
+  fb.appendChild(document.createTextNode(it.q.e));
+  var pct=Math.round(100*S.items.filter(function(x){return x.pick!==null;}).length/S.items.length);
+  $("pfill").style.width=pct+"%";$("pbar").setAttribute("aria-valuenow",pct);
+  if(focusNext)$("nextBtn").focus({preventScroll:true});
+}
+function next(){
+  var it=S.items[S.i];if(it.pick===null)return;
+  if(S.i<S.items.length-1){S.i++;renderQ();}else finish();
+}
+function back(){if(S.i>0&&S.mode==="exam"){S.i--;renderQ();}}
 
-  // Speichert die aktuelle Antwort
-  function saveCurrentAnswer() {
-    const radios = document.getElementsByName(`quiz_answer_${currentQuestion}`);
-    for (let r of radios) {
-      if (r.checked) {
-        userAnswers[currentQuestion] = parseInt(r.value, 10);
-        break;
-      }
-    }
+/* Ergebnis */
+function finish(){
+  var n=S.items.length,score=0,per={},wrong=[];
+  S.items.forEach(function(it){
+    var c=it.q.c;per[c]=per[c]||{r:0,n:0};per[c].n++;
+    if(it.pick===it.q.k){score++;per[c].r++;}else wrong.push(it);
+  });
+  var pct=Math.round(100*score/n);
+  pushHist({t:Date.now(),m:S.mode,s:score,n:n,r:S.retry?1:0});
+  $("resScore").textContent=score+" / "+n;
+  $("resPct").textContent=pct+" % richtig";
+  $("resBar").style.width=pct+"%";
+  $("resMsg").textContent=pct>=90?"Sehr sicher. Schau dir nur die markierten Lücken noch einmal an."
+    :pct>=70?"Solide Basis. Wiederhole die falschen Fragen und sieh dir die Slides der schwächeren Kategorien an."
+    :pct>=50?"Die Grundlagen sind teilweise da. Arbeite die Slides der schwächeren Kategorien durch und versuche es im Lernmodus erneut."
+    :"Hier lohnt sich eine Wiederholung der Slides. Nutze den Lernmodus, um mit den Erklärungen zu üben.";
+  var cr=$("catRes");cr.textContent="";
+  Object.keys(per).sort(function(a,b){return CATS.indexOf(a)-CATS.indexOf(b);}).forEach(function(c){
+    var p=per[c],row=el("div","catrow"),top=el("div","row");
+    top.appendChild(el("span","name",c));
+    top.appendChild(el("span","",p.r+" / "+p.n+" ("+Math.round(100*p.r/p.n)+" %)"));
+    var a=el("a","","Slides: "+c);a.href=SLIDES[c];top.appendChild(a);
+    var bar=el("div","bar"),f=el("i");f.style.width=Math.round(100*p.r/p.n)+"%";bar.appendChild(f);
+    row.appendChild(top);row.appendChild(bar);cr.appendChild(row);
+  });
+  var wl=$("wrongList");wl.textContent="";
+  $("wrongCard").hidden=wrong.length===0;
+  $("retryWrong").hidden=wrong.length===0;
+  wrong.forEach(function(it){
+    var d=document.createElement("details"),s=el("summary","",it.q.q);d.appendChild(s);
+    d.appendChild(el("p","wrong","Deine Antwort: "+(it.pick===null?"keine":it.q.a[it.pick])));
+    d.appendChild(el("p","good","Richtig: "+it.q.a[it.q.k]));
+    d.appendChild(el("p","muted",it.q.e));
+    wl.appendChild(d);
+  });
+  S.wrong=wrong.map(function(x){return x.q;});
+  show("res");renderHist();
+  var h=$("resH");if(h)h.focus({preventScroll:false});
+}
+
+/* Ereignisse */
+$("form").addEventListener("submit",function(e){
+  e.preventDefault();
+  var cs=selCats();if(!cs.length)return;
+  sset("quiz_prefs",JSON.stringify({cats:cs,mode:document.querySelector("input[name=mode]:checked").value,shQ:$("shQ").checked,shA:$("shA").checked}));
+  begin(Q.filter(function(q){return cs.indexOf(q.c)>-1;}),false);
+});
+$("nextBtn").addEventListener("click",next);
+$("backBtn").addEventListener("click",back);
+$("quitBtn").addEventListener("click",function(){show("start");renderHist();});
+$("again").addEventListener("click",function(){show("start");renderHist();window.scrollTo(0,0);});
+$("retryWrong").addEventListener("click",function(){if(S.wrong&&S.wrong.length)begin(S.wrong,true);});
+var resetArmed=false,resetTimer=null;
+$("resetBtn").addEventListener("click",function(){
+  var b=$("resetBtn"),m=$("resetMsg");
+  if(!resetArmed){resetArmed=true;b.textContent="Wirklich zurücksetzen?";m.textContent="Nochmal klicken löscht Verlauf und Einstellungen.";
+    resetTimer=setTimeout(function(){resetArmed=false;b.textContent="Zurücksetzen";m.textContent="";},5000);return;}
+  clearTimeout(resetTimer);resetArmed=false;
+  sdel("quiz_history");sdel("quiz_prefs");
+  b.textContent="Zurücksetzen";m.textContent="Verlauf und Einstellungen wurden gelöscht.";
+  $("shQ").checked=true;$("shA").checked=true;document.querySelector("input[name=mode][value=learn]").checked=true;
+  Array.prototype.forEach.call(document.querySelectorAll("#catBox input"),function(i){i.checked=true;});
+  updCount();renderHist();
+});
+document.addEventListener("keydown",function(e){
+  if(views.quiz.hidden||e.ctrlKey||e.metaKey||e.altKey)return;
+  var t=e.target;
+  if(e.key>="1"&&e.key<="9"){pick(parseInt(e.key,10)-1);e.preventDefault();return;}
+  if(e.key==="Enter"){
+    var isOpt=t&&t.classList&&t.classList.contains("opt");
+    var plain=!t||t===document.body||isOpt;
+    if(plain){e.preventDefault();next();}
   }
+});
 
-  function nextQuestion() {
-    saveCurrentAnswer();
-    // Falls keine Antwort gewählt: Hinweis anzeigen
-    if (userAnswers[currentQuestion] === null) {
-      alert("Bitte wähle eine Antwort!");
-      return;
-    }
-    // Navigation während Feedback deaktivieren
-    disableNavigation(true);
-    
-    // Feedback anzeigen
-    const isCorrect = userAnswers[currentQuestion] === questions[currentQuestion].correct;
-    showFeedback(isCorrect);
-
-    // Nach kurzer Verzögerung: nächste Frage oder Ergebnisse anzeigen
-    setTimeout(() => {
-      if (currentQuestion < questions.length - 1) {
-        currentQuestion++;
-        renderQuestion(currentQuestion);
-        updateProgress();
-      } else {
-        showResults();
-      }
-      disableNavigation(false);
-    }, 1000);
-  }
-
-  function prevQuestion() {
-    saveCurrentAnswer();
-    if (currentQuestion > 0) {
-      currentQuestion--;
-      renderQuestion(currentQuestion);
-      updateProgress();
-    }
-  }
-
-  // Feedback (Richtig/Falsch) anzeigen
-  function showFeedback(isCorrect) {
-    const feedbackEl = document.getElementById("feedback");
-    feedbackEl.textContent = isCorrect ? "Richtig!" : "Falsch!";
-    feedbackEl.style.backgroundColor = isCorrect ? "rgba(0,128,0,0.85)" : "rgba(220,20,60,0.85)";
-    feedbackEl.classList.add("show");
-    setTimeout(() => {
-      feedbackEl.classList.remove("show");
-    }, 800);
-  }
-
-  // Navigation deaktivieren/aktivieren
-  function disableNavigation(disable) {
-    document.getElementById("prevBtn").disabled = disable;
-    document.getElementById("nextBtn").disabled = disable;
-  }
-
-  // Ergebnisse anzeigen
-  function showResults() {
-    const resultBox = document.getElementById("resultBox");
-    resultBox.classList.remove("hidden");
-
-    // Score berechnen
-    let score = 0;
-    questions.forEach((q, i) => {
-      if (userAnswers[i] === q.correct) {
-        score++;
-      }
-    });
-
-    // Score-Text
-    const scoreText = document.getElementById("scoreText");
-    scoreText.textContent = `Du hast ${score} von ${questions.length} Fragen richtig beantwortet.`;
-
-    // Notenschlüssel (angepasst an 40 Fragen)
-    let note;
-    if (score <= 20) {
-      note = 5;
-    } else if (score <= 26) {
-      note = 4;
-    } else if (score <= 32) {
-      note = 3;
-    } else if (score <= 38) {
-      note = 2;
-    } else {
-      note = 1;
-    }
-    const noteText = document.getElementById("noteText");
-    noteText.textContent = `Deine (inoffizielle) Note: ${note}`;
-
-    // Überschrift, Frage & Buttons anpassen
-    document.getElementById("progressText").textContent = "Test abgeschlossen!";
-    document.getElementById("questionText").textContent = "";
-    document.getElementById("answersContainer").innerHTML = "";
-    document.getElementById("prevBtn").style.display = "none";
-    document.getElementById("nextBtn").style.display = "none";
-  }
-
-  // Aktualisiert Fortschritt und Punktezahl
-  function updateProgress() {
-    const progressEl = document.getElementById("progressText");
-    progressEl.textContent = `Frage ${currentQuestion+1} / ${questions.length}`;
-
-    // Punkte aus bisher richtig beantworteten Fragen berechnen
-    let currentScore = 0;
-    for (let i = 0; i < userAnswers.length; i++) {
-      if (userAnswers[i] !== null && userAnswers[i] === questions[i].correct) {
-        currentScore++;
-      }
-    }
-    document.getElementById("scoreDisplay").textContent = `Punkte: ${currentScore}`;
-  }
-
-  // Quiz neu starten
-  function restartQuiz() {
-    currentQuestion = 0;
-    userAnswers = new Array(questions.length).fill(null);
-    shuffleArray(questions);
-    renderQuestion(currentQuestion);
-    updateProgress();
-    document.getElementById("resultBox").classList.add("hidden");
-    document.getElementById("prevBtn").style.display = "none";
-    document.getElementById("nextBtn").style.display = "inline-block";
-  }
+buildCats();renderHist();
+})();
 </script>
 </body>
 </html>
