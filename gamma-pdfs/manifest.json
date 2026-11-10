@@ -1,0 +1,1032 @@
+[
+  {
+    "file": "chatbots-bauen/ai-chatbot-local-storage.pdf",
+    "title": "AI Chatbot Utilizing Local Storage",
+    "category": "chatbots-bauen",
+    "categoryLabel": "Chatbots bauen",
+    "sourceFolder": "04-Chatbots-Bots-Apps",
+    "pages": 7,
+    "sizeMB": 1.33,
+    "language": "en",
+    "level": "Fortgeschritten",
+    "tags": [
+      "Chatbot",
+      "LocalStorage",
+      "JavaScript"
+    ],
+    "description": "Beschreibt, wie ein KI-Chatbot generierte Antworten im Local Storage speichert und wieder abruft.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "chatbots-bauen/building-ai-chatbots-openai-bootstrap5.pdf",
+    "title": "Building AI Chatbots with OpenAI and Bootstrap 5",
+    "category": "chatbots-bauen",
+    "categoryLabel": "Chatbots bauen",
+    "sourceFolder": "04-Chatbots-Bots-Apps",
+    "pages": 8,
+    "sizeMB": 0.7,
+    "language": "en",
+    "level": "Fortgeschritten",
+    "tags": [
+      "Chatbot",
+      "OpenAI API",
+      "Bootstrap 5",
+      "JavaScript"
+    ],
+    "description": "Zeigt den Aufbau einer Chatbot-Oberfläche mit Bootstrap 5 und die Kernfunktionen für OpenAI-Anfragen, Datei-Upload und Chatverlauf.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "chatbots-bauen/enhancing-chatbot-interactions-openai-bootstrap5.pdf",
+    "title": "Enhancing AI Chatbot Interactions with OpenAI and Bootstrap 5",
+    "category": "chatbots-bauen",
+    "categoryLabel": "Chatbots bauen",
+    "sourceFolder": "04-Chatbots-Bots-Apps",
+    "pages": 8,
+    "sizeMB": 0.69,
+    "language": "en",
+    "level": "Fortgeschritten",
+    "tags": [
+      "Chatbot",
+      "OpenAI API",
+      "Bootstrap 5",
+      "HTML"
+    ],
+    "description": "Erklärt ein HTML-Skript für eine Chatbot-Oberfläche mit Bootstrap-5-Struktur, Nutzerinteraktion und Anzeige des Chatverlaufs.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "chatbots-bauen/intelligent-web-search-chatbot.pdf",
+    "title": "Intelligent Web Search Chatbot",
+    "category": "chatbots-bauen",
+    "categoryLabel": "Chatbots bauen",
+    "sourceFolder": "04-Chatbots-Bots-Apps",
+    "pages": 6,
+    "sizeMB": 0.7,
+    "language": "en",
+    "level": "Fortgeschritten",
+    "tags": [
+      "Chatbot",
+      "Websuche",
+      "Chatverlauf"
+    ],
+    "description": "Stellt einen Chatbot mit Websuche vor: Chatverlauf, Eingabe, schnelle Suche und die Funktionsschritte von der Nutzereingabe bis zur Antwort.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "chatbots-bauen/ai-chatbot-local-storage-productivity.pdf",
+    "title": "Optimizing Productivity with AI Chatbot Local Storage",
+    "category": "chatbots-bauen",
+    "categoryLabel": "Chatbots bauen",
+    "sourceFolder": "04-Chatbots-Bots-Apps",
+    "pages": 8,
+    "sizeMB": 0.96,
+    "language": "en",
+    "level": "Fortgeschritten",
+    "tags": [
+      "Chatbot",
+      "LocalStorage",
+      "Produktivität"
+    ],
+    "description": "Zeigt Vorteile der Local-Storage-Integration für Chatbots, etwa gespeicherte Antworten und weniger redundante Interaktionen.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "chatbots-bauen/voice-bot-interface-ki.pdf",
+    "title": "Voice Bot Interface with AI Integration",
+    "category": "chatbots-bauen",
+    "categoryLabel": "Chatbots bauen",
+    "sourceFolder": "04-Chatbots-Bots-Apps",
+    "pages": 6,
+    "sizeMB": 1.63,
+    "language": "en",
+    "level": "Fortgeschritten",
+    "tags": [
+      "Chatbot",
+      "Spracherkennung",
+      "Text-to-Speech",
+      "Chat Completions"
+    ],
+    "description": "Beschreibt eine Sprach-Chat-Oberfläche mit Befehlsverarbeitung, Spracherkennung, Text-zu-Audio und KI-Chat-Completions.",
+    "standHinweis": "Enthält Tool-Namen/Versionen vom Stand 2023/24 (z. B. ChatGPT 1.0, GPT-3.5, DALL·E, Bard), vor Nutzung prüfen.",
+    "review": null
+  },
+  {
+    "file": "chatgpt-ki-grundlagen/chatgpt-und-openai-guide.pdf",
+    "title": "ChatGPT und OpenAI: Der ultimative Guide",
+    "category": "chatgpt-ki-grundlagen",
+    "categoryLabel": "ChatGPT und KI-Grundlagen",
+    "sourceFolder": "12-KI-Tools-Sonstige",
+    "pages": 32,
+    "sizeMB": 2.25,
+    "language": "de",
+    "level": "Fortgeschritten",
+    "tags": [
+      "ChatGPT",
+      "OpenAI",
+      "Deep Research"
+    ],
+    "description": "Webinar-Guide von den ChatGPT-Grundlagen bis zu Entwicklungsmöglichkeiten mit OpenAI.",
+    "standHinweis": "Enthält Tool-Namen/Versionen vom Stand 2023/24 (z. B. ChatGPT 1.0, GPT-3.5, DALL·E, Bard), vor Nutzung prüfen.",
+    "review": null
+  },
+  {
+    "file": "chatgpt-ki-grundlagen/einstieg-ki-welt-chatgpt-power-user.pdf",
+    "title": "Dein Einstieg in die KI-Welt: Von Null zum ChatGPT-Power-User",
+    "category": "chatgpt-ki-grundlagen",
+    "categoryLabel": "ChatGPT und KI-Grundlagen",
+    "sourceFolder": "12-KI-Tools-Sonstige",
+    "pages": 60,
+    "sizeMB": 4.35,
+    "language": "de",
+    "level": "Einsteiger",
+    "tags": [
+      "ChatGPT",
+      "KI-Grundlagen",
+      "Alltag"
+    ],
+    "description": "Einsteigerkurs: Was KI ist, KI im Alltag und wie man ChatGPT zum Power-User-Werkzeug nutzt.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "chatgpt-ki-grundlagen/einfuehrung-chatgpt.pdf",
+    "title": "Einführung in ChatGPT 1.0",
+    "category": "chatgpt-ki-grundlagen",
+    "categoryLabel": "ChatGPT und KI-Grundlagen",
+    "sourceFolder": "07-Bildung-Webinare-Kurse",
+    "pages": 32,
+    "sizeMB": 2.76,
+    "language": "de",
+    "level": "Einsteiger",
+    "tags": [
+      "ChatGPT",
+      "Grundlagen",
+      "Webinar"
+    ],
+    "description": "Webinar zu Grundlagen und Anwendungsmöglichkeiten von ChatGPT im Alltag.",
+    "standHinweis": "Enthält Tool-Namen/Versionen vom Stand 2023/24 (z. B. ChatGPT 1.0, GPT-3.5, DALL·E, Bard), vor Nutzung prüfen.",
+    "review": null
+  },
+  {
+    "file": "chatgpt-ki-grundlagen/einfuehrung-chatgpt-basic-einstieg.pdf",
+    "title": "Einführung in ChatGPT 1.0: Basic Einstieg",
+    "category": "chatgpt-ki-grundlagen",
+    "categoryLabel": "ChatGPT und KI-Grundlagen",
+    "sourceFolder": "07-Bildung-Webinare-Kurse",
+    "pages": 50,
+    "sizeMB": 9.83,
+    "language": "de",
+    "level": "Einsteiger",
+    "tags": [
+      "ChatGPT",
+      "Grundlagen",
+      "Webinar"
+    ],
+    "description": "Webinar für absolute Einsteiger: Grundlagen der KI und der effektive Einsatz von ChatGPT.",
+    "standHinweis": "Enthält Tool-Namen/Versionen vom Stand 2023/24 (z. B. ChatGPT 1.0, GPT-3.5, DALL·E, Bard), vor Nutzung prüfen.",
+    "review": null
+  },
+  {
+    "file": "chatgpt-ki-grundlagen/einfuehrung-chatgpt-umfassender-ueberblick.pdf",
+    "title": "Einführung in ChatGPT 1.0: Ihr umfassender Überblick",
+    "category": "chatgpt-ki-grundlagen",
+    "categoryLabel": "ChatGPT und KI-Grundlagen",
+    "sourceFolder": "07-Bildung-Webinare-Kurse",
+    "pages": 49,
+    "sizeMB": 10.48,
+    "language": "de",
+    "level": "Einsteiger",
+    "tags": [
+      "ChatGPT",
+      "Grundlagen",
+      "Webinar"
+    ],
+    "description": "Webinar, das zeigt, wie ChatGPT komplexe Aufgaben vereinfacht und Arbeitsabläufe unterstützt.",
+    "standHinweis": "Enthält Tool-Namen/Versionen vom Stand 2023/24 (z. B. ChatGPT 1.0, GPT-3.5, DALL·E, Bard), vor Nutzung prüfen.",
+    "review": null
+  },
+  {
+    "file": "chatgpt-ki-grundlagen/entdecke-chatgpt-webinar-guide.pdf",
+    "title": "Entdecke ChatGPT: Dein KI-Webinar-Guide",
+    "category": "chatgpt-ki-grundlagen",
+    "categoryLabel": "ChatGPT und KI-Grundlagen",
+    "sourceFolder": "07-Bildung-Webinare-Kurse",
+    "pages": 51,
+    "sizeMB": 3.12,
+    "language": "de",
+    "level": "Einsteiger",
+    "tags": [
+      "ChatGPT",
+      "Grundlagen",
+      "Webinar"
+    ],
+    "description": "Scroll-Guide zum Webinar Einführung in ChatGPT mit Einstieg in die Welt der KI.",
+    "standHinweis": "Enthält Tool-Namen/Versionen vom Stand 2023/24 (z. B. ChatGPT 1.0, GPT-3.5, DALL·E, Bard), vor Nutzung prüfen.",
+    "review": null
+  },
+  {
+    "file": "chatgpt-ki-grundlagen/kurs-2-fortgeschrittene-gpt-nutzer.pdf",
+    "title": "Kurs 2.0: Fortgeschrittene Tools, Techniken & Skills für GPT-Nutzer",
+    "category": "chatgpt-ki-grundlagen",
+    "categoryLabel": "ChatGPT und KI-Grundlagen",
+    "sourceFolder": "07-Bildung-Webinare-Kurse",
+    "pages": 47,
+    "sizeMB": 4.23,
+    "language": "de",
+    "level": "Fortgeschritten",
+    "tags": [
+      "ChatGPT",
+      "Workflow",
+      "Best Practices"
+    ],
+    "description": "Aufbaukurs zu Optimierung, Workflow und Best Practices für GPT-Nutzer.",
+    "standHinweis": "Enthält Tool-Namen/Versionen vom Stand 2023/24 (z. B. ChatGPT 1.0, GPT-3.5, DALL·E, Bard), vor Nutzung prüfen.",
+    "review": null
+  },
+  {
+    "file": "eu-ai-act/eu-ai-act-rechtsrahmen.pdf",
+    "title": "EU Artificial Intelligence Act: Neuer Rechtsrahmen für KI in Europa",
+    "category": "eu-ai-act",
+    "categoryLabel": "EU AI Act und Regulierung",
+    "sourceFolder": "12-KI-Tools-Sonstige",
+    "pages": 16,
+    "sizeMB": 1.57,
+    "language": "de",
+    "level": "Einsteiger",
+    "tags": [
+      "EU AI Act",
+      "Regulierung",
+      "Risikobasierter Ansatz"
+    ],
+    "description": "Erklärt den EU AI Act als einheitlichen, risikobasierten Rechtsrahmen für Künstliche Intelligenz.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "git-vscode-tools/copilot-vscode-10-hours.pdf",
+    "title": "Copilot & VS Code 10 Hours",
+    "category": "git-vscode-tools",
+    "categoryLabel": "Git, VS Code und Entwickler-Tools",
+    "sourceFolder": "05-Coding-Webentwicklung",
+    "pages": 50,
+    "sizeMB": 3.45,
+    "language": "en",
+    "level": "Fortgeschritten",
+    "tags": [
+      "Copilot",
+      "VS Code",
+      "Videokurs",
+      "KI-Coding"
+    ],
+    "description": "Kursstruktur eines Videokurses zu KI-gestützter Entwicklung mit 10 Modulen, Videos, Hand-outs und Download-Repos.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "git-vscode-tools/git-github-masterclass.pdf",
+    "title": "Git & GitHub Masterclass: From Basics to Advanced Workflows",
+    "category": "git-vscode-tools",
+    "categoryLabel": "Git, VS Code und Entwickler-Tools",
+    "sourceFolder": "05-Coding-Webentwicklung",
+    "pages": 50,
+    "sizeMB": 3.99,
+    "language": "en",
+    "level": "Fortgeschritten",
+    "tags": [
+      "Git",
+      "GitHub",
+      "Copilot",
+      "VS Code"
+    ],
+    "description": "Kurs mit 10 Modulen zu Versionskontrolle, Repositories, Commits, GitHub-Automatisierung, Copilot und VS Code.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "git-vscode-tools/vscode-copilot-anfaenger-bis-profi.pdf",
+    "title": "VS Code & Co-Pilot: Vom Anfänger zum KI-Entwicklungsprofi",
+    "category": "git-vscode-tools",
+    "categoryLabel": "Git, VS Code und Entwickler-Tools",
+    "sourceFolder": "05-Coding-Webentwicklung",
+    "pages": 50,
+    "sizeMB": 10.97,
+    "language": "de",
+    "level": "Fortgeschritten",
+    "tags": [
+      "VS Code",
+      "Copilot",
+      "Git",
+      "10 Module"
+    ],
+    "description": "Lernpfad in 10 Modulen vom Git-Einsteiger zum VS-Code- und Copilot-Nutzer.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "ki-coding/ai-schreibt-deine-erste-webseite-coding-potential.pdf",
+    "title": "AI schreibt deine erste Webseite: Entdecke das Coding-Potential der KI",
+    "category": "ki-coding",
+    "categoryLabel": "Coding und Webentwicklung mit KI",
+    "sourceFolder": "05-Coding-Webentwicklung",
+    "pages": 40,
+    "sizeMB": 7.81,
+    "language": "de",
+    "level": "Einsteiger",
+    "tags": [
+      "Webentwicklung",
+      "KI",
+      "Anfänger"
+    ],
+    "description": "Kurs, der zeigt, wie man mit KI die erste Webseite ohne Coding-Kenntnisse erstellt; startet mit HTML-Grundstruktur und wichtigen Tags.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "ki-coding/ai-schreibt-deine-erste-webseite-keine-zeile.pdf",
+    "title": "AI schreibt deine erste Webseite: Keine Zeile selbst tippen",
+    "category": "ki-coding",
+    "categoryLabel": "Coding und Webentwicklung mit KI",
+    "sourceFolder": "12-KI-Tools-Sonstige",
+    "pages": 41,
+    "sizeMB": 7.05,
+    "language": "de",
+    "level": "Einsteiger",
+    "tags": [
+      "Webentwicklung",
+      "KI",
+      "Anfänger"
+    ],
+    "description": "Guide zum Erstellen der ersten Webseite mit KI, ohne selbst Code zu tippen: HTML, GitHub Pages und CSS mit KI-Unterstützung.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "ki-coding/become-web-developer-with-ai.pdf",
+    "title": "Become a Web Developer with AI: No Coding Experience Required",
+    "category": "ki-coding",
+    "categoryLabel": "Coding und Webentwicklung mit KI",
+    "sourceFolder": "05-Coding-Webentwicklung",
+    "pages": 30,
+    "sizeMB": 5.14,
+    "language": "en",
+    "level": "Einsteiger",
+    "tags": [
+      "Webentwicklung",
+      "KI",
+      "Anfänger",
+      "Englisch"
+    ],
+    "description": "Zeigt, wie man mit KI als Coding-Coach Webseiten baut und veröffentlicht, auch ohne Programmiererfahrung.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "ki-coding/build-interactive-websites-with-ai.pdf",
+    "title": "Build Interactive Websites with AI",
+    "category": "ki-coding",
+    "categoryLabel": "Coding und Webentwicklung mit KI",
+    "sourceFolder": "12-KI-Tools-Sonstige",
+    "pages": 7,
+    "sizeMB": 0.66,
+    "language": "en",
+    "level": "Fortgeschritten",
+    "tags": [
+      "Webentwicklung",
+      "Chatbot",
+      "Flexbox",
+      "Grid"
+    ],
+    "description": "Zeigt KI-gestützte interaktive Webseiten mit responsivem Layout (Flexbox, Grid), Chatbot-Interface und Formularen.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "ki-coding/final-noob-ai-webdev-kurs.pdf",
+    "title": "Final Noob AI Webdev-Kurs",
+    "category": "ki-coding",
+    "categoryLabel": "Coding und Webentwicklung mit KI",
+    "sourceFolder": "05-Coding-Webentwicklung",
+    "pages": 27,
+    "sizeMB": 1.56,
+    "language": "de",
+    "level": "Einsteiger",
+    "tags": [
+      "Webentwicklung",
+      "HTML",
+      "Copy & Paste",
+      "Anfänger"
+    ],
+    "description": "Kurs, in dem man per Copy & Paste mit KI die erste Webseite erstellt; beginnt mit HTML-Grundgerüst und Tags.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "ki-coding/finaler-noob-ai-webdev-kurs.pdf",
+    "title": "Finaler Noob AI Webdev-Kurs",
+    "category": "ki-coding",
+    "categoryLabel": "Coding und Webentwicklung mit KI",
+    "sourceFolder": "05-Coding-Webentwicklung",
+    "pages": 60,
+    "sizeMB": 11.63,
+    "language": "de",
+    "level": "Einsteiger",
+    "tags": [
+      "Webentwicklung",
+      "HTML",
+      "Anfänger",
+      "KI"
+    ],
+    "description": "Ausführliche Fassung des Noob-Kurses: HTML-Grundlagen und Webseiten per Copy & Paste mit KI erstellen.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "ki-coding/html-ai-integration.pdf",
+    "title": "HTML & AI Integration",
+    "category": "ki-coding",
+    "categoryLabel": "Coding und Webentwicklung mit KI",
+    "sourceFolder": "05-Coding-Webentwicklung",
+    "pages": 20,
+    "sizeMB": 5.51,
+    "language": "en",
+    "level": "Einsteiger",
+    "tags": [
+      "HTML",
+      "ChatGPT",
+      "Webinar"
+    ],
+    "description": "Webinar zu HTML-Grundlagen und dazu, wie ChatGPT den HTML-Coding-Workflow beschleunigt.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "ki-coding/ki-gestuetzte-webentwicklung-noob-kurs.pdf",
+    "title": "KI-gestützte Webentwicklung für absolute Anfänger: Dein Noob-Kurs",
+    "category": "ki-coding",
+    "categoryLabel": "Coding und Webentwicklung mit KI",
+    "sourceFolder": "05-Coding-Webentwicklung",
+    "pages": 33,
+    "sizeMB": 5.02,
+    "language": "de",
+    "level": "Einsteiger",
+    "tags": [
+      "Webentwicklung",
+      "KI",
+      "Anfänger",
+      "Kurs"
+    ],
+    "description": "Einsteigerkurs in Modulen: Was Webentwicklung und KI sind und wie man damit ohne Vorkenntnisse Webseiten erstellt.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "ki-coding/ki-gestuetzte-webentwicklung-fuer-anfaenger.pdf",
+    "title": "KI-gestützte Webentwicklung für Anfänger",
+    "category": "ki-coding",
+    "categoryLabel": "Coding und Webentwicklung mit KI",
+    "sourceFolder": "05-Coding-Webentwicklung",
+    "pages": 42,
+    "sizeMB": 7.7,
+    "language": "de",
+    "level": "Einsteiger",
+    "tags": [
+      "Webentwicklung",
+      "KI",
+      "Anfänger"
+    ],
+    "description": "60-Minuten-Crashkurs: HTML-Grundgerüst mit KI-Tools erstellen, Schritt für Schritt für Anfänger.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "ki-coding/mit-ki-zum-web-entwickler-werden.pdf",
+    "title": "Mit KI zum Web-Entwickler werden!",
+    "category": "ki-coding",
+    "categoryLabel": "Coding und Webentwicklung mit KI",
+    "sourceFolder": "12-KI-Tools-Sonstige",
+    "pages": 60,
+    "sizeMB": 3.25,
+    "language": "de",
+    "level": "Einsteiger",
+    "tags": [
+      "Webentwicklung",
+      "KI",
+      "Anfänger"
+    ],
+    "description": "Kurs, der zeigt, wie man mit KI als persönlichem Coding-Coach die erste Webseite ohne Vorkenntnisse erstellt.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "ki-coding/nur-ki-coding-kit.pdf",
+    "title": "Nur KI: Dein ultimatives KI-Coding-Kit",
+    "category": "ki-coding",
+    "categoryLabel": "Coding und Webentwicklung mit KI",
+    "sourceFolder": "05-Coding-Webentwicklung",
+    "pages": 40,
+    "sizeMB": 2.31,
+    "language": "de",
+    "level": "Einsteiger",
+    "tags": [
+      "KI-Coding",
+      "VS Code",
+      "Code-Generierung"
+    ],
+    "description": "Zeigt, wie KI alle Schritte der Webentwicklung von der Code-Generierung bis zur Bereitstellung unterstützt.",
+    "standHinweis": "Enthält Tool-Namen/Versionen vom Stand 2023/24 (z. B. ChatGPT 1.0, GPT-3.5, DALL·E, Bard), vor Nutzung prüfen.",
+    "review": null
+  },
+  {
+    "file": "ki-coding/transform-ideas-into-websites-with-ai.pdf",
+    "title": "Transform Your Ideas into Websites Without Writing a Single Line of Code",
+    "category": "ki-coding",
+    "categoryLabel": "Coding und Webentwicklung mit KI",
+    "sourceFolder": "05-Coding-Webentwicklung",
+    "pages": 50,
+    "sizeMB": 3.76,
+    "language": "en",
+    "level": "Einsteiger",
+    "tags": [
+      "Webentwicklung",
+      "KI",
+      "No-Code"
+    ],
+    "description": "Erklärt, wie KI als persönlicher Coding-Assistent beim Erstellen von Webseiten ohne Programmierkenntnisse hilft.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "ki-coding/foundations-ai-web-development-javascript.pdf",
+    "title": "Webinar: Foundations of AI Web Development, Generating JavaScript with AI",
+    "category": "ki-coding",
+    "categoryLabel": "Coding und Webentwicklung mit KI",
+    "sourceFolder": "05-Coding-Webentwicklung",
+    "pages": 20,
+    "sizeMB": 1.29,
+    "language": "en",
+    "level": "Fortgeschritten",
+    "tags": [
+      "JavaScript",
+      "KI-Coding",
+      "Webinar"
+    ],
+    "description": "Webinar zum Generieren von JavaScript-Code mit KI-Unterstützung.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "ki-im-buero/calc-und-chatgpt-datenmanagement.pdf",
+    "title": "Calc und ChatGPT: Der Premium-Kurs für Datenmanagement",
+    "category": "ki-im-buero",
+    "categoryLabel": "Excel, Office und Social Media mit KI",
+    "sourceFolder": "07-Bildung-Webinare-Kurse",
+    "pages": 36,
+    "sizeMB": 3.5,
+    "language": "de",
+    "level": "Einsteiger",
+    "tags": [
+      "Calc",
+      "Excel",
+      "ChatGPT",
+      "Datenmanagement"
+    ],
+    "description": "Kurs, der Excel/Calc-Grundlagen mit ChatGPT für praxisnahes Datenmanagement kombiniert.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "ki-im-buero/excel-mit-chatgpt-triple-boost.pdf",
+    "title": "Excel mit ChatGPT meistern: Der Triple-Boost Fast Track",
+    "category": "ki-im-buero",
+    "categoryLabel": "Excel, Office und Social Media mit KI",
+    "sourceFolder": "07-Bildung-Webinare-Kurse",
+    "pages": 50,
+    "sizeMB": 10.67,
+    "language": "de",
+    "level": "Einsteiger",
+    "tags": [
+      "Excel",
+      "ChatGPT",
+      "Übungen"
+    ],
+    "description": "Programm, das praxisnahe Excel-Übungen mit ChatGPT-Unterstützung kombiniert.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "ki-im-buero/excel-webinar-10-power-module.pdf",
+    "title": "Excel Webinar: Vom Anfänger zum Experten, 10 Power-Module",
+    "category": "ki-im-buero",
+    "categoryLabel": "Excel, Office und Social Media mit KI",
+    "sourceFolder": "07-Bildung-Webinare-Kurse",
+    "pages": 23,
+    "sizeMB": 3.25,
+    "language": "de",
+    "level": "Einsteiger",
+    "tags": [
+      "Excel",
+      "Webinar",
+      "Module"
+    ],
+    "description": "Webinar in 10 Modulen von Excel-Grundlagen bis zur professionellen Anwendung.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "ki-im-buero/webinar-6-ki-im-buero.pdf",
+    "title": "Webinar 6.0: KI im Büro",
+    "category": "ki-im-buero",
+    "categoryLabel": "Excel, Office und Social Media mit KI",
+    "sourceFolder": "07-Bildung-Webinare-Kurse",
+    "pages": 46,
+    "sizeMB": 4.21,
+    "language": "de",
+    "level": "Einsteiger",
+    "tags": [
+      "Büro",
+      "E-Mail",
+      "Übersetzung",
+      "Dokumente"
+    ],
+    "description": "Webinar zu KI-Anwendungen im Büro: E-Mail, Support, Legal, Übersetzung und Dokumentenerstellung.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "llm-anbieter/mistral-ai-modelle-architektur-analyse.pdf",
+    "title": "Mistral AI: Modelle, Architektur und umfassende Analyse",
+    "category": "llm-anbieter",
+    "categoryLabel": "LLM-Anbieter-Analysen",
+    "sourceFolder": "12-KI-Tools-Sonstige",
+    "pages": 11,
+    "sizeMB": 0.56,
+    "language": "de",
+    "level": "Experte",
+    "tags": [
+      "Mistral",
+      "LLM",
+      "API",
+      "OpenAI-Vergleich"
+    ],
+    "description": "Analyse von Mistral AI, seinen Modellen und APIs im Vergleich zu OpenAI und zur Kombination für Entwickler.",
+    "standHinweis": "Enthält Tool-Namen/Versionen vom Stand 2023/24 (z. B. ChatGPT 1.0, GPT-3.5, DALL·E, Bard), vor Nutzung prüfen.",
+    "review": null
+  },
+  {
+    "file": "llm-anbieter/mistral-ai-revolutionaere-modelle-analyse.pdf",
+    "title": "Mistral AI: Revolutionäre Modelle und umfassende Analyse",
+    "category": "llm-anbieter",
+    "categoryLabel": "LLM-Anbieter-Analysen",
+    "sourceFolder": "12-KI-Tools-Sonstige",
+    "pages": 20,
+    "sizeMB": 4.8,
+    "language": "de",
+    "level": "Experte",
+    "tags": [
+      "Mistral",
+      "LLM",
+      "API",
+      "Monetarisierung"
+    ],
+    "description": "Detaillierte Analyse von Architektur, API-Integration, OpenAI-Vergleich und Monetarisierungsmöglichkeiten von Mistral AI.",
+    "standHinweis": "Enthält Tool-Namen/Versionen vom Stand 2023/24 (z. B. ChatGPT 1.0, GPT-3.5, DALL·E, Bard), vor Nutzung prüfen.",
+    "review": null
+  },
+  {
+    "file": "llm-anbieter/openai-deep-dive-startups.pdf",
+    "title": "OpenAI Deep Dive: Modelle, API, Strategien für KI-Startups",
+    "category": "llm-anbieter",
+    "categoryLabel": "LLM-Anbieter-Analysen",
+    "sourceFolder": "12-KI-Tools-Sonstige",
+    "pages": 20,
+    "sizeMB": 5.1,
+    "language": "de",
+    "level": "Experte",
+    "tags": [
+      "OpenAI",
+      "API",
+      "Startups",
+      "Strategie"
+    ],
+    "description": "Überblick für KI-Startups zu OpenAI-Modellen, API-Integration sowie Markt und Strategien.",
+    "standHinweis": "Enthält Tool-Namen/Versionen vom Stand 2023/24 (z. B. ChatGPT 1.0, GPT-3.5, DALL·E, Bard), vor Nutzung prüfen.",
+    "review": null
+  },
+  {
+    "file": "prompt-engineering/fortgeschrittene-coding-prompts-frameworks.pdf",
+    "title": "Fortgeschrittene Coding-Prompts für verschiedene Frameworks",
+    "category": "prompt-engineering",
+    "categoryLabel": "Prompt Engineering",
+    "sourceFolder": "05-Coding-Webentwicklung",
+    "pages": 20,
+    "sizeMB": 6.41,
+    "language": "de",
+    "level": "Fortgeschritten",
+    "tags": [
+      "Coding-Prompts",
+      "Frameworks",
+      "Bootstrap",
+      "E-Commerce"
+    ],
+    "description": "Sammlung anspruchsvoller Coding-Prompts für populäre Web-Frameworks, z. B. eine responsive Bootstrap-E-Commerce-Seite.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "prompt-engineering/introduction-ai-prompt-libraries.pdf",
+    "title": "Introduction to AI Prompt Libraries",
+    "category": "prompt-engineering",
+    "categoryLabel": "Prompt Engineering",
+    "sourceFolder": "11-KI-Business-Consulting",
+    "pages": 8,
+    "sizeMB": 2.1,
+    "language": "en",
+    "level": "Einsteiger",
+    "tags": [
+      "Prompt-Bibliothek",
+      "Produktivität",
+      "Prompts"
+    ],
+    "description": "Einführung in Prompt-Bibliotheken für Aufgabenmanagement, Konsistenz und schnellere Workflows.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "prompt-engineering/mastering-prompt-engineering.pdf",
+    "title": "Mastering the Art of Prompt Engineering",
+    "category": "prompt-engineering",
+    "categoryLabel": "Prompt Engineering",
+    "sourceFolder": "11-KI-Business-Consulting",
+    "pages": 13,
+    "sizeMB": 2.06,
+    "language": "en",
+    "level": "Fortgeschritten",
+    "tags": [
+      "Prompt Engineering",
+      "Kontext",
+      "Tonalität"
+    ],
+    "description": "Erklärt Prompt Engineering mit Prompt-Struktur: Kontext, Präzision sowie Ton und Stil.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "prompt-engineering/workflow-ai-prompt-libraries.pdf",
+    "title": "Revolutionize Your Workflow with AI Prompt Libraries",
+    "category": "prompt-engineering",
+    "categoryLabel": "Prompt Engineering",
+    "sourceFolder": "11-KI-Business-Consulting",
+    "pages": 8,
+    "sizeMB": 1.71,
+    "language": "en",
+    "level": "Einsteiger",
+    "tags": [
+      "Prompt-Bibliothek",
+      "Workflow",
+      "Prompts"
+    ],
+    "description": "Folien zu Prompt-Bibliotheken als Werkzeug für effizientere Arbeitsabläufe.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "prompt-engineering/webinar-8-ki-coding-prompt-engineering.pdf",
+    "title": "Webinar 8.0: KI Coding & Prompt Engineering für Web Development",
+    "category": "prompt-engineering",
+    "categoryLabel": "Prompt Engineering",
+    "sourceFolder": "05-Coding-Webentwicklung",
+    "pages": 45,
+    "sizeMB": 4.92,
+    "language": "de",
+    "level": "Fortgeschritten",
+    "tags": [
+      "Prompt Engineering",
+      "Python",
+      "JavaScript",
+      "Webinar"
+    ],
+    "description": "Hands-on-Webinar zu KI-gestütztem Programmieren und Prompt Engineering mit Beispielen in Python und JavaScript.",
+    "standHinweis": "Enthält Tool-Namen/Versionen vom Stand 2023/24 (z. B. ChatGPT 1.0, GPT-3.5, DALL·E, Bard), vor Nutzung prüfen.",
+    "review": null
+  },
+  {
+    "file": "stripe-api/deep-dive-stripe-api.pdf",
+    "title": "Deep Dive Stripe API",
+    "category": "stripe-api",
+    "categoryLabel": "Stripe-API für Entwickler",
+    "sourceFolder": "05-Coding-Webentwicklung",
+    "pages": 11,
+    "sizeMB": 0.89,
+    "language": "en",
+    "level": "Fortgeschritten",
+    "tags": [
+      "Stripe",
+      "API",
+      "Payments",
+      "Billing"
+    ],
+    "description": "Stripe-API-Quickstart mit Base-URL, Authentifizierung sowie Überblick über Payments, Billing, Connect und weitere Produkte.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "stripe-api/stripe-api-dokumentation-uebersicht.pdf",
+    "title": "Stripe API Dokumentation: Komplettübersicht für Entwickler",
+    "category": "stripe-api",
+    "categoryLabel": "Stripe-API für Entwickler",
+    "sourceFolder": "05-Coding-Webentwicklung",
+    "pages": 8,
+    "sizeMB": 0.29,
+    "language": "de",
+    "level": "Fortgeschritten",
+    "tags": [
+      "Stripe",
+      "API",
+      "Endpunkte",
+      "Dokumentation"
+    ],
+    "description": "Referenzübersicht der Stripe-API-Funktionen, Endpunkte und Integrationen für deutschsprachige Entwickler.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "stripe-api/stripe-api-uebersicht-features-endpunkte.pdf",
+    "title": "Stripe API Übersicht: Features & Endpunkte",
+    "category": "stripe-api",
+    "categoryLabel": "Stripe-API für Entwickler",
+    "sourceFolder": "05-Coding-Webentwicklung",
+    "pages": 20,
+    "sizeMB": 1.25,
+    "language": "de",
+    "level": "Fortgeschritten",
+    "tags": [
+      "Stripe",
+      "API",
+      "Endpunkte"
+    ],
+    "description": "Nach Bereichen sortierte Übersichtstabelle aller Stripe-API-Features, Endpunkte und Vorteile.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "stripe-api/stripe-developer-friendly-payment-platform.pdf",
+    "title": "Stripe: The Developer-Friendly Payment Platform",
+    "category": "stripe-api",
+    "categoryLabel": "Stripe-API für Entwickler",
+    "sourceFolder": "05-Coding-Webentwicklung",
+    "pages": 50,
+    "sizeMB": 4.49,
+    "language": "en",
+    "level": "Fortgeschritten",
+    "tags": [
+      "Stripe",
+      "Payments",
+      "API",
+      "Atlas"
+    ],
+    "description": "Analyse von Stripe mit Entwicklererfahrung, Atlas-Gründungsservice und API-Architektur.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "stripe-api/stripe-api-doc-quickstart.pdf",
+    "title": "Stripe.com: API Doc (Quickstart)",
+    "category": "stripe-api",
+    "categoryLabel": "Stripe-API für Entwickler",
+    "sourceFolder": "05-Coding-Webentwicklung",
+    "pages": 15,
+    "sizeMB": 4.41,
+    "language": "en",
+    "level": "Fortgeschritten",
+    "tags": [
+      "Stripe",
+      "API",
+      "Authentifizierung",
+      "Billing"
+    ],
+    "description": "Kompakter Stripe-Quickstart mit Base-URL, Basic-Auth, Connect-Header sowie Billing und Subscriptions.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "webentwicklung-grundlagen/coding-bff.pdf",
+    "title": "Coding BFF: Your Ultimate Programming Companion",
+    "category": "webentwicklung-grundlagen",
+    "categoryLabel": "Webentwicklung-Grundlagen (HTML, CSS, JS)",
+    "sourceFolder": "05-Coding-Webentwicklung",
+    "pages": 8,
+    "sizeMB": 1.56,
+    "language": "en",
+    "level": "Einsteiger",
+    "tags": [
+      "Python",
+      "JavaScript",
+      "Programmierung"
+    ],
+    "description": "Kompakter Einstieg in Programmiergrundlagen: Python-Basics (Variablen, Kontrollfluss, Funktionen) und JavaScript-DOM.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "webentwicklung-grundlagen/css-frameworks-bausteine.pdf",
+    "title": "CSS-Frameworks: Die Bausteine moderner Webentwicklung",
+    "category": "webentwicklung-grundlagen",
+    "categoryLabel": "Webentwicklung-Grundlagen (HTML, CSS, JS)",
+    "sourceFolder": "05-Coding-Webentwicklung",
+    "pages": 30,
+    "sizeMB": 7.54,
+    "language": "de",
+    "level": "Einsteiger",
+    "tags": [
+      "CSS",
+      "Frameworks",
+      "Responsive Design"
+    ],
+    "description": "Überblick über CSS-Frameworks mit Gridsystemen, Komponenten-Bibliotheken und anpassbarer Struktur.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "webentwicklung-grundlagen/html-ueberblick-moderne-webentwicklung.pdf",
+    "title": "HTML-Überblick: Moderne Webentwicklung",
+    "category": "webentwicklung-grundlagen",
+    "categoryLabel": "Webentwicklung-Grundlagen (HTML, CSS, JS)",
+    "sourceFolder": "05-Coding-Webentwicklung",
+    "pages": 30,
+    "sizeMB": 2.39,
+    "language": "de",
+    "level": "Einsteiger",
+    "tags": [
+      "HTML",
+      "Semantik",
+      "Barrierefreiheit",
+      "SEO"
+    ],
+    "description": "Überblick über modernes semantisches HTML mit Bedeutung für Struktur, Zugänglichkeit und SEO.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "webentwicklung-grundlagen/html-uebersicht.pdf",
+    "title": "HTML-Übersicht",
+    "category": "webentwicklung-grundlagen",
+    "categoryLabel": "Webentwicklung-Grundlagen (HTML, CSS, JS)",
+    "sourceFolder": "05-Coding-Webentwicklung",
+    "pages": 12,
+    "sizeMB": 5.48,
+    "language": "de",
+    "level": "Einsteiger",
+    "tags": [
+      "HTML",
+      "Responsive Design",
+      "Barrierefreiheit"
+    ],
+    "description": "Übersicht wichtiger HTML-Funktionen für modernes Webdesign, responsive Layouts, interaktive Elemente und Barrierefreiheit.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "webentwicklung-grundlagen/javascript-fuer-anfaenger.pdf",
+    "title": "JavaScript für Anfänger: Ein umfassender Überblick",
+    "category": "webentwicklung-grundlagen",
+    "categoryLabel": "Webentwicklung-Grundlagen (HTML, CSS, JS)",
+    "sourceFolder": "05-Coding-Webentwicklung",
+    "pages": 44,
+    "sizeMB": 4.98,
+    "language": "de",
+    "level": "Einsteiger",
+    "tags": [
+      "JavaScript",
+      "DOM",
+      "Anfänger"
+    ],
+    "description": "Grundlagen von JavaScript, beginnend mit getElementById() und querySelector() für interaktive Webseiten.",
+    "standHinweis": null,
+    "review": null
+  },
+  {
+    "file": "webentwicklung-grundlagen/javascript-ueberblick-funktionen.pdf",
+    "title": "JavaScript-Überblick: Grundlegende Funktionen und Methoden",
+    "category": "webentwicklung-grundlagen",
+    "categoryLabel": "Webentwicklung-Grundlagen (HTML, CSS, JS)",
+    "sourceFolder": "05-Coding-Webentwicklung",
+    "pages": 30,
+    "sizeMB": 1.44,
+    "language": "de",
+    "level": "Einsteiger",
+    "tags": [
+      "JavaScript",
+      "DOM",
+      "Beispielcode"
+    ],
+    "description": "Beschreibt grundlegende JavaScript-Funktionen und -Methoden mit Beispielcode und Anwendungsbeispielen.",
+    "standHinweis": null,
+    "review": null
+  }
+]
