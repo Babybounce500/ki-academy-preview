@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cooles Quiz – 40 Fragen</title>
+  <style>
+    /* Grundlegendes Styling */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(45deg, #1c92d2, #f2fcfe);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .quiz-container {
+      background-color: rgba(255, 255, 255, 0.9);
+      width: 90%;
+      max-width: 600px;
+      border-radius: 8px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .api-key {
+      text-align: center;
+      font-size: 0.8rem;
+      margin-bottom: 10px;
+      color: #555;
+    }
+    .progress {
+      text-align: center;
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+      color: #333;
+    }
+    .score {
+      text-align: center;
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+      color: #333;
+    }
+    .quiz-question {
+      margin-bottom: 15px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      transition: opacity 0.8s ease-in-out;
+    }
+    .answers {
+      margin-bottom: 10px;
+    }
+    .answers label {
+      display: block;
+      background-color: #eef1f7;
+      margin: 6px 0;
+      padding: 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+    .answers label:hover {
+      background-color: #d0d7e3;
+      transform: scale(1.02);
+    }
+    .answers input {
+      margin-right: 8px;
+    }
+    .navigation-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+    .navigation-buttons button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+      color: #fff;
+      background-color: #0072ee;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+    .navigation-buttons button:hover {
+      background-color: #005bb5;
+      transform: scale(1.05);
+    }
+    .hidden {
+      display: none;
+    }
+    .fade {
+      animation: fadeIn 0.8s;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    /* Feedback Styling */
+    .feedback {
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(0,0,0,0.75);
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 1.2rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      z-index: 10;
+    }
+    .feedback.show {
+      opacity: 1;
+      transform: translateX(-50%) scale(1.05);
+    }
+    /* Auswertungsbox */
+    .result-box {
+      text-align: center;
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 6px;
+      background-color: #eef1f7;
+      animation: fadeIn 0.8s;
+    }
+    .result-box h2 {
+      margin-bottom: 10px;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 0.8rem;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+
+<div class="quiz-container fade">
+  <h1>Final Quiz Webentwicklung – 40 Fragen</h1>
+ 
+  <p class="progress" id="progressText"></p>
+  <p class="score" id="scoreDisplay">Punkte: 0</p>
+  
+  <!-- Feedback Message -->
+  <div id="feedback" class="feedback"></div>
+
+  <!-- Frage und Antworten -->
+  <div id="questionContainer">
+    <div id="questionText" class="quiz-question"></div>
+    <div id="answersContainer" class="answers"></div>
+  </div>
+
+  <!-- Navigations-Buttons -->
+  <div class="navigation-buttons">
+    <button id="prevBtn" onclick="prevQuestion()">Zurück</button>
+    <button id="nextBtn" onclick="nextQuestion()">Weiter</button>
+  </div>
+
+  <!-- Auswertung -->
+  <div id="resultBox" class="result-box hidden">
+    <h2>Auswertung</h2>
+    <p id="scoreText"></p>
+    <p id="noteText"></p>
+    <button onclick="restartQuiz()">Nochmal versuchen</button>
+  </div>
+</div>
+
+
+
+<script>
+  // ***** Fragen-Array (40 Fragen) *****
+  const questions = [
+    {
+      question: "Welche Aussage trifft auf die empfohlene Software-Ausstattung für Webentwicklung zu?",
+      answers: [
+        "Notepad reicht vollkommen aus",
+        "Moderne Browser, Code-Editor (z. B. VS Code) & aktuelles Betriebssystem sind vorteilhaft",
+        "Nur ein virtuelles Linux-Image ist nötig",
+        "Alles direkt in Microsoft Paint programmieren"
+      ],
+      correct: 1
+    },
+    {
+      question: "Welcher Browser wird im Kurs als besonders datenschutzfreundlich herausgestellt?",
+      answers: [
+        "Chrome",
+        "Firefox",
+        "Brave",
+        "Opera"
+      ],
+      correct: 2
+    },
+    {
+      question: "Welches dieser Tags ist kein semantisches HTML-Tag?",
+      answers: [
+        "<article>",
+        "<nav>",
+        "<div>",
+        "<section>"
+      ],
+      correct: 2
+    },
+    {
+      question: "Wofür ist HTML in erster Linie zuständig?",
+      answers: [
+        "Optische Gestaltung von Webseiten",
+        "Strukturierung und Auszeichnung von Inhalten",
+        "Ausführung von Server-Logik",
+        "Rendern von 3D-Grafiken im Browser"
+      ],
+      correct: 1
+    },
+    {
+      question: "Was zeichnet ein Utility-First-Framework wie Tailwind CSS aus?",
+      answers: [
+        "Es ersetzt HTML vollständig",
+        "Vorwiegend aussagekräftige Klassen wie p-4 oder text-center",
+        "Keine Klassen, da alles inline geschrieben wird",
+        "Nur für JavaScript-Entwicklung"
+      ],
+      correct: 1
+    },
+    {
+      question: "Welche Tailwind-Klasse sorgt standardmäßig für einen äußeren Abstand (Margin) von 1rem?",
+      answers: [
+        "m-4",
+        "mx-2",
+        "p-4",
+        "mt-2"
+      ],
+      correct: 0
+    },
+    {
+      question: "Was ist laut Kurs ein 'Prompt'?",
+      answers: [
+        "Ein Browser-Plug-in",
+        "Eine Fehlermeldung bei Syntaxfehlern",
+        "Eine spezifische Anweisung an eine KI",
+        "Ein Git-Befehl"
+      ],
+      correct: 2
+    },
+    {
+      question: "In welchem Bereich können KI-Tools nicht sinnvoll unterstützen?",
+      answers: [
+        "Automatisierte Code-Vervollständigung",
+        "Vorschläge für Bugfixes",
+        "Kreative Ideen fürs Webdesign",
+        "Stromversorgung des Rechners"
+      ],
+      correct: 3
+    },
+    {
+      question: "Welches Tool wird ausdrücklich für Browser-Debugging empfohlen?",
+      answers: [
+        "Photoshop",
+        "Chrome DevTools",
+        "Windows Media Player",
+        "Excel"
+      ],
+      correct: 1
+    },
+    {
+      question: "Welche Methode ist am effektivsten zur Fehlersuche in JavaScript?",
+      answers: [
+        "Nur console.log nutzen",
+        "Code in Paint einfügen & durchlesen",
+        "Style-Attribute anpassen",
+        "Mix aus Breakpoints, Logs & Code-Review"
+      ],
+      correct: 3
+    },
+    {
+      question: "Wofür sind sogenannte Media Queries in CSS verantwortlich?",
+      answers: [
+        "Datenbankabfragen zur Website hinzufügen",
+        "Gerätespezifische Gestaltung (Mobile, Tablet, Desktop)",
+        "Automatisches KI-Bilder-Rendering",
+        "Ersetzen alle JavaScript-Funktionen"
+      ],
+      correct: 1
+    },
+    {
+      question: "Was ist ein Kerngedanke des Mobile-First-Ansatzes?",
+      answers: [
+        "Erst Desktop-Layout erstellen & dann verkleinern",
+        "Mit kleinen Viewports starten & zu größeren übergehen",
+        "Smartphone neu starten vor jeder Programmierung",
+        "Nur auf großen Monitoren testen"
+      ],
+      correct: 1
+    },
+    {
+      question: "Was bewirkt 'git add .' gefolgt von 'git commit -m \"...\"'?",
+      answers: [
+        "Alle Dateien werden gelöscht",
+        "Änderungen werden vorgemerkt & als Commit gesichert",
+        "Neue Branch wird erstellt & gemergt",
+        "Nur lokal im RAM gespeichert, nach Ausschalten weg"
+      ],
+      correct: 1
+    },
+    {
+      question: "Welche Aussage beschreibt KEINEN Vorteil von GitHub Pages?",
+      answers: [
+        "Kostenloses Hosting statischer Seiten",
+        "Automatische Bereitstellung per Git",
+        "Eigene Subdomain *.github.io",
+        "Serverseitiges PHP & Datenbank möglich"
+      ],
+      correct: 3
+    },
+    {
+      question: "Mit welchem Befehl zeigt man alle bisherigen Commits an?",
+      answers: [
+        "git log",
+        "git status",
+        "git branch",
+        "git revert"
+      ],
+      correct: 0
+    },
+    {
+      question: "Wofür ist JavaScript in Kombination mit HTML & CSS hauptsächlich zuständig?",
+      answers: [
+        "Struktur von Webseiten",
+        "Dynamische & interaktive Funktionen im Frontend",
+        "Bildbearbeitung",
+        "Datenbankabfragen mit SQL"
+      ],
+      correct: 1
+    },
+    {
+      question: "Wo sollte man den <script>-Tag idealerweise platzieren?",
+      answers: [
+        "Am Ende des <body> (Blockierung verhindern)",
+        "Ganz oben im <head> ohne Attribute",
+        "Erstes Element nach <!DOCTYPE html>",
+        "Niemals verwenden"
+      ],
+      correct: 0
+    },
+    {
+      question: "Welcher Schritt gehört NICHT zum systematischen Debugging?",
+      answers: [
+        "Problem definieren",
+        "Hypothesen & Breakpoints setzen",
+        "Ungesichert deployen ohne Tests",
+        "Testergebnisse analysieren & anpassen"
+      ],
+      correct: 2
+    },
+    {
+      question: "Welche Kombi ist besonders effizient für schnelle Prototypen?",
+      answers: [
+        "MS Paint + WordPad",
+        "HTML, Tailwind & KI-Codegenerator",
+        "Excel + KI",
+        "DOS-Eingabe ohne Editor"
+      ],
+      correct: 1
+    },
+    {
+      question: "Erster Schritt, wenn KI, GitHub Pages & Responsive Design vereint werden sollen?",
+      answers: [
+        "Planlos Code kopieren & deployen",
+        "Strukturiertes Repo, GitHub Pages, responsives Layout",
+        "Warten auf Warren Buffetts Invest",
+        "Excel-Datei hochladen statt HTML"
+      ],
+      correct: 1
+    },
+    {
+      question: "Welche Datei-Endung ist typisch für ein CSS-Stylesheet?",
+      answers: [
+        ".html",
+        ".js",
+        ".txt",
+        ".css"
+      ],
+      correct: 3
+    },
+    {
+      question: "Welcher Befehl legt ein neues lokales Git-Repository an?",
+      answers: [
+        "git clone .",
+        "git init",
+        "git newrepo",
+        "git local"
+      ],
+      correct: 1
+    },
+    {
+      question: "Welche Klasse in Tailwind sorgt für zentrierten Text?",
+      answers: [
+        "text-center",
+        "mx-auto",
+        "justify-center",
+        "text-middle"
+      ],
+      correct: 0
+    },
+    {
+      question: "Wie setzt man in JavaScript die Variable userName auf den Wert 'Max'?",
+      answers: [
+        "var userName = 'Max';",
+        "<var userName='Max'>",
+        "userName: 'Max';",
+        "username => 'Max';"
+      ],
+      correct: 0
+    },
+    {
+      question: "Welche Aussage ist falsch?",
+      answers: [
+        "HTML kann Struktur verbessern (Semantik)",
+        "CSS kümmert sich um das Aussehen der Seite",
+        "JavaScript erzeugt Dynamik",
+        "GitHub Pages erlaubt PHP-Server-Skripte"
+      ],
+      correct: 3
+    },
+    {
+      question: "Was bewirkt 'git push' (vereinfacht betrachtet)?",
+      answers: [
+        "Änderungen vom Remote kommen ins Lokale",
+        "Änderungen vom Lokalen gehen ins Remote",
+        "Löscht alle Dateien auf dem Remote",
+        "Erzeugt einen neuen Branch"
+      ],
+      correct: 1
+    },
+    {
+      question: "Welches Meta-Tag definiert UTF-8 als Zeichencodierung?",
+      answers: [
+        "<meta name='viewport' content='width=device-width, initial-scale=1.0'>",
+        "<meta charset='UTF-8'>",
+        "<meta name='description' content='...'>",
+        "<meta http-equiv='refresh' content='5'>"
+      ],
+      correct: 1
+    },
+    {
+      question: "Welche Aussage zu Git ist richtig?",
+      answers: [
+        "Git ist ein Bildbearbeitungsprogramm",
+        "Git ist ein verteiltes Versionskontrollsystem",
+        "Git nur für Minecraft-Mods",
+        "Git nur auf macOS einsetzbar"
+      ],
+      correct: 1
+    },
+    {
+      question: "Was ist ein 'Merge-Konflikt' in Git?",
+      answers: [
+        "Wenn 'git merge' gelöscht wurde",
+        "Kollision von Änderungen an derselben Stelle",
+        "Ein Fehler in JavaScript",
+        "Repo ist zu groß"
+      ],
+      correct: 1
+    },
+    {
+      question: "Welche Schleife ist in JavaScript NICHT existent?",
+      answers: [
+        "for",
+        "while",
+        "do-while",
+        "repeat-until"
+      ],
+      correct: 3
+    },
+    {
+      question: "Welche Datei-Endung ist typisch für JavaScript-Dateien?",
+      answers: [
+        ".js",
+        ".jsc",
+        ".css",
+        ".html"
+      ],
+      correct: 0
+    },
+    {
+      question: "Welche Farbe hat der Hex-Code #FF0000?",
+      answers: [
+        "Grün",
+        "Rot",
+        "Blau",
+        "Gelb"
+      ],
+      correct: 1
+    },
+    {
+      question: "Welche Reihenfolge im klassischen Web-Stack ist korrekt?",
+      answers: [
+        "HTML (Struktur), CSS (Design), JS (Interaktivität)",
+        "CSS (Struktur), HTML (Design), JS (Interaktivität)",
+        "JS (Layout), HTML (Interaktivität), CSS (Struktur)",
+        "HTML (Interaktivität), CSS (Datenbank), JS (Struktur)"
+      ],
+      correct: 0
+    },
+    {
+      question: "Was versteht man unter 'responsive Bildern'?",
+      answers: [
+        "Bilder passen sich automatisch an Gerätegröße an",
+        "Bilder nur in HD",
+        "Bilder in externer Datenbank",
+        "Bilder gehen nicht ohne JavaScript"
+      ],
+      correct: 0
+    },
+    {
+      question: "Welche CSS-Eigenschaft bestimmt den Innenabstand eines Elements?",
+      answers: [
+        "margin",
+        "padding",
+        "border",
+        "content"
+      ],
+      correct: 1
+    },
+    {
+      question: "Welcher Git-Befehl holt Änderungen vom Remote ins Lokale?",
+      answers: [
+        "git pull",
+        "git fetchall",
+        "git gather",
+        "git refresh"
+      ],
+      correct: 0
+    },
+    {
+      question: "Was ist ein 'Fork' auf GitHub?",
+      answers: [
+        "Eine Gabel, die Tastatureingaben abfängt",
+        "Kopie eines fremden Repos in den eigenen Account",
+        "Kryptische Fehlermeldung in JS",
+        "Datenbankfunktion"
+      ],
+      correct: 1
+    },
+    {
+      question: "Welche Tailwind-Klasse fügt einen Rahmen (border) hinzu?",
+      answers: [
+        "outline-2",
+        "border",
+        "rd-1",
+        "bg-border"
+      ],
+      correct: 1
+    },
+    {
+      question: "Welches Element umschließt semantisch den Hauptinhalt?",
+      answers: [
+        "<article>",
+        "<main>",
+        "<header>",
+        "<aside>"
+      ],
+      correct: 1
+    },
+    {
+      question: "Wie zeigt man am einfachsten eine Alert-Box in JavaScript an?",
+      answers: [
+        "alert('Hallo');",
+        "console.log('Hallo');",
+        "prompt('Hallo');",
+        "infoDialog('Hallo');"
+      ],
+      correct: 0
+    }
+  ];
+
+  let currentQuestion = 0;          // Aktueller Fragen-Index
+  let userAnswers = new Array(questions.length).fill(null); // Array für gewählte Antworten
+
+  // Beim Laden der Seite: Fragen mischen, dann erste Frage anzeigen
+  window.addEventListener("DOMContentLoaded", () => {
+    shuffleArray(questions);
+    renderQuestion(currentQuestion);
+    updateProgress();
+  });
+
+  // Fisher-Yates Shuffle
+  function shuffleArray(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+  }
+
+  // Rendert die aktuelle Frage in den DOM
+  function renderQuestion(index) {
+    const questionText = document.getElementById("questionText");
+    const answersContainer = document.getElementById("answersContainer");
+
+    // Ergebnis-Box verbergen
+    document.getElementById("resultBox").classList.add("hidden");
+
+    // Frage anzeigen
+    questionText.textContent = `Frage ${index+1}: ${questions[index].question}`;
+
+    // Antworten generieren
+    answersContainer.innerHTML = "";
+    questions[index].answers.forEach((answer, i) => {
+      const label = document.createElement("label");
+      const radio = document.createElement("input");
+      radio.type = "radio";
+      radio.name = `quiz_answer_${index}`;
+      radio.value = i;
+
+      // Falls bereits ausgewählt, setzen
+      if (userAnswers[index] === i) {
+        radio.checked = true;
+      }
+
+      label.appendChild(radio);
+      label.appendChild(document.createTextNode(" " + answer));
+      answersContainer.appendChild(label);
+    });
+
+    // Navigation anpassen
+    document.getElementById("prevBtn").style.display = index === 0 ? "none" : "inline-block";
+    document.getElementById("nextBtn").textContent = (index === questions.length - 1) ? "Abschließen" : "Weiter";
+  }
+
+  // Speichert die aktuelle Antwort
+  function saveCurrentAnswer() {
+    const radios = document.getElementsByName(`quiz_answer_${currentQuestion}`);
+    for (let r of radios) {
+      if (r.checked) {
+        userAnswers[currentQuestion] = parseInt(r.value, 10);
+        break;
+      }
+    }
+  }
+
+  function nextQuestion() {
+    saveCurrentAnswer();
+    // Falls keine Antwort gewählt: Hinweis anzeigen
+    if (userAnswers[currentQuestion] === null) {
+      alert("Bitte wähle eine Antwort!");
+      return;
+    }
+    // Navigation während Feedback deaktivieren
+    disableNavigation(true);
+    
+    // Feedback anzeigen
+    const isCorrect = userAnswers[currentQuestion] === questions[currentQuestion].correct;
+    showFeedback(isCorrect);
+
+    // Nach kurzer Verzögerung: nächste Frage oder Ergebnisse anzeigen
+    setTimeout(() => {
+      if (currentQuestion < questions.length - 1) {
+        currentQuestion++;
+        renderQuestion(currentQuestion);
+        updateProgress();
+      } else {
+        showResults();
+      }
+      disableNavigation(false);
+    }, 1000);
+  }
+
+  function prevQuestion() {
+    saveCurrentAnswer();
+    if (currentQuestion > 0) {
+      currentQuestion--;
+      renderQuestion(currentQuestion);
+      updateProgress();
+    }
+  }
+
+  // Feedback (Richtig/Falsch) anzeigen
+  function showFeedback(isCorrect) {
+    const feedbackEl = document.getElementById("feedback");
+    feedbackEl.textContent = isCorrect ? "Richtig!" : "Falsch!";
+    feedbackEl.style.backgroundColor = isCorrect ? "rgba(0,128,0,0.85)" : "rgba(220,20,60,0.85)";
+    feedbackEl.classList.add("show");
+    setTimeout(() => {
+      feedbackEl.classList.remove("show");
+    }, 800);
+  }
+
+  // Navigation deaktivieren/aktivieren
+  function disableNavigation(disable) {
+    document.getElementById("prevBtn").disabled = disable;
+    document.getElementById("nextBtn").disabled = disable;
+  }
+
+  // Ergebnisse anzeigen
+  function showResults() {
+    const resultBox = document.getElementById("resultBox");
+    resultBox.classList.remove("hidden");
+
+    // Score berechnen
+    let score = 0;
+    questions.forEach((q, i) => {
+      if (userAnswers[i] === q.correct) {
+        score++;
+      }
+    });
+
+    // Score-Text
+    const scoreText = document.getElementById("scoreText");
+    scoreText.textContent = `Du hast ${score} von ${questions.length} Fragen richtig beantwortet.`;
+
+    // Notenschlüssel (angepasst an 40 Fragen)
+    let note;
+    if (score <= 20) {
+      note = 5;
+    } else if (score <= 26) {
+      note = 4;
+    } else if (score <= 32) {
+      note = 3;
+    } else if (score <= 38) {
+      note = 2;
+    } else {
+      note = 1;
+    }
+    const noteText = document.getElementById("noteText");
+    noteText.textContent = `Deine (inoffizielle) Note: ${note}`;
+
+    // Überschrift, Frage & Buttons anpassen
+    document.getElementById("progressText").textContent = "Test abgeschlossen!";
+    document.getElementById("questionText").textContent = "";
+    document.getElementById("answersContainer").innerHTML = "";
+    document.getElementById("prevBtn").style.display = "none";
+    document.getElementById("nextBtn").style.display = "none";
+  }
+
+  // Aktualisiert Fortschritt und Punktezahl
+  function updateProgress() {
+    const progressEl = document.getElementById("progressText");
+    progressEl.textContent = `Frage ${currentQuestion+1} / ${questions.length}`;
+
+    // Punkte aus bisher richtig beantworteten Fragen berechnen
+    let currentScore = 0;
+    for (let i = 0; i < userAnswers.length; i++) {
+      if (userAnswers[i] !== null && userAnswers[i] === questions[i].correct) {
+        currentScore++;
+      }
+    }
+    document.getElementById("scoreDisplay").textContent = `Punkte: ${currentScore}`;
+  }
+
+  // Quiz neu starten
+  function restartQuiz() {
+    currentQuestion = 0;
+    userAnswers = new Array(questions.length).fill(null);
+    shuffleArray(questions);
+    renderQuestion(currentQuestion);
+    updateProgress();
+    document.getElementById("resultBox").classList.add("hidden");
+    document.getElementById("prevBtn").style.display = "none";
+    document.getElementById("nextBtn").style.display = "inline-block";
+  }
+</script>
+</body>
+</html>

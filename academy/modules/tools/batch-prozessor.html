@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚡ BATCH PROCESSOR - Mistral AI Streaming Interface</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --steel-primary: hsl(217, 91%, 60%);
+      --steel-secondary: hsl(216, 87%, 53%);
+      --steel-accent: hsl(214, 95%, 93%);
+      --steel-dark: hsl(222, 84%, 5%);
+      --steel-bg: hsl(220, 39%, 11%);
+      --steel-surface: hsl(217, 32%, 17%);
+      --steel-text: hsl(213, 31%, 91%);
+      --steel-muted: hsl(215, 20%, 65%);
+      --steel-error: hsl(0, 84%, 60%);
+      --steel-warning: hsl(45, 93%, 47%);
+      --steel-success: hsl(142, 76%, 36%);
+    }
+
+    body {
+      font-family: 'Courier New', Courier, monospace;
+      background-color: var(--steel-bg);
+      color: var(--steel-text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 64rem;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+
+    header {
+      border-bottom: 1px solid var(--steel-primary);
+      padding: 1rem;
+    }
+
+    .header-content {
+      max-width: 64rem;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .header-subtitle {
+      font-size: 0.875rem;
+      font-weight: normal;
+      color: var(--steel-muted);
+      margin-left: 1rem;
+    }
+
+    .card {
+      background-color: rgba(30, 41, 59, 0.6);
+      border: 1px solid var(--steel-primary);
+      border-radius: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .card-header {
+      padding: 1.5rem 1.5rem 0;
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+
+    .card-content {
+      padding: 1.5rem;
+    }
+
+    label {
+      display: block;
+      color: var(--steel-muted);
+      margin-bottom: 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      background-color: var(--steel-bg);
+      border: 1px solid var(--steel-primary);
+      color: var(--steel-text);
+      padding: 0.5rem;
+      border-radius: 0.375rem;
+      font-family: inherit;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 200px;
+    }
+
+    textarea::placeholder {
+      color: var(--steel-muted);
+      opacity: 0.5;
+    }
+
+    .grid {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .grid-cols-4 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    @media (max-width: 768px) {
+      .grid-cols-4 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .flex {
+      display: flex;
+    }
+
+    .gap-2 {
+      gap: 0.5rem;
+    }
+
+    .justify-between {
+      justify-content: space-between;
+    }
+
+    .justify-end {
+      justify-content: flex-end;
+    }
+
+    .items-center {
+      align-items: center;
+    }
+
+    .mt-2 {
+      margin-top: 0.5rem;
+    }
+
+    .mt-4 {
+      margin-top: 1rem;
+    }
+
+    .mb-2 {
+      margin-bottom: 0.5rem;
+    }
+
+    .text-xs {
+      font-size: 0.75rem;
+    }
+
+    .text-muted {
+      color: var(--steel-muted);
+    }
+
+    .text-success {
+      color: var(--steel-success);
+    }
+
+    .text-primary {
+      color: var(--steel-primary);
+    }
+
+    .text-error {
+      color: var(--steel-error);
+    }
+
+    .btn-primary, .btn-secondary, .btn-outline {
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      border: none;
+      cursor: pointer;
+      font-size: 0.875rem;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background-color: var(--steel-primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--steel-secondary);
+    }
+
+    .btn-secondary {
+      background-color: var(--steel-surface);
+      color: var(--steel-text);
+      border: 1px solid var(--steel-primary);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--steel-primary);
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      color: var(--steel-text);
+      border: 1px solid var(--steel-primary);
+    }
+
+    .btn-outline:hover {
+      background-color: var(--steel-surface);
+    }
+
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: var(--steel-surface);
+      min-width: 200px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      z-index: 1;
+      border: 1px solid var(--steel-primary);
+      border-radius: 0.375rem;
+      margin-top: 0.25rem;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+
+    .dropdown-item {
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .dropdown-item:hover {
+      background-color: var(--steel-primary);
+    }
+
+    .dropdown-label {
+      padding: 0.75rem 1rem;
+      font-weight: bold;
+      color: var(--steel-primary);
+    }
+
+    .dropdown-separator {
+      height: 1px;
+      background-color: var(--steel-primary);
+      margin: 0.25rem 0;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .stat-card {
+      background-color: var(--steel-surface);
+      padding: 1rem;
+      border-radius: 0.375rem;
+      text-align: center;
+      border: 1px solid var(--steel-primary);
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      color: var(--steel-muted);
+    }
+
+    .results-container {
+      margin-top: 1rem;
+    }
+
+    .result-item {
+      background-color: var(--steel-surface);
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 0.375rem;
+      border: 1px solid var(--steel-primary);
+    }
+
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--steel-primary);
+    }
+
+    .result-prompt {
+      font-size: 0.875rem;
+      color: var(--steel-muted);
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .result-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .result-actions button {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+    }
+
+    .result-preview-section {
+      margin: 0.75rem 0;
+      display: none;
+    }
+
+    .result-preview-section.show {
+      display: block;
+    }
+
+    .preview-toggle {
+      background-color: var(--steel-surface);
+      border: 1px solid var(--steel-primary);
+      color: var(--steel-text);
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      cursor: pointer;
+      font-size: 0.875rem;
+      margin-bottom: 0.5rem;
+      width: 100%;
+      text-align: left;
+      transition: all 0.2s;
+    }
+
+    .preview-toggle:hover {
+      background-color: var(--steel-primary);
+    }
+
+    .preview-toggle.active {
+      background-color: var(--steel-primary);
+    }
+
+    .result-preview {
+      width: 100%;
+      height: 400px;
+      border: 1px solid var(--steel-primary);
+      border-radius: 0.375rem;
+      background-color: white;
+      margin-top: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .result-preview {
+        height: 250px;
+      }
+
+      .result-actions {
+        flex-wrap: wrap;
+      }
+
+      .result-actions button {
+        flex: 1;
+        min-width: 80px;
+      }
+    }
+
+    .result-content {
+      background-color: var(--steel-bg);
+      padding: 1rem;
+      border-radius: 0.375rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .result-error {
+      color: var(--steel-error);
+    }
+
+    .result-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 0.5rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--steel-primary);
+      font-size: 0.75rem;
+      color: var(--steel-muted);
+    }
+
+    .streaming-text {
+      color: var(--steel-text);
+    }
+
+    .streaming-cursor::after {
+      content: '▊';
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background-color: var(--steel-surface);
+      border: 1px solid var(--steel-primary);
+      border-radius: 0.5rem;
+      padding: 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      display: none;
+      z-index: 1000;
+      min-width: 300px;
+    }
+
+    .toast.show {
+      display: block;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .toast-title {
+      font-weight: bold;
+      margin-bottom: 0.25rem;
+      color: var(--steel-primary);
+    }
+
+    .toast-description {
+      font-size: 0.875rem;
+      color: var(--steel-muted);
+    }
+
+    .toast.error .toast-title {
+      color: var(--steel-error);
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 52px;
+      height: 26px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--steel-surface);
+      transition: 0.3s;
+      border-radius: 26px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+
+    input:checked + .toggle-slider {
+      background-color: var(--steel-primary);
+    }
+
+    input:checked + .toggle-slider:before {
+      transform: translateX(26px);
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--steel-bg);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--steel-primary);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--steel-secondary);
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: var(--steel-surface);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--steel-primary);
+      transition: width 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <h1>
+        <span class="text-primary">⚡</span>
+        BATCH PROCESSOR
+        <span class="header-subtitle">// Mistral AI Streaming Interface via SERVER5</span>
+      </h1>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Configuration</div>
+      </div>
+      <div class="card-content">
+        <div class="grid grid-cols-4">
+          <div>
+            <label>Model</label>
+            <select id="model">
+              <option value="mistral-large-latest">mistral-large-latest</option>
+              <option value="mistral-small-latest">mistral-small-latest</option>
+              <option value="codestral-latest">codestral-latest</option>
+              <option value="open-mistral-nemo">open-mistral-nemo</option>
+            </select>
+          </div>
+          <div>
+            <label>Max Tokens</label>
+            <input type="number" id="maxTokens" value="256000" max="256000" />
+          </div>
+          <div>
+            <label>Temperature</label>
+            <input type="number" id="temperature" step="0.1" min="0" max="2" value="0.7" />
+          </div>
+          <div>
+            <label>Live Streaming</label>
+            <div style="padding-top: 0.5rem;">
+              <label class="toggle-switch">
+                <input type="checkbox" id="streamToggle" checked>
+                <span class="toggle-slider"></span>
+              </label>
+              <span class="text-xs text-muted" style="margin-left: 0.5rem;">Enhanced</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Prompts</div>
+      </div>
+      <div class="card-content">
+        <textarea id="prompts" placeholder="Write a Python function to calculate fibonacci&#10;Explain quantum computing in simple terms&#10;Generate a REST API for user management&#10;..."></textarea>
+        <div class="flex justify-between items-center mt-2">
+          <span class="text-xs text-muted">One prompt per line</span>
+          <span class="text-xs text-success">Lines: <span id="lineCount">0</span></span>
+        </div>
+        <div class="mt-4 flex gap-2">
+          <div class="dropdown">
+            <button class="btn-outline" id="samplesBtn">Load Samples</button>
+            <div class="dropdown-content" id="samplesDropdown">
+              <div class="dropdown-label">Project Categories</div>
+              <div class="dropdown-separator"></div>
+              <div class="dropdown-item" data-category="Landing Pages">Landing Pages</div>
+              <div class="dropdown-item" data-category="E-commerce">E-commerce</div>
+              <div class="dropdown-item" data-category="Dashboards">Dashboards</div>
+              <div class="dropdown-item" data-category="Portfolios">Portfolios</div>
+              <div class="dropdown-item" data-category="Blogs & Content">Blogs & Content</div>
+              <div class="dropdown-item" data-category="Interactive Apps">Interactive Apps</div>
+              <div class="dropdown-separator"></div>
+              <div class="dropdown-item" data-category="Random Mix">Random Mix</div>
+            </div>
+          </div>
+          <button class="btn-primary" id="processBtn">Process Prompts</button>
+          <button class="btn-outline" id="clearBtn">Clear Results</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="resultsCard" style="display: none;">
+      <div class="card-header">
+        <div class="card-title">Results</div>
+      </div>
+      <div class="card-content">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value text-primary" id="totalPrompts">0</div>
+            <div class="stat-label">Total</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value text-success" id="completedPrompts">0</div>
+            <div class="stat-label">Success</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value text-error" id="failedPrompts">0</div>
+            <div class="stat-label">Failed</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value text-primary" id="totalTokens">0</div>
+            <div class="stat-label">Tokens</div>
+          </div>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        </div>
+        <div class="flex gap-2 mt-4 mb-2">
+          <button class="btn-secondary" id="bulkDownloadHtml">📦 Bulk Download HTML</button>
+          <button class="btn-secondary" id="bulkDownloadText">📦 Bulk Download Text</button>
+          <button class="btn-secondary" id="singleBulkHtml">📦 Single Bulk HTML (ZIP)</button>
+        </div>
+        <div class="results-container" id="resultsContainer"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast">
+    <div class="toast-title" id="toastTitle"></div>
+    <div class="toast-description" id="toastDescription"></div>
+  </div>
+
+  <script>
+    const BACKEND_URL = 'https://theserver-open-ai.replit.app';
+
+    const HARDCODED_SYSTEM_PROMPT = "You are an elite senior full-stack developer and code generation expert with mastery in HTML5, CSS3, JavaScript, Python, React, Node.js, and modern web technologies. Your expertise includes responsive design, CSS Grid, Flexbox, media queries, REST APIs, and production-grade code architecture. Generate ONLY pure, executable, production-ready code without any comments, explanations, markdown formatting, or descriptions. Output clean code snippets only. Focus on best practices, performance optimization, and modern standards.";
+
+    const sampleProjects = {
+      "Landing Pages": [
+        "Create a complete modern landing page for a tech startup with animated hero section, features grid, testimonials, and contact form. Use CSS Grid, Flexbox, CSS animations, and modern JavaScript. Include all CSS and JS in one HTML file.",
+        "Build a SaaS product landing page with pricing tables, feature comparison, customer testimonials carousel, and sign-up forms. Include smooth scrolling and modern animations.",
+        "Design a creative agency landing page with portfolio showcase, team section, services grid, and contact form. Use CSS transforms and JavaScript interactions.",
+        "Create a restaurant landing page with menu showcase, reservation system, image gallery, and location map integration. Include mobile-responsive design."
+      ],
+      "E-commerce": [
+        "Design a complete e-commerce product page with image gallery, zoom functionality, size/color selectors, quantity controls, add to cart animation, reviews section, and mobile-responsive layout. Include all styling and interactivity in one HTML file.",
+        "Build an online store homepage with product grid, search filters, shopping cart sidebar, promotional banners, and user account dropdown.",
+        "Create a checkout page with form validation, payment options, order summary, shipping calculator, and progress indicators.",
+        "Design a product category page with advanced filtering, sorting options, pagination, and wishlist functionality."
+      ],
+      "Dashboards": [
+        "Create a modern dashboard interface with sidebar navigation, data visualization charts using Chart.js, responsive cards, search functionality, and interactive filters. Use CSS Grid for layout and modern JavaScript for functionality.",
+        "Build an analytics dashboard with real-time data displays, interactive charts, KPI cards, and customizable widgets.",
+        "Design an admin panel with user management table, statistics overview, notification center, and settings panel.",
+        "Create a project management dashboard with task boards, calendar view, team collaboration tools, and progress tracking."
+      ],
+      "Portfolios": [
+        "Build a responsive portfolio website with dark/light theme toggle, smooth scrolling navigation, project gallery with hover effects, skills section with progress bars, and contact form. Use CSS custom properties and modern ES6+ JavaScript.",
+        "Create a photographer portfolio with fullscreen image gallery, lightbox functionality, project categories, and client testimonials.",
+        "Design a developer portfolio with code showcases, GitHub integration, tech stack display, and interactive project demos.",
+        "Build a designer portfolio with case studies, design process showcase, client work gallery, and downloadable resume."
+      ],
+      "Blogs & Content": [
+        "Build a complete blog website with header navigation, hero section, article grid, sidebar, pagination, search bar, and responsive design. Include hover effects, smooth transitions, and mobile-first approach in one HTML file.",
+        "Create a news website with article categories, featured stories, author profiles, comment system, and social sharing.",
+        "Design a magazine-style layout with multiple content sections, image galleries, subscription forms, and newsletter signup.",
+        "Build a documentation site with sidebar navigation, search functionality, code highlighting, and responsive tables."
+      ],
+      "Interactive Apps": [
+        "Create a weather app with location search, 5-day forecast, interactive maps, and weather alerts. Include animations and responsive design.",
+        "Build a calculator app with scientific functions, history tracking, keyboard support, and theme options.",
+        "Design a todo list app with drag-and-drop functionality, categories, progress tracking, and local storage.",
+        "Create a quiz app with multiple choice questions, timer functionality, score tracking, and result sharing."
+      ]
+    };
+
+    const modelSelect = document.getElementById('model');
+    const maxTokensInput = document.getElementById('maxTokens');
+    const temperatureInput = document.getElementById('temperature');
+    const streamToggle = document.getElementById('streamToggle');
+    const promptsTextarea = document.getElementById('prompts');
+    const lineCountSpan = document.getElementById('lineCount');
+    const samplesBtn = document.getElementById('samplesBtn');
+    const samplesDropdown = document.getElementById('samplesDropdown');
+    const processBtn = document.getElementById('processBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const bulkDownloadHtml = document.getElementById('bulkDownloadHtml');
+    const bulkDownloadText = document.getElementById('bulkDownloadText');
+    const singleBulkHtml = document.getElementById('singleBulkHtml');
+    const resultsCard = document.getElementById('resultsCard');
+    const resultsContainer = document.getElementById('resultsContainer');
+    const totalPromptsSpan = document.getElementById('totalPrompts');
+    const completedPromptsSpan = document.getElementById('completedPrompts');
+    const failedPromptsSpan = document.getElementById('failedPrompts');
+    const totalTokensSpan = document.getElementById('totalTokens');
+    const progressFill = document.getElementById('progressFill');
+    const toast = document.getElementById('toast');
+    const toastTitle = document.getElementById('toastTitle');
+    const toastDescription = document.getElementById('toastDescription');
+
+    function updateLineCount() {
+      const lines = promptsTextarea.value.split('\n').filter(line => line.trim()).length;
+      lineCountSpan.textContent = lines;
+    }
+
+    promptsTextarea.addEventListener('input', updateLineCount);
+
+    samplesDropdown.querySelectorAll('.dropdown-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const category = item.dataset.category;
+        if (category === 'Random Mix') {
+          const allPrompts = Object.values(sampleProjects).flat();
+          const shuffled = allPrompts.sort(() => 0.5 - Math.random());
+          promptsTextarea.value = shuffled.slice(0, 8).join('\n');
+        } else if (sampleProjects[category]) {
+          promptsTextarea.value = sampleProjects[category].join('\n');
+        }
+        updateLineCount();
+      });
+    });
+
+    function showToast(title, description, isError = false) {
+      toastTitle.textContent = title;
+      toastDescription.textContent = description;
+      toast.className = isError ? 'toast show error' : 'toast show';
+      setTimeout(() => {
+        toast.className = 'toast';
+      }, 3000);
+    }
+
+    function createResultItem(prompt, index) {
+      const div = document.createElement('div');
+      div.className = 'result-item';
+      div.innerHTML = `
+        <div class="result-header">
+          <span class="result-prompt" title="${prompt}">#${index + 1}: ${prompt}</span>
+          <div class="result-actions">
+            <button class="btn-secondary preview-html" data-index="${index}">👁️ Preview</button>
+            <button class="btn-secondary download-html" data-index="${index}">HTML</button>
+            <button class="btn-secondary download-text" data-index="${index}">TXT</button>
+          </div>
+        </div>
+        <div class="result-preview-section" id="preview-section-${index}">
+          <button class="preview-toggle" data-index="${index}">
+            <span class="toggle-icon">▶</span> Show Live Preview
+          </button>
+          <iframe class="result-preview" id="preview-iframe-${index}" sandbox="allow-scripts allow-same-origin"></iframe>
+        </div>
+        <div class="result-content streaming-text">Processing...</div>
+        <div class="result-footer">
+          <span class="result-status">Processing</span>
+          <span class="result-tokens">0 tokens</span>
+        </div>
+      `;
+      resultsContainer.appendChild(div);
+      
+      const previewToggle = div.querySelector('.preview-toggle');
+      const iframe = div.querySelector('.result-preview');
+      const toggleIcon = previewToggle.querySelector('.toggle-icon');
+      
+      previewToggle.addEventListener('click', () => {
+        if (iframe.style.display === 'none') {
+          iframe.style.display = 'block';
+          toggleIcon.textContent = '▼';
+          previewToggle.innerHTML = `<span class="toggle-icon">▼</span> Hide Live Preview`;
+          previewToggle.classList.add('active');
+        } else {
+          iframe.style.display = 'none';
+          toggleIcon.textContent = '▶';
+          previewToggle.innerHTML = `<span class="toggle-icon">▶</span> Show Live Preview`;
+          previewToggle.classList.remove('active');
+        }
+      });
+      
+      iframe.style.display = 'none';
+      
+      return div;
+    }
+
+    function updateResultItem(resultDiv, content, tokens, index) {
+      const statusSpan = resultDiv.querySelector('.result-status');
+      const tokensSpan = resultDiv.querySelector('.result-tokens');
+      statusSpan.textContent = 'Completed';
+      statusSpan.style.color = 'var(--steel-success)';
+      tokensSpan.textContent = `${tokens} tokens`;
+      
+      if (isHtmlContent(content)) {
+        const previewSection = resultDiv.querySelector('.result-preview-section');
+        const iframe = resultDiv.querySelector(`#preview-iframe-${index}`);
+        previewSection.classList.add('show');
+        iframe.srcdoc = content;
+      }
+    }
+
+    function downloadResult(result, index, asText = false) {
+      const filename = result.prompt.substring(0, 50).replace(/[^a-z0-9]/gi, '_').toLowerCase();
+      const content = result.response;
+      const mimeType = asText ? 'text/plain' : 'text/html';
+      const extension = asText ? 'txt' : 'html';
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${filename}_${index + 1}.${extension}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function isHtmlContent(content) {
+      return content.includes('<html') || content.includes('<!DOCTYPE html') || 
+             (content.includes('<head>') && content.includes('<body>'));
+    }
+
+    function previewHtml(result) {
+      const blob = new Blob([result.response], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const previewWindow = window.open(url, '_blank');
+      if (!previewWindow) {
+        showToast('Blocked', 'Preview blocked by popup blocker. Please allow popups.', true);
+      } else {
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }
+    }
+
+    async function processPromptsStreaming(prompts, config) {
+      const results = [];
+      let totalTokensUsed = 0;
+      
+      for (let i = 0; i < prompts.length; i++) {
+        const prompt = prompts[i];
+        const resultDiv = createResultItem(prompt, i);
+        const streamingDiv = resultDiv.querySelector('.streaming-text');
+        
+        try {
+          const messages = [
+            { role: "system", content: HARDCODED_SYSTEM_PROMPT },
+            { role: "user", content: prompt }
+          ];
+
+          const response = await fetch(`${BACKEND_URL}/mistral/chat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              model: config.model,
+              messages: messages,
+              max_tokens: config.maxTokens,
+              temperature: config.temperature,
+              top_p: 1,
+              presence_penalty: 0,
+              frequency_penalty: 0,
+              stream: true
+            })
+          });
+
+          if (!response.ok) {
+            throw new Error(`API request failed: ${response.status}`);
+          }
+
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder();
+          let fullResponse = '';
+          let tokenCount = 0;
+
+          streamingDiv.classList.add('streaming-cursor');
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            const chunk = decoder.decode(value);
+            const lines = chunk.split('\n');
+
+            for (const line of lines) {
+              if (line.startsWith('data: ')) {
+                const data = line.slice(6);
+                if (data === '[DONE]') continue;
+
+                try {
+                  const parsed = JSON.parse(data);
+                  if (parsed.choices && parsed.choices[0].delta?.content) {
+                    fullResponse += parsed.choices[0].delta.content;
+                    streamingDiv.textContent = fullResponse;
+                    tokenCount++;
+                  }
+                } catch (e) {
+                  console.error('Parse error:', e);
+                }
+              }
+            }
+          }
+
+          streamingDiv.classList.remove('streaming-cursor');
+          
+          const resultObj = {
+            prompt,
+            response: fullResponse,
+            tokens: tokenCount,
+            index: i
+          };
+          results.push(resultObj);
+          allResults.push(resultObj);
+
+          totalTokensUsed += tokenCount;
+          updateResultItem(resultDiv, fullResponse, tokenCount, i);
+          
+        } catch (error) {
+          streamingDiv.textContent = `Error: ${error.message}`;
+          streamingDiv.className = 'result-error';
+          const statusSpan = resultDiv.querySelector('.result-status');
+          statusSpan.textContent = 'Failed';
+          statusSpan.style.color = 'var(--steel-error)';
+          
+          results.push({ prompt, error: error.message, index: i });
+          allResults.push({ prompt, error: error.message, index: i });
+        }
+
+        completedPromptsSpan.textContent = i + 1;
+        const failedCount = results.filter(r => r.error).length;
+        failedPromptsSpan.textContent = failedCount;
+        totalTokensSpan.textContent = totalTokensUsed.toLocaleString();
+        progressFill.style.width = `${((i + 1) / prompts.length) * 100}%`;
+      }
+
+      return results;
+    }
+
+    async function processPromptsNonStreaming(prompts, config) {
+      const results = [];
+      let totalTokensUsed = 0;
+      
+      for (let i = 0; i < prompts.length; i++) {
+        const prompt = prompts[i];
+        const resultDiv = createResultItem(prompt, i);
+        const responseDiv = resultDiv.querySelector('.streaming-text');
+
+        try {
+          const messages = [
+            { role: "system", content: HARDCODED_SYSTEM_PROMPT },
+            { role: "user", content: prompt }
+          ];
+
+          const response = await fetch(`${BACKEND_URL}/mistral/chat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              model: config.model,
+              messages: messages,
+              max_tokens: config.maxTokens,
+              temperature: config.temperature,
+              top_p: 1,
+              presence_penalty: 0,
+              frequency_penalty: 0,
+              stream: false
+            })
+          });
+
+          if (!response.ok) {
+            throw new Error(`API request failed: ${response.status}`);
+          }
+
+          const data = await response.json();
+          const responseText = data.choices[0].message.content;
+          const tokens = data.usage?.total_tokens || 0;
+
+          responseDiv.textContent = responseText;
+          
+          const resultObj = {
+            prompt,
+            response: responseText,
+            tokens,
+            index: i
+          };
+          results.push(resultObj);
+          allResults.push(resultObj);
+
+          totalTokensUsed += tokens;
+          updateResultItem(resultDiv, responseText, tokens, i);
+
+        } catch (error) {
+          responseDiv.textContent = `Error: ${error.message}`;
+          responseDiv.className = 'result-error';
+          const statusSpan = resultDiv.querySelector('.result-status');
+          statusSpan.textContent = 'Failed';
+          statusSpan.style.color = 'var(--steel-error)';
+          
+          results.push({ prompt, error: error.message, index: i });
+          allResults.push({ prompt, error: error.message, index: i });
+        }
+
+        completedPromptsSpan.textContent = i + 1;
+        const failedCount = results.filter(r => r.error).length;
+        failedPromptsSpan.textContent = failedCount;
+        totalTokensSpan.textContent = totalTokensUsed.toLocaleString();
+        progressFill.style.width = `${((i + 1) / prompts.length) * 100}%`;
+      }
+
+      return results;
+    }
+
+    async function processPrompts() {
+      const promptsText = promptsTextarea.value.trim();
+      if (!promptsText) {
+        showToast('No Prompts', 'Please enter at least one prompt.', true);
+        return;
+      }
+
+      const prompts = promptsText.split('\n').filter(p => p.trim());
+      if (prompts.length === 0) {
+        showToast('No Prompts', 'Please enter at least one prompt.', true);
+        return;
+      }
+
+      const config = {
+        model: modelSelect.value,
+        maxTokens: parseInt(maxTokensInput.value),
+        temperature: parseFloat(temperatureInput.value)
+      };
+
+      processBtn.disabled = true;
+      processBtn.textContent = 'Processing...';
+      resultsCard.style.display = 'block';
+      resultsContainer.innerHTML = '';
+      
+      totalPromptsSpan.textContent = prompts.length;
+      completedPromptsSpan.textContent = 0;
+      failedPromptsSpan.textContent = 0;
+      totalTokensSpan.textContent = 0;
+      progressFill.style.width = '0%';
+
+      try {
+        const results = streamToggle.checked 
+          ? await processPromptsStreaming(prompts, config)
+          : await processPromptsNonStreaming(prompts, config);
+
+        const successCount = results.filter(r => !r.error).length;
+        showToast('Processing Complete', `${successCount}/${prompts.length} prompts completed successfully.`);
+
+        resultsContainer.addEventListener('click', (e) => {
+          if (e.target.classList.contains('preview-html')) {
+            const index = parseInt(e.target.dataset.index);
+            previewHtml(results[index]);
+          } else if (e.target.classList.contains('download-html')) {
+            const index = parseInt(e.target.dataset.index);
+            downloadResult(results[index], index, false);
+          } else if (e.target.classList.contains('download-text')) {
+            const index = parseInt(e.target.dataset.index);
+            downloadResult(results[index], index, true);
+          }
+        });
+
+      } catch (error) {
+        showToast('Error', `Processing failed: ${error.message}`, true);
+      } finally {
+        processBtn.disabled = false;
+        processBtn.textContent = 'Process Prompts';
+      }
+    }
+
+    function clearResults() {
+      resultsCard.style.display = 'none';
+      resultsContainer.innerHTML = '';
+      totalPromptsSpan.textContent = 0;
+      completedPromptsSpan.textContent = 0;
+      failedPromptsSpan.textContent = 0;
+      totalTokensSpan.textContent = 0;
+      progressFill.style.width = '0%';
+      allResults = [];
+      showToast('Cleared', 'All results have been cleared.');
+    }
+
+    function bulkDownloadHtmlFiles() {
+      if (allResults.length === 0) {
+        showToast('No Results', 'No results to download.', true);
+        return;
+      }
+
+      const successResults = allResults.filter(r => !r.error);
+      if (successResults.length === 0) {
+        showToast('No Success', 'No successful results to download.', true);
+        return;
+      }
+
+      const combinedHtml = successResults.map((result, index) => {
+        return `<!-- Result ${index + 1}: ${result.prompt} -->\n${result.response}\n\n`;
+      }).join('\n<!-- ==================== -->\n\n');
+
+      const blob = new Blob([combinedHtml], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `batch_results_${Date.now()}.html`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      showToast('Downloaded', `Downloaded ${successResults.length} results as HTML.`);
+    }
+
+    function bulkDownloadTextFiles() {
+      if (allResults.length === 0) {
+        showToast('No Results', 'No results to download.', true);
+        return;
+      }
+
+      const successResults = allResults.filter(r => !r.error);
+      if (successResults.length === 0) {
+        showToast('No Success', 'No successful results to download.', true);
+        return;
+      }
+
+      const combinedText = successResults.map((result, index) => {
+        return `=== Result ${index + 1} ===\nPrompt: ${result.prompt}\nTokens: ${result.tokens}\n\n${result.response}\n`;
+      }).join('\n====================\n\n');
+
+      const blob = new Blob([combinedText], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `batch_results_${Date.now()}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      showToast('Downloaded', `Downloaded ${successResults.length} results as Text.`);
+    }
+
+    async function singleBulkHtmlDownload() {
+      if (allResults.length === 0) {
+        showToast('No Results', 'No results to download.', true);
+        return;
+      }
+
+      const successResults = allResults.filter(r => !r.error);
+      if (successResults.length === 0) {
+        showToast('No Success', 'No successful results to download.', true);
+        return;
+      }
+
+      const zip = new JSZip();
+      
+      successResults.forEach((result, index) => {
+        const filename = result.prompt.substring(0, 50).replace(/[^a-z0-9]/gi, '_').toLowerCase();
+        const content = result.response;
+        zip.file(`${index + 1}_${filename}.html`, content);
+      });
+
+      try {
+        const blob = await zip.generateAsync({ type: 'blob' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `batch_results_${Date.now()}.zip`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        showToast('Downloaded', `Downloaded ${successResults.length} HTML files as ZIP.`);
+      } catch (error) {
+        showToast('Error', 'Failed to create ZIP file.', true);
+      }
+    }
+
+    let allResults = [];
+
+    processBtn.addEventListener('click', processPrompts);
+    clearBtn.addEventListener('click', clearResults);
+    bulkDownloadHtml.addEventListener('click', bulkDownloadHtmlFiles);
+    bulkDownloadText.addEventListener('click', bulkDownloadTextFiles);
+    singleBulkHtml.addEventListener('click', singleBulkHtmlDownload);
+    updateLineCount();
+  </script>
+</body>
+</html>

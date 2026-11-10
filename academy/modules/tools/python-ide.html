@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python IDE - Modern Development Environment</title>
+    <meta name="description" content="Professional Python IDE with Monaco Editor, integrated terminal, and file management system">
+    
+    <!-- Monaco Editor -->
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs/loader.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --vscode-bg: hsl(0, 0%, 11.8%);
+            --vscode-panel: hsl(0, 0%, 14.5%);
+            --vscode-sidebar: hsl(240, 3.7%, 18.4%);
+            --vscode-border: hsl(240, 3.7%, 24.3%);
+            --vscode-text: hsl(0, 0%, 80%);
+            --vscode-text-dim: hsl(0, 0%, 58.8%);
+            --vscode-accent: hsl(207, 90%, 54%);
+            --vscode-tab: hsl(240, 3.7%, 18.4%);
+            --vscode-tab-active: hsl(0, 0%, 11.8%);
+            --vscode-success: hsl(122, 39%, 49%);
+            --vscode-error: hsl(4, 90%, 58%);
+            --vscode-warning: hsl(35, 100%, 50%);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--vscode-bg);
+            color: var(--vscode-text);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .ide-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* Title Bar */
+        .title-bar {
+            background-color: var(--vscode-panel);
+            border-bottom: 1px solid var(--vscode-border);
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            user-select: none;
+        }
+
+        .title-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--vscode-success);
+        }
+
+        /* Menu Bar */
+        .menu-bar {
+            background-color: var(--vscode-panel);
+            border-bottom: 1px solid var(--vscode-border);
+            height: 32px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            gap: 16px;
+            overflow-x: auto;
+        }
+
+        .menu-btn {
+            background: transparent;
+            border: none;
+            color: var(--vscode-text);
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+        }
+
+        .menu-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .quick-action-btn {
+            background: linear-gradient(135deg, var(--vscode-accent), hsl(207, 70%, 45%));
+            border: 1px solid var(--vscode-border);
+        }
+
+        .quick-action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(64, 149, 255, 0.3);
+        }
+
+        /* Main Content */
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 256px;
+            background-color: var(--vscode-sidebar);
+            border-right: 1px solid var(--vscode-border);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--vscode-border);
+        }
+
+        .sidebar-tab {
+            flex: 1;
+            padding: 12px;
+            background: transparent;
+            border: none;
+            color: var(--vscode-text-dim);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-tab.active {
+            background-color: rgba(64, 149, 255, 0.2);
+            color: var(--vscode-accent);
+        }
+
+        .file-explorer {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 8px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .file-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .file-item.active {
+            background-color: rgba(64, 149, 255, 0.2);
+        }
+
+        /* Editor Area */
+        .editor-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tab-bar {
+            background-color: var(--vscode-tab);
+            border-bottom: 1px solid var(--vscode-border);
+            display: flex;
+            overflow-x: auto;
+        }
+
+        .editor-tab {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-right: 1px solid var(--vscode-border);
+            background-color: var(--vscode-tab);
+            cursor: pointer;
+            min-width: 120px;
+        }
+
+        .editor-tab.active {
+            background-color: var(--vscode-tab-active);
+        }
+
+        .editor-tab:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .tab-close {
+            margin-left: auto;
+            cursor: pointer;
+            opacity: 0;
+        }
+
+        .editor-tab:hover .tab-close {
+            opacity: 1;
+        }
+
+        #monaco-editor {
+            flex: 1;
+            height: 100%;
+        }
+
+        /* Bottom Panel */
+        .bottom-panel {
+            height: 300px;
+            border-top: 1px solid var(--vscode-border);
+            display: flex;
+        }
+
+        .output-panel, .terminal-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--vscode-panel);
+        }
+
+        .panel-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--vscode-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-title {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--vscode-text);
+        }
+
+        .panel-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .panel-btn {
+            background: transparent;
+            border: none;
+            color: var(--vscode-text-dim);
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .panel-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--vscode-text);
+        }
+
+        .output-content, .terminal-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .output-line {
+            padding: 8px;
+            margin: 4px 0;
+            border-radius: 4px;
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
+        .output-line.error {
+            background-color: rgba(239, 68, 68, 0.2);
+            border-left: 4px solid var(--vscode-error);
+            color: var(--vscode-error);
+        }
+
+        .output-line.success {
+            background-color: rgba(34, 197, 94, 0.2);
+            border-left: 4px solid var(--vscode-success);
+            color: var(--vscode-success);
+        }
+
+        .output-line.command {
+            background-color: rgba(59, 130, 246, 0.2);
+            border-left: 4px solid var(--vscode-accent);
+            color: var(--vscode-accent);
+        }
+
+        .terminal-input-area {
+            border-top: 1px solid var(--vscode-border);
+            padding: 12px 16px;
+            background-color: var(--vscode-panel);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .terminal-prompt {
+            color: var(--vscode-accent);
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-weight: bold;
+        }
+
+        .terminal-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--vscode-text);
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 13px;
+            outline: none;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            background-color: var(--vscode-accent);
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            font-size: 11px;
+            color: white;
+        }
+
+        .status-left, .status-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--vscode-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: hsl(0, 0%, 26%);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: hsl(0, 0%, 38%);
+        }
+
+        /* Help Panel */
+        .help-panel {
+            background-color: var(--vscode-panel);
+            border-bottom: 1px solid var(--vscode-border);
+            padding: 16px;
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .help-panel.active {
+            display: block;
+        }
+
+        .help-section {
+            margin-bottom: 16px;
+        }
+
+        .help-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--vscode-accent);
+            margin-bottom: 8px;
+        }
+
+        .help-content {
+            color: var(--vscode-text-dim);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .code-example {
+            background-color: var(--vscode-bg);
+            padding: 8px;
+            border-radius: 4px;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            margin: 8px 0;
+        }
+
+        .icon {
+            width: 16px;
+            height: 16px;
+        }
+
+        .placeholder-notice {
+            background-color: rgba(255, 165, 0, 0.2);
+            border-left: 4px solid var(--vscode-warning);
+            padding: 8px 12px;
+            margin: 8px 0;
+            border-radius: 4px;
+            font-size: 12px;
+            color: var(--vscode-warning);
+        }
+    </style>
+</head>
+<body>
+    <div class="ide-container">
+        <!-- Title Bar -->
+        <div class="title-bar">
+            <div class="title-left">
+                <i data-lucide="file" class="icon"></i>
+                <span style="font-size: 13px; font-weight: 500;">Python IDE</span>
+                <div class="status-dot"></div>
+                <span style="font-size: 11px; color: var(--vscode-text-dim);">Connected (Mock)</span>
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <i data-lucide="minus" class="icon" style="cursor: pointer;"></i>
+                <i data-lucide="maximize-2" class="icon" style="cursor: pointer;"></i>
+                <i data-lucide="x" class="icon" style="cursor: pointer;"></i>
+            </div>
+        </div>
+
+        <!-- Menu Bar -->
+        <div class="menu-bar">
+            <button class="menu-btn" onclick="connectFolder()">
+                <i data-lucide="folder-open" style="width: 14px; height: 14px;"></i>
+                Ordner verbinden
+            </button>
+            <button class="menu-btn quick-action-btn" onclick="quickTest()">
+                <i data-lucide="zap" style="width: 14px; height: 14px;"></i>
+                Schnelltest
+            </button>
+            <button class="menu-btn" onclick="runCode()">
+                <i data-lucide="play" style="width: 14px; height: 14px;"></i>
+                Ausführen
+            </button>
+            <button class="menu-btn" onclick="toggleHelp()">
+                <i data-lucide="help-circle" style="width: 14px; height: 14px;"></i>
+                Hilfe
+            </button>
+            <button class="menu-btn" onclick="startServer('flask')">
+                🌶️ Flask
+            </button>
+            <button class="menu-btn" onclick="startServer('fastapi')">
+                ⚡ FastAPI
+            </button>
+            <button class="menu-btn" onclick="startServer('http')">
+                🌐 HTTP Server
+            </button>
+        </div>
+
+        <!-- Help Panel -->
+        <div class="help-panel" id="helpPanel">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
+                <h3 class="help-title" style="font-size: 16px;">Python IDE Hilfe</h3>
+                <button class="menu-btn" onclick="toggleHelp()">
+                    <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+                </button>
+            </div>
+            
+            <div class="placeholder-notice">
+                ⚠️ <strong>HINWEIS:</strong> Dies ist eine standalone Demo-Version. API-Calls sind hardcodiert mit Placeholder API Key: <code>sk-placeholder-api-key-12345</code>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+                <div class="help-section">
+                    <h4 class="help-title">📝 Python Shell Regeln:</h4>
+                    <ul class="help-content" style="list-style: none; padding-left: 0;">
+                        <li>• Ein Befehl pro Zeile eingeben</li>
+                        <li>• Nach jedem Befehl Enter drücken</li>
+                        <li>• Keine mehrzeiligen Code-Blöcke</li>
+                        <li>• Verwende Semikolons für mehrere Statements</li>
+                    </ul>
+                    
+                    <h4 class="help-title" style="margin-top: 16px;">✅ Richtige Beispiele:</h4>
+                    <div class="code-example">
+                        <div style="color: var(--vscode-success);">print("Hallo Welt!")</div>
+                        <div style="color: var(--vscode-success);">x = 5; print(x * 2)</div>
+                        <div style="color: var(--vscode-success);">import math; print(math.pi)</div>
+                    </div>
+                </div>
+                
+                <div class="help-section">
+                    <h4 class="help-title">❌ Häufige Fehler:</h4>
+                    <div class="code-example">
+                        <div style="color: var(--vscode-error);">def test(): print("hi")</div>
+                        <div style="color: var(--vscode-text-dim);">↳ Mehrzeilige Funktionen nicht möglich</div>
+                        <div style="color: var(--vscode-error); margin-top: 8px;">cmd1() cmd2()</div>
+                        <div style="color: var(--vscode-text-dim);">↳ Verwende Semikolon: cmd1(); cmd2()</div>
+                    </div>
+                    
+                    <h4 class="help-title" style="margin-top: 16px;">🔧 Praktische Tipps:</h4>
+                    <ul class="help-content" style="list-style: none; padding-left: 0;">
+                        <li>• Für komplexen Code: Editor verwenden</li>
+                        <li>• Lambda für einfache Funktionen</li>
+                        <li>• List Comprehensions nutzen</li>
+                        <li>• F5 zum Code ausführen</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="sidebar-tabs">
+                    <button class="sidebar-tab active">
+                        <i data-lucide="file" style="width: 20px; height: 20px;"></i>
+                    </button>
+                    <button class="sidebar-tab">
+                        <i data-lucide="search" style="width: 20px; height: 20px;"></i>
+                    </button>
+                    <button class="sidebar-tab">
+                        <i data-lucide="git-branch" style="width: 20px; height: 20px;"></i>
+                    </button>
+                    <button class="sidebar-tab">
+                        <i data-lucide="settings" style="width: 20px; height: 20px;"></i>
+                    </button>
+                </div>
+                
+                <div style="padding: 12px 16px; border-bottom: 1px solid var(--vscode-border);">
+                    <h3 style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--vscode-text-dim);">Explorer</h3>
+                </div>
+                
+                <div class="file-explorer" id="fileExplorer">
+                    <div class="file-item active" onclick="openFile('main.py')">
+                        <i data-lucide="file-text" style="width: 16px; height: 16px; color: #DCDCAA;"></i>
+                        <span>main.py</span>
+                    </div>
+                    <div class="file-item" onclick="openFile('test.py')">
+                        <i data-lucide="file-text" style="width: 16px; height: 16px; color: #DCDCAA;"></i>
+                        <span>test.py</span>
+                    </div>
+                    <div class="file-item" onclick="openFile('utils.py')">
+                        <i data-lucide="file-text" style="width: 16px; height: 16px; color: #DCDCAA;"></i>
+                        <span>utils.py</span>
+                    </div>
+                    <div class="file-item" onclick="openFile('config.py')">
+                        <i data-lucide="file-text" style="width: 16px; height: 16px; color: #DCDCAA;"></i>
+                        <span>config.py</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Editor Area -->
+            <div class="editor-area">
+                <div class="tab-bar">
+                    <div class="editor-tab active">
+                        <i data-lucide="file-text" style="width: 14px; height: 14px; color: #DCDCAA;"></i>
+                        <span style="font-size: 13px;">main.py</span>
+                        <i data-lucide="x" class="tab-close" style="width: 14px; height: 14px;"></i>
+                    </div>
+                </div>
+                <div id="monaco-editor"></div>
+            </div>
+        </div>
+
+        <!-- Bottom Panel -->
+        <div class="bottom-panel">
+            <!-- Output Panel -->
+            <div class="output-panel">
+                <div class="panel-header">
+                    <h3 class="panel-title">📄 Output Panel</h3>
+                    <div class="panel-actions">
+                        <button class="panel-btn" onclick="clearOutput()">
+                            <i data-lucide="trash-2" style="width: 12px; height: 12px;"></i>
+                            Clear
+                        </button>
+                        <button class="panel-btn" onclick="runCode()">
+                            <i data-lucide="play" style="width: 12px; height: 12px;"></i>
+                            Run
+                        </button>
+                    </div>
+                </div>
+                <div class="output-content" id="outputContent">
+                    <div class="placeholder-notice">
+                        🎯 Ready to run Python code (Mock Mode - API Key: sk-placeholder-api-key-12345)
+                        <div style="margin-top: 8px;">Output will appear here after execution</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Terminal Panel -->
+            <div class="terminal-panel">
+                <div class="panel-header">
+                    <h3 class="panel-title">💻 Python Shell</h3>
+                    <div class="panel-actions">
+                        <button class="panel-btn" onclick="clearTerminal()">
+                            <i data-lucide="trash-2" style="width: 12px; height: 12px;"></i>
+                            Clear
+                        </button>
+                    </div>
+                </div>
+                <div class="terminal-content" id="terminalContent">
+                    <div class="output-line">Python IDE Terminal (Mock Mode)</div>
+                    <div class="output-line">Type Python commands to interact</div>
+                    <div class="placeholder-notice">API Endpoint: https://api.placeholder.com/python (Key: sk-placeholder-api-key-12345)</div>
+                </div>
+                <div class="terminal-input-area">
+                    <span class="terminal-prompt">>>> </span>
+                    <input type="text" class="terminal-input" id="terminalInput" placeholder="Enter Python code..." onkeypress="handleTerminalInput(event)">
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-left">
+                <div style="display: flex; align-items: center; gap: 4px;">
+                    <i data-lucide="git-branch" style="width: 12px; height: 12px;"></i>
+                    <span>main</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 4px;">
+                    <i data-lucide="alert-triangle" style="width: 12px; height: 12px;"></i>
+                    <span>0</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 4px;">
+                    <i data-lucide="wifi" style="width: 12px; height: 12px;"></i>
+                    <span>Connected (Mock)</span>
+                </div>
+            </div>
+            <div class="status-right">
+                <span>Ln <span id="cursorLine">1</span>, Col <span id="cursorCol">1</span></span>
+                <span>Spaces: 4</span>
+                <span>UTF-8</span>
+                <span>Python 3.11.0</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // File System Mock Data
+        const files = {
+            'main.py': `# Python IDE - Modern Development Environment
+# API Configuration: https://api.placeholder.com/python
+# API Key: sk-placeholder-api-key-12345
+
+import os
+import sys
+from datetime import datetime
+
+class PythonIDE:
+    def __init__(self):
+        self.version = "1.0.0"
+        self.author = "Modern Development Team"
+        self.api_key = "sk-placeholder-api-key-12345"
+        self.api_endpoint = "https://api.placeholder.com/python"
+        
+    def welcome_message(self):
+        # Display welcome message with current time
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        message = f"Welcome to Python IDE v{self.version}"
+        print(message)
+        print(f"Session started at: {current_time}")
+        print(f"API Endpoint: {self.api_endpoint}")
+        
+    def execute_code(self, code):
+        # Execute Python code safely (Mock)
+        try:
+            result = eval(code)
+            return result
+        except Exception as e:
+            return f"Error: {str(e)}"
+    
+    def api_call(self, endpoint, data):
+        # Mock API call with placeholder key
+        print(f"API Call to {endpoint}")
+        print(f"Using API Key: {self.api_key}")
+        return {"status": "success", "data": data}
+
+# Initialize the IDE
+if __name__ == "__main__":
+    ide = PythonIDE()
+    ide.welcome_message()
+    
+    # Example API call
+    result = ide.api_call("/execute", {"code": "print('Hello World')"})
+    print(f"API Response: {result}")`,
+            
+            'test.py': `# Test Suite
+# Mock API Testing with Placeholder Key
+
+import unittest
+
+class TestPythonIDE(unittest.TestCase):
+    def setUp(self):
+        self.api_key = "sk-placeholder-api-key-12345"
+        self.api_endpoint = "https://api.placeholder.com/python"
+    
+    def test_api_connection(self):
+        # Mock API connection test
+        print(f"Testing API: {self.api_endpoint}")
+        print(f"Using Key: {self.api_key}")
+        self.assertTrue(True)
+    
+    def test_code_execution(self):
+        # Test code execution
+        result = 2 + 2
+        self.assertEqual(result, 4)
+        print("✅ Code execution test passed")
+    
+    def test_error_handling(self):
+        # Test error handling
+        try:
+            result = 1 / 0
+        except ZeroDivisionError:
+            print("✅ Error handling test passed")
+            self.assertTrue(True)
+
+if __name__ == '__main__':
+    print("Running tests with Mock API...")
+    unittest.main()`,
+            
+            'utils.py': `# Utility Functions
+# Helper functions for API interaction
+
+def mock_api_call(endpoint, api_key="sk-placeholder-api-key-12345"):
+    """
+    Mock API call function
+    
+    Args:
+        endpoint: API endpoint URL
+        api_key: API authentication key (default: placeholder)
+    
+    Returns:
+        dict: Mock API response
+    """
+    print(f"Mock API Call:")
+    print(f"  Endpoint: {endpoint}")
+    print(f"  API Key: {api_key}")
+    
+    return {
+        "status": "success",
+        "message": "This is a mock API response",
+        "data": {
+            "endpoint": endpoint,
+            "authenticated": True
+        }
+    }
+
+def format_output(data):
+    """Format output for display"""
+    if isinstance(data, dict):
+        return "\\n".join([f"{k}: {v}" for k, v in data.items()])
+    return str(data)
+
+def validate_api_key(key):
+    """Validate API key format (Mock)"""
+    return key.startswith("sk-") and len(key) > 10
+
+# Example usage
+if __name__ == "__main__":
+    response = mock_api_call("https://api.placeholder.com/python")
+    print(format_output(response))`,
+            
+            'config.py': `# Configuration File
+# API and Application Settings
+
+# API Configuration
+API_CONFIG = {
+    "endpoint": "https://api.placeholder.com/python",
+    "key": "sk-placeholder-api-key-12345",
+    "timeout": 30,
+    "retry_attempts": 3
+}
+
+# Application Settings
+APP_CONFIG = {
+    "version": "1.0.0",
+    "debug": True,
+    "log_level": "INFO"
+}
+
+# Mock Server Configuration
+SERVER_CONFIG = {
+    "flask": {
+        "host": "0.0.0.0",
+        "port": 5001,
+        "api_key": API_CONFIG["key"]
+    },
+    "fastapi": {
+        "host": "0.0.0.0",
+        "port": 8000,
+        "api_key": API_CONFIG["key"]
+    }
+}
+
+def get_api_headers():
+    """Get API headers with authentication"""
+    return {
+        "Authorization": f"Bearer {API_CONFIG['key']}",
+        "Content-Type": "application/json"
+    }
+
+print(f"Configuration loaded. API Key: {API_CONFIG['key']}")`
+        };
+
+        let editor;
+        let currentFile = 'main.py';
+
+        // Initialize Monaco Editor
+        require.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs' } });
+        
+        require(['vs/editor/editor.main'], function () {
+            // Define custom theme
+            monaco.editor.defineTheme('vscode-dark-custom', {
+                base: 'vs-dark',
+                inherit: true,
+                rules: [
+                    { token: 'comment', foreground: '6a9955' },
+                    { token: 'keyword', foreground: '569cd6' },
+                    { token: 'string', foreground: 'ce9178' },
+                    { token: 'number', foreground: 'b5cea8' },
+                    { token: 'function', foreground: 'dcdcaa' },
+                ],
+                colors: {
+                    'editor.background': '#1e1e1e',
+                    'editor.lineHighlightBackground': '#2a2a2a',
+                    'editorLineNumber.foreground': '#858585',
+                    'editor.selectionBackground': '#264f78',
+                }
+            });
+
+            editor = monaco.editor.create(document.getElementById('monaco-editor'), {
+                value: files[currentFile],
+                language: 'python',
+                theme: 'vscode-dark-custom',
+                fontSize: 13,
+                fontFamily: "'Fira Code', 'Monaco', 'Consolas', monospace",
+                lineNumbers: 'on',
+                roundedSelection: false,
+                scrollBeyondLastLine: false,
+                automaticLayout: true,
+                minimap: { enabled: false },
+                folding: true,
+            });
+
+            // Update cursor position
+            editor.onDidChangeCursorPosition((e) => {
+                document.getElementById('cursorLine').textContent = e.position.lineNumber;
+                document.getElementById('cursorCol').textContent = e.position.column;
+            });
+
+            // Save on Ctrl+S
+            editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, function() {
+                saveFile();
+            });
+
+            // Run on F5
+            editor.addCommand(monaco.KeyCode.F5, function() {
+                runCode();
+            });
+        });
+
+        // File Operations
+        function openFile(filename) {
+            currentFile = filename;
+            if (files[filename]) {
+                editor.setValue(files[filename]);
+                
+                // Update UI
+                document.querySelectorAll('.file-item').forEach(item => {
+                    item.classList.remove('active');
+                    if (item.textContent.trim() === filename) {
+                        item.classList.add('active');
+                    }
+                });
+            }
+        }
+
+        function saveFile() {
+            files[currentFile] = editor.getValue();
+            addOutput(`✅ Saved: ${currentFile}`, 'success');
+        }
+
+        // Code Execution (Mock)
+        function runCode() {
+            const code = editor.getValue();
+            clearOutput();
+            
+            addOutput(`>>> Running ${currentFile}...`, 'command');
+            addOutput(`>>> API Endpoint: https://api.placeholder.com/python`, 'command');
+            addOutput(`>>> API Key: sk-placeholder-api-key-12345`, 'command');
+            
+            // Simulate execution
+            setTimeout(() => {
+                if (code.includes('print')) {
+                    const matches = code.match(/print\((.*?)\)/g);
+                    if (matches) {
+                        matches.forEach(match => {
+                            const content = match.match(/print\((.*?)\)/)[1];
+                            addOutput(content.replace(/['"]/g, ''), 'success');
+                        });
+                    }
+                }
+                
+                if (code.includes('api_call')) {
+                    addOutput('API Response: {"status": "success", "data": {...}}', 'success');
+                }
+                
+                if (code.includes('test') || code.includes('unittest')) {
+                    addOutput('Running tests with Mock API...', 'command');
+                    addOutput('✅ test_api_connection passed', 'success');
+                    addOutput('✅ test_code_execution passed', 'success');
+                    addOutput('✅ test_error_handling passed', 'success');
+                }
+                
+                addOutput('>>> Execution completed successfully', 'success');
+            }, 500);
+        }
+
+        // Quick Test
+        function quickTest() {
+            const tests = [
+                'test.py - Umfangreiche Tests',
+                'simple_test.py - Einfache Tests',
+                'test_verbose.py - Unit Tests mit Details'
+            ];
+            
+            const choice = prompt(`Welchen Test ausführen?\n\n1. ${tests[0]}\n2. ${tests[1]}\n3. ${tests[2]}\n\nGib 1, 2 oder 3 ein:`);
+            
+            clearOutput();
+            addOutput('>>> Quick Test Mode (Mock API)', 'command');
+            addOutput('>>> API Key: sk-placeholder-api-key-12345', 'command');
+            
+            setTimeout(() => {
+                addOutput('Running tests...', 'command');
+                addOutput('✅ Test 1: API Connection - PASSED', 'success');
+                addOutput('✅ Test 2: Code Execution - PASSED', 'success');
+                addOutput('✅ Test 3: Error Handling - PASSED', 'success');
+                addOutput('All tests passed successfully!', 'success');
+            }, 500);
+        }
+
+        // Server Operations (Mock)
+        function startServer(type) {
+            const servers = {
+                flask: { emoji: '🌶️', port: 5001 },
+                fastapi: { emoji: '⚡', port: 8000 },
+                http: { emoji: '🌐', port: 8080 }
+            };
+            
+            const server = servers[type];
+            addTerminalOutput(`${server.emoji} Starting ${type.toUpperCase()} server on port ${server.port}...`, 'command');
+            addTerminalOutput(`Using API Key: sk-placeholder-api-key-12345`, 'command');
+            
+            setTimeout(() => {
+                addTerminalOutput(`✅ Server running at http://localhost:${server.port}`, 'success');
+                addTerminalOutput(`Mock API endpoint configured`, 'success');
+            }, 500);
+        }
+
+        function connectFolder() {
+            const path = prompt('Pfad zum lokalen Ordner eingeben:');
+            if (path) {
+                addTerminalOutput(`📁 Connecting to folder: ${path}`, 'command');
+                addTerminalOutput(`Using API credentials: sk-placeholder-api-key-12345`, 'command');
+                setTimeout(() => {
+                    addTerminalOutput(`✅ Connected successfully (Mock)`, 'success');
+                }, 500);
+            }
+        }
+
+        // Terminal Operations
+        function handleTerminalInput(event) {
+            if (event.key === 'Enter') {
+                const input = document.getElementById('terminalInput');
+                const command = input.value.trim();
+                
+                if (command) {
+                    addTerminalOutput(`>>> ${command}`, 'command');
+                    
+                    // Mock command execution
+                    setTimeout(() => {
+                        if (command.includes('print')) {
+                            const content = command.match(/print\((.*?)\)/)?.[1]?.replace(/['"]/g, '') || command;
+                            addTerminalOutput(content, 'success');
+                        } else if (command.includes('import')) {
+                            addTerminalOutput(`✅ Module imported (Mock API: sk-placeholder-api-key-12345)`, 'success');
+                        } else if (command.match(/^\d+\s*[\+\-\*\/]\s*\d+$/)) {
+                            try {
+                                const result = eval(command);
+                                addTerminalOutput(`${result}`, 'success');
+                            } catch (e) {
+                                addTerminalOutput(`Error: ${e.message}`, 'error');
+                            }
+                        } else {
+                            addTerminalOutput(`Command executed (Mock Mode)`, 'success');
+                        }
+                    }, 200);
+                    
+                    input.value = '';
+                }
+            }
+        }
+
+        // Output Management
+        function addOutput(text, type = 'normal') {
+            const output = document.getElementById('outputContent');
+            const line = document.createElement('div');
+            line.className = `output-line ${type}`;
+            line.textContent = text;
+            output.appendChild(line);
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function clearOutput() {
+            document.getElementById('outputContent').innerHTML = `
+                <div class="placeholder-notice">
+                    🎯 Ready to run Python code (Mock Mode - API Key: sk-placeholder-api-key-12345)
+                    <div style="margin-top: 8px;">Output will appear here after execution</div>
+                </div>
+            `;
+        }
+
+        function addTerminalOutput(text, type = 'normal') {
+            const terminal = document.getElementById('terminalContent');
+            const line = document.createElement('div');
+            line.className = `output-line ${type}`;
+            line.textContent = text;
+            terminal.appendChild(line);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        function clearTerminal() {
+            document.getElementById('terminalContent').innerHTML = `
+                <div class="output-line">Python IDE Terminal (Mock Mode)</div>
+                <div class="output-line">Type Python commands to interact</div>
+                <div class="placeholder-notice">API Endpoint: https://api.placeholder.com/python (Key: sk-placeholder-api-key-12345)</div>
+            `;
+        }
+
+        // Help Panel
+        function toggleHelp() {
+            const panel = document.getElementById('helpPanel');
+            panel.classList.toggle('active');
+            lucide.createIcons();
+        }
+
+        // Initialize
+        console.log('%c Python IDE - Standalone Version', 'color: #4095FF; font-size: 16px; font-weight: bold;');
+        console.log('%c API Configuration:', 'color: #6A9955; font-weight: bold;');
+        console.log('%c   Endpoint: https://api.placeholder.com/python', 'color: #CE9178;');
+        console.log('%c   API Key: sk-placeholder-api-key-12345', 'color: #CE9178;');
+        console.log('%c   Status: Mock Mode Active', 'color: #FFA500;');
+    </script>
+</body>
+</html>

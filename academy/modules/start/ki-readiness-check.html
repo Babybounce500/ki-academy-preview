@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KI-Check | Domvs Avrea O.P.N GmbH</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00D4AA;
+            --secondary: #0066FF;
+            --accent: #FF3366;
+            --dark: #0A0E27;
+            --darker: #050813;
+            --light: #F8F9FA;
+            --gradient-1: linear-gradient(135deg, #0066FF 0%, #00D4AA 100%);
+            --gradient-2: linear-gradient(135deg, #FF3366 0%, #FF9933 100%);
+            --gradient-3: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--darker);
+            color: #ffffff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.4;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 20% 50%, rgba(0, 102, 255, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(0, 212, 170, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 20%, rgba(255, 51, 102, 0.1) 0%, transparent 50%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Container */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 3rem 0;
+            position: relative;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            background: rgba(255, 255, 255, 0.05);
+            height: 8px;
+            border-radius: 20px;
+            margin: 2rem 0;
+            overflow: hidden;
+            border: 1px solid rgba(0, 212, 170, 0.2);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--gradient-1);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0, 212, 170, 0.5);
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Question Card */
+        .question-card {
+            background: rgba(20, 30, 60, 0.6);
+            border: 2px solid rgba(0, 212, 170, 0.3);
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 2rem 0;
+            backdrop-filter: blur(20px);
+            transform: translateY(20px);
+            opacity: 0;
+            animation: slideIn 0.5s ease forwards;
+        }
+
+        @keyframes slideIn {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .question-number {
+            display: inline-block;
+            background: var(--gradient-1);
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .question-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #ffffff;
+        }
+
+        .question-subtitle {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 2rem;
+        }
+
+        /* Answer Options */
+        .answer-options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .answer-option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .answer-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-1);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 0;
+        }
+
+        .answer-option:hover {
+            border-color: var(--primary);
+            transform: translateX(10px);
+        }
+
+        .answer-option:hover::before {
+            left: 0;
+            opacity: 0.1;
+        }
+
+        .answer-option.selected {
+            border-color: var(--primary);
+            background: rgba(0, 212, 170, 0.15);
+            box-shadow: 0 0 30px rgba(0, 212, 170, 0.3);
+        }
+
+        .answer-option.selected::before {
+            left: 0;
+            opacity: 0.2;
+        }
+
+        .answer-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .answer-icon {
+            width: 24px;
+            height: 24px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .answer-option.selected .answer-icon {
+            border-color: var(--primary);
+            background: var(--primary);
+        }
+
+        .answer-option.selected .answer-icon::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .answer-text {
+            flex: 1;
+        }
+
+        .answer-label {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+            color: #ffffff;
+        }
+
+        .answer-description {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .btn-primary {
+            background: var(--gradient-1);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 212, 170, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Results Section */
+        .results-container {
+            display: none;
+        }
+
+        .results-container.active {
+            display: block;
+            animation: slideIn 0.5s ease forwards;
+        }
+
+        .score-card {
+            background: var(--gradient-1);
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .score-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .score-number {
+            font-size: 5rem;
+            font-weight: 900;
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+
+        .score-label {
+            font-size: 1.5rem;
+            color: white;
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+        }
+
+        .result-section {
+            background: rgba(20, 30, 60, 0.6);
+            border: 2px solid rgba(0, 212, 170, 0.3);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            backdrop-filter: blur(20px);
+        }
+
+        .result-section h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .result-section p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .recommendation-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .recommendation-list li {
+            padding: 1rem;
+            margin: 0.5rem 0;
+            background: rgba(0, 212, 170, 0.1);
+            border-left: 4px solid var(--primary);
+            border-radius: 8px;
+            color: #ffffff;
+            font-weight: 500;
+        }
+
+        .category-scores {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .category-card {
+            background: rgba(20, 30, 60, 0.6);
+            border: 2px solid rgba(0, 212, 170, 0.2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(20px);
+        }
+
+        .category-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 0.5rem;
+        }
+
+        .category-score {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--primary);
+        }
+
+        .category-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+
+        .category-bar-fill {
+            height: 100%;
+            background: var(--gradient-1);
+            border-radius: 10px;
+            transition: width 1s ease;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: var(--gradient-2);
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            margin: 3rem 0;
+        }
+
+        .cta-section h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .cta-section p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: white;
+            color: var(--dark);
+            padding: 1.2rem 3rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Contact Form */
+        .contact-form {
+            background: rgba(20, 30, 60, 0.6);
+            border: 2px solid rgba(0, 212, 170, 0.3);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            backdrop-filter: blur(20px);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            font-family: 'Outfit', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        textarea.form-input {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .question-card {
+                padding: 2rem;
+            }
+
+            .score-number {
+                font-size: 3.5rem;
+            }
+
+            .category-scores {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+
+        /* Hidden Class */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Loading Animation */
+        .loading {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(0, 212, 170, 0.2);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">DOMVS AVREA</div>
+            <h1>KI-Readiness Check</h1>
+            <p>Finden Sie heraus, wie KI Ihr Unternehmen transformieren kann und welche Tools am besten zu Ihnen passen.</p>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="progress-text" id="progressText">Frage 0 von 12</div>
+
+        <!-- Quiz Container -->
+        <div id="quizContainer"></div>
+
+        <!-- Results Container -->
+        <div class="results-container" id="resultsContainer">
+            <!-- Results will be inserted here -->
+        </div>
+    </div>
+
+    <script>
+        // Questions Database
+        const questions = [
+            {
+                id: 1,
+                category: 'Aktueller Status',
+                question: 'Wie würden Sie Ihren aktuellen KI-Einsatz beschreiben?',
+                subtitle: 'Seien Sie ehrlich - es gibt keine falschen Antworten',
+                options: [
+                    { text: 'Keine Erfahrung', description: 'Wir nutzen aktuell keine KI-Tools', score: 0 },
+                    { text: 'Experimentierphase', description: 'Wir testen einzelne Tools wie ChatGPT', score: 2 },
+                    { text: 'Punktueller Einsatz', description: 'KI wird in 1-2 Bereichen eingesetzt', score: 4 },
+                    { text: 'Systematischer Einsatz', description: 'KI ist fester Bestandteil unserer Prozesse', score: 6 }
+                ]
+            },
+            {
+                id: 2,
+                category: 'Automatisierung',
+                question: 'Wie viel Zeit verbringen Sie mit repetitiven Aufgaben?',
+                subtitle: 'Denken Sie an Dateneingabe, Berichte, E-Mails, etc.',
+                options: [
+                    { text: 'Sehr viel (>50%)', description: 'Die Hälfte meiner Zeit geht für Routine drauf', score: 6 },
+                    { text: 'Einiges (30-50%)', description: 'Etwa ein Drittel sind wiederkehrende Tasks', score: 4 },
+                    { text: 'Wenig (10-30%)', description: 'Nur gelegentlich repetitive Arbeit', score: 2 },
+                    { text: 'Kaum (<10%)', description: 'Fast nur strategische Arbeit', score: 0 }
+                ]
+            },
+            {
+                id: 3,
+                category: 'Datennutzung',
+                question: 'Wie nutzen Sie Ihre Geschäftsdaten?',
+                subtitle: 'Finanzen, Kunden, Märkte, etc.',
+                options: [
+                    { text: 'Gar nicht strukturiert', description: 'Daten liegen verstreut, kaum Auswertung', score: 6 },
+                    { text: 'Excel & manuelle Auswertung', description: 'Ich erstelle selbst Tabellen und Reports', score: 4 },
+                    { text: 'Basis-Tools', description: 'Wir nutzen einfache Analyse-Software', score: 2 },
+                    { text: 'Professionelle BI-Tools', description: 'Dashboards und automatische Analysen', score: 0 }
+                ]
+            },
+            {
+                id: 4,
+                category: 'Entscheidungsfindung',
+                question: 'Wie treffen Sie geschäftliche Entscheidungen?',
+                subtitle: 'Investitionen, Strategien, Personalentscheidungen',
+                options: [
+                    { text: 'Bauchgefühl', description: 'Hauptsächlich auf Erfahrung basiert', score: 6 },
+                    { text: 'Mix aus Intuition & Daten', description: 'Ich schaue mir Zahlen an, entscheide aber intuitiv', score: 4 },
+                    { text: 'Datengestützt', description: 'Ich analysiere erst, dann entscheide ich', score: 2 },
+                    { text: 'KI-unterstützt', description: 'Predictive Analytics & Szenarien-Modellierung', score: 0 }
+                ]
+            },
+            {
+                id: 5,
+                category: 'Kommunikation',
+                question: 'Wie viel Zeit geht für E-Mails und Kommunikation drauf?',
+                subtitle: 'Täglich',
+                options: [
+                    { text: 'Sehr viel (>3h)', description: 'E-Mails und Meetings fressen meine Zeit', score: 6 },
+                    { text: 'Viel (2-3h)', description: 'Deutlicher Teil meines Tages', score: 4 },
+                    { text: 'Moderat (1-2h)', description: 'Überschaubar', score: 2 },
+                    { text: 'Wenig (<1h)', description: 'Sehr effizient organisiert', score: 0 }
+                ]
+            },
+            {
+                id: 6,
+                category: 'Content-Erstellung',
+                question: 'Erstellen Sie regelmäßig Inhalte?',
+                subtitle: 'Social Media, Berichte, Präsentationen, Marketing',
+                options: [
+                    { text: 'Ja, sehr viel', description: 'Das ist ein großer Teil meiner Arbeit', score: 6 },
+                    { text: 'Ja, regelmäßig', description: 'Mehrmals pro Woche', score: 4 },
+                    { text: 'Gelegentlich', description: 'Ab und zu', score: 2 },
+                    { text: 'Nein', description: 'Kaum Content-Arbeit', score: 0 }
+                ]
+            },
+            {
+                id: 7,
+                category: 'Finanzplanung',
+                question: 'Wie gut haben Sie Ihre Finanzen im Blick?',
+                subtitle: 'Cashflow, Forecasts, Budgets',
+                options: [
+                    { text: 'Chaos', description: 'Ich habe keinen echten Überblick', score: 6 },
+                    { text: 'Grundlagen', description: 'Ich weiß was reinkommt und rausgeht', score: 4 },
+                    { text: 'Strukturiert', description: 'Regelmäßige Reports und Planung', score: 2 },
+                    { text: 'Perfekt optimiert', description: 'Echtzeitdaten, Forecasts, Szenarien', score: 0 }
+                ]
+            },
+            {
+                id: 8,
+                category: 'Wettbewerb',
+                question: 'Wie gut kennen Sie Ihren Markt?',
+                subtitle: 'Konkurrenz, Trends, Opportunities',
+                options: [
+                    { text: 'Wenig Einblick', description: 'Ich reagiere meist, statt zu agieren', score: 6 },
+                    { text: 'Basis-Wissen', description: 'Ich kenne die Hauptakteure', score: 4 },
+                    { text: 'Guter Überblick', description: 'Ich beobachte den Markt aktiv', score: 2 },
+                    { text: 'Datengetriebene Insights', description: 'Automatische Marktanalysen & Alerts', score: 0 }
+                ]
+            },
+            {
+                id: 9,
+                category: 'Skalierung',
+                question: 'Was hindert Sie aktuell am Wachstum?',
+                subtitle: 'Ehrliche Selbsteinschätzung',
+                options: [
+                    { text: 'Zeit & Kapazität', description: 'Ich bin der Flaschenhals', score: 6 },
+                    { text: 'Fehlende Prozesse', description: 'Alles ist zu manuell und chaotisch', score: 5 },
+                    { text: 'Mangelnde Insights', description: 'Ich weiß nicht, wo ich ansetzen soll', score: 4 },
+                    { text: 'Nichts Gravierendes', description: 'Wir skalieren bereits gut', score: 0 }
+                ]
+            },
+            {
+                id: 10,
+                category: 'Team-Effizienz',
+                question: 'Wie produktiv ist Ihr Team?',
+                subtitle: 'Falls Sie Mitarbeiter haben',
+                options: [
+                    { text: 'Viel Leerlauf', description: 'Ineffiziente Prozesse, viel Doppelarbeit', score: 6 },
+                    { text: 'Geht so', description: 'Könnte besser laufen', score: 4 },
+                    { text: 'Gut organisiert', description: 'Klare Prozesse und Verantwortlichkeiten', score: 2 },
+                    { text: 'Kein Team / Nicht relevant', description: 'Solo oder bereits optimiert', score: 0 }
+                ]
+            },
+            {
+                id: 11,
+                category: 'Technologie-Offenheit',
+                question: 'Wie stehen Sie zu neuen Technologien?',
+                subtitle: 'Ihre persönliche Einstellung',
+                options: [
+                    { text: 'Early Adopter', description: 'Ich teste alles Neue sofort', score: 6 },
+                    { text: 'Interessiert', description: 'Ich probiere gern aus, wenn es Sinn macht', score: 4 },
+                    { text: 'Abwartend', description: 'Lieber erst sehen, was sich bewährt', score: 2 },
+                    { text: 'Skeptisch', description: 'Ich bleibe bei bewährten Methoden', score: 0 }
+                ]
+            },
+            {
+                id: 12,
+                category: 'Investitionsbereitschaft',
+                question: 'Wie viel würden Sie monatlich in KI-Tools investieren?',
+                subtitle: 'Wenn der ROI stimmt',
+                options: [
+                    { text: '€50-100', description: 'Kleine Investition zum Testen', score: 2 },
+                    { text: '€100-300', description: 'Moderates Budget für echten Nutzen', score: 4 },
+                    { text: '€300-1000', description: 'Ernsthaftes Investment in Produktivität', score: 6 },
+                    { text: '>€1000', description: 'Was nötig ist für maximalen Impact', score: 8 }
+                ]
+            }
+        ];
+
+        // State Management
+        let currentQuestion = 0;
+        let answers = [];
+        let categoryScores = {};
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            showQuestion(0);
+            updateProgress();
+        });
+
+        function showQuestion(index) {
+            const question = questions[index];
+            const container = document.getElementById('quizContainer');
+            
+            container.innerHTML = `
+                <div class="question-card">
+                    <div class="question-number">Frage ${index + 1} von ${questions.length}</div>
+                    <h2 class="question-title">${question.question}</h2>
+                    <p class="question-subtitle">${question.subtitle}</p>
+                    
+                    <div class="answer-options">
+                        ${question.options.map((option, i) => `
+                            <div class="answer-option" onclick="selectAnswer(${i})">
+                                <div class="answer-content">
+                                    <div class="answer-icon"></div>
+                                    <div class="answer-text">
+                                        <div class="answer-label">${option.text}</div>
+                                        <div class="answer-description">${option.description}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="button-group">
+                        ${index > 0 ? `<button class="btn btn-secondary" onclick="previousQuestion()">← Zurück</button>` : ''}
+                        <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" disabled>
+                            ${index < questions.length - 1 ? 'Weiter →' : 'Auswertung anzeigen'}
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function selectAnswer(optionIndex) {
+            // Remove previous selections
+            document.querySelectorAll('.answer-option').forEach(opt => opt.classList.remove('selected'));
+            
+            // Select new option
+            document.querySelectorAll('.answer-option')[optionIndex].classList.add('selected');
+            
+            // Store answer
+            answers[currentQuestion] = {
+                questionId: questions[currentQuestion].id,
+                category: questions[currentQuestion].category,
+                optionIndex: optionIndex,
+                score: questions[currentQuestion].options[optionIndex].score
+            };
+            
+            // Enable next button
+            document.getElementById('nextBtn').disabled = false;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                showQuestion(currentQuestion);
+                updateProgress();
+            } else {
+                showResults();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion(currentQuestion);
+                updateProgress();
+                
+                // Restore previous selection
+                if (answers[currentQuestion]) {
+                    setTimeout(() => {
+                        document.querySelectorAll('.answer-option')[answers[currentQuestion].optionIndex].classList.add('selected');
+                        document.getElementById('nextBtn').disabled = false;
+                    }, 100);
+                }
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = `Frage ${currentQuestion + 1} von ${questions.length}`;
+        }
+
+        function calculateResults() {
+            // Calculate total score
+            const totalScore = answers.reduce((sum, answer) => sum + answer.score, 0);
+            const maxScore = questions.reduce((sum, q) => sum + Math.max(...q.options.map(o => o.score)), 0);
+            const percentScore = Math.round((totalScore / maxScore) * 100);
+
+            // Calculate category scores
+            categoryScores = {};
+            answers.forEach(answer => {
+                if (!categoryScores[answer.category]) {
+                    categoryScores[answer.category] = { total: 0, count: 0 };
+                }
+                categoryScores[answer.category].total += answer.score;
+                categoryScores[answer.category].count++;
+            });
+
+            // Determine profile
+            let profile = '';
+            let recommendations = [];
+            let consultationType = '';
+
+            if (percentScore >= 70) {
+                profile = 'KI-Power-User 🚀';
+                recommendations = [
+                    'Sie haben massives Automatisierungs-Potenzial',
+                    'Individuelle KI-Workflows für Ihre spezifischen Prozesse',
+                    'Fortgeschrittene Tools: GPT-4, Automation-Chains, Custom Bots',
+                    'ROI-Fokus: 10-20h Zeitersparnis/Woche realistisch',
+                    'Enterprise-Lösungen mit API-Integration'
+                ];
+                consultationType = 'Elite / Advisory Paket (499-2.000€/Monat)';
+            } else if (percentScore >= 50) {
+                profile = 'KI-Ready 💎';
+                recommendations = [
+                    'Sie sind bereit für den nächsten Schritt',
+                    'Systematische Tool-Integration in Ihre Workflows',
+                    'Pro-Tools für Daten, Content & Kommunikation',
+                    'Erwartete Zeitersparnis: 5-10h/Woche',
+                    'Persönliches Onboarding und regelmäßige Check-ins'
+                ];
+                consultationType = 'Pro Paket (79-149€/Monat)';
+            } else if (percentScore >= 30) {
+                profile = 'KI-Einsteiger ⭐';
+                recommendations = [
+                    'Perfekter Zeitpunkt zum Einstieg',
+                    'Fokus auf Quick-Wins und einfache Automatisierung',
+                    'Starter-Tools für die wichtigsten Bereiche',
+                    'Erwartete Zeitersparnis: 2-5h/Woche',
+                    'Schritt-für-Schritt Begleitung'
+                ];
+                consultationType = 'Starter Paket (19-39€/Monat)';
+            } else {
+                profile = 'KI-Neuling 🌱';
+                recommendations = [
+                    'Entdecken Sie das Potenzial von KI',
+                    'Kostenlose Einführungs-Session',
+                    'Einfache Tools für den Alltag',
+                    'Keine Vorkenntnisse nötig',
+                    'Risikofrei ausprobieren'
+                ];
+                consultationType = 'Kostenloser KI-Check + Starter (19-39€/Monat)';
+            }
+
+            return {
+                totalScore,
+                maxScore,
+                percentScore,
+                profile,
+                recommendations,
+                consultationType,
+                categoryScores
+            };
+        }
+
+        function showResults() {
+            const results = calculateResults();
+            
+            document.getElementById('quizContainer').style.display = 'none';
+            document.querySelector('.progress-container').style.display = 'none';
+            document.querySelector('.progress-text').style.display = 'none';
+            
+            const resultsContainer = document.getElementById('resultsContainer');
+            resultsContainer.innerHTML = `
+                <div class="score-card">
+                    <div class="score-number">${results.percentScore}%</div>
+                    <div class="score-label">${results.profile}</div>
+                </div>
+
+                <div class="result-section">
+                    <h3>📊 Ihre Analyse</h3>
+                    <p>Basierend auf Ihren Antworten haben Sie <strong>${results.totalScore} von ${results.maxScore} Punkten</strong> erreicht. 
+                    Das zeigt: Sie haben erhebliches Potenzial für KI-gestützte Prozessoptimierung!</p>
+                </div>
+
+                <div class="result-section">
+                    <h3>🎯 Unsere Empfehlungen für Sie</h3>
+                    <ul class="recommendation-list">
+                        ${results.recommendations.map(rec => `<li>${rec}</li>`).join('')}
+                    </ul>
+                </div>
+
+                <div class="category-scores">
+                    ${Object.entries(results.categoryScores).map(([category, data]) => {
+                        const categoryPercent = Math.round((data.total / (data.count * 6)) * 100);
+                        return `
+                            <div class="category-card">
+                                <div class="category-name">${category}</div>
+                                <div class="category-score">${categoryPercent}%</div>
+                                <div class="category-bar">
+                                    <div class="category-bar-fill" style="width: ${categoryPercent}%"></div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+
+                <div class="result-section">
+                    <h3>💡 Passend für Sie: ${results.consultationType}</h3>
+                    <p>Diese Analyse zeigt, dass dieses Paket optimal zu Ihrem aktuellen Setup und Ihren Zielen passt. 
+                    In einem kostenlosen Erstgespräch schauen wir uns Ihre spezifische Situation an und entwickeln einen konkreten Umsetzungsplan.</p>
+                </div>
+
+                <div class="cta-section">
+                    <h3>🚀 Bereit für den nächsten Schritt?</h3>
+                    <p>Buchen Sie jetzt Ihr kostenloses 30-minütiges Beratungsgespräch und lassen Sie uns gemeinsam Ihr KI-Setup planen.</p>
+                    <a href="#contact" class="cta-button" onclick="showContactForm()">Jetzt Termin vereinbaren</a>
+                </div>
+
+                <div class="contact-form hidden" id="contactForm">
+                    <h3 style="color: var(--primary); margin-bottom: 1.5rem;">📞 Kontaktieren Sie uns</h3>
+                    <form onsubmit="submitForm(event)">
+                        <div class="form-group">
+                            <label class="form-label">Name *</label>
+                            <input type="text" class="form-input" placeholder="Ihr vollständiger Name" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">E-Mail *</label>
+                            <input type="email" class="form-input" placeholder="ihre@email.de" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Telefon</label>
+                            <input type="tel" class="form-input" placeholder="+49 123 456789">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Unternehmen / Branche</label>
+                            <input type="text" class="form-input" placeholder="Ihre Firma oder Selbstständigkeit">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Nachricht</label>
+                            <textarea class="form-input" placeholder="Was möchten Sie konkret mit KI erreichen?"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Anfrage senden</button>
+                    </form>
+                </div>
+
+                <div class="result-section">
+                    <h3>📄 Ihre Ergebnisse als PDF</h3>
+                    <p>Möchten Sie diese Analyse als PDF erhalten? Klicken Sie auf den Button unten.</p>
+                    <button class="btn btn-secondary" onclick="window.print()" style="margin-top: 1rem;">
+                        📥 Als PDF speichern
+                    </button>
+                </div>
+            `;
+            
+            resultsContainer.classList.add('active');
+            
+            // Animate category bars
+            setTimeout(() => {
+                document.querySelectorAll('.category-bar-fill').forEach(bar => {
+                    const width = bar.style.width;
+                    bar.style.width = '0%';
+                    setTimeout(() => bar.style.width = width, 100);
+                });
+            }, 500);
+        }
+
+        function showContactForm() {
+            document.getElementById('contactForm').classList.remove('hidden');
+            document.getElementById('contactForm').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function submitForm(e) {
+            e.preventDefault();
+            alert('Vielen Dank für Ihre Anfrage! Wir melden uns innerhalb von 24 Stunden bei Ihnen.\n\nIn der finalen Version würde hier eine echte Integration zu Ihrem CRM/E-Mail-System erfolgen.');
+        }
+    </script>
+</body>
+</html>

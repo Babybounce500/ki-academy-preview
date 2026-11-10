@@ -1,0 +1,958 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Genitus Inc. - Spezialist für Prompt Engineering, AI-Optimierung und generative KI-Technologien">
+    <title>Prompt Engineering | Genitus Inc.</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --secondary: #10b981;
+            --accent: #8b5cf6;
+            --dark: #0f172a;
+            --darker: #020617;
+            --light: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            overflow-x: hidden;
+        }
+
+        .orbitron {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4);
+        }
+
+        .grid-pattern {
+            background-image:
+                radial-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
+                radial-gradient(rgba(16, 185, 129, 0.1) 1px, transparent 1px);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+        }
+
+        .nav-link {
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Simple scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--darker);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+
+        /* Mobile menu */
+        .mobile-menu {
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .mobile-menu.show {
+            transform: translateY(0);
+        }
+
+        /* Accordion styles */
+        .accordion {
+            border-radius: 0.5rem;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .accordion-header {
+            cursor: pointer;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .accordion-header:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .accordion-content.show {
+            max-height: 2000px;
+        }
+
+        .accordion-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-icon.rotate {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-40 bg-gray-900 bg-opacity-90 backdrop-filter backdrop-blur-md" id="header">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <a href="#" class="flex items-center space-x-2 group">
+                    <div class="h-10 w-10 rounded-lg bg-gradient-to-tr from-blue-600 to-blue-400 flex items-center justify-center">
+                        <span class="orbitron text-white font-bold text-xl">G</span>
+                    </div>
+                    <span class="orbitron text-white text-xl font-bold">GENITUS<span class="text-blue-500">AI</span></span>
+                </a>
+                <nav class="hidden md:flex space-x-8">
+                    <a href="#home" class="text-gray-300 hover:text-blue-500 transition duration-300 nav-link">Home</a>
+                    <a href="#projects" class="text-gray-300 hover:text-blue-500 transition duration-300 nav-link">Projects</a>
+                    <a href="#skills" class="text-gray-300 hover:text-blue-500 transition duration-300 nav-link">Skills</a>
+                    <a href="#ebook" class="text-gray-300 hover:text-blue-500 transition duration-300 nav-link">E-Book</a>
+                    <a href="#blog" class="text-gray-300 hover:text-blue-500 transition duration-300 nav-link">Blog</a>
+                    <a href="#contact" class="text-gray-300 hover:text-blue-500 transition duration-300 nav-link">Contact</a>
+                </nav>
+                <div class="md:hidden">
+                    <button id="menuToggle" class="text-white focus:outline-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="mobile-menu fixed inset-x-0 top-16 z-30 bg-gray-900 bg-opacity-95 backdrop-filter backdrop-blur-md shadow-xl p-6 md:hidden">
+            <nav class="flex flex-col space-y-4">
+                <a href="#home" class="text-gray-300 hover:text-blue-500 transition duration-300">Home</a>
+                <a href="#projects" class="text-gray-300 hover:text-blue-500 transition duration-300">Projects</a>
+                <a href="#skills" class="text-gray-300 hover:text-blue-500 transition duration-300">Skills</a>
+                <a href="#ebook" class="text-gray-300 hover:text-blue-500 transition duration-300">E-Book</a>
+                <a href="#blog" class="text-gray-300 hover:text-blue-500 transition duration-300">Blog</a>
+                <a href="#contact" class="text-gray-300 hover:text-blue-500 transition duration-300">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="pt-32 pb-20 relative overflow-hidden grid-pattern">
+        <div class="absolute top-0 right-0 w-1/3 h-full bg-blue-500 bg-opacity-10 blur-3xl rounded-full"></div>
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="orbitron text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+                    Prompt Engineering at <span class="gradient-text">Genitus Inc.</span>
+                </h1>
+                <p class="text-xl text-gray-300 mb-10">
+                    We specialize in innovative solutions in Prompt Engineering, AI optimization, and generative AI technologies.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                    <a href="#projects" class="px-8 py-4 bg-blue-600 hover:bg-blue-500 rounded-lg orbitron font-bold text-white transition duration-300 text-center">
+                        View Projects
+                    </a>
+                    <a href="#contact" class="px-8 py-4 bg-gray-800 hover:bg-gray-700 border border-blue-500 rounded-lg orbitron font-bold text-white transition duration-300 text-center">
+                        Contact Us
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects with Accordion -->
+    <section id="projects" class="py-20 bg-gray-900">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="orbitron text-4xl font-bold mb-4">
+                    <span class="gradient-text">Projects</span>
+                </h2>
+            </div>
+
+            <!-- Project Categories Accordion -->
+            <div class="space-y-6">
+                <!-- Development Category -->
+                <div class="accordion bg-gray-800 border border-gray-700">
+                    <div class="accordion-header bg-gray-800 border-b border-gray-700">
+                        <h3 class="orbitron text-xl font-bold text-white">Development Prompts</h3>
+                        <i class="fas fa-chevron-down text-blue-500 accordion-icon"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- PROCODE -->
+                            <div class="bg-gray-900 rounded-lg overflow-hidden shadow-lg border border-gray-700 card-hover">
+                                <div class="h-40 bg-gradient-to-br from-blue-900 to-purple-900 relative">
+                                    <img src="https://babybounce500.github.io/icon/1p.webp" alt="Project Image PROCODE" class="w-full h-full object-cover opacity-90">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="orbitron text-lg font-bold text-white mb-2">PROCODE</h3>
+                                    <p class="text-gray-400 text-sm mb-4">Advanced coding prompts for developers.</p>
+                                    <a href="https://domusaurea.tech/PROCODE.html" target="_blank" class="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded text-white text-sm transition duration-300 w-full text-center">
+                                        View Prompts
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- HTML -->
+                            <div class="bg-gray-900 rounded-lg overflow-hidden shadow-lg border border-gray-700 card-hover">
+                                <div class="h-40 bg-gradient-to-br from-orange-900 to-red-900 relative">
+                                    <img src="https://babybounce500.github.io/icon/5p.webp" alt="Project Image HTML" class="w-full h-full object-cover opacity-90">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="orbitron text-lg font-bold text-white mb-2">HTML</h3>
+                                    <p class="text-gray-400 text-sm mb-4">Solutions for HTML challenges through targeted prompts.</p>
+                                    <a href="https://domusaurea.tech/HTML1.html" target="_blank" class="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded text-white text-sm transition duration-300 w-full text-center">
+                                        View Prompts
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- CSS -->
+                            <div class="bg-gray-900 rounded-lg overflow-hidden shadow-lg border border-gray-700 card-hover">
+                                <div class="h-40 bg-gradient-to-br from-blue-900 to-cyan-900 relative">
+                                    <img src="https://babybounce500.github.io/icon/4p.webp" alt="Project Image CSS" class="w-full h-full object-cover opacity-90">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="orbitron text-lg font-bold text-white mb-2">CSS</h3>
+                                    <p class="text-gray-400 text-sm mb-4">Optimize your CSS with custom prompts.</p>
+                                    <a href="https://domusaurea.tech/PP5Mobile.html" target="_blank" class="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded text-white text-sm transition duration-300 w-full text-center">
+                                        View Prompts
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- JAVA -->
+                            <div class="bg-gray-900 rounded-lg overflow-hidden shadow-lg border border-gray-700 card-hover">
+                                <div class="h-40 bg-gradient-to-br from-red-900 to-yellow-900 relative">
+                                    <img src="https://babybounce500.github.io/icon/6p.webp" alt="Project Image JAVA" class="w-full h-full object-cover opacity-90">
+                                    <div class="absolute inset-0 bg-gradient-to```html
+                                    <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="orbitron text-lg font-bold text-white mb-2">JAVA</h3>
+                                    <p class="text-gray-400 text-sm mb-4">Optimized Java prompts for professional applications.</p>
+                                    <a href="https://domusaurea.tech/JAVA.html" target="_blank" class="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded text-white text-sm transition duration-300 w-full text-center">
+                                        View Prompts
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- Advanced Application Generation -->
+                            <div class="bg-gray-900 rounded-lg overflow-hidden shadow-lg border border-gray-700 card-hover">
+                                <div class="h-40 bg-gradient-to-br from-indigo-900 to-blue-900 relative">
+                                    <img src="https://babybounce500.github.io/icon/8p.webp" alt="Advanced Application Generation Prompts" class="w-full h-full object-cover opacity-90">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="orbitron text-lg font-bold text-white mb-2">App Generation</h3>
+                                    <p class="text-gray-400 text-sm mb-4">Efficient solutions for application generation.</p>
+                                    <a href="https://babybounce500.github.io/icon/12p.html" target="_blank" class="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded text-white text-sm transition duration-300 w-full text-center">
+                                        View Prompts
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Frameworks & Integration Category -->
+                <div class="accordion bg-gray-800 border border-gray-700">
+                    <div class="accordion-header bg-gray-800 border-b border-gray-700">
+                        <h3 class="orbitron text-xl font-bold text-white">Frameworks & Integration</h3>
+                        <i class="fas fa-chevron-down text-blue-500 accordion-icon"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- FRAMEchat -->
+                            <div class="bg-gray-900 rounded-lg overflow-hidden shadow-lg border border-gray-700 card-hover">
+                                <div class="h-40 bg-gradient-to-br from-green-900 to-blue-900 relative">
+                                    <img src="https://babybounce500.github.io/icon/2p.webp" alt="Project Image FRAMEchat" class="w-full h-full object-cover opacity-90">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="orbitron text-lg font-bold text-white mb-2">FRAMEchat</h3>
+                                    <p class="text-gray-400 text-sm mb-4">Frameworks for innovative chatbots.</p>
+                                    <a href="https://domusaurea.tech/FRAMEchat.html" target="_blank" class="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded text-white text-sm transition duration-300 w-full text-center">
+                                        View Prompts
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- INDEX -->
+                            <div class="bg-gray-900 rounded-lg overflow-hidden shadow-lg border border-gray-700 card-hover">
+                                <div class="h-40 bg-gradient-to-br from-purple-900 to-pink-900 relative">
+                                    <img src="https://babybounce500.github.io/icon/3p.webp" alt="Project Image INDEX" class="w-full h-full object-cover opacity-90">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="orbitron text-lg font-bold text-white mb-2">INDEX</h3>
+                                    <p class="text-gray-400 text-sm mb-4">Centralized prompts for maximum efficiency.</p>
+                                    <a href="https://domusaurea.tech/FRAME2.html" target="_blank" class="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded text-white text-sm transition duration-300 w-full text-center">
+                                        View Prompts
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Creative & Media Category -->
+                <div class="accordion bg-gray-800 border border-gray-700">
+                    <div class="accordion-header bg-gray-800 border-b border-gray-700">
+                        <h3 class="orbitron text-xl font-bold text-white">Creative & Media</h3>
+                        <i class="fas fa-chevron-down text-blue-500 accordion-icon"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- DALL-E Prompt Generation -->
+                            <div class="bg-gray-900 rounded-lg overflow-hidden shadow-lg border border-gray-700 card-hover">
+                                <div class="h-40 bg-gradient-to-br from-pink-900 to-purple-900 relative">
+                                    <img src="https://babybounce500.github.io/icon/9p.webp" alt="Advanced DALL-E Prompt Generation" class="w-full h-full object-cover opacity-90">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="orbitron text-lg font-bold text-white mb-2">DALL-E Prompt Generation</h3>
+                                    <p class="text-gray-400 text-sm mb-4">Optimized prompts for creative images.</p>
+                                    <a href="https://babybounce500.github.io/icon/13p.html" target="_blank" class="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded text-white text-sm transition duration-300 w-full text-center">
+                                        View Prompts
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- Suno.ai Music Generation -->
+                            <div class="bg-gray-900 rounded-lg overflow-hidden shadow-lg border border-gray-700 card-hover">
+                                <div class="h-40 bg-gradient-to-br from-green-900 to-teal-900 relative">
+                                    <img src="https://babybounce500.github.io/icon/10p.webp" alt="Advanced Suno.ai Music Generation Prompts" class="w-full h-full object-cover opacity-90">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="orbitron text-lg font-bold text-white mb-2">Suno.ai Music Generation</h3>
+                                    <p class="text-gray-400 text-sm mb-4">Music prompts for Suno.ai.</p>
+                                    <a href="https://babybounce500.github.io/icon/14p.html" target="_blank" class="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded text-white text-sm transition duration-300 w-full text-center">
+                                        View Prompts
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Business & Professional Category -->
+                <div class="accordion bg-gray-800 border border-gray-700">
+                    <div class="accordion-header bg-gray-800 border-b border-gray-700">
+                        <h3 class="orbitron text-xl font-bold text-white">Business & Professional</h3>
+                        <i class="fas fa-chevron-down text-blue-500 accordion-icon"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Legal Consultation Prompts -->
+                            <div class="bg-gray-900 rounded-lg overflow-hidden shadow-lg border border-gray-700 card-hover">
+                                <div class="h-40 bg-gradient-to-br from-blue-900 to-gray-900 relative">
+                                    <img src="https://babybounce500.github.io/icon/11p.webp" alt="Advanced Legal Consultation Prompts" class="w-full h-full object-cover opacity-90">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="orbitron text-lg font-bold text-white mb-2">Legal Consultation</h3>
+                                    <p class="text-gray-400 text-sm mb-4">Effective prompts for legal consultation.</p>
+                                    <a href="https://babybounce500.github.io/icon/15p.html" target="_blank" class="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded text-white text-sm transition duration-300 w-full text-center">
+                                        View Prompts
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- Email Generation Prompts -->
+                            <div class="bg-gray-900 rounded-lg overflow-hidden shadow-lg border border-gray-700 card-hover">
+                                <div class="h-40 bg-gradient-to-br from-cyan-900 to-blue-900 relative">
+                                    <img src="https://babybounce500.github.io/icon/12p.webp" alt="Advanced Email Generation Prompts" class="w-full h-full object-cover opacity-90">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="orbitron text-lg font-bold text-white mb-2">Email Generation</h3>
+                                    <p class="text-gray-400 text-sm mb-4">Professional prompts for email creation.</p>
+                                    <a href="https://babybounce500.github.io/icon/16p.html" target="_blank" class="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded text-white text-sm transition duration-300 w-full text-center">
+                                        View Prompts
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- Trading -->
+                            <div class="bg-gray-900 rounded-lg overflow-hidden shadow-lg border border-gray-700 card-hover">
+                                <div class="h-40 bg-gradient-to-br from-yellow-900 to-green-900 relative">
+                                    <img src="https://babybounce500.github.io/icon/14p.webp" alt="Project Image Trading" class="w-full h-full object-cover opacity-90">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="orbitron text-lg font-bold text-white mb-2">Trading</h3>
+                                    <p class="text-gray-400 text-sm mb-4">Innovative trading prompts for your success.</p>
+                                    <a href="https://domusaurea.tech/PROMPT3.html" target="_blank" class="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded text-white text-sm transition duration-300 w-full text-center">
+                                        View Prompts
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- E-Book Section -->
+    <section id="ebook" class="py-20 relative overflow-hidden grid-pattern">
+        <div class="absolute top-0 left-0 w-1/4 h-1/2 bg-blue-500 bg-opacity-10 blur-3xl rounded-full"></div>
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-10 md:mb-0">
+                    <h2 class="orbitron text-4xl font-bold mb-4">
+                        <span class="gradient-text">The Ultimate</span>
+                        <br>Prompt Engineering E-Book
+                    </h2>
+                    <p class="text-xl text-gray-300 mb-6">
+                        Master the art of AI optimization and prompt creation
+                    </p>
+                    <p class="text-gray-400 mb-8">
+                        Our exclusive e-book is a comprehensive guide for anyone looking to elevate their skills in prompt engineering. Whether you're a beginner or a professional, this book offers proven techniques, strategies, and practical examples to maximize the efficiency of your AI models.
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                        <div class="flex items-start">
+                            <div class="text-blue-500 mr-3">
+                                <i class="fas fa-lightbulb"></i>
+                            </div>
+                            <p class="text-gray-300">Practical tips for effective prompting</p>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="text-blue-500 mr-3">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <p class="text-gray-300">Case studies and real-world examples</p>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="```html
+                            <div class="text-blue-500 mr-3">
+                                <i class="fas fa-rocket"></i>
+                            </div>
+                            <p class="text-gray-300">Strategies for optimizing generative AI</p>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="text-blue-500 mr-3">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <p class="text-gray-300">Exclusive insights into cutting-edge techniques</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                        <a href="https://domusaurea.tech/EBOOKprompt.html" class="px-8 py-4 bg-blue-600 hover:bg-blue-500 rounded-lg orbitron font-bold text-white transition duration-300 inline-block">
+                            <i class="fas fa-download mr-2"></i> Download Now
+                        </a>
+                        <a href="https://mastering-the-art-of-pro-hukjnft.gamma.site/" class="px-8 py-4 bg-gray-800 hover:bg-gray-700 border border-blue-500 rounded-lg orbitron font-bold text-white transition duration-300 inline-block">
+                            <i class="fas fa-info-circle mr-2"></i> Learn More
+                        </a>
+                    </div>
+                </div>
+                <div class="md:w-1/2 md:pl-10">
+                    <div class="relative">
+                        <div class="rounded-xl overflow-hidden border-4 border-blue-500 shadow-lg">
+                            <img src="https://babybounce500.github.io/icon/480.webp" alt="E-Book Cover" class="w-full h-auto">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Before-After Comparisons -->
+    <section class="py-20 bg-gray-900">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="orbitron text-4xl font-bold mb-4">
+                    <span class="gradient-text">Before-After Comparisons</span>
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-gray-800 rounded-xl overflow-hidden border border-gray-700 card-hover">
+                    <div class="p-6 border-b border-gray-700 bg-gray-900">
+                        <h3 class="orbitron text-xl font-bold text-white mb-2">Before</h3>
+                        <p class="text-gray-300">"Explain climate change."</p>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="orbitron text-xl font-bold text-green-500 mb-2">After</h3>
+                        <p class="text-gray-300">"Explain climate change in simple words for a fifth-grader and provide three actionable steps to reduce CO₂ emissions."</p>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800 rounded-xl overflow-hidden border border-gray-700 card-hover">
+                    <div class="p-6 border-b border-gray-700 bg-gray-900">
+                        <h3 class="orbitron text-xl font-bold text-white mb-2">Before</h3>
+                        <p class="text-gray-300">"Write a poem."</p>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="orbitron text-xl font-bold text-green-500 mb-2">After</h3>
+                        <p class="text-gray-300">"Write a sonnet-like poem about the changing of the seasons, using rhyming couplets and metaphorical language."</p>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800 rounded-xl overflow-hidden border border-gray-700 card-hover">
+                    <div class="p-6 border-b border-gray-700 bg-gray-900">
+                        <h3 class="orbitron text-xl font-bold text-white mb-2">Before</h3>
+                        <p class="text-gray-300">"Give me tips for a cover letter."</p>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="orbitron text-xl font-bold text-green-500 mb-2">After</h3>
+                        <p class="text-gray-300">"Create a detailed guide for a cover letter for a software developer position, including key competencies, professional experiences, and a tailored introduction."</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills -->
+    <section id="skills" class="py-20 relative overflow-hidden grid-pattern">
+        <div class="absolute bottom-0 right-0 w-1/3 h-2/3 bg-blue-500 bg-opacity-10 blur-3xl rounded-full"></div>
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="text-center mb-16">
+                <h2 class="orbitron text-4xl font-bold mb-4">
+                    <span class="gradient-text">Skills</span>
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="bg-gray-800 rounded-xl p-8 border border-gray-700 card-hover">
+                    <div class="text-blue-500 text-4xl mb-4 flex justify-center">
+                        <i class="fas fa-sliders-h"></i>
+                    </div>
+                    <h3 class="orbitron text-xl font-bold text-white mb-4 text-center">Prompt Optimization</h3>
+                    <div class="w-full bg-gray-700 rounded-full h-2.5 mb-4">
+                        <div class="bg-blue-600 h-2.5 rounded-full" style="width: 90%"></div>
+                    </div>
+                    <p class="text-right text-sm text-gray-400">90%</p>
+                </div>
+
+                <div class="bg-gray-800 rounded-xl p-8 border border-gray-700 card-hover">
+                    <div class="text-green-500 text-4xl mb-4 flex justify-center">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3 class="orbitron text-xl font-bold text-white mb-4 text-center">Chatbot Integration</h3>
+                    <div class="w-full bg-gray-700 rounded-full h-2.5 mb-4">
+                        <div class="bg-green-600 h-2.5 rounded-full" style="width: 85%"></div>
+                    </div>
+                    <p class="text-right text-sm text-gray-400">85%</p>
+                </div>
+
+                <div class="bg-gray-800 rounded-xl p-8 border border-gray-700 card-hover">
+                    <div class="text-purple-500 text-4xl mb-4 flex justify-center">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h3 class="orbitron text-xl font-bold text-white mb-4 text-center">Data Modeling</h3>
+                    <div class="w-full bg-gray-700 rounded-full h-2.5 mb-4">
+                        <div class="bg-purple-600 h-2.5 rounded-full" style="width: 75%"></div>
+                    </div>
+                    <p class="text-right text-sm text-gray-400">75%</p>
+                </div>
+
+                <div class="bg-gray-800 rounded-xl p-8 border border-gray-700 card-hover">
+                    <div class="text-yellow-500 text-4xl mb-4 flex justify-center">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3 class="orbitron text-xl font-bold text-white mb-4 text-center">Generative AI Techniques</h3>
+                    <div class="w-full bg-gray-700 rounded-full h-2.5 mb-4">```html
+                        <div class="bg-yellow-600 h-2.5 rounded-full" style="width: 80%"></div>
+                    </div>
+                    <p class="text-right text-sm text-gray-400">80%</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog -->
+    <section id="blog" class="py-20 bg-gray-900">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="orbitron text-4xl font-bold mb-4">
+                    <span class="gradient-text">Blog</span>
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-gray-800 rounded-xl overflow-hidden border border-gray-700 card-hover">
+                    <div class="h-48 bg-gradient-to-br from-blue-900 to-indigo-900"></div>
+                    <div class="p-6">
+                        <h3 class="orbitron text-xl font-bold text-white mb-4">Best Practices in Prompt Engineering</h3>
+                        <p class="text-gray-300 mb-6">Learn how to craft effective prompts to maximize the performance of your AI models.</p>
+                        <a href="https://domusaurea.tech/BLOG3.html" target="_blank" class="text-blue-400 hover:text-blue-300 transition flex items-center">
+                            <span>Read more</span>
+                            <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800 rounded-xl overflow-hidden border border-gray-700 card-hover">
+                    <div class="h-48 bg-gradient-to-br from-green-900 to-teal-900"></div>
+                    <div class="p-6">
+                        <h3 class="orbitron text-xl font-bold text-white mb-4">Tutorial: LangChain Framework</h3>
+                        <p class="text-gray-300 mb-6">A comprehensive tutorial on using the LangChain framework for efficient prompt engineering.</p>
+                        <a href="https://domusaurea.tech/BLOG3.html" target="_blank" class="text-blue-400 hover:text-blue-300 transition flex items-center">
+                            <span>Read more</span>
+                            <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800 rounded-xl overflow-hidden border border-gray-700 card-hover">
+                    <div class="h-48 bg-gradient-to-br from-purple-900 to-pink-900"></div>
+                    <div class="p-6">
+                        <h3 class="orbitron text-xl font-bold text-white mb-4">Current Trends in Generative AI</h3>
+                        <p class="text-gray-300 mb-6">Stay updated with the latest developments and trends in generative AI.</p>
+                        <a href="https://domusaurea.tech/BLOG3.html" target="_blank" class="text-blue-400 hover:text-blue-300 transition flex items-center">
+                            <span>Read more</span>
+                            <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="py-20 relative overflow-hidden grid-pattern">
+        <div class="absolute top-0 right-0 w-1/4 h-1/2 bg-purple-500 bg-opacity-10 blur-3xl rounded-full"></div>
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="text-center mb-16">
+                <h2 class="orbitron text-4xl font-bold mb-4">
+                    <span class="gradient-text">Contact</span>
+                </h2>
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto">
+                    Get in Touch
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-10">
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="bg-gray-800 rounded-xl p-6 border border-gray-700 card-hover">
+                        <div class="flex items-start">
+                            <div class="text-blue-500 mr-4">
+                                <i class="fas fa-map-marker-alt text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="orbitron text-xl font-bold text-white mb-2">Address</h3>
+                                <p class="text-gray-300">
+                                    131 Continental Dr, Suite 305<br>
+                                    Newark, DE 19713<br>
+                                    New Castle County, Delaware
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-800 rounded-xl p-6 border border-gray-700 card-hover">
+                        <div class="flex items-start">
+                            <div class="text-green-500 mr-4">
+                                <i class="fas fa-envelope text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="orbitron text-xl font-bold text-white mb-2">Email</h3>
+                                <p class="text-gray-300">
+                                    <a href="mailto:ai-agency@mylibby.ai" class="hover:text-green-400 transition duration-300">ai-agency@mylibby.ai</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-800 rounded-xl p-6 border border-gray-700 card-hover">
+                        <div class="flex items-start">
+                            <div class="text-purple-500 mr-4">
+                                <i class="fas fa-phone-alt text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="orbitron text-xl font-bold text-white mb-2">Phone</h3>
+                                <p class="text-gray-300">
+                                    <a href="tel:+16508997660" class="hover:text-purple-400 transition duration-300">+1 650 899 7660</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-800 rounded-xl p-6 border border-gray-700 card-hover">
+                        <h3 class="orbitron text-xl font-bold text-white mb-4">Follow Us</h3>
+                        <div class="grid grid-cols-5 gap-2">
+                            <a href="https://www.linkedin.com/in/daniel-gereci-150583311/" target="_blank" class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-700 hover:bg-blue-600 text-gray-300 hover:text-white transition duration-300">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                            <a href="https://github.com/Babybounce500/icon" target="_blank" class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-700 hover:bg-gray-900 text-gray-300 hover:text-white transition duration-300">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="https://chatgpt.com/g/g-676987c117c88191afd22dab8dcd6826-promptmaster-pro" target="_blank" class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-700 hover:bg-blue-500 text-gray-300 hover:text-white transition duration-300">
+                                <i class="fas fa-comments"></i>
+                            </a>
+                            <a href="https://www.youtube.com/channel/UCRW3hK-LYj5uNlfYR7rENgQ" target="_blank" class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-700 hover:bg-red-600 text-gray-300 hover:text-white transition duration-300">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                            <a href="https://www.facebook.com/profile.php?id=61570518250071&locale=de_DE" target="_blank" class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-700 hover:bg-blue-800 text-gray-300 hover:text-white transition duration-300">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-3">
+                    <form class="bg-gray-800 rounded-xl p-8 border border-gray-700" action="mailto:ai-agency@mylibby.ai" method="post" enctype="text/plain">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <label for="name" class="block text-gray-300 mb-2 orbitron">Name</label>
+                                <input type="text" id="name" name="name" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label for="email" class="block text-gray-300 mb-2 orbitron">Email</label>
+                                <input type="email" id="email" name="email" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                        </div>
+                        <div class="mb-6">
+                            <label for="subject" class="block text-gray-300 mb-2 orbitron">Subject</label>
+                            <input type="text" id="subject" name="subject" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="mb-6">
+                            <label for="message" class="block text-gray-300 mb-2 orbitron">Message</label>
+                            <textarea id="message" name="message" rows="5" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-lg orbitron transition duration-300">
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CEO Section -->
+    <section class="py-20 bg-gray-900">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/3 mb-10 md:mb-0">
+                    <div class="relative">
+                        <div class="w-64 h-64 mx-auto rounded-full overflow-hidden border-2 border-blue-500 shadow-lg">
+                            <img src="https://babybounce500.github.io/icon/DUDE2.jpg" alt="Daniel Gereci" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                </div>
+                <div class="md:w-2/3 md:pl-10">
+                    <h2 class="orbitron text-3xl font-bold mb-4 text-white">
+                        CEO & Founder
+                    </h2>
+                    <h3 class="orbitron text-2xl font-bold text-blue-500 mb-4">Daniel Gereci</h3>
+                    <p class="text-gray-300 mb-6">
+                        With extensive experience in AI and prompt engineering, Daniel leads Genitus Inc. with a vision to revolutionize how businesses interact with artificial intelligence. His expertise has helped numerous companies optimize their AI workflows and achieve better results through advanced prompt engineering techniques.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="https://www.linkedin.com/in/daniel-gereci-150583311/" target="_blank" class="text-blue-400 hover:text-blue-300 transition">
+                            <i class="fab fa-linkedin-in text-xl"></i>
+                        </a>
+                        <a href="#" class="text-blue-400 hover:text-blue-300 transition">
+                            <i class="fab fa-twitter text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-10 bg-gray-900 border-t border-gray-800">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
+                <div>
+                    <h3 class="orbitron text-white text-lg font-bold mb-4">Company</h3>
+                    <p class="text-gray-400 mb-4">
+                        Address: 131 Continental Dr, Suite 305<br>
+                        Newark, DE 19713<br>
+                        New Castle County, Delaware<br><br>
+                        Email: <a href="mailto:ai-agency@mylibby.ai" class="text-blue-400 hover:text-blue-300">ai-agency@mylibby.ai</a><br>
+                        Phone: <a href="tel:+16508997660" class="text-blue-400 hover:text-blue-300">+1 650 899 7660</a>
+                    </p>
+                </div>
+
+                <div>
+                    <h3 class="orbitron text-white text-lg font-bold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#home" class="text-gray-400 hover:text-blue-400 transition duration-300">Home</a></li>
+                        <li><a href="#projects" class="text-gray-400 hover:text-blue-400 transition duration-300">Projects</a></li>
+                        <li><a href="#skills" class="text-gray-400 hover:text-blue-400 transition duration-300">Skills</a></li>
+                        <li><a href="#ebook" class="text-gray-400 hover:text-blue-400 transition duration-300">E-Book</a></li>
+                        <li><a href="#blog" class="```html
+                        <li><a href="#blog" class="text-gray-400 hover:text-blue-400 transition duration-300">Blog</a></li>
+                        <li><a href="#contact" class="text-gray-400 hover:text-blue-400 transition duration-300">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <a href="#" class="flex items-center space-x-2 mb-4">
+                        <div class="h-10 w-10 rounded-lg bg-blue-600 flex items-center justify-center">
+                            <span class="orbitron text-white font-bold text-xl">G</span>
+                        </div>
+                        <span class="orbitron text-white text-xl font-bold">GENITUS<span class="text-blue-500">AI</span></span>
+                    </a>
+                    <p class="text-gray-400 mb-4">
+                        Specializing in innovative solutions in Prompt Engineering, AI optimization, and generative AI technologies.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="https://www.facebook.com/profile.php?id=61570518250071&locale=de_DE" target="_blank" class="text-gray-400 hover:text-blue-400 transition duration-300">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://www.youtube.com/channel/UCRW3hK-LYj5uNlfYR7rENgQ" target="_blank" class="text-gray-400 hover:text-blue-400 transition duration-300">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/in/daniel-gereci-150583311/" target="_blank" class="text-gray-400 hover:text-blue-400 transition duration-300">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-800 pt-6 text-center">
+                <p class="text-gray-500">
+                    © 2024 Genitus Inc. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to top button -->
+    <button id="back-to-top" class="fixed bottom-8 right-8 bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg z-50 opacity-0 transition-opacity duration-300 hover:bg-blue-500">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Minimal JavaScript -->
+    <script>
+        // Mobile menu toggle
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.getElementById('mobileMenu').classList.toggle('show');
+        });
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('#mobileMenu a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('mobileMenu').classList.remove('show');
+            });
+        });
+
+        // Accordion functionality
+        document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const content = header.nextElementSibling;
+                const icon = header.querySelector('.accordion-icon');
+
+                // Toggle the current accordion
+                content.classList.toggle('show');
+                icon.classList.toggle('rotate');
+
+                // Optional: Close other accordions when opening a new one
+                // Uncomment the below code if you want only one accordion open at a time
+                /*
+                document.querySelectorAll('.accordion-content').forEach(item => {
+                    if (item !== content) {
+                        item.classList.remove('show');
+                        item.previousElementSibling.querySelector('.accordion-icon').classList.remove('rotate');
+                    }
+                });
+                */
+            });
+        });
+
+        // Back to top button
+        const backToTopButton = document.getElementById('back-to-top');
+
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.remove('opacity-0');
+                backToTopButton.classList.add('opacity-100');
+            } else {
+                backToTopButton.classList.remove('opacity-100');
+                backToTopButton.classList.add('opacity-0');
+            }
+        });
+
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Open all accordions on page load for better SEO (optional)
+        // Uncomment if you want all accordions to be open by default
+        /*
+        window.addEventListener('load', () => {
+            document.querySelectorAll('.accordion-content').forEach(content => {
+                content.classList.add('show');
+                content.previousElementSibling.querySelector('.accordion-icon').classList.add('rotate');
+            });
+        });
+        */
+    </script>
+</body>
+</html>
+

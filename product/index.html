@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KI-Webentwickler in 10 Stunden</title>
+<meta name="description" content="Online-Kurs: Mit KI-Unterstützung Websites und Web-Apps bauen. Ohne Vorkenntnisse, mit zwei Portfolio-Projekten und Zertifikat.">
+<style>
+  :root{
+    --bg:#0a0a0f; --bg2:#12121c; --card:#151522; --line:rgba(148,163,184,.18);
+    --text:#f1f5f9; --muted:#94a3b8; --cyan:#06b6d4; --pink:#ec4899; --gold:#fbbf24;
+    --on-accent:#06121a; --radius:16px; --maxw:1080px;
+  }
+  @media (prefers-color-scheme: light){
+    :root:not([data-theme="dark"]){
+      --bg:#f6f8fc; --bg2:#eaeff8; --card:#ffffff; --line:rgba(15,23,42,.12);
+      --text:#0f172a; --muted:#475569; --cyan:#0e7490; --pink:#be185d; --gold:#b45309; --on-accent:#ffffff;
+    }
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-text-size-adjust:100%}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 16px}
+  section{padding:64px 0}
+  h1,h2,h3{line-height:1.15;letter-spacing:-.02em}
+  h1{font-size:clamp(2.1rem,6vw,3.6rem);font-weight:800}
+  h2{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;margin-bottom:12px}
+  h3{font-size:1.1rem;font-weight:700;margin-bottom:6px}
+  p.lead{font-size:1.15rem;color:var(--muted);max-width:640px}
+  .grad{background:linear-gradient(90deg,var(--cyan),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .eyebrow{display:inline-block;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);font-weight:700;margin-bottom:14px}
+
+  /* Nav */
+  header{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .brand{font-weight:800;letter-spacing:.04em}
+  .brand span{color:var(--cyan)}
+  .nav a.btn{padding:8px 16px;font-size:.9rem}
+  .nav .links{display:flex;gap:22px;align-items:center}
+  .nav .links a.t{color:var(--muted);text-decoration:none;font-size:.92rem}
+  .nav .links a.t:hover{color:var(--text)}
+  @media(max-width:720px){.nav .links a.t{display:none}}
+
+  /* Buttons */
+  .btn{display:inline-block;background:linear-gradient(90deg,var(--cyan),var(--pink));color:var(--on-accent);font-weight:700;text-decoration:none;padding:14px 26px;border-radius:12px;border:0;cursor:pointer;font-size:1rem;transition:transform .15s,box-shadow .15s}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px color-mix(in srgb,var(--pink) 30%,transparent)}
+  .btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
+  .btn.ghost:hover{box-shadow:none;border-color:var(--cyan)}
+  .btn:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+  /* Hero */
+  .hero{padding:80px 0 56px;background:radial-gradient(900px 400px at 80% -10%,color-mix(in srgb,var(--pink) 18%,transparent),transparent),radial-gradient(800px 400px at 0% 0%,color-mix(in srgb,var(--cyan) 16%,transparent),transparent)}
+  .hero p.lead{margin:20px 0 28px}
+  .cta-row{display:flex;gap:12px;flex-wrap:wrap}
+  .facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:44px}
+  .fact{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
+  .fact b{display:block;font-size:1.6rem}
+  .fact span{color:var(--muted);font-size:.9rem}
+
+  /* Cards */
+  .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin-top:28px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+  .card p{color:var(--muted);font-size:.96rem}
+  .ico{font-size:1.5rem;margin-bottom:8px}
+  .alt{background:var(--bg2)}
+
+  /* Curriculum */
+  .steps{list-style:none;counter-reset:s;margin-top:28px;display:grid;gap:10px}
+  .steps li{counter-increment:s;display:flex;gap:16px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px}
+  .steps li::before{content:counter(s);flex:0 0 34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:800;background:linear-gradient(135deg,var(--cyan),var(--pink));color:var(--on-accent)}
+  .steps .h{margin-left:auto;color:var(--muted);font-size:.9rem;white-space:nowrap}
+
+  /* Pricing */
+  .price-grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));margin-top:32px;align-items:stretch}
+  .plan{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:28px;display:flex;flex-direction:column}
+  .plan.main{border:2px solid var(--cyan);box-shadow:0 0 0 4px color-mix(in srgb,var(--cyan) 12%,transparent)}
+  .plan .tag{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);font-weight:700}
+  .plan .price{font-size:2.6rem;font-weight:800;margin:8px 0 2px}
+  .plan .price small{font-size:.95rem;color:var(--muted);font-weight:500}
+  .plan ul{list-style:none;margin:18px 0 24px;display:grid;gap:9px;flex:1}
+  .plan li::before{content:"✓ ";color:var(--cyan);font-weight:800}
+  .plan li{color:var(--text);font-size:.96rem}
+
+  .plan.bundle{margin-top:18px;flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;border:2px solid var(--pink)}
+  .plan.bundle .price{font-size:2.4rem}
+  .plan.hero-bundle{margin-top:28px;padding:32px;background:linear-gradient(135deg,color-mix(in srgb,var(--cyan) 12%,var(--card)),color-mix(in srgb,var(--pink) 12%,var(--card)))}
+  .plan.bundle ul.bl{margin:14px 0 8px}
+  .btn.big{padding:18px 34px;font-size:1.1rem}
+
+  /* FAQ */
+  details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-top:10px}
+  summary{cursor:pointer;font-weight:700}
+  details p{color:var(--muted);margin-top:10px}
+
+  /* Signup */
+  .signup{background:linear-gradient(135deg,color-mix(in srgb,var(--cyan) 14%,var(--card)),color-mix(in srgb,var(--pink) 14%,var(--card)));border:1px solid var(--line);border-radius:24px;padding:36px;text-align:center}
+  form{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:22px}
+  input[type=email],input[type=text]{flex:1 1 220px;max-width:340px;padding:14px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--text);font-size:1rem}
+  .consent{flex:1 1 100%;font-size:.82rem;color:var(--muted);text-align:left;max-width:640px;margin:4px auto 0}
+  .consent input{margin-right:8px}
+  #formMsg{margin-top:14px;font-weight:600;min-height:1.4em}
+  .note{font-size:.82rem;color:var(--muted);margin-top:14px}
+
+  footer{padding:40px 0;border-top:1px solid var(--line);color:var(--muted);font-size:.88rem}
+  footer .cols{display:flex;gap:24px;flex-wrap:wrap;justify-content:space-between}
+  footer a{color:var(--muted)}
+  .todo{background:color-mix(in srgb,var(--gold) 20%,transparent);border:1px dashed var(--gold);padding:1px 6px;border-radius:6px}
+  .proto{background:var(--gold);color:#1a1200;text-align:center;font-size:.82rem;padding:6px 12px;font-weight:600}
+
+  @media(max-width:560px){section{padding:44px 0}.steps li{flex-wrap:wrap}.steps .h{margin-left:50px}.signup{padding:24px 16px}}
+  @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}.btn{transition:none}}
+</style>
+</head>
+<body>
+
+<div class="proto">PROTOTYP · Platzhalter in gelb müssen vor dem Livegang ersetzt werden (Firma, Impressum, Links, Zahlung, Formular)</div>
+
+<header>
+  <div class="wrap nav">
+    <div class="brand">KI<span>·</span>WEBENTWICKLER</div>
+    <div class="links">
+      <a class="t" href="#programm">Programm</a>
+      <a class="t" href="#preise">Preise</a>
+      <a class="t" href="#faq">FAQ</a>
+      <a class="btn" href="#webinar">Gratis-Webinar</a>
+    </div>
+  </div>
+</header>
+
+<main>
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Online-Kurs · ohne Vorkenntnisse</span>
+    <h1>Deine erste Website und Web-App.<br><span class="grad">Mit KI an deiner Seite.</span></h1>
+    <p class="lead">In ca. 10 Stunden lernst du, mit HTML, CSS und JavaScript zu arbeiten und KI-Assistenten so zu steuern, dass echter, funktionierender Code entsteht. Am Ende steht dein Software-Portfolio online, und du weißt, wie du es selbst veröffentlichst und weiterentwickelst.</p>
+    <div class="cta-row">
+      <a class="btn" href="#webinar">Kostenloses Webinar sichern</a>
+      <a class="btn ghost" href="#preise">Preise ansehen</a>
+    </div>
+    <div class="facts">
+      <div class="fact"><b>ca. 10 h</b><span>kompaktes Programm</span></div>
+      <div class="fact"><b>Portfolio</b><span>online veröffentlicht</span></div>
+      <div class="fact"><b>24/7</b><span>Coding-Chatbot</span></div>
+      <div class="fact"><b>Zertifikat</b><span>nach Portfolio-Prüfung</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM / NUTZEN -->
+<section>
+  <div class="wrap">
+    <span class="eyebrow">Warum dieser Kurs</span>
+    <h2>Nicht Theorie büffeln. Bauen.</h2>
+    <p class="lead">Du lernst nicht nur Syntax, sondern den Arbeitsablauf, mit dem heute Webprojekte entstehen: Idee beschreiben, Code erzeugen lassen, prüfen, verbessern.</p>
+    <div class="grid">
+      <div class="card"><div class="ico">🧭</div><h3>Für Einsteiger gemacht</h3><p>Du brauchst nur PC-Grundkenntnisse. Wir starten bei null und gehen Schritt für Schritt.</p></div>
+      <div class="card"><div class="ico">🤖</div><h3>Prompting für Entwickler</h3><p>Du lernst, KI-Tools präzise zu briefen, Ergebnisse zu bewerten und Fehler zu beheben, statt blind zu kopieren.</p></div>
+      <div class="card"><div class="ico">🧪</div><h3>Direkt im Browser üben</h3><p>Ein Live-Editor und ein Coding-Chatbot sind im Kurs eingebunden. Keine Installation nötig.</p></div>
+      <div class="card"><div class="ico">📁</div><h3>Portfolio statt Urkunde</h3><p>Du gehst mit zwei eigenen Projekten raus, die du zeigen kannst, plus einem Zertifikat nach bestandener Prüfung.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROGRAMM -->
+<section class="alt" id="programm">
+  <div class="wrap">
+    <span class="eyebrow">Programm</span>
+    <h2>Der 10-Stunden-Fahrplan</h2>
+    <p class="lead">Kompakt, praxisnah und in deinem Tempo. Start jederzeit.</p>
+    <ol class="steps">
+      <li><div><b>Kick-off &amp; Setup</b></div><span class="h">0,5 h</span></li>
+      <li><div><b>HTML Essentials</b></div><span class="h">2 h</span></li>
+      <li><div><b>CSS Layout &amp; Komponenten</b></div><span class="h">2 h</span></li>
+      <li><div><b>JavaScript Basics</b></div><span class="h">2 h</span></li>
+      <li><div><b>Prompt-Engineering für Entwickler</b></div><span class="h">0,5 h</span></li>
+      <li><div><b>Projektarbeit: Website und Web-App</b></div><span class="h">2 h</span></li>
+      <li><div><b>Prüfung, Feedback &amp; Zertifikat</b></div><span class="h">1 h</span></li>
+    </ol>
+    <div class="grid">
+      <div class="card"><h3>📖 E-Book</h3><p>Kursbuch zu HTML, CSS, JS und KI-Workflows zum Nachlesen.</p></div>
+      <div class="card"><h3>❓ Quiz &amp; Aufgaben</h3><p>Selbsttests und Challenges nach jedem Abschnitt.</p></div>
+      <div class="card"><h3>💡 Prompt-Listen</h3><p>Erprobte Prompts für typische Aufgaben im Webprojekt.</p></div>
+      <div class="card"><h3>📑 PDFs</h3><p>HTML- und CSS-Nachschlagewerke für unterwegs.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PREISE -->
+<section id="preise">
+  <div class="wrap">
+    <span class="eyebrow">Preise</span>
+    <h2>Das Komplettpaket: vom Anfänger zum Experten</h2>
+    <p class="lead">Alle drei Webinar-Reihen in einem Paket. Du startest bei null und baust dich Reihe für Reihe bis zu eigenen KI-Systemen hoch.</p>
+    <div class="plan bundle hero-bundle">
+      <div>
+        <span class="tag">Bundle · Reihe 1 + 2 + 3</span>
+        <h3>KI-Komplettpaket</h3>
+        <div class="price">5.000 € <small>inkl. MwSt. · Einzelpreise zusammen 12.908 €</small></div>
+        <ul class="bl">
+          <li>Reihe 1: KI-Webentwickler (Anfänger)</li>
+          <li>Reihe 2: KI-Agenten &amp; Apps bauen (Advanced)</li>
+          <li>Reihe 3: KI-Systeme für Business (Expert)</li>
+          <li><span class="todo">[Anzahl]</span> persönliche 1:1-Calls mit mir (<span class="todo">[Dauer]</span>)</li>
+          <li>12 Monate Live-Webinare, Betreuung und Support</li>
+          <li>Alle meine Coding-Tools, Bots und Materialien, dauerhaft nutzbar</li>
+          <li>Selbstlernmaterial: E-Book, Challenges, Quiz und Prompt-Bibliothek</li>
+          <li><span class="todo">[Optional]</span> Platz im 1-Tages-Bootcamp</li>
+          <li>Aufzeichnungen, Coding-Chatbot und Zertifikate</li>
+        </ul>
+        <p class="note">Einmalzahlung. <span class="todo">Definition "dauerhaft" und Leistungsumfang in AGB festhalten</span></p>
+      </div>
+      <a class="btn big" href="#KAUF-LINK-BUNDLE" data-todo="Checkout-Link Bundle">Komplettpaket sichern</a>
+    </div>
+    <h3 style="margin:40px 0 0">Oder starte mit einer einzelnen Reihe</h3>
+    <div class="price-grid">
+      <div class="plan main">
+        <span class="tag">Reihe 1 · Anfänger</span>
+        <h3>KI-Webentwickler</h3>
+        <div class="price">664 € <small>inkl. MwSt.</small></div>
+        <ul>
+          <li>Ca. 10 h Programm, ohne Vorkenntnisse</li>
+          <li>Dein Software-Portfolio, selbst veröffentlicht</li>
+          <li>Prüfung &amp; Zertifikat</li>
+          <li>Coding-Chatbot rund um die Uhr</li>
+          <li>E-Mail-Support</li>
+        </ul>
+        <a class="btn" href="#KAUF-LINK-1" data-todo="Checkout-Link Reihe 1">Reihe 1 buchen</a>
+      </div>
+      <div class="plan">
+        <span class="tag">Reihe 2 · Advanced</span>
+        <h3>KI-Agenten &amp; Apps bauen</h3>
+        <div class="price">2.244 € <small>inkl. MwSt.</small></div>
+        <ul>
+          <li>Agent-Workflows, RAG und Tool-Anbindung</li>
+          <li>Eigene Anwendung von Idee bis Livegang</li>
+          <li>Vorlagen, Prompt-Bibliothek, Code-Beispiele</li>
+          <li>Gruppen-Fragerunden live</li>
+          <li><span class="todo">Inhalte final festlegen</span></li>
+        </ul>
+        <a class="btn ghost" href="#KAUF-LINK-2" data-todo="Checkout-Link Reihe 2">Reihe 2 buchen</a>
+      </div>
+      <div class="plan">
+        <span class="tag">Reihe 3 · Expert</span>
+        <h3>KI-Systeme für Business</h3>
+        <div class="price">10.000 € <small>inkl. MwSt.</small></div>
+        <ul>
+          <li>Eigenes KI-System für ein Geschäftsmodell</li>
+          <li>Persönliche 1:1-Begleitung</li>
+          <li>Ausgewählte Plätze</li>
+          <li>Bewerbung und Vorgespräch</li>
+          <li><span class="todo">Inhalte final festlegen</span></li>
+        </ul>
+        <a class="btn ghost" href="#webinar">Per Gespräch bewerben</a>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="card"><h3>📞 Weitere 1:1-Calls zubuchbar</h3><p>Zusätzliche Sessions für Code-Reviews, Projektfeedback oder Strategie. <span class="todo">Optionen &amp; Preise festlegen</span></p></div>
+      <div class="card"><h3>🏢 Für Firmen</h3><p>Tagesseminar vor Ort: 1.000 € netto Pauschale zzgl. Spesen, bis ca. 12 Teilnehmende. <a href="#angebot" style="color:var(--cyan)">Angebot anfordern</a></p></div>
+    </div>
+    <p class="note">Hinweis: Preise laut aktuellem Angebot. <span class="todo">Widerrufsbelehrung &amp; AGB vor Livegang ergänzen</span></p>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="alt" id="faq">
+  <div class="wrap">
+    <span class="eyebrow">FAQ</span>
+    <h2>Häufige Fragen</h2>
+    <details><summary>Brauche ich Programmiererfahrung?</summary><p>Nein. PC-Grundkenntnisse reichen. Der Kurs startet bei den Grundlagen.</p></details>
+    <details><summary>Wie lange dauert der Kurs?</summary><p>Das Programm umfasst ca. 10 Stunden. Du lernst in deinem eigenen Tempo und kannst jederzeit starten.</p></details>
+    <details><summary>Was bekomme ich am Ende?</summary><p>Ein Software-Portfolio mit mindestens zwei eigenen Projekten, das online erreichbar ist, dazu Vorlagen, Code und Prompts zum Weiterarbeiten und ein Zertifikat, sobald deine Projekte die Kriterien zu Codequalität, Responsiveness und Funktion erfüllen. Bei Abweichungen bekommst du konkrete Hinweise und kannst erneut einreichen.</p></details>
+    <details><summary>Brauche ich Software oder ein Abo?</summary><p>Du arbeitest im Browser mit Editor und Chatbot. Es muss nichts installiert werden.</p></details>
+    <details><summary>Kann ich mit Ergebnis-Garantien rechnen?</summary><p>Wir versprechen dir einen klaren Lernweg und eigene Projekte, keine Einkommens- oder Jobgarantie. Dein Ergebnis hängt von deinem Einsatz ab.</p></details>
+    <details><summary>Gibt es eine Rückgabe?</summary><p><span class="todo">Rückgabe-/Widerrufsregel festlegen und hier eintragen</span></p></details>
+  </div>
+</section>
+
+<!-- WEBINAR -->
+<section id="webinar">
+  <div class="wrap">
+    <div class="signup">
+      <span class="eyebrow">Kostenlos</span>
+      <h2>Live-Webinar: In 60 Minuten zur ersten KI-gebauten Seite</h2>
+      <p class="lead" style="margin:0 auto">Wir bauen live eine kleine Web-App mit KI und zeigen dir den Kursablauf. Fragen sind erlaubt.</p>
+      <form id="signupForm" novalidate>
+        <input type="text" name="name" placeholder="Vorname" aria-label="Vorname" autocomplete="given-name">
+        <input type="email" name="email" placeholder="E-Mail-Adresse" aria-label="E-Mail-Adresse" autocomplete="email" required>
+        <label class="consent"><input type="checkbox" name="consent" required> Ich willige ein, dass mir die Webinar-Infos per E-Mail geschickt werden. Abmeldung jederzeit möglich. Details in der <a href="#DATENSCHUTZ">Datenschutzerklärung</a>.</label>
+        <button class="btn" type="submit">Platz sichern</button>
+      </form>
+      <div id="formMsg" role="status" aria-live="polite"></div>
+      <p class="note">Termin: <span class="todo">Datum &amp; Uhrzeit eintragen</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- FIRMENANGEBOT -->
+<section class="alt" id="angebot">
+  <div class="wrap" style="text-align:center">
+    <span class="eyebrow">Für Unternehmen</span>
+    <h2>Euer Team arbeitet mit KI, nicht neben ihr.</h2>
+    <p class="lead" style="margin:0 auto 24px">Wir schneiden das Tagesseminar auf eure Aufgaben zu. Schreib uns kurz, worum es geht, und du bekommst ein Angebot.</p>
+    <a class="btn" href="mailto:FIRMEN-MAIL@BEISPIEL.DE?subject=Anfrage%20Tagesseminar" data-todo="E-Mail einsetzen">Angebot per E-Mail anfordern</a>
+    <p class="note"><span class="todo">Kontakt-E-Mail eintragen</span></p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap cols">
+    <div>
+      <b><span class="todo">Firmenname</span></b><br>
+      <span class="todo">Anschrift</span> · <span class="todo">Handelsregister / USt-IdNr.</span>
+    </div>
+    <div>
+      <a href="#IMPRESSUM">Impressum</a> · <a href="#DATENSCHUTZ">Datenschutz</a> · <a href="#AGB">AGB</a> · <a href="#WIDERRUF">Widerruf</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Formular: noch NICHT angebunden. Endpoint einsetzen (z. B. E-Mail-Dienst / Backend).
+  var ENDPOINT = ""; // TODO
+  var form = document.getElementById("signupForm");
+  var msg = document.getElementById("formMsg");
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    var email = form.email.value.trim();
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ msg.textContent = "Bitte gib eine gültige E-Mail-Adresse ein."; return; }
+    if(!form.consent.checked){ msg.textContent = "Bitte stimme dem E-Mail-Versand zu."; return; }
+    if(!ENDPOINT){ msg.textContent = "Prototyp: Das Formular ist noch nicht angebunden. Es wurde nichts gespeichert."; return; }
+    fetch(ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:form.name.value,email:email})})
+      .then(function(r){ if(!r.ok) throw 0; msg.textContent = "Danke! Bitte bestätige deine Anmeldung in der E-Mail."; form.reset(); })
+      .catch(function(){ msg.textContent = "Das hat nicht geklappt. Bitte versuche es später noch einmal."; });
+  });
+</script>
+</body>
+</html>

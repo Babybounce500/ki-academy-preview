@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Genitus AI Training - Werde zum KI-Experten mit unseren professionellen Kursen, geführt von Branchenexperten">
+    <meta name="keywords" content="KI Training, AI Kurse, Künstliche Intelligenz lernen, KI Zertifizierung, Machine Learning">
+    <title>Genitus AI Training | Werde zum KI-Experten</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --secondary: #10b981;
+            --accent: #8b5cf6;
+            --dark: #0f172a;
+            --darker: #020617;
+            --light: #e2e8f0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 5rem;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            overflow-x: hidden;
+        }
+
+        .orbitron {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-hover {
+            transition: transform 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+        }
+
+        .backdrop {
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .nav-link {
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--darker);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+
+        /* Improved mobile menu */
+        .mobile-menu {
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .mobile-menu.show {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-40 transition-all duration-300" id="header">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <a href="#" class="flex items-center space-x-2 group">
+                    <div class="h-10 w-10 rounded-lg bg-gradient-to-tr from-blue-600 to-blue-400 flex items-center justify-center shadow-lg group-hover:scale-110 transition duration-300">
+                        <span class="orbitron text-white font-bold text-xl">G</span>
+                    </div>
+                    <span class="orbitron text-white text-xl font-bold group-hover:text-blue-400 transition duration-300">GENITUS<span class="text-blue-500">AI</span></span>
+                </a>
+                <nav class="hidden md:flex space-x-10">
+                    <a href="#features" class="text-gray-300 hover:text-blue-500 transition duration-300 nav-link">Features</a>
+                    <a href="#benefits" class="text-gray-300 hover:text-blue-500 transition duration-300 nav-link">Benefits</a>
+                    <a href="#pricing" class="text-gray-300 hover:text-blue-500 transition duration-300 nav-link">Pricing</a>
+                    <a href="#testimonials" class="text-gray-300 hover:text-blue-500 transition duration-300 nav-link">Testimonials</a>
+                    <a href="#about" class="text-gray-300 hover:text-blue-500 transition duration-300 nav-link">About</a>
+                    <a href="#contact" class="text-gray-300 hover:text-blue-500 transition duration-300 nav-link">Contact</a>
+                </nav>
+                <div class="hidden md:block">
+                    <a href="#contact" class="px-5 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg orbitron font-bold text-white transition-all duration-300">
+                        Jetzt starten
+                    </a>
+                </div>
+                <div class="md:hidden">
+                    <button id="menuToggle" class="text-white focus:outline-none z-50 relative">
+                        <svg id="menuIcon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                        </svg>
+                        <svg id="closeIcon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="mobile-menu fixed inset-x-0 top-16 z-40 bg-gray-900 bg-opacity-95 backdrop shadow-xl p-6 md:hidden">
+            <nav class="flex flex-col space-y-6 mb-8">
+                <a href="#features" class="text-gray-300 hover:text-blue-500 transition duration-300 font-medium text-lg">Features</a>
+                <a href="#benefits" class="text-gray-300 hover:text-blue-500 transition duration-300 font-medium text-lg">Benefits</a>
+                <a href="#pricing" class="text-gray-300 hover:text-blue-500 transition duration-300 font-medium text-lg">Pricing</a>
+                <a href="#testimonials" class="text-gray-300 hover:text-blue-500 transition duration-300 font-medium text-lg">Testimonials</a>
+                <a href="#about" class="text-gray-300 hover:text-blue-500 transition duration-300 font-medium text-lg">About</a>
+                <a href="#contact" class="text-gray-300 hover:text-blue-500 transition duration-300 font-medium text-lg">Contact</a>
+            </nav>
+            <a href="#contact" class="block text-center px-5 py-3 bg-blue-600 hover:bg-blue-500 rounded-lg orbitron font-bold text-white transition duration-300">
+                Jetzt starten
+            </a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="pt-32 pb-20">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-10 md:mb-0">
+                    <h1 class="orbitron text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
+                        <span class="gradient-text">Werde zum</span>
+                        <br>KI-Experten
+                    </h1>
+                    <p class="text-xl text-gray-300 mb-10 leading-relaxed">
+                        Entdecke die Zukunft der Technologie mit unserem hochmodernen KI-Trainingsprogramm.
+                    </p>
+                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                        <a href="#pricing" class="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 rounded-lg orbitron font-bold text-white transition-all duration-300 text-center">
+                            Jetzt starten
+                        </a>
+                        <a href="#features" class="px-8 py-4 bg-gray-800 hover:bg-gray-700 border border-blue-500 rounded-lg orbitron font-bold text-white transition-all duration-300 text-center">
+                            Mehr erfahren
+                        </a>
+                    </div>
+                </div>
+                <div class="md:w-1/2">
+                    <div class="rounded-xl overflow-hidden border border-gray-700">
+                        <img src="https://images.unsplash.com/photo-1593508512255-86ab42a8e620?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" alt="AI Training" class="w-full h-auto">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="py-20">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <span class="orbitron text-blue-500 text-sm font-bold tracking-wider uppercase mb-2 block">Unsere Leistungen</span>
+                <h2 class="orbitron text-4xl sm:text-5xl font-bold mb-4">
+                    <span class="gradient-text">Innovative Features</span>
+                </h2>
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto">
+                    Wir bieten dir alles, was du brauchst, um in der Welt der künstlichen Intelligenz erfolgreich zu sein.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <div class="bg-gray-800 rounded-xl overflow-hidden transform transition duration-500 card-hover">
+                    <div class="p-8">
+                        <div class="text-blue-500 mb-6 flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-500 bg-opacity-10 border border-blue-500 border-opacity-20">
+                            <i class="fas fa-laptop-code text-3xl"></i>
+                        </div>
+                        <h3 class="orbitron text-2xl font-bold mb-4">Interaktive Module</h3>
+                        <p class="text-gray-300 leading-relaxed">Lerne durch praktische Beispiele und interaktive Sessions.</p>
+                        <div class="mt-6">
+                            <a href="#" class="inline-flex items-center text-blue-400 hover:text-blue-300 transition">
+                                <span class="mr-2">Mehr erfahren</span>
+                                <i class="fas fa-arrow-right text-sm"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800 rounded-xl overflow-hidden transform transition duration-500 card-hover">
+                    <div class="p-8">
+                        <div class="text-green-500 mb-6 flex items-center justify-center w-16 h-16 rounded-2xl bg-green-500 bg-opacity-10 border border-green-500 border-opacity-20">
+                            <i class="fas fa-chalkboard-teacher text-3xl"></i>
+                        </div>
+                        <h3 class="orbitron text-2xl font-bold mb-4">Erfahrene Trainer</h3>
+                        <p class="text-gray-300 leading-relaxed">Unsere Experten bringen jahrelange Erfahrung in praxisorientierten Projekten mit.</p>
+                        <div class="mt-6">
+                            <a href="#" class="inline-flex items-center text-green-400 hover:text-green-300 transition">
+                                <span class="mr-2">Mehr erfahren</span>
+                                <i class="fas fa-arrow-right text-sm"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800 rounded-xl overflow-hidden transform transition duration-500 card-hover">
+                    <div class="p-8">
+                        <div class="text-purple-500 mb-6 flex items-center justify-center w-16 h-16 rounded-2xl bg-purple-500 bg-opacity-10 border border-purple-500 border-opacity-20">
+                            <i class="fas fa-certificate text-3xl"></i>
+                        </div>
+                        <h3 class="orbitron text-2xl font-bold mb-4">Zertifizierung</h3>
+                        <p class="text-gray-300 leading-relaxed">Erhalte ein anerkanntes Zertifikat nach Abschluss des Kurses.</p>
+                        <div class="mt-6">
+                            <a href="#" class="inline-flex items-center text-purple-400 hover:text-purple-300 transition">
+                                <span class="mr-2">Mehr erfahren</span>
+                                <i class="fas fa-arrow-right text-sm"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits -->
+    <section id="benefits" class="py-20 bg-gray-900">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-16 md:mb-0">
+                    <div class="rounded-xl overflow-hidden border border-gray-700">
+                        <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" alt="AI Benefits" class="w-full h-auto">
+                    </div>
+                </div>
+                <div class="md:w-1/2 md:pl-16">
+                    <span class="orbitron text-green-500 text-sm font-bold tracking-wider uppercase mb-2 block">Warum uns wählen</span>
+                    <h2 class="orbitron text-4xl sm:text-5xl font-bold mb-6">
+                        <span class="gradient-text">Warum unser</span>
+                        <br>KI-Training wählen?
+                    </h2>
+                    <div class="space-y-8">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 mt-1">
+                                <div class="flex items-center justify-center w-10 h-10 rounded-full bg-green-500 bg-opacity-20">
+                                    <i class="fas fa-check text-green-500"></i>
+                                </div>
+                            </div>
+                            <div class="ml-5">
+                                <h3 class="orbitron text-xl font-bold text-white mb-2">Zukunftssichere Fähigkeiten</h3>
+                                <p class="text-gray-300 leading-relaxed">Erwerbe Kompetenzen, die in einer zunehmend KI-gesteuerten Welt unverzichtbar sind.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 mt-1">
+                                <div class="flex items-center justify-center w-10 h-10 rounded-full bg-green-500 bg-opacity-20">
+                                    <i class="fas fa-check text-green-500"></i>
+                                </div>
+                            </div>
+                            <div class="ml-5">
+                                <h3 class="orbitron text-xl font-bold text-white mb-2">Praxisnahe Projekte</h3>
+                                <p class="text-gray-300 leading-relaxed">Arbeite an realen Projekten, die dir praktische Erfahrung und ein beeindruckendes Portfolio bieten.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 mt-1">
+                                <div class="flex items-center justify-center w-10 h-10 rounded-full bg-green-500 bg-opacity-20">
+                                    <i class="fas fa-check text-green-500"></i>
+                                </div>
+                            </div>
+                            <div class="ml-5">
+                                <h3 class="orbitron text-xl font-bold text-white mb-2">Flexible Lernoptionen</h3>
+                                <p class="text-gray-300 leading-relaxed">Wähle zwischen Live-Kursen, Videotrainings oder Vor-Ort-Workshops.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-10">
+                        <a href="#pricing" class="px-8 py-4 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 rounded-lg orbitron font-bold text-white transition-all duration-300">
+                            Kurse entdecken
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-20">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <span class="orbitron text-blue-500 text-sm font-bold tracking-wider uppercase mb-2 block">Transparente Preisgestaltung</span>
+                <h2 class="orbitron text-4xl sm:text-5xl font-bold mb-4">
+                    <span class="gradient-text">Unsere Preise</span>
+                </h2>
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto">
+                    Flexible Optionen für jeden Bedarf und jedes Budget
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Live Zoom Kurse -->
+                <div class="bg-gray-900 rounded-xl overflow-hidden transform transition duration-500 card-hover border border-gray-700">
+                    <div class="bg-gradient-to-r from-blue-800 to-blue-600 px-6 py-5">
+                        <div class="text-white mb-2">
+                            <i class="fas fa-video text-2xl"></i>
+                        </div>
+                        <h3 class="orbitron text-2xl font-bold text-white mb-1">Live Zoom Kurse</h3>
+                        <p class="text-blue-100 text-sm">Interaktive Schulungen</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="mb-6 text-center">
+                            <span class="orbitron text-3xl font-bold text-white">120 € - 2.400 €</span>
+                        </div>
+                        <ul class="text-gray-300 space-y-4 mb-8">
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-blue-400 mt-1 mr-3"></i>
+                                <span><span class="font-semibold text-white">Kurzformate 1h:</span> 120 €</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-blue-400 mt-1 mr-3"></i>
+                                <span><span class="font-semibold text-white">Tagesseminare 8h:</span> 1.200 €</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-blue-400 mt-1 mr-3"></i>
+                                <span><span class="font-semibold text-white">Mehrtägige Kurse:</span> 2.400 €</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-blue-400 mt-1 mr-3"></i>
+                                <span><span class="font-semibold text-white">Q&A Sessions</span> inklusive</span>
+                            </li>
+                        </ul>
+                        <a href="#contact" class="block text-center py-3 px-6 bg-blue-600 hover:bg-blue-500 rounded-lg orbitron font-bold text-white transition-all duration-300">
+                            Jetzt buchen
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Video Kurse -->
+                <div class="bg-gray-900 rounded-xl overflow-hidden transform transition duration-500 card-hover border border-gray-700">
+                    <div class="bg-gradient-to-r from-green-800 to-green-600 px-6 py-5">
+                        <div class="text-white mb-2">
+                            <i class="fas fa-play-circle text-2xl"></i>
+                        </div>
+                        <h3 class="orbitron text-2xl font-bold text-white mb-1">Video Kurse</h3>
+                        <p class="text-green-100 text-sm">Lerne in deinem eigenen Tempo</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="mb-6 text-center">
+                            <span class="orbitron text-3xl font-bold text-white">600 €</span>
+                        </div>
+                        <ul class="text-gray-300 space-y-4 mb-8">
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-400 mt-1 mr-3"></i>
+                                <span><span class="font-semibold text-white">Umfassender Kurs 10h:</span> 600 €</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-400 mt-1 mr-3"></i>
+                                <span><span class="font-semibold text-white">Lebenslanger Zugang</span> zu allen Updates</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-400 mt-1 mr-3"></i>
+                                <span><span class="font-semibold text-white">Übungsmaterialien</span> inklusive</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-400 mt-1 mr-3"></i>
+                                <span><span class="font-semibold text-white">Community-Zugang</span> für Austausch</span>
+                            </li>
+                        </ul>
+                        <a href="#contact" class="block text-center py-3 px-6 bg-green-600 hover:bg-green-500 rounded-lg orbitron font-bold text-white transition-all duration-300">
+                            Jetzt buchen
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Vor-Ort Trainings -->
+                <div class="bg-gray-900 rounded-xl overflow-hidden transform transition duration-500 card-hover border border-gray-700">
+                    <div class="bg-gradient-to-r from-purple-800 to-purple-600 px-6 py-5">
+                        <div class="text-white mb-2">
+                            <i class="fas fa-building text-2xl"></i>
+                        </div>
+                        <h3 class="orbitron text-2xl font-bold text-white mb-1">Vor-Ort Trainings</h3>
+                        <p class="text-purple-100 text-sm">Direktes Training an deinem Standort</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="mb-6 text-center">
+                            <span class="orbitron text-3xl font-bold text-white">840 € - 2.400 €</span>
+                        </div>
+                        <ul class="text-gray-300 space-y-4 mb-8">
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-purple-400 mt-1 mr-3"></i>
+                                <span><span class="font-semibold text-white">Halbtags-Workshops 4h:</span> 840 €</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-purple-400 mt-1 mr-3"></i>
+                                <span><span class="font-semibold text-white">Ganztags-Workshops 8h:</span> 1.440 €</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-purple-400 mt-1 mr-3"></i>
+                                <span><span class="font-semibold text-white">Zweitägige Workshops:</span> 2.400 €</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-purple-400 mt-1 mr-3"></i>
+                                <span><span class="font-semibold text-white">Individuelle Anpassung</span> an Ihre Bedürfnisse</span>
+                            </li>
+                        </ul>
+                        <a href="#contact" class="block text-center py-3 px-6 bg-purple-600 hover:bg-purple-500 rounded-lg orbitron font-bold text-white transition-all duration-300">
+                            Jetzt buchen
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Premium KI Training -->
+                <div class="bg-gray-900 rounded-xl overflow-hidden transform transition duration-500 card-hover border border-yellow-500">
+                    <div class="bg-gradient-to-r from-yellow-700 to-yellow-500 px-6 py-5 relative overflow-hidden">
+                        <div class="text-white mb-2 relative z-10">
+                            <i class="fas fa-crown text-2xl"></i>
+                        </div>
+                        <h3 class="orbitron text-2xl font-bold text-white mb-1 relative z-10">Premium KI Training</h3>
+                        <p class="text-yellow-100 text-sm relative z-10">Exklusive 1:1 Betreuung</p>
+                    </div>
+                    <div class="p-6 relative">
+                        <div class="mb-6 text-center relative z-10">
+                            <span class="orbitron text-3xl font-bold text-white">3.600 €</span>
+                        </div>
+                        <ul class="text-gray-200 space-y-4 mb-8 relative z-10">
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-yellow-400 mt-1 mr-3"></i>
+                                <span><span class="font-semibold text-white">Exklusive 1:1 Sessions</span> mit Top-Experten</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-yellow-400 mt-1 mr-3"></i>
+                                <span><span class="font-semibold text-white">Langfristige Unterstützung</span> für 6 Monate</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-yellow-400 mt-1 mr-3"></i>
+                                <span><span class="font-semibold text-white">Zugang zu Premium-Inhalten</span> und Ressourcen</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-yellow-400 mt-1 mr-3"></i>
+                                <span><span class="font-semibold text-white">Zertifikat & Bonusmaterialien</span> inklusive</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-yellow-400 mt-1 mr-3"></i>
+                                <span><span class="font-semibold text-white">Karriere-Coaching</span> & Netzwerkzugang</span>
+                            </li>
+                        </ul>
+                        <a href="#contact" class="block text-center py-3 px-6 bg-yellow-600 hover:bg-yellow-500 rounded-lg orbitron font-bold text-white transition-all duration-300 relative z-10">
+                            Jetzt buchen
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="testimonials" class="py-20 bg-gray-900">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <span class="orbitron text-purple-500 text-sm font-bold tracking-wider uppercase mb-2 block">Erfolgsgeschichten</span>
+                <h2 class="orbitron text-4xl sm:text-5xl font-bold mb-4">
+                    <span class="gradient-text">Was unsere Teilnehmer sagen</span>
+                </h2>
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto">
+                    Erfahre, wie unser Training anderen geholfen hat, ihre KI-Karriere zu starten
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div class="bg-gray-800 rounded-xl p-8 border border-gray-700 relative">
+                    <div class="absolute -top-5 left-8 text-blue-500 text-5xl opacity-80">
+                        <i class="fas fa-quote-left"></i>
+                    </div>
+                    <div class="pt-6">
+                        <p class="text-gray-300 mb-8 leading-relaxed relative z-10">Das KI-Training hat unsere Arbeitsweise grundlegend verändert.</p>
+                        <div class="flex items-center">
+                            <div class="w-14 h-14 rounded-full overflow-hidden mr-4 border-2 border-blue-500">
+                                <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Anna Müller" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <h4 class="orbitron font-bold text-white text-lg">Anna Müller</h4>
+                                <div class="flex items-center mt-1">
+                                    <p class="text-blue-400 mr-2">Freelancerin</p>
+                                    <div class="flex">
+                                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800 rounded-xl p-8 border border-gray-700 relative">
+                    <div class="absolute -top-5 left-8 text-green-500 text-5xl opacity-80">
+                        <i class="fas fa-quote-left"></i>
+                    </div>
+                    <div class="pt-6">
+                        <p class="text-gray-300 mb-8 leading-relaxed relative z-10">Dank der flexiblen Terminplanung konnte ich den Kurs ohne Stress absolvieren.</p>
+                        <div class="flex items-center">
+                            <div class="w-14 h-14 rounded-full overflow-hidden mr-4 border-2 border-green-500">
+                                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Maximilian Schmidt" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <h4 class="orbitron font-bold text-white text-lg">Maximilian Schmidt</h4>
+                                <div class="flex items-center mt-1">
+                                    <p class="text-green-400 mr-2">Business Consultant</p>
+                                    <div class="flex">
+                                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/3 mb-10 md:mb-0">
+                    <div class="relative">
+                        <div class="w-64 h-64 mx-auto rounded-full overflow-hidden border-4 border-blue-500">
+                            <img src="https://babybounce500.github.io/icon/DUDE2.jpg" alt="Daniel Gereci" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                </div>
+                <div class="md:w-2/3 md:pl-16">
+                    <span class="orbitron text-blue-500 text-sm font-bold tracking-wider uppercase mb-2 block">Unsere Geschichte</span>
+                    <h2 class="orbitron text-4xl sm:text-5xl font-bold mb-6">
+                        <span class="gradient-text">Über uns</span>
+                    </h2>
+                    <p class="text-xl text-gray-300 mb-8 leading-relaxed">
+                        Wir bieten professionelle KI-Trainings für Einzelpersonen und Unternehmen.
+                    </p>
+                    <div class="mb-8 bg-gray-800 rounded-xl p-6 border border-gray-700">
+                        <h3 class="orbitron text-2xl font-bold text-white mb-2">Daniel Gereci</h3>
+                        <p class="text-blue-400 mb-4">CEO & Gründer, Genitus Inc.</p>
+                        <p class="text-gray-300 leading-relaxed">
+                            Mit über 15 Jahren Erfahrung in der KI-Branche.
+                        </p>
+                    </div>
+                    <div class="flex space-x-4">
+                        <a href="#" class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-800 hover:bg-blue-600 text-blue-400 hover:text-white transition-all duration-300">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-800 hover:bg-blue-600 text-blue-400 hover:text-white transition-all duration-300">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-800 hover:bg-blue-600 text-blue-400 hover:text-white transition-all duration-300">
+                            <i class="fas fa-globe"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="py-20 bg-gradient-to-r from-blue-900 to-purple-900">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="orbitron text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white">
+                Starte deine KI-Karriere <br>noch heute!
+            </h2>
+            <p class="text-xl text-gray-200 mb-10 max-w-3xl mx-auto">
+                Sichere dir jetzt deinen Platz in unserem nächsten Training.
+            </p>
+            <a href="#contact" class="inline-block px-12 py-6 bg-white text-gray-900 hover:bg-gray-100 rounded-lg orbitron font-bold text-lg transition-all duration-300">
+                Kontaktiere uns <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <span class="orbitron text-purple-500 text-sm font-bold tracking-wider uppercase mb-2 block">Erreiche uns</span>
+                <h2 class="orbitron text-4xl sm:text-5xl font-bold mb-4">
+                    <span class="gradient-text">Kontaktiere uns</span>
+                </h2>
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto">
+                    Hast du Fragen? Wir sind für dich da!
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-10">
+                <div class="lg:col-span-2 space-y-8">
+                    <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                        <div class="flex items-start">
+                            <div class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500 bg-opacity-20 mr-4">
+                                <i class="fas fa-map-marker-alt text-blue-500 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="orbitron text-xl font-bold text-white mb-2">Adresse</h3>
+                                <p class="text-gray-300">
+                                    131 Continental Dr, Suite 305<br>
+                                    Newark, DE 19713
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                        <div class="flex items-start">
+                            <div class="flex items-center justify-center w-12 h-12 rounded-full bg-green-500 bg-opacity-20 mr-4">
+                                <i class="fas fa-phone-alt text-green-500 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="orbitron text-xl font-bold text-white mb-2">Telefon</h3>
+                                <p class="text-gray-300">
+                                    <a href="tel:+16508997660" class="hover:text-green-400 transition duration-300">+1 650 899 7660</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                        <div class="flex items-start">
+                            <div class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500 bg-opacity-20 mr-4">
+                                <i class="fas fa-envelope text-purple-500 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="orbitron text-xl font-bold text-white mb-2">Email</h3>
+                                <p class="text-gray-300">
+                                    <a href="mailto:ai-agency@mylibby.ai" class="hover:text-purple-400 transition duration-300">ai-agency@mylibby.ai</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                        <h3 class="orbitron text-xl font-bold text-white mb-4">Folge uns</h3>
+                        <div class="flex space-x-4">
+                            <a href="#" class="flex items-center justify-center w-12 h-12 rounded-full bg-gray-700 hover:bg-blue-600 text-gray-300 hover:text-white transition-all duration-300">
+                                <i class="fab fa-facebook-f text-lg"></i>
+                            </a>
+                            <a href="#" class="flex items-center justify-center w-12 h-12 rounded-full bg-gray-700 hover:bg-blue-400 text-gray-300 hover:text-white transition-all duration-300">
+                                <i class="fab fa-twitter text-lg"></i>
+                            </a>
+                            <a href="#" class="flex items-center justify-center w-12 h-12 rounded-full bg-gray-700 hover:bg-blue-700 text-gray-300 hover:text-white transition-all duration-300">
+                                <i class="fab fa-linkedin-in text-lg"></i>
+                            </a>
+                            <a href="#" class="flex items-center justify-center w-12 h-12 rounded-full bg-gray-700 hover:bg-purple-600 text-gray-300 hover:text-white transition-all duration-300">
+                                <i class="fab fa-instagram text-lg"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-3">
+                    <form class="bg-gray-800 rounded-xl p-8 border border-gray-700" action="mailto:ai-agency@mylibby.ai" method="post" enctype="text/plain">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <label for="name" class="block text-gray-300 mb-2 orbitron">Name</label>
+                                <input type="text" id="name" name="name" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300" placeholder="Dein Name">
+                            </div>
+                            <div>
+                                <label for="email" class="block text-gray-300 mb-2 orbitron">Email</label>
+                                <input type="email" id="email" name="email" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300" placeholder="deine@email.de">
+                            </div>
+                        </div>
+                        <div class="mb-6">
+                            <label for="subject" class="block text-gray-300 mb-2 orbitron">Betreff</label>
+                            <input type="text" id="subject" name="subject" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300" placeholder="Worum geht es?">
+                        </div>
+                        <div class="mb-8">
+                            <label for="message" class="block text-gray-300 mb-2 orbitron">Nachricht</label>
+                            <textarea id="message" name="message" rows="5" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300" placeholder="Deine Nachricht an uns..."></textarea>
+                        </div>
+                        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                            <div class="flex items-center mb-4 sm:mb-0">
+                                <input type="checkbox" id="privacy" class="mr-2 h-5 w-5 rounded border-gray-600 text-blue-500 focus:ring-blue-500">
+                                <label for="privacy" class="text-gray-300 text-sm">Ich akzeptiere die <a href="#" class="text-blue-400 hover:text-blue-300">Datenschutzerklärung</a></label>
+                            </div>
+                            <button type="submit" class="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold py-3 px-8 rounded-lg orbitron transition-all duration-300">
+                                Nachricht senden <i class="fas fa-paper-plane ml-2"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-16 bg-gray-900 border-t border-gray-800">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-16">
+                <div>
+                    <a href="#" class="flex items-center space-x-2 group mb-6">
+                        <div class="h-10 w-10 rounded-lg bg-gradient-to-tr from-blue-600 to-blue-400 flex items-center justify-center shadow-lg group-hover:scale-110 transition duration-300">
+                            <span class="orbitron text-white font-bold text-xl">G</span>
+                        </div>
+                        <span class="orbitron text-white text-xl font-bold group-hover:text-blue-400 transition duration-300">GENITUS<span class="text-blue-500">AI</span></span>
+                    </a>
+                    <p class="text-gray-400 mb-6 leading-relaxed">
+                        Wir machen KI-Wissen zugänglich und anwendbar für alle.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-800 hover:bg-blue-600 text-gray-400 hover:text-white transition-all duration-300">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-800 hover:bg-blue-400 text-gray-400 hover:text-white transition-all duration-300">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-800 hover:bg-blue-700 text-gray-400 hover:text-white transition-all duration-300">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="orbitron text-white text-lg font-bold mb-6">Kurse</h3>
+                    <ul class="space-y-4">
+                        <li><a href="#" class="text-gray-400 hover:text-blue-400 transition duration-300 flex items-center"><i class="fas fa-chevron-right text-xs mr-2 text-blue-500"></i> KI Grundlagen</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-blue-400 transition duration-300 flex items-center"><i class="fas fa-chevron-right text-xs mr-2 text-blue-500"></i> Machine Learning</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-blue-400 transition duration-300 flex items-center"><i class="fas fa-chevron-right text-xs mr-2 text-blue-500"></i> Deep Learning</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-blue-400 transition duration-300 flex items-center"><i class="fas fa-chevron-right text-xs mr-2 text-blue-500"></i> Natural Language Processing</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-blue-400 transition duration-300 flex items-center"><i class="fas fa-chevron-right text-xs mr-2 text-blue-500"></i> Computer Vision</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="orbitron text-white text-lg font-bold mb-6">Links</h3>
+                    <ul class="space-y-4">
+                        <li><a href="#" class="text-gray-400 hover:text-blue-400 transition duration-300 flex items-center"><i class="fas fa-chevron-right text-xs mr-2 text-blue-500"></i> Über uns</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-blue-400 transition duration-300 flex items-center"><i class="fas fa-chevron-right text-xs mr-2 text-blue-500"></i> Blog</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-blue-400 transition duration-300 flex items-center"><i class="fas fa-chevron-right text-xs mr-2 text-blue-500"></i> Karriere</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-blue-400 transition duration-300 flex items-center"><i class="fas fa-chevron-right text-xs mr-2 text-blue-500"></i> Partner werden</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-blue-400 transition duration-300 flex items-center"><i class="fas fa-chevron-right text-xs mr-2 text-blue-500"></i> FAQ</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="orbitron text-white text-lg font-bold mb-6">Newsletter</h3>
+                    <p class="text-gray-400 mb-4">Bleibe auf dem Laufenden.</p>
+                    <form class="mb-4">
+                        <div class="flex">
+                            <input type="email" placeholder="Deine Email-Adresse" class="flex-grow bg-gray-800 border border-gray-700 rounded-l-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-r-lg transition duration-300">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </form>
+                    <p class="text-gray-500 text-sm">Wir respektieren deine Privatsphäre.</p>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <div class="text-gray-500 mb-4 md:mb-0 text-center md:text-left">
+                    © 2024 Genitus Inc. Alle Rechte vorbehalten.
+                </div>
+                <div class="flex flex-wrap justify-center space-x-4 text-sm">
+                    <a href="#" class="text-gray-500 hover:text-blue-400 transition duration-300 mb-2">Datenschutz</a>
+                    <a href="#" class="text-gray-500 hover:text-blue-400 transition duration-300 mb-2">AGB</a>
+                    <a href="#" class="text-gray-500 hover:text-blue-400 transition duration-300 mb-2">Impressum</a>
+                    <a href="#" class="text-gray-500 hover:text-blue-400 transition duration-300 mb-2">Cookie-Einstellungen</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Header scroll effect
+        const header = document.getElementById('header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 10) {
+                header.classList.add('bg-gray-900', 'bg-opacity-90', 'shadow-lg');
+                header.classList.remove('py-4');
+                header.classList.add('py-2');
+            } else {
+                header.classList.remove('bg-gray-900', 'bg-opacity-90', 'shadow-lg');
+                header.classList.remove('py-2');
+                header.classList.add('py-4');
+            }
+        });
+
+        // Mobile menu toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const menuIcon = document.getElementById('menuIcon');
+        const closeIcon = document.getElementById('closeIcon');
+
+        menuToggle.addEventListener('click', function() {
+            mobileMenu.classList.toggle('show');
+            menuIcon.classList.toggle('hidden');
+            closeIcon.classList.toggle('hidden');
+        });
+
+        // Close mobile menu when clicking on a link
+        const mobileLinks = document.querySelectorAll('#mobileMenu a');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('show');
+                menuIcon.classList.remove('hidden');
+                closeIcon.classList.add('hidden');
+            });
+        });
+
+        // Smooth scrolling for all anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

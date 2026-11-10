@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Dive Stripe API (Dark Mode)</title>
+  <!-- Materialize CSS Dark -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+  <style>
+    body, nav, .sidenav, table.striped > tbody > tr {
+      background-color: #121212 !important;
+      color: #e0e0e0 !important;
+    }
+    table.striped > tbody > tr:nth-child(odd) {
+      background-color: #1e1e1e !important;
+    }
+    a, .brand-logo, .sidenav a {
+      color: #bb86fc !important;
+    }
+    .nav-wrapper {
+      background-color: #1f1f1f !important;
+    }
+    .section h4 {
+      color: #ffffff !important;
+    }
+    blockquote {
+      border-left: 5px solid #bb86fc !important;
+      color: #e0e0e0 !important;
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body class="grey darken-4">
+
+  <!-- Navbar -->
+  <nav>
+    <div class="nav-wrapper container">
+      <a href="#" data-target="mobile-nav" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+     
+      <ul id="nav-desktop" class="right hide-on-med-and-down">
+        <li><a href="#general-api">Stripe.com API Features</a></li>
+        <li><a href="#core-payments">Core Payments APIs</a></li>
+        <li><a href="#billing-subs">Billing & Subscriptions</a></li>
+        <li><a href="#connect-market">Connect & Marketplaces</a></li>
+        <li><a href="#issuing-treasury">Issuing, Treasury & Capital</a></li>
+        <li><a href="#dev-tools">DevTools</li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Mobile Sidenav -->
+  <ul class="sidenav" id="mobile-nav">
+    <li><a href="#general-api">Stripe.com API Features</a></li>
+    <li><a href="#core-payments">Core Payments APIs</a></li>
+    <li><a href="#billing-subs">Billing & Subscriptions</a></li>
+    <li><a href="#connect-market">Connect & Marketplaces</a></li>
+    <li><a href="#issuing-treasury">Issuing, Treasury & Capital</a></li>
+    <li><a href="#dev-tools">DevTools</li>
+  </ul>
+
+  <div class="container section">
+    <section id="quickstart">
+      <h4>⚡Stripe API Quickstart</h4>
+      <p><strong>Base URL:</strong> <code>https://api.stripe.com/v1/</code> (HTTPS required)</p>
+      <p><strong>Auth:</strong> HTTP Basic Auth – Username: your <code>sk_…</code>, leave password blank</p>
+      <p><strong>Connect:</strong> Add header: <code>Stripe-Account: acct_…</code></p>
+      <p><strong>RAK/OAuth:</strong> Restricted API Keys or OAuth tokens for marketplaces</p>
+    </section>
+    
+    
+    <!-- General API Features -->
+    <section id="general-api">
+      <h4>Stripe.com API Features</h4>
+      <table class="striped responsive-table">
+        <thead>
+          <tr>
+            <th>Topic</th>
+            <th>Endpoint / Params</th>
+            <th>Function</th>
+            <th>Features</th>
+            <th>Benefits</th>
+            <th>Auth</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Authentication</strong></td>
+            <td>–</td>
+            <td>Secures all API calls</td>
+            <td>
+              • sk_test…/sk_live… keys<br>
+              • Restricted keys<br>
+              • Instant Test↔Live switch<br>
+              • Granular permissions
+            </td>
+            <td>Uniform security<br>Flexible key rotation</td>
+            <td>HTTP Basic w/ Secret Key</td>
+          </tr>
+          <tr>
+            <td><strong>Error Handling</strong></td>
+            <td>–</td>
+            <td>Consistent error model</td>
+            <td>
+              • HTTP status codes (2xx/4xx/5xx)<br>
+              • error.code / message<br>
+              • Clear client vs server
+            </td>
+            <td>Programmable retries<br>Clean UX on failure</td>
+            <td>HTTP Basic w/ Secret Key</td>
+          </tr>
+          <tr>
+            <td><strong>Expand</strong></td>
+            <td>?expand[]=…</td>
+            <td>Inline embed linked objects</td>
+            <td>
+              • Up to 4 levels deep<br>
+              • Multiple fields per request
+            </td>
+            <td>Fewer round trips<br>Simpler client logic</td>
+            <td>HTTP Basic w/ Secret Key</td>
+          </tr>
+          <tr>
+            <td><strong>Idempotency</strong></td>
+            <td>Idempotency-Key header</td>
+            <td>Safe retries, no duplicates</td>
+            <td>
+              • 24h storage<br>
+              • Automatic dedupe<br>
+              • Retry strategies
+            </td>
+            <td>Prevents double charges</td>
+            <td>HTTP Basic w/ Secret Key</td>
+          </tr>
+          <tr>
+            <td><strong>Metadata</strong></td>
+            <td>metadata[key]=value</td>
+            <td>Attach custom key/value</td>
+            <td>
+              • Up to 50 pairs<br>
+              • Values up to 500 chars
+            </td>
+            <td>Flexible tracking<br>Audit trails</td>
+            <td>HTTP Basic w/ Secret Key</td>
+          </tr>
+          <tr>
+            <td><strong>Pagination</strong></td>
+            <td>limit, starting_after, ending_before</td>
+            <td>Cursor-based lists</td>
+            <td>
+              • Cursor instead of page#<br>
+              • Auto-pagination in SDKs
+            </td>
+            <td>Efficient data handling</td>
+            <td>HTTP Basic w/ Secret Key</td>
+          </tr>
+          <tr>
+            <td><strong>Search</strong></td>
+            <td>/v1/.../search + query, page, limit</td>
+            <td>Full-text & filter queries</td>
+            <td>
+              • SQL-like syntax<br>
+              • next_page cursor
+            </td>
+            <td>Complex queries natively</td>
+            <td>HTTP Basic w/ Secret Key</td>
+          </tr>
+          <tr>
+            <td><strong>Versioning / Req-ID</strong></td>
+            <td>Stripe-Version header, Request-Id</td>
+            <td>Lock API version & debug</td>
+            <td>
+              • Monthly backward-compatible releases<br>
+              • Unique request IDs
+            </td>
+            <td>Stable upgrades<br>Faster support</td>
+            <td>HTTP Basic w/ Secret Key</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Core Payments APIs -->
+    <section id="core-payments" class="section">
+      <h4>Core Payments APIs</h4>
+      <table class="striped responsive-table">
+        <thead>
+          <tr>
+            <th>Topic</th>
+            <th>Endpoint / Params</th>
+            <th>Function</th>
+            <th>Features</th>
+            <th>Benefits</th>
+            <th>Auth</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>PaymentIntents</strong></td>
+            <td>
+              /v1/payment_intents<br>
+              /:id/confirm<br>
+              /:id/capture<br>
+              /:id/cancel
+            </td>
+            <td>Manage full payment flows</td>
+            <td>
+              • PSD2 compliant<br>
+              • 3DS flows built-in<br>
+              • Auto status transitions
+            </td>
+            <td>Unified API for all methods</td>
+            <td>API Key</td>
+          </tr>
+          <tr>
+            <td><strong>Charges</strong></td>
+            <td>
+              /v1/charges<br>
+              /:id<br>
+              /:id/capture
+            </td>
+            <td>Legacy direct charges</td>
+            <td>
+              • Immediate capture<br>
+              • Multiple captures
+            </td>
+            <td>Simple & direct integration</td>
+            <td>API Key</td>
+          </tr>
+          <tr>
+            <td><strong>Checkout Sessions</strong></td>
+            <td>
+              /v1/checkout/sessions<br>
+              /:id/line_items
+            </td>
+            <td>Hosted checkout UI</td>
+            <td>
+              • Dynamic payment methods<br>
+              • A/B testing<br>
+              • CSS theming
+            </td>
+            <td>High conversions<br>No UI code needed</td>
+            <td>API Key</td>
+          </tr>
+          <tr>
+            <td><strong>Payment Links</strong></td>
+            <td>
+              /v1/payment_links<br>
+              /:id/line_items
+            </td>
+            <td>No-code payment URLs</td>
+            <td>
+              • Reusable links<br>
+              • Price/product config
+            </td>
+            <td>Quick start, no dev</td>
+            <td>API Key</td>
+          </tr>
+          <tr>
+            <td><strong>SetupIntents</strong></td>
+            <td>
+              /v1/setup_intents<br>
+              /:id/confirm<br>
+              /:id/cancel
+            </td>
+            <td>Save payment methods</td>
+            <td>
+              • Auto-attach to customer<br>
+              • Micro-deposit support
+            </td>
+            <td>Smooth future payments</td>
+            <td>API Key</td>
+          </tr>
+          <tr>
+            <td><strong>PaymentMethods</strong></td>
+            <td>
+              /v1/payment_methods<br>
+              /:id<br>
+              /:id/attach<br>
+              /:id/detach
+            </td>
+            <td>Manage payment instruments</td>
+            <td>
+              • Cards, SEPA, wallets…<br>
+              • Customer-scoped
+            </td>
+            <td>Improved UX</td>
+            <td>API Key</td>
+          </tr>
+          <tr>
+            <td><strong>Webhooks & Events</strong></td>
+            <td>
+              /v1/webhook_endpoints<br>
+              /v1/events
+            </td>
+            <td>Async event handling</td>
+            <td>
+              • Signature verification<br>
+              • Retries & replay<br>
+              • Real-time triggers
+            </td>
+            <td>Reliable automation</td>
+            <td>API Key + Webhook Secret</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Billing & Subscriptions -->
+    <section id="billing-subs" class="section">
+      <h4>Billing & Subscriptions</h4>
+      <table class="striped responsive-table">
+        <thead>
+          <tr>
+            <th>Topic</th>
+            <th>Endpoint / Params</th>
+            <th>Function</th>
+            <th>Features</th>
+            <th>Benefits</th>
+            <th>Auth</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Subscriptions</strong></td>
+            <td>
+              /v1/subscriptions<br>
+              /:id<br>
+              /:id/cancel<br>
+              /:id/resume<br>
+              /search
+            </td>
+            <td>Manage recurring billing</td>
+            <td>
+              • Usage & quantity based<br>
+              • Trials<br>
+              • Prorations
+            </td>
+            <td>Predictable revenue<br>Flexible pricing</td>
+            <td>API Key</td>
+          </tr>
+          <tr>
+            <td><strong>Invoices</strong></td>
+            <td>
+              /v1/invoices<br>
+              /:id<br>
+              /create_preview<br>
+              /:id/finalize<br>
+              /:id/send<br>
+              /search
+            </td>
+            <td>Create & send invoices</td>
+            <td>
+              • Email delivery<br>
+              • PDF rendering<br>
+              • Reminder workflows
+            </td>
+            <td>Automated dunning<br>Professional branding</td>
+            <td>API Key</td>
+          </tr>
+          <tr>
+            <td><strong>Billing Payment Links</strong></td>
+            <td>
+              /v1/payment_links<br>
+              /:id/line_items
+            </td>
+            <td>No-code billing links</td>
+            <td>
+              • Reusable<br>
+              • A/B testing
+            </td>
+            <td>Fastest go-live</td>
+            <td>API Key</td>
+          </tr>
+          <tr>
+            <td><strong>Tax</strong></td>
+            <td>
+              /v1/tax/rates<br>
+              /v1/tax/calculations<br>
+              /v1/tax/registrations
+            </td>
+            <td>Automated tax calculation</td>
+            <td>
+              • Country rules<br>
+              • Threshold monitoring<br>
+              • Reporting
+            </td>
+            <td>Reduced error risk<br>Less manual work</td>
+            <td>API Key</td>
+          </tr>
+          <tr>
+            <td><strong>Revenue Recognition</strong></td>
+            <td>
+              /v1/reporting/report_runs<br>
+              (recognized_revenue_summary_by_product)
+            </td>
+            <td>ASC 606 automation</td>
+            <td>
+              • Real-time status<br>
+              • Product/date categories
+            </td>
+            <td>Compliance assurance<br>Less bookkeeping</td>
+            <td>Reporting Key / Dashboard</td>
+          </tr>
+          <tr>
+            <td><strong>Payout Reconciliation</strong></td>
+            <td>
+              /v1/reporting/report_runs<br>
+              (itemized_payouts)
+            </td>
+            <td>Match payouts to bank</td>
+            <td>
+              • Detailed payout line-items<br>
+              • Status flags
+            </td>
+            <td>Automated control<br>Faster close</td>
+            <td>API Key</td>
+          </tr>
+          <tr>
+            <td><strong>Sigma (Custom Reports)</strong></td>
+            <td>/v1/sigma/scheduled_query_runs<br>/:id</td>
+            <td>SQL-based reporting</td>
+            <td>
+              • Scheduled runs<br>
+              • Output files<br>
+              • Webhook notifications
+            </td>
+            <td>Deep real-time insights</td>
+            <td>API Key</td>
+          </tr>
+          <tr>
+            <td><strong>Data Pipeline</strong></td>
+            <td>– (Dashboard export)</td>
+            <td>Warehouse export</td>
+            <td>
+              • Full history<br>
+              • Auto updates
+            </td>
+            <td>BI integration<br>Central warehouse</td>
+            <td>Dashboard Login</td>
+          </tr>
+          <tr>
+            <td><strong>External Data Import</strong></td>
+            <td>– (No-code connector)</td>
+            <td>Auto data import</td>
+            <td>
+              • CSV, SFTP, API<br>
+              • Mapping UI
+            </td>
+            <td>Unified dataset<br>Less ETL work</td>
+            <td>Dashboard Login</td>
+          </tr>
+          <tr>
+            <td><strong>Atlas (Incorporation)</strong></td>
+            <td>– (Atlas dashboard)</td>
+            <td>Company formation & EIN</td>
+            <td>
+              • LLC/C-Corp options<br>
+              • 83(b) support<br>
+              • Founders bundle
+            </td>
+            <td>Complete incorporation<br>Founder discounts</td>
+            <td>Atlas Login</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Connect & Marketplaces -->
+    <section id="connect-market" class="section">
+      <h4>Connect & Marketplaces</h4>
+      <table class="striped responsive-table">
+        <thead>
+          <tr>
+            <th>Topic</th>
+            <th>Endpoint / Params</th>
+            <th>Function</th>
+            <th>Features</th>
+            <th>Benefits</th>
+            <th>Auth</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Auth & Scope</strong></td>
+            <td>–</td>
+            <td>Access & account scoping</td>
+            <td>
+              • Stripe-Account header<br>
+              • Context switching
+            </td>
+            <td>Single key management</td>
+            <td>HTTP Basic + Account Header</td>
+          </tr>
+          <tr>
+            <td><strong>Hosted Onboarding</strong></td>
+            <td>/v1/account_links</td>
+            <td>Prebuilt onboarding flow</td>
+            <td>
+              • Standard UI<br>
+              • Auto verification
+            </td>
+            <td>Fastest integration</td>
+            <td>API Key + Account Header</td>
+          </tr>
+          <tr>
+            <td><strong>Embedded Onboarding</strong></td>
+            <td>Connect Components (JS/React)</td>
+            <td>Custom UI widgets</td>
+            <td>
+              • Custom branding<br>
+              • Unified UX<br>
+              • Flexible config
+            </td>
+            <td>Self-hosted UX</td>
+            <td>API Key + Account Header</td>
+          </tr>
+          <tr>
+            <td><strong>API Onboarding</strong></td>
+            <td>/v1/accounts<br>/:id/persons</td>
+            <td>Full custom flow</td>
+            <td>
+              • Fine-grained data<br>
+              • Own UX
+            </td>
+            <td>Maximum flexibility</td>
+            <td>API Key + Account Header</td>
+          </tr>
+          <tr>
+            <td><strong>Direct Charges</strong></td>
+            <td>POST /v1/charges + Account Header</td>
+            <td>Charge directly on connect</td>
+            <td>
+              • Immediate funds<br>
+              • Full fee control
+            </td>
+            <td>Clear revenue split</td>
+            <td>API Key + Account Header</td>
+          </tr>
+          <tr>
+            <td><strong>Destination Charges</strong></td>
+            <td>POST /v1/charges + destination={acct_…}</td>
+            <td>Platform charges then payout</td>
+            <td>
+              • Platform fee<br>
+              • Split remainder
+            </td>
+            <td>Fee monetization<br>Transparency</td>
+            <td>API Key + Account Header</td>
+          </tr>
+          <tr>
+            <td><strong>Separate Charges & Transfers</strong></td>
+            <td>POST /v1/charges<br>POST /v1/transfers</td>
+            <td>Two-step payment flow</td>
+            <td>
+              • Timing flexibility<br>
+              • Partial splits
+            </td>
+            <td>Delayed/batched payouts</td>
+            <td>API Key + Account Header</td>
+          </tr>
+          <tr>
+            <td><strong>Subscriptions (Connected)</strong></td>
+            <td>POST /v1/subscriptions + Account Header</td>
+            <td>Recurring for sellers</td>
+            <td>
+              • Usage & flat plans<br>
+              • Trials & prorations
+            </td>
+            <td>Automated seller billing</td>
+            <td>API Key + Account Header</td>
+          </tr>
+          <tr>
+            <td><strong>Payouts</strong></td>
+            <td>GET/POST /v1/payouts + Account Header</td>
+            <td>Payout funds to accounts</td>
+            <td>
+              • Schedule options<br>
+              • Reversals/cancels
+            </td>
+            <td>Automated payouts</td>
+            <td>API Key + Account Header</td>
+          </tr>
+          <tr>
+            <td><strong>Tax & Reporting</strong></td>
+            <td>/v1/tax/calculations + Account Header<br>/v1/reporting/report_runs</td>
+            <td>Tax & 1099 reporting</td>
+            <td>
+              • Threshold monitoring<br>
+              • Form generation
+            </td>
+            <td>Compliance automation</td>
+            <td>API Key + Account Header</td>
+          </tr>
+          <tr>
+            <td><strong>Radar</strong></td>
+            <td>– (Dashboard rules)</td>
+            <td>Fraud prevention & scoring</td>
+            <td>
+              • Platform-wide rules<br>
+              • Real-time scoring
+            </td>
+            <td>Fewer frauds<br>Unified policy</td>
+            <td>Dashboard Login + API Key</td>
+          </tr>
+          <tr>
+            <td><strong>Dashboard Components</strong></td>
+            <td>Embedded Components</td>
+            <td>Seller UI widgets</td>
+            <td>
+              • Balances, Transactions, Reports<br>
+              • Full UI kit
+            </td>
+            <td>Seller self-service</td>
+            <td>API Key + Account Header</td>
+          </tr>
+          <tr>
+            <td><strong>Global Currencies</strong></td>
+            <td>–</td>
+            <td>Worldwide payments & payouts</td>
+            <td>
+              • 135+ currencies<br>
+              • Local methods<br>
+              • Cross-border
+            </td>
+            <td>Higher conversions</td>
+            <td>API Key + Account Header</td>
+          </tr>
+          <tr>
+            <td><strong>Platform Tools</strong></td>
+            <td>– (Dashboard: team, roles)</td>
+            <td>Central platform mgmt</td>
+            <td>
+              • Multi-user roles<br>
+              • Event logging<br>
+              • Webhook config
+            </td>
+            <td>Scalable permissions</td>
+            <td>Dashboard Login + API Key</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Issuing, Treasury & Capital -->
+    <section id="issuing-treasury" class="section">
+      <h4>Issuing, Treasury & Capital</h4>
+      <table class="striped responsive-table">
+        <thead>
+          <tr>
+            <th>Topic</th>
+            <th>Endpoint / Params</th>
+            <th>Function</th>
+            <th>Features</th>
+            <th>Benefits</th>
+            <th>Auth</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Issuing</strong></td>
+            <td>
+              /v1/issuing/cardholders<br>
+              /v1/issuing/cards<br>
+              /v1/issuing/authorizations/:id<br>
+              /v1/issuing/disputes
+            </td>
+            <td>Create & manage cards</td>
+            <td>
+              • Physical & virtual<br>
+              • Auth & capture controls<br>
+              • PIN/magstripe<br>
+              • Dispute handling
+            </td>
+            <td>Real-time expense control</td>
+            <td>API Key</td>
+          </tr>
+          <tr>
+            <td><strong>Treasury</strong></td>
+            <td>
+              /v1/treasury/financial_accounts<br>
+              /v1/treasury/transactions<br>
+              /v1/treasury/transaction_entries<br>
+              /v1/treasury/inbound_transfers<br>
+              /v1/treasury/outbound_transfers
+            </td>
+            <td>Banking-as-a-Service</td>
+            <td>
+              • Multi-currency accounts<br>
+              • ACH/Wire flows<br>
+              • Real-time balances
+            </td>
+            <td>Seamless cash mgmt</td>
+            <td>API Key</td>
+          </tr>
+          <tr>
+            <td><strong>Capital</strong></td>
+            <td>
+              /v1/capital/financing_offers<br>
+              /:id/mark_delivered<br>
+              /v1/capital/financing_summary
+            </td>
+            <td>Revenue-based financing</td>
+            <td>
+              • % revenue repayment<br>
+              • Offer lifecycle<br>
+              • Status dashboard
+            </td>
+            <td>Fast capital access<br>No interest loans</td>
+            <td>API Key</td>
+          </tr>
+          <tr>
+            <td><strong>Connect Capital</strong></td>
+            <td>Same endpoints + Account Header</td>
+            <td>Platform financing offers</td>
+            <td>
+              • Platform-driven offers<br>
+              • API onboarding & monitoring
+            </td>
+            <td>Unified mgmt for platform & sellers</td>
+            <td>API Key + Account Header</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Developer Tools & Infra -->
+    <section id="dev-tools" class="section">
+      <h4>Developer Tools & Infrastructure</h4>
+      <table class="striped responsive-table">
+        <thead>
+          <tr>
+            <th>Topic</th>
+            <th>Tool / Endpoint</th>
+            <th>Function</th>
+            <th>Features</th>
+            <th>Benefits</th>
+            <th>Auth</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Versioning & Changelog</strong></td>
+            <td>–</td>
+            <td>Track API changes</td>
+            <td>
+              • Monthly releases<br>
+              • Breaking-change notes<br>
+              • Dashboard changelog
+            </td>
+            <td>Early break alerts</td>
+            <td>Stripe-Version header</td>
+          </tr>
+          <tr>
+            <td><strong>SDKs & UI Components</strong></td>
+            <td>Official client libraries</td>
+            <td>Fast integration</td>
+            <td>
+              • Auto-pagination<br>
+              • Typed interfaces<br>
+              • UI elements
+            </td>
+            <td>Less boilerplate</td>
+            <td>API Key</td>
+          </tr>
+          <tr>
+            <td><strong>Error Management</strong></td>
+            <td>–</td>
+            <td>Auth & robust errors</td>
+            <td>
+              • HTTP Basic auth<br>
+              • Standard error objects<br>
+              • Idempotency tools
+            </td>
+            <td>Safe retries</td>
+            <td>HTTP Basic w/ Secret Key</td>
+          </tr>
+          <tr>
+            <td><strong>Testing & Sandbox</strong></td>
+            <td>Test clocks, helpers, simulators</td>
+            <td>Realistic tests</td>
+            <td>
+              • Time travel<br>
+              • Webhook forwarding<br>
+              • Test fixtures
+            </td>
+            <td>Complex flows safely</td>
+            <td>Test-Mode API Key</td>
+          </tr>
+          <tr>
+            <td><strong>Event Destinations</strong></td>
+            <td>/v2/core/event_destinations</td>
+            <td>Route events externally</td>
+            <td>
+              • Thin vs snapshot<br>
+              • Ping/enable/disable
+            </td>
+            <td>Flexible routing</td>
+            <td>API Key</td>
+          </tr>
+          <tr>
+            <td><strong>Stripe CLI</strong></td>
+            <td><code>stripe</code> commands</td>
+            <td>Local resource mgmt</td>
+            <td>
+              • Fixture generation<br>
+              • Webhook forwarding<br>
+              • Live-mode simulate
+            </td>
+            <td>Rapid prototyping</td>
+            <td>CLI login</td>
+          </tr>
+          <tr>
+            <td><strong>Workbench</strong></td>
+            <td>Dashboard UI</td>
+            <td>Query & debug</td>
+            <td>
+              • Query explorer<br>
+              • Event log<br>
+              • API version tests
+            </td>
+            <td>Central troubleshooting</td>
+            <td>Dashboard login</td>
+          </tr>
+          <tr>
+            <td><strong>Stripe Shell</strong></td>
+            <td>In-browser CLI</td>
+            <td>Interactive testing</td>
+            <td>
+              • Autocomplete<br>
+              • In-context samples
+            </td>
+            <td>No local setup</td>
+            <td>Dashboard login</td>
+          </tr>
+          <tr>
+            <td><strong>Developer Dashboard</strong></td>
+            <td>Dashboard UI</td>
+            <td>Monitor calls & webhooks</td>
+            <td>
+              • Live logs<br>
+              • Request details<br>
+              • Quota watch
+            </td>
+            <td>Real-time insight</td>
+            <td>Dashboard login</td>
+          </tr>
+          <tr>
+            <td><strong>LLM Integration</strong></td>
+            <td>LLMS.txt, API playground</td>
+            <td>AI-assisted workflows</td>
+            <td>
+              • Prompt templates<br>
+              • Auto docs fetch
+            </td>
+            <td>Faster prototyping</td>
+            <td>API Key</td>
+          </tr>
+          <tr>
+            <td><strong>Security Best Practices</strong></td>
+            <td>–</td>
+            <td>Key & infra protection</td>
+            <td>
+              • Webhook signature<br>
+              • Key rotation<br>
+              • RBAC
+            </td>
+            <td>Minimized risk</td>
+            <td>API Key + Webhook Secret</td>
+          </tr>
+          <tr>
+            <td><strong>Apps & Connectors</strong></td>
+            <td>/v1/apps, Connectors UI</td>
+            <td>Dashboard extensions</td>
+            <td>
+              • UI extensions<br>
+              • OAuth flows<br>
+              • Templates
+            </td>
+            <td>Custom workflows</td>
+            <td>API Key + OAuth</td>
+          </tr>
+          <tr>
+            <td><strong>Partner Ecosystem</strong></td>
+            <td>–</td>
+            <td>Training & community</td>
+            <td>
+              • Partner directory<br>
+              • Certification<br>
+              • Tutorials/Discord
+            </td>
+            <td>Expert network</td>
+            <td>Partner portal</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <blockquote class="section">
+      <strong>Source:</strong> All content derived from Stripe API documentation.
+    </blockquote>
+
+  </div>
+
+  <!-- Materialize JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function(){
+      var elems = document.querySelectorAll('.sidenav');
+      M.Sidenav.init(elems);
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ultimativer KI-Webkurs – Extremer Aufgaben- & Challenge-Guide (MASTERPIECE)</title>
+  <!-- Tailwind CSS per CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html { scroll-behavior: smooth; }
+    .feedback { font-weight: bold; }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800 p-4">
+
+  <!-- Header -->
+  <header class="mb-8 text-center">
+    <h1 class="text-4xl font-extrabold mb-2">
+      Ultimativer KI-Webkurs – Aufgaben, Quiz & Challenges
+    </h1>
+    <p class="text-lg">
+      Ein dermaßen umfangreiches Aufgaben-Dokument, das dich vom Anfänger zum Profi bringt!
+    </p>
+  </header>
+
+  <!-- Inhaltsverzeichnis -->
+  <nav class="mb-12">
+    <ul class="flex flex-wrap justify-center gap-4 text-blue-600 font-semibold">
+      <li><a href="#chapter1">Kapitel 1</a></li>
+      <li><a href="#chapter2">Kapitel 2</a></li>
+      <li><a href="#chapter3">Kapitel 3</a></li>
+      <li><a href="#chapter4">Kapitel 4</a></li>
+      <li><a href="#chapter5">Kapitel 5</a></li>
+      <li><a href="#chapter6">Kapitel 6</a></li>
+      <li><a href="#chapter7">Kapitel 7</a></li>
+      <li><a href="#chapter8">Kapitel 8</a></li>
+      <li><a href="#chapter9">Kapitel 9</a></li>
+      <li><a href="#chapter10">Kapitel 10</a></li>
+      <li><a href="#abschluss">Abschluss</a></li>
+    </ul>
+  </nav>
+
+  <!-- Kapitel 1: Was brauchst du als kompletter Neuling? -->
+  <section id="chapter1" class="mb-12">
+    <h2 class="text-3xl font-bold border-b pb-2 mb-4">Kapitel 1: Was brauchst du als kompletter Neuling?</h2>
+    <ol class="list-decimal pl-6 space-y-4">
+      <li>
+        <strong>Frage:</strong> Welche Hardware- und Softwarevoraussetzungen sind für den Einstieg in die Webentwicklung essentiell?<br>
+        <em>Aufgabe:</em> Erstelle eine Liste (mindestens 3 Punkte pro Kategorie) und begründe kurz, warum diese Voraussetzung wichtig ist.
+      </li>
+
+      <li>
+        <strong>Quiz (1):</strong> Welcher Editor wird im Kurs besonders empfohlen?<br>
+        <em>Optionen:</em>
+        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch1-q1" data-correct="B">
+          <label class="block"><input type="radio" name="quiz-ch1-q1" value="A"> A) Notepad</label>
+          <label class="block"><input type="radio" name="quiz-ch1-q1" value="B"> B) Visual Studio Code</label>
+          <label class="block"><input type="radio" name="quiz-ch1-q1" value="C"> C) Sublime Text</label>
+          <label class="block"><input type="radio" name="quiz-ch1-q1" value="D"> D) Atom</label>
+          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch1-q1')">Antwort prüfen</button>
+          <span class="feedback inline-block ml-2"></span>
+        </div>
+      </li>
+
+      <li>
+        <strong>Challenge:</strong> Starte deinen Editor, erstelle eine Datei namens <code>index.html</code> und nutze Emmet (<code>html:5</code>) für ein HTML5-Grundgerüst.  
+        <br><em>Bonus:</em> Füge ein Kommentar-Tag hinzu, in dem du dein persönliches Startup-Motto notierst.
+      </li>
+
+      <li>
+        <strong>Extra-Aufgabe:</strong> Recherchiere und vergleiche zwei moderne Browser (z. B. Brave vs. Vivaldi). Erstelle eine Tabelle mit mindestens fünf Vor- und Nachteilen.
+      </li>
+
+      <li>
+        <strong>Kreativitäts-Boost:</strong> Schreibe einen kurzen Prompt für eine KI (z. B. ChatGPT), der dir hilft, den besten Code-Editor für Webentwickler zu finden. Erkläre, warum du diesen Prompt gewählt hast.
+      </li>
+
+      <li>
+        <strong>Frage 2:</strong> Welche Rolle spielt die Betriebssystemversion für die Webentwicklung?<br>
+        <em>Aufgabe:</em> Recherchiere, welche Vorteile ein aktuelles Betriebssystem bietet und erstelle eine kurze Übersicht.
+      </li>
+
+      <li>
+        <strong>Quiz (2):</strong> Welcher Browser bietet standardmäßig den besten Datenschutz?<br>
+        <em>Optionen:</em>
+        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch1-q2" data-correct="C">
+          <label class="block"><input type="radio" name="quiz-ch1-q2" value="A"> A) Chrome</label>
+          <label class="block"><input type="radio" name="quiz-ch1-q2" value="B"> B) Firefox</label>
+          <label class="block"><input type="radio" name="quiz-ch1-q2" value="C"> C) Brave</label>
+          <label class="block"><input type="radio" name="quiz-ch1-q2" value="D"> D) Safari</label>
+          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch1-q2')">Antwort prüfen</button>
+          <span class="feedback inline-block ml-2"></span>
+        </div>
+      </li>
+
+      <li>
+        <strong>Challenge 2:</strong> Erstelle ein kurzes Video oder eine Präsentation (max. 5 Minuten), in der du erklärst, warum aktuelle Tools und Betriebssysteme den Entwicklungsprozess beschleunigen.
+      </li>
+
+      <li>
+        <strong>Extra-Aufgabe 2:</strong> Entwickle eine Mindmap, die die gesamte benötigte Infrastruktur (Hardware, Software, Browser, Tools) visualisiert und erkläre, wie diese miteinander interagieren.
+      </li>
+    </ol>
+  </section>
+
+  <!-- Kapitel 2: HTML-Grundlagen – Dein erster Meilenstein -->
+  <section id="chapter2" class="mb-12">
+    <h2 class="text-3xl font-bold border-b pb-2 mb-4">Kapitel 2: HTML-Grundlagen – Dein erster Meilenstein</h2>
+    <ol class="list-decimal pl-6 space-y-4">
+
+      <li>
+        <strong>Frage:</strong> Was sind semantische Tags in HTML und welchen Nutzen haben sie für SEO und Accessibility?<br>
+        <em>Aufgabe:</em> Erkläre in eigenen Worten (mindestens 3 Sätze) die Rolle von <code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code> und <code>&lt;footer&gt;</code>.
+      </li>
+
+      <li>
+        <strong>Quiz (1):</strong> Welche Aussage trifft zu?<br>
+        <em>Optionen:</em>
+        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch2-q1" data-correct="B">
+          <label class="block"><input type="radio" name="quiz-ch2-q1" value="A"> A) HTML dient primär zur optischen Gestaltung.</label>
+          <label class="block"><input type="radio" name="quiz-ch2-q1" value="B"> B) HTML strukturiert den Inhalt einer Webseite.</label>
+          <label class="block"><input type="radio" name="quiz-ch2-q1" value="C"> C) HTML ersetzt CSS und JavaScript.</label>
+          <label class="block"><input type="radio" name="quiz-ch2-q1" value="D"> D) HTML ist überflüssig bei modernen Webseiten.</label>
+          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch2-q1')">Antwort prüfen</button>
+          <span class="feedback inline-block ml-2"></span>
+        </div>
+      </li>
+
+      <li>
+        <strong>Challenge:</strong> Erstelle deine erste "Hello World"-Seite in HTML und integriere mindestens einen semantischen Tag. Teste die Seite in deinem Browser und dokumentiere, welche Effekte du bemerkst.
+      </li>
+
+      <li>
+        <strong>Extra-Aufgabe:</strong> Baue ein Formular in HTML, das Name, E-Mail und eine kurze Nachricht aufnimmt. Beschreibe, wie jedes Eingabefeld den Benutzer unterstützt und warum diese Felder wichtig sind.
+      </li>
+
+      <li>
+        <strong>Kreativitäts-Boost:</strong> Schreibe einen innovativen Prompt für eine KI, der dir hilft, ein kreatives HTML-Layout für eine Portfolioseite zu generieren. Begründe, warum dein Prompt besonders kreative Designelemente anregt.
+      </li>
+
+      <li>
+        <strong>Frage 2:</strong> Warum sind HTML-Kommentare wichtig und wie können sie beim Debuggen helfen?<br>
+        <em>Aufgabe:</em> Erstelle ein HTML-Dokument mit mehreren Kommentarzeilen und erläutere, wie diese dir beim Auffinden von Fehlern geholfen haben.
+      </li>
+
+      <li>
+        <strong>Quiz (2):</strong> Welches Element ist kein semantisches HTML-Tag?<br>
+        <em>Optionen:</em>
+        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch2-q2" data-correct="C">
+          <label class="block"><input type="radio" name="quiz-ch2-q2" value="A"> A) &lt;article&gt;</label>
+          <label class="block"><input type="radio" name="quiz-ch2-q2" value="B"> B) &lt;section&gt;</label>
+          <label class="block"><input type="radio" name="quiz-ch2-q2" value="C"> C) &lt;div&gt;</label>
+          <label class="block"><input type="radio" name="quiz-ch2-q2" value="D"> D) &lt;footer&gt;</label>
+          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch2-q2')">Antwort prüfen</button>
+          <span class="feedback inline-block ml-2"></span>
+        </div>
+      </li>
+
+      <li>
+        <strong>Challenge 2:</strong> Erstelle eine Mini-Webseite, die ausschließlich aus semantischen HTML-Tags besteht. Füge CSS hinzu, um die Bereiche farblich zu unterscheiden, und erläutere deine Struktur.
+      </li>
+
+      <li>
+        <strong>Extra-Aufgabe 2:</strong> Führe ein Peer-Review durch, indem du deine HTML-Seite mit einem Freund teilst und gegenseitig Verbesserungsvorschläge für die semantische Struktur austauschst.
+      </li>
+    </ol>
+  </section>
+
+  <!-- Kapitel 3: CSS simpel erklärt (und Tailwind als Turbo) -->
+  <section id="chapter3" class="mb-12">
+    <h2 class="text-3xl font-bold border-b pb-2 mb-4">Kapitel 3: CSS simpel erklärt (und Tailwind als Turbo)</h2>
+    <ol class="list-decimal pl-6 space-y-4">
+
+      <li>
+        <strong>Frage:</strong> Wie unterscheidet sich klassisches CSS von einem Utility-First Framework wie Tailwind?<br>
+        <em>Aufgabe:</em> Erstelle einen Vergleich (mindestens 4 Sätze) und nenne jeweils 2 Vor- und Nachteile.
+      </li>
+
+      <li>
+        <strong>Quiz (1):</strong> Welche Tailwind-Klasse sorgt für ein Padding von 1rem?<br>
+        <em>Optionen:</em>
+        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch3-q1" data-correct="B">
+          <label class="block"><input type="radio" name="quiz-ch3-q1" value="A"> A) m-4</label>
+          <label class="block"><input type="radio" name="quiz-ch3-q1" value="B"> B) p-4</label>
+          <label class="block"><input type="radio" name="quiz-ch3-q1" value="C"> C) pt-4</label>
+          <label class="block"><input type="radio" name="quiz-ch3-q1" value="D"> D) p-2</label>
+          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch3-q1')">Antwort prüfen</button>
+          <span class="feedback inline-block ml-2"></span>
+        </div>
+      </li>
+
+      <li>
+        <strong>Challenge:</strong> Entwickle ein responsives Kartenlayout mit Tailwind CSS, das bei kleineren Bildschirmen in eine Spalte wechselt. Erstelle zwei Varianten (mit <code>flex</code> und <code>grid</code>) und diskutiere Vor- und Nachteile.
+      </li>
+
+      <li>
+        <strong>Extra-Aufgabe:</strong> Erstelle eine externe CSS-Datei, in der du einen Dunkelmodus definierst. Implementiere einen Toggle-Button, der zwischen Hell- und Dunkelmodus wechselt. Beschreibe, wie du den Zustand speicherst (z. B. Local Storage).
+      </li>
+
+      <li>
+        <strong>Kreativitäts-Boost:</strong> Formuliere einen komplexen Prompt für eine KI, der dir ein einzigartiges CSS-Design mit Animationen und Hover-Effekten für eine Startup-Webseite erstellt.
+      </li>
+
+      <li>
+        <strong>Frage 2:</strong> Wie beeinflusst die CSS-Spezifität die Anwendung von Styles?<br>
+        <em>Aufgabe:</em> Erstelle ein kurzes Dokument (mind. 300 Wörter), in dem du anhand von Beispielen erklärst, wie CSS-Spezifität funktioniert.
+      </li>
+
+      <li>
+        <strong>Quiz (2):</strong> Welche Methode hilft beim Auflösen von CSS-Konflikten?<br>
+        <em>Optionen:</em>
+        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch3-q2" data-correct="D">
+          <label class="block"><input type="radio" name="quiz-ch3-q2" value="A"> A) Inline-Styles</label>
+          <label class="block"><input type="radio" name="quiz-ch3-q2" value="B"> B) Externe Stylesheets</label>
+          <label class="block"><input type="radio" name="quiz-ch3-q2" value="C"> C) !important</label>
+          <label class="block"><input type="radio" name="quiz-ch3-q2" value="D"> D) Alle genannten</label>
+          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch3-q2')">Antwort prüfen</button>
+          <span class="feedback inline-block ml-2"></span>
+        </div>
+      </li>
+
+      <li>
+        <strong>Challenge 2:</strong> Entwerfe ein komplettes CSS-Theme für eine fiktive Webseite (inkl. responsiver Elemente, Animationen, Hover-Effekte) und präsentiere es in einer Live-Demo.
+      </li>
+
+      <li>
+        <strong>Extra-Aufgabe 2:</strong> Erstelle ein kurzes Video (max. 5 Min.), in dem du den Unterschied zwischen traditionellem CSS und einem Utility-First Framework wie Tailwind erklärst. Nutze Beispiele und Animationen.
+      </li>
+    </ol>
+  </section>
+
+  <!-- Kapitel 4: KI als Code-Generator – Schritt für Schritt -->
+  <section id="chapter4" class="mb-12">
+    <h2 class="text-3xl font-bold border-b pb-2 mb-4">Kapitel 4: KI als Code-Generator – Schritt für Schritt</h2>
+    <ol class="list-decimal pl-6 space-y-4">
+
+      <li>
+        <strong>Frage:</strong> Welche Vorteile bietet der Einsatz von KI-Tools im Programmierprozess?<br>
+        <em>Aufgabe:</em> Liste mindestens drei Vorteile auf und nenne jeweils ein Beispiel aus dem Kurs.
+      </li>
+
+      <li>
+        <strong>Quiz (1):</strong> Was versteht man im Kurs unter einem "Prompt"?<br>
+        <em>Optionen:</em>
+        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch4-q1" data-correct="B">
+          <label class="block"><input type="radio" name="quiz-ch4-q1" value="A"> A) Eine Fehlermeldung</label>
+          <label class="block"><input type="radio" name="quiz-ch4-q1" value="B"> B) Eine Anweisung an die KI</label>
+          <label class="block"><input type="radio" name="quiz-ch4-q1" value="C"> C) Ein Code-Snippet</label>
+          <label class="block"><input type="radio" name="quiz-ch4-q1" value="D"> D) Ein Debugging-Tool</label>
+          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch4-q1')">Antwort prüfen</button>
+          <span class="feedback inline-block ml-2"></span>
+        </div>
+      </li>
+
+      <li>
+        <strong>Challenge:</strong> Nutze ein KI-Tool (z. B. ChatGPT) und fordere es auf, einen HTML-Code für ein Navigationsmenü mit Tailwind CSS zu generieren. Vergleiche das Ergebnis mit dem Kursbeispiel und diskutiere mögliche Verbesserungen.
+      </li>
+
+      <li>
+        <strong>Extra-Aufgabe:</strong> Erstelle ein kleines Projekt, in dem du die KI-generierte Lösung in deinen eigenen Code integrierst. Optimiere den Code und dokumentiere deine Änderungen in einem Blogpost.
+      </li>
+
+      <li>
+        <strong>Kreativitäts-Boost:</strong> Schreibe einen Prompt, der eine KI dazu anregt, ein interaktives Tutorial zu erstellen – mit Code-Beispielen, kurzen Videos und Quizfragen.
+      </li>
+
+      <li>
+        <strong>Frage 2:</strong> Wie kann eine KI dir helfen, wiederkehrende Code-Muster zu erkennen und zu optimieren?<br>
+        <em>Aufgabe:</em> Erstelle eine Liste von 5 Anwendungsfällen, in denen KI die Code-Optimierung unterstützen kann.
+      </li>
+
+      <li>
+        <strong>Quiz (2):</strong> Welcher der folgenden Begriffe beschreibt am besten den Prozess der Code-Generierung durch KI?<br>
+        <em>Optionen:</em>
+        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch4-q2" data-correct="B">
+          <label class="block"><input type="radio" name="quiz-ch4-q2" value="A"> A) Automatisierung</label>
+          <label class="block"><input type="radio" name="quiz-ch4-q2" value="B"> B) Prompt Engineering</label>
+          <label class="block"><input type="radio" name="quiz-ch4-q2" value="C"> C) Refactoring</label>
+          <label class="block"><input type="radio" name="quiz-ch4-q2" value="D"> D) Debugging</label>
+          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch4-q2')">Antwort prüfen</button>
+          <span class="feedback inline-block ml-2"></span>
+        </div>
+      </li>
+
+      <li>
+        <strong>Challenge 2:</strong> Entwickle ein interaktives "Prompt-Baukasten"-Tool, mit dem du unterschiedliche Code-Generierungs-Prompts kombinieren und testen kannst. Dokumentiere deine Idee in einem Konzeptpapier.
+      </li>
+
+      <li>
+        <strong>Extra-Aufgabe 2:</strong> Führe eine Umfrage in deinem Netzwerk durch, welche KI-Tools für die Code-Generierung am nützlichsten sind, und präsentiere die Ergebnisse in einer Infografik.
+      </li>
+    </ol>
+  </section>
+
+  <!-- Kapitel 5: Debugging & Fehlersuche – ohne Frust -->
+  <section id="chapter5" class="mb-12">
+    <h2 class="text-3xl font-bold border-b pb-2 mb-4">Kapitel 5: Debugging & Fehlersuche – ohne Frust</h2>
+    <ol class="list-decimal pl-6 space-y-4">
+
+      <li>
+        <strong>Frage:</strong> Nenne zwei typische Fehlerquellen in HTML/CSS, die zu Darstellungsfehlern führen können.<br>
+        <em>Aufgabe:</em> Erstelle ein Codebeispiel mit absichtlichem Fehler (z. B. fehlendes schließendes Tag) und beschreibe, wie du den Fehler findest.
+      </li>
+
+      <li>
+        <strong>Quiz (1):</strong> Welches Tool hilft dir beim Debugging in modernen Browsern?<br>
+        <em>Optionen:</em>
+        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch5-q1" data-correct="A">
+          <label class="block"><input type="radio" name="quiz-ch5-q1" value="A"> A) Chrome DevTools</label>
+          <label class="block"><input type="radio" name="quiz-ch5-q1" value="B"> B) Windows Task Manager</label>
+          <label class="block"><input type="radio" name="quiz-ch5-q1" value="C"> C) File Explorer</label>
+          <label class="block"><input type="radio" name="quiz-ch5-q1" value="D"> D) Photoshop</label>
+          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch5-q1')">Antwort prüfen</button>
+          <span class="feedback inline-block ml-2"></span>
+        </div>
+      </li>
+
+      <li>
+        <strong>Challenge:</strong> Setze einen Breakpoint in deinem JavaScript-Code mit Chrome DevTools und dokumentiere die Codeausführung (Screenshots, kurze Notizen).
+      </li>
+
+      <li>
+        <strong>Extra-Aufgabe:</strong> Simuliere absichtlich einen kleinen Codefehler in HTML oder CSS und bitte einen Freund, den Fehler zu finden. Sammle das Feedback und präsentiere deine Erkenntnisse.
+      </li>
+
+      <li>
+        <strong>Kreativitäts-Boost:</strong> Formuliere einen Prompt für eine KI, die dir bei der automatisierten Fehlersuche im Code hilft. Beschreibe, welche Arten von Fehlern besonders tricky sind.
+      </li>
+
+      <li>
+        <strong>Frage 2:</strong> Wie kann systematisches Debugging die Effizienz beim Programmieren steigern?<br>
+        <em>Aufgabe:</em> Schreibe eine Schritt-für-Schritt-Anleitung (mind. 5 Schritte) zur effektiven Fehlersuche in einem komplexen JavaScript-Projekt.
+      </li>
+
+      <li>
+        <strong>Quiz (2):</strong> Welche Methode ist am effektivsten, um Fehler in JavaScript zu finden?<br>
+        <em>Optionen:</em>
+        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch5-q2" data-correct="D">
+          <label class="block"><input type="radio" name="quiz-ch5-q2" value="A"> A) Console Logging</label>
+          <label class="block"><input type="radio" name="quiz-ch5-q2" value="B"> B) Breakpoints setzen</label>
+          <label class="block"><input type="radio" name="quiz-ch5-q2" value="C"> C) Code-Reviews</label>
+          <label class="block"><input type="radio" name="quiz-ch5-q2" value="D"> D) Alle genannten</label>
+          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch5-q2')">Antwort prüfen</button>
+          <span class="feedback inline-block ml-2"></span>
+        </div>
+      </li>
+
+      <li>
+        <strong>Challenge 2:</strong> Entwickle ein Debugging-Toolkit als Web-App, das häufige Fehler automatisch erkennt. Skizziere das Konzept und implementiere einen Prototyp.
+      </li>
+
+      <li>
+        <strong>Extra-Aufgabe 2:</strong> Führe ein Mini-Workshop zum Thema Debugging durch und dokumentiere die wichtigsten Erkenntnisse in einer Präsentation.
+      </li>
+    </ol>
+  </section>
+
+  <!-- Kapitel 6: Mobile-Optimierung & Responsives Design -->
+  <section id="chapter6" class="mb-12">
+    <h2 class="text-3xl font-bold border-b pb-2 mb-4">Kapitel 6: Mobile-Optimierung & Responsives Design</h2>
+    <ol class="list-decimal pl-6 space-y-4">
+
+      <li>
+        <strong>Frage:</strong> Warum ist responsives Design für moderne Webseiten unverzichtbar?<br>
+        <em>Aufgabe:</em> Vergleiche in einem kurzen Text (mind. 3 Sätze) statisches Design mit responsivem Design.
+      </li>
+
+      <li>
+        <strong>Quiz (1):</strong> Welches Meta-Tag ist ausschlaggebend für die mobile Darstellung?<br>
+        <em>Optionen:</em>
+        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch6-q1" data-correct="B">
+          <label class="block"><input type="radio" name="quiz-ch6-q1" value="A"> A) &lt;meta charset="UTF-8"&gt;</label>
+          <label class="block"><input type="radio" name="quiz-ch6-q1" value="B"> B) &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</label>
+          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch6-q1')">Antwort prüfen</button>
+          <span class="feedback inline-block ml-2"></span>
+        </div>
+      </li>
+
+      <li>
+        <strong>Challenge:</strong> Erstelle ein responsives Hamburger-Menü, das bei kleinen Bildschirmgrößen erscheint. Teste deine Lösung auf echten Mobilgeräten und dokumentiere deine Erfahrungen.
+      </li>
+
+      <li>
+        <strong>Extra-Aufgabe:</strong> Erstelle ein kurzes Video (max. 3 Min.), in dem du anhand eines Beispiels den Unterschied zwischen statischem und responsivem Design erklärst.
+      </li>
+
+      <li>
+        <strong>Kreativitäts-Boost:</strong> Entwickle einen Prompt für eine KI, der dir hilft, ein innovatives responsives Layout zu entwerfen – z. B. mit ungewöhnlichen Breakpoints und interaktiven Animationen.
+      </li>
+
+      <li>
+        <strong>Frage 2:</strong> Welche Vorteile bietet das mobile-first Design gegenüber dem Desktop-first Ansatz?<br>
+        <em>Aufgabe:</em> Erstelle eine Liste von mindestens 5 Vorteilen eines Mobile-first Ansatzes.
+      </li>
+
+      <li>
+        <strong>Quiz (2):</strong> Welcher der folgenden Begriffe beschreibt eine Methode, um responsives Design zu realisieren?<br>
+        <em>Optionen:</em>
+        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch6-q2" data-correct="D">
+          <label class="block"><input type="radio" name="quiz-ch6-q2" value="A"> A) Media Queries</label>
+          <label class="block"><input type="radio" name="quiz-ch6-q2" value="B"> B) Flexbox</label>
+          <label class="block"><input type="radio" name="quiz-ch6-q2" value="C"> C) CSS Grid</label>
+          <label class="block"><input type="radio" name="quiz-ch6-q2" value="D"> D) Alle genannten</label>
+          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch6-q2')">Antwort prüfen</button>
+          <span class="feedback inline-block ml-2"></span>
+        </div>
+      </li>
+
+      <li>
+        <strong>Challenge 2:</strong> Erstelle eine vollständige Responsive-Webseite (Desktop, Tablet, Mobile) und dokumentiere in einem Bericht, wie sich Layout und UX anpassen.
+      </li>
+
+      <li>
+        <strong>Extra-Aufgabe 2:</strong> Führe A/B-Tests zur Benutzerfreundlichkeit deiner mobilen Webseite durch und präsentiere die Ergebnisse in einem Diagramm.
+      </li>
+    </ol>
+  </section>
+
+  <!-- Kapitel 7: GitHub Pages – Deine Webseite geht online -->
+  <section id="chapter7" class="mb-12">
+    <h2 class="text-3xl font-bold border-b pb-2 mb-4">Kapitel 7: GitHub Pages – Deine Webseite geht online</h2>
+    <ol class="list-decimal pl-6 space-y-4">
+
+      <li>
+        <strong>Frage:</strong> Welche Vorteile bietet das Hosting über GitHub Pages?<br>
+        <em>Aufgabe:</em> Schreibe eine kurze Anleitung (mind. 5 Schritte), wie du deine statische Webseite veröffentlichst.
+      </li>
+
+      <li>
+        <strong>Quiz (1):</strong> Welche Git-Befehle sind zentral für das Versionieren deiner Projekte?<br>
+        <em>Optionen:</em>
+        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch7-q1" data-correct="D">
+          <label class="block"><input type="radio" name="quiz-ch7-q1" value="A"> A) git add</label>
+          <label class="block"><input type="radio" name="quiz-ch7-q1" value="B"> B) git commit</label>
+          <label class="block"><input type="radio" name="quiz-ch7-q1" value="C"> C) git push</label>
+          <label class="block"><input type="radio" name="quiz-ch7-q1" value="D"> D) Alle genannten</label>
+          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch7-q1')">Antwort prüfen</button>
+          <span class="feedback inline-block ml-2"></span>
+        </div>
+      </li>
+
+      <li>
+        <strong>Challenge:</strong> Erstelle ein neues Repository auf GitHub, lade deinen Code hoch und aktiviere GitHub Pages. Mache einen Screenshot von deinem aktiven Repo als Beleg.
+      </li>
+
+      <li>
+        <strong>Extra-Aufgabe:</strong> Richte ein automatisiertes Deployment (z. B. via GitHub Actions) ein und verfasse ein kurzes Tutorial dazu.
+      </li>
+
+      <li>
+        <strong>Kreativitäts-Boost:</strong> Entwickle einen Prompt, der einer KI hilft, eine ausgeklügelte Deployment-Strategie zu erstellen – inkl. automatischer Tests und Optimierungen.
+      </li>
+
+      <li>
+        <strong>Frage 2:</strong> Wie trägt die Versionskontrolle zu einem sicheren Entwicklungsprozess bei?<br>
+        <em>Aufgabe:</em> Erstelle eine Liste (mind. 6 Punkte), in der du beschreibst, wie Git bei der Fehlervermeidung und -behebung hilft.
+      </li>
+
+      <li>
+        <strong>Quiz (2):</strong> Welcher Git-Befehl zeigt den Verlauf aller Commits an?<br>
+        <em>Optionen:</em>
+        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch7-q2" data-correct="A">
+          <label class="block"><input type="radio" name="quiz-ch7-q2" value="A"> A) git log</label>
+          <label class="block"><input type="radio" name="quiz-ch7-q2" value="B"> B) git status</label>
+          <label class="block"><input type="radio" name="quiz-ch7-q2" value="C"> C) git diff</label>
+          <label class="block"><input type="radio" name="quiz-ch7-q2" value="D"> D) git branch</label>
+          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch7-q2')">Antwort prüfen</button>
+          <span class="feedback inline-block ml-2"></span>
+        </div>
+      </li>
+
+      <li>
+        <strong>Challenge 2:</strong> Führe eine Analyse durch, wie sich häufige Fehler in Git-Repositories (z. B. Merge-Konflikte) lösen lassen. Erstelle ein interaktives Tutorial (z. B. Slideshow).
+      </li>
+
+      <li>
+        <strong>Extra-Aufgabe 2:</strong> Organisiere einen Mini-Hackathon, bei dem die Teilnehmer in Teams ein Git-Repository erstellen und gemeinsam an einem kleinen Projekt arbeiten. Dokumentiere Best Practices.
+      </li>
+    </ol>
+  </section>
+
+  <!-- Kapitel 8: Erste Interaktionen mit JavaScript -->
+  <section id="chapter8" class="mb-12">
+    <h2 class="text-3xl font-bold border-b pb-2 mb-4">Kapitel 8: Erste Interaktionen mit JavaScript</h2>
+    <ol class="list-decimal pl-6 space-y-4">
+
+      <li>
+        <strong>Frage:</strong> Was ermöglicht JavaScript, was HTML und CSS nicht leisten können?<br>
+        <em>Aufgabe:</em> Erstelle ein JS-Snippet, das auf Button-Klick eine Meldung (z. B. per <code>alert()</code>) anzeigt.
+      </li>
+
+      <li>
+        <strong>Quiz (1):</strong> Wo sollte der <code>&lt;script&gt;</code>-Tag idealerweise platziert werden?<br>
+        <em>Optionen:</em>
+        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch8-q1" data-correct="A">
+          <label class="block"><input type="radio" name="quiz-ch8-q1" value="A"> A) Am Ende des &lt;body&gt;</label>
+          <label class="block"><input type="radio" name="quiz-ch8-q1" value="B"> B) Ganz oben im &lt;head&gt; ohne defer</label>
+          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch8-q1')">Antwort prüfen</button>
+          <span class="feedback inline-block ml-2"></span>
+        </div>
+      </li>
+
+      <li>
+        <strong>Challenge:</strong> Programmiere eine Funktion, die beim Klicken auf einen Button den Hintergrund zufällig ändert. Dokumentiere den Prozess (Screenshots, Code-Kommentare).
+      </li>
+
+      <li>
+        <strong>Extra-Aufgabe:</strong> Entwickle ein kleines interaktives Spiel (z. B. ein Quiz oder Memory) in JavaScript, inkl. verschiedener Schwierigkeitsgrade. Beschreibe den Entwicklungsprozess.
+      </li>
+
+      <li>
+        <strong>Kreativitäts-Boost:</strong> Schreibe einen Prompt, der einer KI hilft, ein Lernspiel mit Drag-and-Drop-Elementen zu entwerfen – inklusive sofortigem Feedback.
+      </li>
+
+      <li>
+        <strong>Frage 2:</strong> Wie kann man asynchrone JavaScript-Funktionen effektiv testen und debuggen?<br>
+        <em>Aufgabe:</em> Erstelle ein Beispiel, das asynchrone Operationen (z. B. <code>async/await</code>) demonstriert und erläutere den Ablauf.
+      </li>
+
+      <li>
+        <strong>Quiz (2):</strong> Welche Methode wird häufig zum Abrufen von Daten aus APIs verwendet?<br>
+        <em>Optionen:</em>
+        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch8-q2" data-correct="A">
+          <label class="block"><input type="radio" name="quiz-ch8-q2" value="A"> A) fetch()</label>
+          <label class="block"><input type="radio" name="quiz-ch8-q2" value="B"> B) alert()</label>
+          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch8-q2')">Antwort prüfen</button>
+          <span class="feedback inline-block ml-2"></span>
+        </div>
+      </li>
+
+      <li>
+        <strong>Challenge 2:</strong> Erstelle ein interaktives JavaScript-Projekt, das den aktuellen Wetterbericht einer Stadt anzeigt – inkl. Fehlerbehandlung für ungültige Eingaben. Dokumentiere deinen Prozess.
+      </li>
+
+      <li>
+        <strong>Extra-Aufgabe 2:</strong> Organisiere eine kleine Challenge im Team, bei der jeder eine eigene interaktive Web-App entwickelt. Vergleicht eure Ansätze und diskutiert Verbesserungsvorschläge.
+      </li>
+    </ol>
+  </section>
+
+  <!-- Kapitel 9: Dynamische Inhalte & APIs – Ein Vorgeschmack -->
+  <section id="chapter9" class="mb-12">
+    <h2 class="text-3xl font-bold border-b pb-2 mb-4">Kapitel 9: Dynamische Inhalte & APIs – Ein Vorgeschmack</h2>
+    <ol class="list-decimal pl-6 space-y-4">
+
+      <li>
+        <strong>Frage:</strong> Was versteht man unter einer API und wie können diese in Webprojekten eingesetzt werden?<br>
+        <em>Aufgabe:</em> Erkläre in eigenen Worten (mind. 3 Sätze), was eine RESTful API ist.
+      </li>
+
+      <li>
+        <strong>Quiz (1):</strong> Welche JavaScript-Methode wird oft genutzt, um Daten von einer API abzurufen?<br>
+        <em>Optionen:</em>
+        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch9-q1" data-correct="A">
+          <label class="block"><input type="radio" name="quiz-ch9-q1" value="A"> A) fetch()</label>
+          <label class="block"><input type="radio" name="quiz-ch9-q1" value="B"> B) innerHTML</label>
+          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch9-q1')">Antwort prüfen</button>
+          <span class="feedback inline-block ml-2"></span>
+        </div>
+      </li>
+
+      <li>
+        <strong>Challenge:</strong> Entwickle ein kleines Dashboard, das Daten (z. B. Titel) von einer öffentlichen API (z. B. JSONPlaceholder) abruft und in einer Liste anzeigt. Füge Filter-/Sortierfunktionen hinzu.
+      </li>
+
+      <li>
+        <strong>Extra-Aufgabe:</strong> Erstelle ein interaktives Dashboard mit Diagrammen (z. B. Chart.js), das Live-Daten (z. B. Wetter-API) anzeigt. Dokumentiere deine Schritte.
+      </li>
+
+      <li>
+        <strong>Kreativitäts-Boost:</strong> Formuliere einen Prompt für eine KI, die ein interaktives Dashboard entwirft, das mehrere Datenquellen (Wetter, Börse, Nachrichten) kombiniert. Erkläre, wie du die Daten visuell verbindest.
+      </li>
+
+      <li>
+        <strong>Frage 2:</strong> Wie kann man APIs sicher in Webprojekten integrieren?<br>
+        <em>Aufgabe:</em> Erstelle eine Liste von Best Practices für den sicheren Umgang mit API-Schlüsseln und authentifizierten Endpunkten.
+      </li>
+
+      <li>
+        <strong>Quiz (2):</strong> Welcher Begriff beschreibt eine API, die HTTP-Methoden wie GET und POST nutzt?<br>
+        <em>Optionen:</em>
+        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch9-q2" data-correct="A">
+          <label class="block"><input type="radio" name="quiz-ch9-q2" value="A"> A) REST</label>
+          <label class="block"><input type="radio" name="quiz-ch9-q2" value="B"> B) SOAP</label>
+          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch9-q2')">Antwort prüfen</button>
+          <span class="feedback inline-block ml-2"></span>
+        </div>
+      </li>
+
+      <li>
+        <strong>Challenge 2:</strong> Erstelle ein Projekt, das verschiedene API-Daten kombiniert – z. B. Wetter, Börsenkurse, Schlagzeilen – und dokumentiere die Integration.
+      </li>
+
+      <li>
+        <strong>Extra-Aufgabe 2:</strong> Führe einen Vergleichstest durch, bei dem du zwei verschiedene öffentliche APIs (z. B. zwei Wetter-APIs) integrierst und ihre Ergebnisse hinsichtlich Genauigkeit und Geschwindigkeit evaluierst.
+      </li>
+    </ol>
+  </section>
+
+  <!-- Kapitel 10: SEO für Einsteiger – Gefunden werden -->
+  <section id="chapter10" class="mb-12">
+    <h2 class="text-3xl font-bold border-b pb-2 mb-4">Kapitel 10: SEO für Einsteiger – Gefunden werden</h2>
+    <ol class="list-decimal pl-6 space-y-4">
+
+      <li>
+        <strong>Frage:</strong> Welche HTML-Elemente sind zentral für eine gute SEO-Optimierung?<br>
+        <em>Aufgabe:</em> Erstelle ein HTML-Dokument mit optimierten <code>&lt;title&gt;</code>- und <code>&lt;meta description&gt;</code>-Tags und erkläre, warum diese wichtig sind.
+      </li>
+
+      <li>
+        <strong>Quiz (1):</strong> Was verbessert vor allem die lokale SEO?<br>
+        <em>Optionen:</em>
+        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch10-q1" data-correct="B">
+          <label class="block"><input type="radio" name="quiz-ch10-q1" value="A"> A) Globale Keywords</label>
+          <label class="block"><input type="radio" name="quiz-ch10-q1" value="B"> B) Lokale Keywords</label>
+          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch10-q1')">Antwort prüfen</button>
+          <span class="feedback inline-block ml-2"></span>
+        </div>
+      </li>
+
+      <li>
+        <strong>Challenge:</strong> Nutze ein SEO-Analyse-Tool (z. B. Google Lighthouse) zur Bewertung deiner Seite. Identifiziere Optimierungspotenziale bei Ladezeit, mobiler Performance und Content-Struktur. Erstelle einen detaillierten Bericht.
+      </li>
+
+      <li>
+        <strong>Extra-Aufgabe:</strong> Erstelle einen Vergleichsbericht zwischen lokaler und globaler SEO, inkl. praktischer Tipps, Tools und Beispielen. Präsentiere deine Ergebnisse als Infografik.
+      </li>
+
+      <li>
+        <strong>Kreativitäts-Boost:</strong> Schreibe einen innovativen Prompt für eine KI, die dir hilft, kreative und einzigartige SEO-Texte zu generieren – integriere dabei auch lokale Besonderheiten und Storytelling-Elemente.
+      </li>
+
+      <li>
+        <strong>Frage 2:</strong> Wie wirken sich Meta-Tags und strukturierte Daten auf das Ranking in Suchmaschinen aus?<br>
+        <em>Aufgabe:</em> Erstelle ein Dokument (mind. 400 Wörter), in dem du die Wirkung von Meta-Tags und strukturierten Daten erklärst und Beispiele aus erfolgreichen Webseiten analysierst.
+      </li>
+
+      <li>
+        <strong>Quiz (2):</strong> Welches dieser Elemente gehört nicht zu den grundlegenden SEO-Maßnahmen?<br>
+        <em>Optionen:</em>
+        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch10-q2" data-correct="D">
+          <label class="block"><input type="radio" name="quiz-ch10-q2" value="A"> A) &lt;title&gt;-Tag</label>
+          <label class="block"><input type="radio" name="quiz-ch10-q2" value="B"> B) &lt;meta description&gt;</label>
+          <label class="block"><input type="radio" name="quiz-ch10-q2" value="C"> C) Interne Verlinkungen</label>
+          <label class="block"><input type="radio" name="quiz-ch10-q2" value="D"> D) Animationen mit CSS</label>
+          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch10-q2')">Antwort prüfen</button>
+          <span class="feedback inline-block ml-2"></span>
+        </div>
+      </li>
+
+      <li>
+        <strong>Challenge 2:</strong> Entwickle eine SEO-Strategie für eine fiktive lokale Dienstleistungsseite. Berücksichtige dabei Keyword-Recherche, Content-Optimierung und technische Aspekte. Präsentiere deine Strategie in einem umfassenden Plan.
+      </li>
+
+      <li>
+        <strong>Extra-Aufgabe 2:</strong> Erstelle ein SEO-Audit für deine eigene Webseite (oder eine Beispielseite) und dokumentiere alle gefundenen Optimierungsmöglichkeiten. Präsentiere deine Ergebnisse in einem Bericht und einem Diagramm.
+      </li>
+    </ol>
+  </section>
+
+  <!-- Abschluss: Dein Weg in die KI-Webentwicklungs-Zukunft -->
+  <section id="abschluss" class="mb-12">
+    <h2 class="text-3xl font-bold border-b pb-2 mb-4">Abschluss: Dein Weg in die KI-Webentwicklungs-Zukunft</h2>
+    <ol class="list-decimal pl-6 space-y-4">
+
+      <li>
+        <strong>Reflexionsfrage:</strong> Was waren die größten Herausforderungen in diesem Kurs und welche Fortschritte hast du gemacht?<br>
+        <em>Aufgabe:</em> Schreibe eine ausführliche Reflexion (mind. 200 Wörter) und nenne konkrete nächste Schritte für deine Weiterbildung.
+      </li>
+
+      <li>
+        <strong>Quiz (1):</strong> Welche Lernstrategie fördert kontinuierliches Wachstum?<br>
+        <em>Optionen:</em>
+        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-abschluss-q1" data-correct="D">
+          <label class="block"><input type="radio" name="quiz-abschluss-q1" value="A"> A) Allein lernen</label>
+          <label class="block"><input type="radio" name="quiz-abschluss-q1" value="B"> B) Praxisprojekte umsetzen</label>
+          <label class="block"><input type="radio" name="quiz-abschluss-q1" value="C"> C) Regelmäßig Feedback einholen</label>
+          <label class="block"><input type="radio" name="quiz-abschluss-q1" value="D"> D) B und C</label>
+          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-abschluss-q1')">Antwort prüfen</button>
+          <span class="feedback inline-block ml-2"></span>
+        </div>
+      </li>
+
+      <li>
+        <strong>Challenge:</strong> Erstelle einen 3‑Monats-Lernplan mit konkreten Projekten, Zielen und Ressourcen, um ein fortgeschrittener Webentwickler zu werden. Präsentiere deinen Plan als Dokument oder Mindmap und teile ihn mit einem Mentor.
+      </li>
+
+      <li>
+        <strong>Extra-Aufgabe:</strong> Verfasse einen Blogbeitrag oder erstelle ein Video, in dem du deinen gesamten Lernweg zusammenfasst und deine wichtigsten Erkenntnisse präsentierst.
+      </li>
+
+      <li>
+        <strong>Kreativitäts-Boost:</strong> Schreibe einen Prompt, der eine KI auffordert, einen interaktiven, multimodalen Lernpfad zu entwickeln – inkl. Video-Tutorials, Code-Beispielen und Quizzes.
+      </li>
+
+      <li>
+        <strong>Reflexionsfrage 2:</strong> Wie haben sich deine technischen Fähigkeiten und dein Problemlösungsansatz im Laufe des Kurses verändert?<br>
+        <em>Aufgabe:</em> Schreibe eine ausführliche Selbstreflexion (mind. 300 Wörter) und beschreibe konkrete Beispiele, in denen du Fortschritte gemacht hast.
+      </li>
+
+      <li>
+        <strong>Quiz (2):</strong> Welche Methode zur kontinuierlichen Verbesserung deiner Fähigkeiten ist am effektivsten?<br>
+        <em>Optionen:</em>
+        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-abschluss-q2" data-correct="D">
+          <label class="block"><input type="radio" name="quiz-abschluss-q2" value="A"> A) Tägliches Lesen von Fachartikeln</label>
+          <label class="block"><input type="radio" name="quiz-abschluss-q2" value="B"> B) Praxisprojekte</label>
+          <label class="block"><input type="radio" name="quiz-abschluss-q2" value="C"> C) Regelmäßiges Feedback einholen</label>
+          <label class="block"><input type="radio" name="quiz-abschluss-q2" value="D"> D) B und C</label>
+          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-abschluss-q2')">Antwort prüfen</button>
+          <span class="feedback inline-block ml-2"></span>
+        </div>
+      </li>
+
+      <li>
+        <strong>Challenge 2:</strong> Erstelle einen umfassenden Lernpfad (als interaktive Web-App oder detailliertes Dokument), der alle Aspekte des Kurses integriert – von HTML/CSS über JavaScript und APIs bis zu SEO. Integriere praktische Projekte, Quizzes und regelmäßige Selbsttests.
+      </li>
+
+      <li>
+        <strong>Extra-Aufgabe 2:</strong> Organisiere eine Online-Runde, in der du deine Lernfortschritte mit anderen Kursteilnehmern teilst und gemeinsam an einem umfangreichen Projekt arbeitest. Dokumentiere den gesamten Prozess und präsentiere eure Ergebnisse.
+      </li>
+    </ol>
+  </section>
+
+  <!-- Footer -->
+  <footer class="mt-12 text-center">
+    <p class="mb-2">Viel Erfolg beim Umsetzen deiner Projekte und beim Weiterentwickeln deiner Fähigkeiten!</p>
+    <p>Dein KI-Webentwicklungs-Team</p>
+    <a href="#top" class="text-blue-600 hover:underline mt-4 block">Zurück nach oben</a>
+  </footer>
+
+  <!-- JavaScript für interaktives Quiz-Feedback -->
+  <script>
+    /**
+     * Funktion zur Überprüfung einer Quizfrage.
+     * @param {string} quizId - Die ID des Quiz-Containers.
+     */
+    function checkAnswer(quizId) {
+      const quizContainer = document.getElementById(quizId);
+      const correctAnswer = quizContainer.getAttribute('data-correct');
+      const feedbackEl = quizContainer.querySelector('.feedback');
+      const selectedOption = quizContainer.querySelector('input[name="' + quizId + '"]:checked');
+      
+      if (!selectedOption) {
+        feedbackEl.textContent = 'Bitte wähle eine Antwort aus!';
+        feedbackEl.style.color = 'orange';
+        return;
+      }
+      
+      if (selectedOption.value === correctAnswer) {
+        feedbackEl.textContent = 'Richtig!';
+        feedbackEl.style.color = 'green';
+      } else {
+        feedbackEl.textContent = 'Falsch! Richtige Antwort: ' + correctAnswer;
+        feedbackEl.style.color = 'red';
+      }
+    }
+  </script>
+</body>
+</html>

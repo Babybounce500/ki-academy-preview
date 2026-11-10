@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prompt-Bibliothek Reihe 1</title>
+<style>
+  :root { --bg:#0a0a0f; --card:#151522; --line:rgba(148,163,184,.2); --text:#f1f5f9; --muted:#94a3b8; --cyan:#06b6d4; --pink:#ec4899; --gold:#fbbf24; }
+  @media (prefers-color-scheme: light) { :root { --bg:#f6f8fc; --card:#fff; --line:rgba(15,23,42,.14); --text:#0f172a; --muted:#475569; --cyan:#0e7490; --pink:#be185d; --gold:#b45309; } }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); line-height: 1.55; padding: 0 16px 60px; }
+  .wrap { max-width: 980px; margin: 0 auto; }
+  header { padding: 40px 0 16px; }
+  h1 { font-size: clamp(1.7rem, 5vw, 2.6rem); letter-spacing: -.02em; }
+  h1 span { background: linear-gradient(90deg, var(--cyan), var(--pink)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .lead { color: var(--muted); max-width: 680px; margin-top: 10px; }
+  .bar { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); padding: 12px 0; border-bottom: 1px solid var(--line); display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .bar input { flex: 1 1 220px; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--text); font-size: 1rem; }
+  .chip { border: 1px solid var(--line); background: var(--card); color: var(--muted); padding: 7px 12px; border-radius: 999px; cursor: pointer; font-size: .85rem; }
+  .chip[aria-pressed="true"] { color: #04121a; background: linear-gradient(90deg, var(--cyan), var(--pink)); border-color: transparent; font-weight: 700; }
+  h2 { margin: 34px 0 12px; font-size: 1.25rem; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; margin-bottom: 12px; }
+  .card h3 { font-size: 1.02rem; margin-bottom: 4px; }
+  .when { color: var(--muted); font-size: .9rem; margin-bottom: 10px; }
+  pre { white-space: pre-wrap; word-break: break-word; background: color-mix(in srgb, var(--bg) 70%, #000); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; font: 14px/1.5 Consolas, "Courier New", monospace; }
+  .row { display: flex; align-items: center; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+  button.copy { border: 0; border-radius: 10px; padding: 8px 14px; font-weight: 700; cursor: pointer; background: linear-gradient(90deg, var(--cyan), var(--pink)); color: #04121a; }
+  button.copy:focus-visible, .chip:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+  .tag { font-size: .75rem; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 2px 9px; }
+  .note { margin-top: 28px; color: var(--muted); font-size: .88rem; }
+  .empty { color: var(--muted); padding: 20px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Prompt-Bibliothek <span>Reihe 1</span></h1>
+    <p class="lead">Kopierfertige Prompts für Lernen, Bauen, Fehlersuche, Portfolio und Hosting. Ersetze alles in <code>[eckigen Klammern]</code> durch deine eigenen Angaben und prüfe jedes Ergebnis im Browser.</p>
+  </header>
+
+  <div class="bar" role="search">
+    <input id="q" type="search" placeholder="Suchen, z. B. Fehler, Portfolio, Formular" aria-label="Prompts durchsuchen">
+    <span id="chips"></span>
+  </div>
+  <main id="list"></main>
+
+  <p class="note">Gib niemals Passwörter, Schlüssel, Kundendaten oder vertrauliche Inhalte in einen Prompt ein. KI-Antworten können falsch sein: testen, lesen, nachfragen.</p>
+</div>
+
+<script>
+  // Format: [Gruppe, Titel, Wann nutzen, Prompt]
+  const PROMPTS = [
+    ["Start und Lernen", "Konzept einfach erklären", "Wenn dir ein Begriff unklar ist.",
+      "Erkläre mir als Einsteiger in einfachen Worten, was [Begriff] ist.\nNutze ein Alltagsbeispiel und antworte in höchstens zehn Sätzen.\nNenne am Ende einen typischen Anfängerfehler."],
+    ["Start und Lernen", "Code Zeile für Zeile erklären", "Bevor du fremden Code einbaust.",
+      "Hier ist Code, den ich nicht verstehe.\nErkläre ihn Zeile für Zeile in einfachen Worten und nenne zwei Fehler, die dabei passieren können.\n[Code einfügen]"],
+    ["Start und Lernen", "Lernplan für eine Woche", "Wenn du strukturiert üben willst.",
+      "Ich bin Einsteiger und habe pro Tag [Zeit] Zeit.\nErstelle einen Lernplan für eine Woche zum Thema [Thema] mit täglich einer kleinen Übung und einem Ergebnis, das ich im Browser prüfen kann."],
+
+    ["HTML", "Seite mit sauberer Struktur", "Für den Start einer neuen Seite.",
+      "Du bist ein erfahrener Webentwickler.\nErstelle eine einzelne HTML-Datei für [Zweck] mit header, nav, main, section und footer.\nNutze semantische Tags, keine externen Bibliotheken. Antworte mit dem Code und drei Sätzen Erklärung."],
+    ["HTML", "Formular mit Beschriftungen", "Kontakt- oder Anmeldeformular.",
+      "Erstelle ein HTML-Formular mit den Feldern [Felder].\nJedes Feld braucht ein label und eine passende Eingabeart. Markiere Pflichtfelder.\nErkläre kurz, wofür jedes Feld gut ist."],
+    ["HTML", "Barrierefreiheit prüfen", "Vor dem Veröffentlichen.",
+      "Prüfe diesen HTML-Code auf Barrierefreiheit: alt-Texte, Überschriften-Reihenfolge, Beschriftungen, Kontraste.\nGib eine Liste der fünf wichtigsten Verbesserungen, ändere den Code noch nicht.\n[Code einfügen]"],
+
+    ["CSS", "Layout mit Flexbox", "Menüs und Kartenreihen.",
+      "Gestalte diese Struktur mit Flexbox: [Beschreibung].\nBitte nur das CSS, mit Kommentaren, was jede Zeile bewirkt. Keine Frameworks."],
+    ["CSS", "Responsive Raster", "Seite fürs Handy anpassen.",
+      "Baue ein Raster mit drei Karten, das auf großen Bildschirmen dreispaltig ist und unter 700 Pixel einspaltig wird.\nZeige HTML und CSS und erkläre die Media Query in zwei Sätzen."],
+    ["CSS", "Dunkelmodus mit Variablen", "Design pflegbar machen.",
+      "Ergänze meine Seite um einen Hell-Dunkel-Modus mit CSS-Variablen und prefers-color-scheme.\nÄndere nur die Farben, nicht die Struktur.\n[Code einfügen]"],
+    ["CSS", "Stilregel greift nicht", "Wenn CSS nicht wirkt.",
+      "Diese CSS-Regel hat keine Wirkung: [Regel].\nHier ist das HTML dazu: [HTML].\nErkläre die Ursache (Spezifität, Reihenfolge, Schreibfehler) und zeige die minimale Korrektur."],
+
+    ["JavaScript", "Knopf mit Wirkung", "Erste Interaktion.",
+      "Schreibe JavaScript für einen Knopf mit der id [id], der beim Klick [Wirkung] auslöst.\nNutze addEventListener, schreibe lesbaren Code und erkläre die drei wichtigsten Zeilen."],
+    ["JavaScript", "Daten im Browser merken", "Einstellungen speichern.",
+      "Erweitere diesen Code so, dass die Auswahl mit localStorage gespeichert und beim Laden wieder angewendet wird.\nSpeichere keine sensiblen Daten.\n[Code einfügen]"],
+    ["JavaScript", "Filter für Projektkarten", "Für das Portfolio.",
+      "Baue einen Filter für Karten mit data-kategorie-Attributen und Buttons für die Kategorien [Kategorien].\nNutze das hidden-Attribut. Zeige HTML, CSS und JavaScript in einer Datei."],
+
+    ["Fehlersuche", "Fehler beheben", "Wenn etwas nicht funktioniert.",
+      "Es passiert: [was passiert].\nErwartet: [was du erwartest].\nHier ist mein Code: [Code einfügen]\nFinde die Ursache, ändere nur das Nötige und erkläre die Korrektur in zwei Sätzen."],
+    ["Fehlersuche", "Konsolenmeldung deuten", "Rote Meldung in der Konsole.",
+      "Ich bekomme diese Fehlermeldung in der Browser-Konsole: [Meldung].\nHier ist der betroffene Code: [Code].\nErkläre, was sie bedeutet, wo die Ursache liegen kann und wie ich sie Schritt für Schritt prüfe."],
+    ["Fehlersuche", "Code-Review vor Abgabe", "Qualität sichern.",
+      "Prüfe diesen Code auf Lesbarkeit, Struktur und häufige Fehler.\nGib eine nach Wichtigkeit sortierte Liste mit fünf Verbesserungen. Ändere den Code noch nicht.\n[Code einfügen]"],
+
+    ["Portfolio", "Projektkarte formulieren", "Beschreibung für ein Projekt.",
+      "Formuliere eine Projektbeschreibung für mein Portfolio.\nNutze nur diese Angaben: Problem [..], Lösung [..], Technik [..], Ergebnis [..], Link [..].\nStruktur: Titel, ein Satz Problem, ein Satz Lösung, Technik, Ergebnis. Erfinde nichts dazu."],
+    ["Portfolio", "Portfolio-Startseite", "Aus der Vorlage eine eigene Seite machen.",
+      "Passe diese Portfolio-Vorlage an: Name [Name], Beruf [Beruf], Schwerpunkt [Schwerpunkt].\nÄndere nur Texte und Farben, die Struktur bleibt. Antworte mit dem geänderten Code.\n[Vorlage einfügen]"],
+    ["Portfolio", "Über-mich-Text", "Kurzer, ehrlicher Profiltext.",
+      "Schreibe einen Über-mich-Text mit höchstens 80 Wörtern.\nAngaben: [Hintergrund], [Interessen], [was ich baue].\nSachlicher Ton, keine Übertreibungen, keine Zahlen oder Erfolge, die ich nicht genannt habe."],
+
+    ["Hosting", "Veröffentlichen mit GitHub Pages", "Erste Veröffentlichung.",
+      "Erkläre mir Schritt für Schritt, wie ich eine statische Website mit GitHub Pages veröffentliche.\nIch habe die Dateien index.html, stylesheet.css und script.js. Nenne typische Fehler, wenn die Seite nicht angezeigt wird."],
+    ["Hosting", "Eigene Domain verbinden", "Domain und DNS.",
+      "Ich habe die Domain [Domain] und hoste bei [Anbieter].\nErkläre die DNS-Einträge, die ich setzen muss, wie ich prüfe, ob HTTPS aktiv ist, und was bei Verzögerungen normal ist."],
+    ["Hosting", "Rechtliche Mindestliste", "Orientierung, keine Rechtsberatung.",
+      "Ich veröffentliche ein Portfolio mit Kontaktformular in Deutschland.\nWelche Punkte sollte ich prüfen: Impressum, Datenschutz, Schriften, Bilder?\nGib eine Checkliste und weise darauf hin, was ich rechtlich prüfen lassen sollte."],
+
+    ["Agenten", "Agenten auf dem Papier planen", "Vor dem ersten Agenten.",
+      "Ich möchte einen Agenten für folgende Aufgabe planen: [Aufgabe].\nBeschreibe: Ziel in einem Satz, nötige Werkzeuge, Aktionen, die eine Freigabe brauchen, und fünf Testfälle mit bekanntem Ergebnis."],
+    ["Agenten", "Werkzeug beschreiben", "Für Werkzeuge in Agenten.",
+      "Schreibe eine Werkzeugbeschreibung für [Funktion] mit Name, kurzer Beschreibung, Parametern und Beispielaufruf.\nDie Beschreibung soll so klar sein, dass ein neuer Kollege sie ohne Rückfrage versteht."],
+    ["Agenten", "Leitplanken festlegen", "Sicherheit für Agenten.",
+      "Mein Agent soll [Aufgabe] erledigen.\nNenne Leitplanken: minimale Rechte, Aktionen mit Freigabe, Limits für Schritte und Kosten, Protokollierung und wie er mit Inhalten aus unsicheren Quellen umgehen soll."]
+  ];
+
+  const list = document.getElementById('list');
+  const chips = document.getElementById('chips');
+  const q = document.getElementById('q');
+  const groups = ['Alle', ...new Set(PROMPTS.map(p => p[0]))];
+  let active = 'Alle';
+
+  function render() {
+    const term = q.value.trim().toLowerCase();
+    const shown = PROMPTS.filter(p => (active === 'Alle' || p[0] === active) && (!term || (p[1] + p[2] + p[3]).toLowerCase().includes(term)));
+    list.innerHTML = '';
+    if (!shown.length) { list.innerHTML = '<p class="empty">Keine Treffer.</p>'; return; }
+    let lastGroup = '';
+    shown.forEach(p => {
+      if (p[0] !== lastGroup) { const h = document.createElement('h2'); h.textContent = p[0]; list.appendChild(h); lastGroup = p[0]; }
+      const card = document.createElement('article'); card.className = 'card';
+      card.innerHTML = '<h3></h3><p class="when"></p><pre></pre><div class="row"><button class="copy" type="button">Kopieren</button><span class="tag"></span></div>';
+      card.querySelector('h3').textContent = p[1];
+      card.querySelector('.when').textContent = p[2];
+      card.querySelector('pre').textContent = p[3];
+      card.querySelector('.tag').textContent = p[0];
+      const btn = card.querySelector('button');
+      btn.addEventListener('click', () => {
+        const done = () => { btn.textContent = 'Kopiert'; setTimeout(() => btn.textContent = 'Kopieren', 1400); };
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(p[3]).then(done, done);
+        else { const ta = document.createElement('textarea'); ta.value = p[3]; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch (e) {} ta.remove(); done(); }
+      });
+      list.appendChild(card);
+    });
+  }
+  groups.forEach(g => {
+    const b = document.createElement('button'); b.className = 'chip'; b.type = 'button'; b.textContent = g; b.setAttribute('aria-pressed', g === active);
+    b.addEventListener('click', () => { active = g; chips.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', c === b)); render(); });
+    chips.appendChild(b);
+  });
+  q.addEventListener('input', render);
+  render();
+</script>
+</body>
+</html>

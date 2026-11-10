@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Prompt Engineering Toolkit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00ff9d;
+            --secondary: #00a3ff;
+            --accent: #ff00e6;
+            --background: #0a0a1a;
+            --surface: #1a1a2e;
+            --text: #e0e0e0;
+            --text-light: #f0f0f0;
+            --text-dark: #a0a0a0;
+            --glow: 0 0 10px rgba(0, 255, 157, 0.3);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: var(--transition);
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            padding-top: 80px;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(0, 255, 157, 0.05), rgba(0, 163, 255, 0.05));
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Header and Navigation */
+        header {
+            background: linear-gradient(135deg, var(--surface), var(--background));
+            color: white;
+            text-align: center;
+            padding: 3rem 1rem;
+            margin-bottom: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0, 255, 157, 0.1);
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 255, 157, 0.1) 0%, transparent 70%);
+            animation: rotate 60s linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+            text-shadow: var(--glow);
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary);
+            margin: 2rem 0 1rem;
+            font-size: 2rem;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 0.5rem;
+            position: relative;
+            scroll-margin-top: 100px;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+
+        h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--secondary);
+            margin: 1.5rem 0 0.5rem;
+            font-size: 1.5rem;
+        }
+
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(90deg, var(--surface), var(--background));
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+            border-bottom: 1px solid rgba(0, 255, 157, 0.1);
+        }
+
+        .nav-title {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: var(--primary);
+            text-shadow: var(--glow);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+            background: rgba(0, 255, 157, 0.1);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover::after {
+            left: 0;
+            width: 100%;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background: var(--surface);
+            min-width: 250px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            z-index: 1;
+            border: 1px solid rgba(0, 255, 157, 0.1);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            color: var(--text);
+            padding: 0.75rem 1rem;
+            text-decoration: none;
+            display: block;
+            border-radius: 0.25rem;
+            transition: var(--transition);
+        }
+
+        .dropdown-content a:hover {
+            background: rgba(0, 255, 157, 0.1);
+            color: var(--primary);
+        }
+
+        .toggle-btn {
+            background: transparent;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+        }
+
+        .toggle-btn:hover {
+            color: var(--primary);
+        }
+
+        /* Main Content */
+        section {
+            margin-bottom: 3rem;
+            scroll-margin-top: 100px;
+            position: relative;
+            padding: 2rem;
+            background: rgba(26, 26, 46, 0.5);
+            border-radius: 1rem;
+            border: 1px solid rgba(0, 255, 157, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 4px 4px 0 0;
+        }
+
+        ul {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        li {
+            background: rgba(26, 26, 46, 0.7);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(0, 255, 157, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        li::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 255, 157, 0.1) 0%, transparent 70%);
+            animation: rotate 60s linear infinite;
+            z-index: 0;
+        }
+
+        li:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            background: rgba(26, 26, 46, 0.9);
+        }
+
+        strong {
+            color: var(--primary);
+            font-weight: 600;
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .prompt {
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--text-light);
+            font-family: 'Roboto Mono', monospace;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+            white-space: pre-line;
+            overflow-x: auto;
+            position: relative;
+            border: 1px solid rgba(0, 255, 157, 0.2);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .prompt::before {
+            content: 'PROMPT';
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            color: var(--accent);
+            opacity: 0.7;
+        }
+
+        .copy-btn {
+            background: rgba(0, 255, 157, 0.1);
+            color: var(--primary);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .copy-btn:hover {
+            background: rgba(0, 255, 157, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Utility Classes */
+        .tag {
+            display: inline-block;
+            background: rgba(0, 255, 157, 0.1);
+            color: var(--primary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+            margin-right: 0.5rem;
+            font-size: 0.8rem;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+            border: 1px solid rgba(0, 255, 157, 0.2);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .card {
+            background: rgba(26, 26, 46, 0.7);
+            border-radius: 1rem;
+            padding: 2rem;
+            border: 1px solid rgba(0, 255, 157, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 255, 157, 0.1) 0%, transparent 70%);
+            animation: rotate 60s linear infinite;
+            z-index: 0;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            background: rgba(26, 26, 46, 0.9);
+        }
+
+        .card-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .card-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+
+        /* Search and Tabs */
+        .search-container {
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border: 1px solid rgba(0, 255, 157, 0.2);
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            background: rgba(26, 26, 46, 0.5);
+            color: var(--text);
+            transition: var(--transition);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 255, 157, 0.2);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-dark);
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid rgba(0, 255, 157, 0.2);
+            margin-bottom: 2rem;
+            position: sticky;
+            top: 80px;
+            background: var(--background);
+            z-index: 900;
+            padding: 0.5rem 0;
+        }
+
+        .tab {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border-bottom: 3px solid transparent;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            position: relative;
+        }
+
+        .tab:hover {
+            color: var(--primary);
+        }
+
+        .tab.active {
+            border-bottom: 3px solid var(--primary);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+            border-top: 1px solid rgba(0, 255, 157, 0.1);
+            font-family: 'Orbitron', sans-serif;
+            color: var(--text-dark);
+        }
+
+        /* Back to Top */
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: var(--background);
+            width: 4rem;
+            height: 4rem;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: var(--transition);
+            opacity: 0;
+            visibility: hidden;
+            z-index: 1000;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            ul {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+
+            .grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+        }
+
+        @media (max-width: 992px) {
+            .nav {
+                flex-direction: column;
+                padding: 1rem;
+            }
+
+            .nav-links {
+                margin-top: 1rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .nav-links a {
+                padding: 0.5rem;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            h2 {
+                font-size: 1.8rem;
+            }
+
+            .card-title {
+                font-size: 1.3rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding-top: 120px;
+            }
+
+            .container {
+                padding: 0 1.5rem;
+            }
+
+            ul {
+                grid-template-columns: 1fr;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            li, .card {
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            .card-title {
+                font-size: 1.2rem;
+            }
+
+            .prompt {
+                padding: 1rem;
+            }
+
+            .copy-btn {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .nav-title {
+                font-size: 1.2rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .nav-links {
+                gap: 0.5rem;
+            }
+
+            .nav-links a {
+                padding: 0.3rem 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            .tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab {
+                padding: 0.75rem 1rem;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-title">ULTIMATE PROMPT ENGINEERING TOOLKIT</div>
+        <div class="nav-links">
+            <div class="dropdown">
+                <a href="#">SaaS & Monetarisierung</a>
+                <div class="dropdown-content">
+                    <a href="#payment-gateways">Payment Gateways</a>
+                    <a href="#monetarisierungsmodelle">Monetarisierungsmodelle</a>
+                    <a href="#rechnungsstellung">Rechnungsstellung</a>
+                    <a href="#pricing-strategien">Pricing-Strategien</a>
+                    <a href="#advanced-api">Advanced API Features</a>
+                    <a href="#monetarisierungs-addons">Monetarisierungs-Addons</a>
+                    <a href="#business-analytics">Business Analytics</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <a href="#">Backend Development</a>
+                <div class="dropdown-content">
+                    <a href="#nodejs-express">Node.js & Express</a>
+                    <a href="#backend-architecture">Architecture Patterns</a>
+                    <a href="#databases">Datenbanken & Storage</a>
+                    <a href="#security">Security & Authentication</a>
+                    <a href="#performance">Performance & Scalability</a>
+                    <a href="#api-design">API Design</a>
+                    <a href="#devops">DevOps & Deployment</a>
+                    <a href="#use-cases">Use Cases</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <a href="#">AI & LLMs</a>
+                <div class="dropdown-content">
+                    <a href="#ai-llm-core">AI & LLM Core</a>
+                    <a href="#openai-integration">OpenAI Integration</a>
+                    <a href="#fine-tuning">Fine-Tuning & Training</a>
+                    <a href="#rag-knowledge">RAG & Knowledge Graphs</a>
+                    <a href="#llmops">LLMOps & Deployment</a>
+                    <a href="#ai-safety">AI Safety & Ethics</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <a href="#">Frontend & Programming</a>
+                <div class="dropdown-content">
+                    <a href="#programming-concepts">Programming Concepts</a>
+                    <a href="#frontend-web">Frontend Web Development</a>
+                    <a href="#design-ux">Design & UX</a>
+                    <a href="#javascript-advanced">JavaScript Advanced</a>
+                    <a href="#prompt-engineering">Prompt Engineering</a>
+                    <a href="#prompt-modifiers">Advanced Prompt Modifiers</a>
+                    <a href="#ai-devops">AI & DevOps</a>
+                    <a href="#frontend-techniques">Frontend Techniques</a>
+                </div>
+            </div>
+            <button class="toggle-btn" id="darkModeToggle">🌙</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1>ULTIMATE PROMPT ENGINEERING TOOLKIT</h1>
+            <p>COMPREHENSIVE GUIDE TO CRAFTING EFFECTIVE PROMPTS ACROSS DOMAINS</p>
+            <div class="search-container">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search for terms, concepts, or examples...">
+            </div>
+        </header>
+
+        <div class="tabs">
+            <div class="tab active" data-tab="all">ALL</div>
+            <div class="tab" data-tab="saas">SaaS & Monetarisierung</div>
+            <div class="tab" data-tab="backend">Backend</div>
+            <div class="tab" data-tab="ai">AI & LLMs</div>
+            <div class="tab" data-tab="frontend">Frontend</div>
+        </div>
+
+        <!-- Main Content Sections -->
+        <div class="tab-content active" id="all">
+            <!-- SAAS & MONETARISIERUNG SECTION -->
+            <section id="payment-gateways">
+                <h2>💳 KERN-INTEGRATIONEN & PAYMENT GATEWAYS</h2>
+                <ul>
+                    <li><strong>Stripe API:</strong> Subscriptions, Billing, Webhooks, Checkout Sessions <span class="tag">SaaS</span></li>
+                    <li><strong>PayPal REST API:</strong> Einmalzahlungen, Subscriptions, Payouts <span class="tag">E-Commerce</span></li>
+                    <li><strong>Paddle:</strong> SaaS Billing + Steuerautomatisierung (EU VAT Ready) <span class="tag">International</span></li>
+                    <li><strong>Braintree:</strong> Advanced Payments & Vaulting <span class="tag">Security</span></li>
+                    <li><strong>Adyen:</strong> Global Payment Solution für Enterprises <span class="tag">Enterprise</span></li>
+                    <li><strong>Razorpay:</strong> Indien-fokussiertes Payment Gateway mit Abo-Modellen <span class="tag">Regional</span></li>
+                    <li><strong>Google Pay / Apple Pay:</strong> Mobile Payments mit Stripe Integration <span class="tag">Mobile</span></li>
+                    <li><strong>Coinbase Commerce:</strong> Akzeptiere Kryptowährungen (BTC, ETH, USDC) <span class="tag">Crypto</span></li>
+                    <li><strong>Revolut Business:</strong> Abrechnung und Währungsumtausch für internationale Kunden <span class="tag">Forex</span></li>
+                    <li><strong>Mollie:</strong> Europäische Payment-Lösung mit niedriger Einstiegshürde <span class="tag">EU</span></li>
+                    <li><strong>Klarna:</strong> Buy-now-pay-later Integration für höhere Konversionsraten <span class="tag">Conversion</span></li>
+                    <li><strong>Square:</strong> Omnichannel Payments für Online und Offline Geschäfte <span class="tag">Omnichannel</span></li>
+                </ul>
+                <div class="prompt">
+                    <button class="copy-btn" data-prompt="stripe-checkout">COPY</button>
+                    <strong>PROMPT-BEISPIEL:</strong>
+                    "Implementiere ein <b>Stripe Subscription System</b> mit <b>Checkout Sessions</b> und <b>Webhooks</b>.
+                    Verknüpfe <b>PayPal</b> als alternative Zahloption und integriere <b>Apple Pay</b> für mobile Nutzer."
+                </div>
+                <div class="prompt">
+                    <button class="copy-btn" data-prompt="multi-gateway">COPY</button>
+                    <strong>ERWEITERTES BEISPIEL:</strong>
+                    "Erstelle ein <b>Multi-Gateway Payment System</b> mit <b>Stripe als Hauptprozessor</b>, <b>PayPal als Alternative</b> und <b>Coinbase für Krypto-Zahlungen</b>.
+                    Implementiere <b>Webhook-Handler</b> für alle Plattformen mit einer <b>einheitlichen Event-Verarbeitung</b> und <b>Transaktionsprotokollierung</b> in der Datenbank."
+                </div>
+            </section>
+
+            <!-- Other sections would follow the same pattern with Orbitron-inspired styling -->
+            <!-- ... -->
+
+            <!-- FRONTEND TECHNIQUES SECTION -->
+            <section id="frontend-techniques">
+                <h2>🚀 FRONTEND TECHNIQUES</h2>
+                <div class="grid">
+                    <div class="card">
+                        <h3 class="card-title">HTML5 ADVANCED</h3>
+                        <ul>
+                            <li><strong>Semantic Tags:</strong> &lt;header&gt;, &lt;article&gt;, &lt;section&gt;, &lt;footer&gt;</li>
+                            <li><strong>Media Elements:</strong> &lt;video&gt;, &lt;audio&gt;, &lt;canvas&gt;, &lt;picture&gt;</li>
+                            <li><strong>Form Validation:</strong> Built-in constraints, validation API</li>
+                            <li><strong>Web Components:</strong> Custom elements, shadow DOM</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3 class="card-title">CSS3 TECHNIQUES</h3>
+                        <ul>
+                            <li><strong>CSS Variables:</strong> --primary-color, var(--primary-color)</li>
+                            <li><strong>Flexbox & Grid:</strong> Responsive layouts</li>
+                            <li><strong>Animations:</strong> @keyframes, transitions</li>
+                            <li><strong>Media Queries:</strong> Responsive design breakpoints</li>
+                            <li><strong>Container Queries:</strong> Component-level responsiveness</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3 class="card-title">JAVASCRIPT MODERN</h3>
+                        <ul>
+                            <li><strong>ES6+ Features:</strong> Arrow functions, destructuring, modules</li>
+                            <li><strong>Async Programming:</strong> Promises, async/await</li>
+                            <li><strong>Event Loop:</strong> Microtasks, macrotasks</li>
+                            <li><strong>Web APIs:</strong> Intersection Observer, Fetch API</li>
+                            <li><strong>Performance:</strong> Throttling, debouncing, memoization</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3 class="card-title">FRONTEND FRAMEWORKS</h3>
+                        <ul>
+                            <li><strong>React:</strong> Hooks, Context, Suspense</li>
+                            <li><strong>Vue:</strong> Composition API, Reactivity</li>
+                            <li><strong>Angular:</strong> Dependency Injection, RxJS</li>
+                            <li><strong>Svelte:</strong> Compile-time reactivity, minimal runtime</li>
+                            <li><strong>Next.js/Nuxt.js:</strong> SSR, static generation, routing</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="prompt">
+                    <button class="copy-btn" data-prompt="modern-frontend">COPY</button>
+                    <strong>PROMPT-BEISPIEL:</strong>
+                    "Create a <b>modern frontend component</b> using <b>CSS Grid</b> with <b>responsive breakpoints</b>, <b>accessibility features</b>, and <b>optimized animations</b> that work across browsers."
+                </div>
+                <div class="prompt">
+                    <button class="copy-btn" data-prompt="advanced-component">COPY</button>
+                    <strong>ERWEITERTES BEISPIEL:</strong>
+                    "Develop a <b>high-performance data visualization component</b> with <b>Canvas/WebGL rendering</b>, <b>virtualized data handling</b> for thousands of points, <b>responsive layout adaptation</b>, and <b>touch/mouse interaction</b>.
+                    Implement <b>accessibility features</b> including <b>keyboard navigation</b>, <b>screen reader support</b>, and <b>high-contrast mode</b>.
+                    Add <b>progressive enhancement</b> with <b>fallback rendering</b> for older browsers and <b>performance monitoring</b> via <b>Core Web Vitals metrics</b>."
+                </div>
+            </section>
+        </div>
+
+        <!-- Tab content for other categories -->
+        <div class="tab-content" id="saas">
+            <!-- Content will be populated by JavaScript -->
+        </div>
+        <div class="tab-content" id="backend">
+            <!-- Content will be populated by JavaScript -->
+        </div>
+        <div class="tab-content" id="ai">
+            <!-- Content will be populated by JavaScript -->
+        </div>
+        <div class="tab-content" id="frontend">
+            <!-- Content will be populated by JavaScript -->
+        </div>
+
+        <footer>
+            <p>ULTIMATE PROMPT ENGINEERING TOOLKIT — COMPREHENSIVE GUIDE FOR CRAFTING EFFECTIVE PROMPTS ACROSS DOMAINS</p>
+            <p>© 2024 - DESIGNED FOR PROMPT ENGINEERS, DEVELOPERS, AND AI ENTHUSIASTS</p>
+        </footer>
+    </div>
+
+    <a href="#" class="back-to-top" id="backToTop">↑</a>
+
+    <script>
+        // Dark mode toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        darkModeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            darkModeToggle.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+            // Save preference to localStorage
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+        });
+
+        // Check for saved dark mode preference
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+            darkModeToggle.textContent = '☀️';
+        }
+
+        // Back to top button
+        const backToTopBtn = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopBtn.classList.add('visible');
+            } else {
+                backToTopBtn.classList.remove('visible');
+            }
+        });
+
+        backToTopBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.toLowerCase();
+            const allListItems = document.querySelectorAll('li');
+            const allPrompts = document.querySelectorAll('.prompt');
+
+            if (searchTerm.length < 2) {
+                // Reset all visibility if search term is too short
+                allListItems.forEach(item => item.style.display = '');
+                allPrompts.forEach(prompt => prompt.style.display = '');
+                document.querySelectorAll('section').forEach(section => section.style.display = '');
+                return;
+            }
+
+            // Hide all sections initially
+            document.querySelectorAll('section').forEach(section => section.style.display = 'none');
+
+            // Show items and their containing sections if they match
+            allListItems.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    item.style.display = '';
+                    let section = item.closest('section');
+                    if (section) section.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            // Also search in prompts
+            allPrompts.forEach(prompt => {
+                const text = prompt.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    prompt.style.display = '';
+                    let section = prompt.closest('section');
+                    if (section) section.style.display = '';
+                } else {
+                    prompt.style.display = 'none';
+                }
+            });
+        });
+
+        // Tab functionality
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs
+                tabs.forEach(t => t.classList.remove('active'));
+
+                // Add active class to clicked tab
+                tab.classList.add('active');
+
+                // Hide all tab contents
+                tabContents.forEach(content => content.classList.remove('active'));
+
+                // Show the selected tab content
+                const tabId = tab.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+
+                // If not "all" tab, populate the content
+                if (tabId !== 'all') {
+                    populateTabContent(tabId);
+                }
+            });
+        });
+
+        function populateTabContent(tabId) {
+            const targetTab = document.getElementById(tabId);
+            targetTab.innerHTML = ''; // Clear existing content
+
+            // Map tab IDs to section categories
+            const sectionMap = {
+                'saas': ['payment-gateways', 'monetarisierungsmodelle', 'rechnungsstellung', 'pricing-strategien', 'advanced-api', 'monetarisierungs-addons', 'business-analytics', 'monetarisierungs-flow'],
+                'backend': ['nodejs-express', 'backend-architecture', 'databases', 'security', 'performance', 'api-design', 'devops', 'use-cases'],
+                'ai': ['ai-llm-core', 'openai-integration', 'fine-tuning', 'rag-knowledge', 'llmops', 'ai-safety', 'ai-combined'],
+                'frontend': ['programming-concepts', 'frontend-web', 'design-ux', 'javascript-advanced', 'prompt-engineering', 'prompt-modifiers', 'ai-devops', 'frontend-techniques', 'combined-prompt']
+            };
+
+            // Clone the relevant sections
+            if (sectionMap[tabId]) {
+                sectionMap[tabId].forEach(sectionId => {
+                    const originalSection = document.getElementById(sectionId);
+                    if (originalSection) {
+                        const clonedSection = originalSection.cloneNode(true);
+                        targetTab.appendChild(clonedSection);
+                    }
+                });
+            }
+        }
+
+        // Copy button functionality
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('copy-btn')) {
+                const promptId = e.target.getAttribute('data-prompt');
+                const promptText = e.target.nextElementSibling ?
+                    e.target.nextElementSibling.textContent + '\n' + e.target.parentElement.textContent.replace('COPY', '').trim() :
+                    e.target.parentElement.textContent.replace('COPY', '').trim();
+
+                navigator.clipboard.writeText(promptText.replace(/<\/?b>/g, ''))
+                    .then(() => {
+                        const originalText = e.target.textContent;
+                        e.target.textContent = 'COPIED!';
+                        setTimeout(() => {
+                            e.target.textContent = originalText;
+                        }, 2000);
+                    })
+                    .catch(err => {
+                        console.error('Failed to copy text: ', err);
+                    });
+            }
+        });
+
+        // Add glow effect to interactive elements on hover
+        document.querySelectorAll('a, button, .copy-btn').forEach(element => {
+            element.addEventListener('mouseenter', () => {
+                element.style.boxShadow = '0 0 15px rgba(0, 255, 157, 0.5)';
+            });
+
+            element.addEventListener('mouseleave', () => {
+                element.style.boxShadow = '';
+            });
+        });
+
+        // Add animation to cards on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.card, li, .prompt').forEach(element => {
+            element.style.opacity = '0';
+            element.style.transform = 'translateY(20px)';
+            element.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(element);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>From AI to Web Developer – Ultimate Beginner’s Edition</title>
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Smooth Scrolling -->
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+    /* Base Styles (Desktop View) */
+    header {
+      background-color: #1e3a8a; /* Blue */
+      color: #fff;
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 100;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+    header h1 {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin: 0;
+      /* Gradient color for the title */
+      background: linear-gradient(90deg, #60a5fa, #facc15);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    /* Desktop Navigation (should be defined outside the media query) */
+    nav.desktop {
+      display: block;
+    }
+    /* Mobile Navigation (Burger Menu) – hidden by default */
+    nav.mobile {
+      display: none;
+    }
+    /* ----------------------------- */
+    /* Media Query for Mobile Devices */
+    /* ----------------------------- */
+    @media (max-width: 768px) {
+      /* Smaller title for better readability */
+      header h1 {
+        font-size: 2rem;
+      }
+      /* Hide desktop navigation */
+      nav.desktop {
+        display: none;
+      }
+      /* Show burger icon – ensure this element in your HTML has the class .burger */
+      .burger {
+        display: block;
+        cursor: pointer;
+      }
+      /* Show mobile navigation (burger menu) */
+      nav.mobile {
+        display: block;
+        position: absolute;
+        top: 100%; /* Directly under the header */
+        left: 0;
+        width: 100%;
+        background-color: #1e40af; /* Slightly darker blue tone */
+        z-index: 20;
+        border-top: 1px solid rgba(255, 255, 255, 0.3);
+      }
+      /* Navigation items in the burger menu */
+      nav.mobile ul {
+        list-style: none;
+        margin: 0;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+      }
+      nav.mobile ul li {
+        margin-bottom: 0.75rem;
+      }
+      nav.mobile ul li a {
+        color: #fff;
+        text-decoration: none;
+        font-size: 1.2rem;
+      }
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <!-- Header with Navigation -->
+  <header class="bg-blue-800 text-white p-4 fixed top-0 w-full z-10 shadow-xl">
+    <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
+      <h1 class="text-3xl font-extrabold mb-2 md:mb-0">
+        From AI to Web Developer – Course 1.0
+      </h1>
+      <nav>
+        <ul class="flex flex-wrap gap-3 text-sm">
+          <li><a href="#preface" class="hover:underline">Preface</a></li>
+          <li><a href="#chapter1" class="hover:underline">Chapter 1</a></li>
+          <li><a href="#chapter2" class="hover:underline">Chapter 2</a></li>
+          <li><a href="#chapter3" class="hover:underline">Chapter 3</a></li>
+          <li><a href="#chapter4" class="hover:underline">Chapter 4</a></li>
+          <li><a href="#chapter5" class="hover:underline">Chapter 5</a></li>
+          <li><a href="#chapter6" class="hover:underline">Chapter 6</a></li>
+          <li><a href="#chapter7" class="hover:underline">Chapter 7</a></li>
+          <li><a href="#chapter8" class="hover:underline">Chapter 8</a></li>
+          <li><a href="#chapter9" class="hover:underline">Chapter 9</a></li>
+          <li><a href="#chapter10" class="hover:underline">Chapter 10</a></li>
+          <li><a href="#conclusion" class="hover:underline">Conclusion</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <!-- Main Content -->
+  <main class="pt-28 container mx-auto px-4">
+    <!-- Preface -->
+    <section id="preface" class="mb-16">
+      <h2 class="text-4xl font-bold border-b pb-4 mb-8">Preface</h2>
+      <p class="mb-4">
+        Welcome to the future of web development – where AI is your constant companion! In the past, you had to sift through thick books, but today, an intelligent machine helps you program step by step. The revolution has begun!
+      </p>
+      <p class="mb-4">
+        This eBook is for absolute beginners who want to dive into the world of HTML, CSS, JavaScript, and more – with the support of modern AI. Here, you'll not only learn how the code works but also why it works and how to customize it for your projects.
+      </p>
+      <p class="mb-4">
+        A little insider tip: Sometimes, having a cup of coffee or tea in hand helps – ideas flow more freely. And remember: Every mistake is just a step to success!
+      </p>
+      <p class="mb-4 font-semibold">
+        Try this prompt for getting started:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-4">
+        <code>Explain how to create a simple HTML page with semantic tags and why that's important.</code>
+      </pre>
+      <p class="mb-4">
+        Enjoy and good luck – let's dive into your AI-supported web development future!
+      </p>
+      <a href="#top" class="block mt-4 text-blue-400 hover:underline">Back to top</a>
+    </section>
+    <!-- Chapter 1: What You Need as a Complete Beginner -->
+    <section id="chapter1" class="mb-16">
+      <h2 class="text-4xl font-bold border-b pb-4 mb-8">
+        Chapter 1: What You Need as a Complete Beginner
+      </h2>
+      <!-- First Part -->
+      <h3 class="text-3xl font-semibold mt-4">1.1 Hardware & Software</h3>
+      <p class="mb-3">
+        Your computer doesn't need to be a high-end model – a device from the last 3–5 years is perfectly fine. Make sure it has an up-to-date operating system for smooth operation.
+      </p>
+      <p class="mb-3">
+        Browser: Use modern browsers like Chrome, Firefox, Edge, or Safari. Also, experiment with lesser-known ones like Brave or Vivaldi – sometimes you discover great features there.
+      </p>
+      <p class="mb-3">
+        Editor: Besides simple editors like Notepad, <strong>Visual Studio Code</strong> is recommended. VS Code offers numerous extensions, auto-completion, and a great community.
+      </p>
+      <p class="mb-3 italic">
+        Anecdote: When I started, I often wondered if I really needed a "professional" editor. Today, I can't imagine working without VS Code – the extensions are lifesavers!
+      </p>
+      <p class="mb-3">
+        Additional Prompt:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>Create a comparison of the best free code editors for web development and their pros and cons.</code>
+      </pre>
+      <p class="mb-3">
+        Tip & Shortcut: Use <code>Ctrl+P</code> in VS Code to quickly open files and <code>Ctrl+Shift+P</code> for the command palette.
+      </p>
+      <!-- Second Part -->
+      <h3 class="text-3xl font-semibold mt-8">1.2 No Panic, No Prior Knowledge</h3>
+      <p class="mb-3">
+        You don't need to be a genius from the start – everyone starts small. Basic PC skills (managing files, creating folders) lay the foundation for your success.
+      </p>
+      <p class="mb-3">
+        Tip: Work in small steps and test your code regularly. Every small success motivates you to keep going.
+      </p>
+      <p class="mb-3">
+        Useful Prompt:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>What happens if I forget a closing tag in HTML? Give a practical example and explain the error.</code>
+      </pre>
+      <p class="mb-3">
+        Anecdote: I remember spending hours looking for a missing </code>&lt;/div&gt;</code> – a tiny error that almost cost me my entire day. Now I know: Every line counts!
+      </p>
+      <h3 class="text-3xl font-semibold mt-8">1.3 AI as Your Helper</h3>
+      <p class="mb-3">
+        Modern AI tools like ChatGPT and Bard support you in all phases of web development. They not only provide finished code but also explain the background – so you learn continuously.
+      </p>
+      <p class="mb-3">
+        Tip: Use AI to compare different solution paths. Always ask for alternatives and optimize your code step by step.
+      </p>
+      <p class="mb-3">
+        Useful Prompt:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>Create an HTML code with responsive CSS for a navigation menu and explain why each step is necessary.</code>
+      </pre>
+      <p class="mb-3">
+        Shortcut: Save frequently used code snippets as your own "User Snippets" in VS Code to save time.
+      </p>
+      <p class="mb-3 italic">
+        Anecdote: My first encounter with AI was like magic – within seconds, I had a working code that I could then analyze and understand myself.
+      </p>
+      <a href="#top" class="block mt-4 text-blue-400 hover:underline">Back to top</a>
+    </section>
+    <!-- Chapter 2: HTML Basics – Your First Milestone -->
+    <section id="chapter2" class="mb-16">
+      <h2 class="text-4xl font-bold border-b pb-4 mb-8">
+        Chapter 2: HTML Basics – Your First Milestone
+      </h2>
+      <!-- First Part -->
+      <h3 class="text-3xl font-semibold mt-4">2.1 What is HTML?</h3>
+      <p class="mb-3">
+        HTML (HyperText Markup Language) forms the skeleton of your webpage. It structures content like text, images, links, and forms. Without HTML, there would be no foundation for CSS and JavaScript to build upon.
+      </p>
+      <p class="mb-3">
+        Tip: Compare HTML to the framework of a house – it gives you the structure that will later be "beautified" with CSS.
+      </p>
+      <p class="mb-3">
+        Useful Prompt:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>Explain the structure of an HTML page and why semantic tags are important for accessibility.</code>
+      </pre>
+      <!-- Second Part -->
+      <h3 class="text-3xl font-semibold mt-8">2.2 Your First "Hello World" in HTML</h3>
+      <p class="mb-3">
+        Try this code: Create a file named <code>index.html</code> and add the following code:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;My First AI-Powered Website&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;Hello, World!&lt;/h1&gt;
+    &lt;p&gt;Welcome to my page, created with AI support.&lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code>
+      </pre>
+      <p class="mb-3">
+        Tip: Vary the text or add your own elements – experiment freely to feel the difference.
+      </p>
+      <p class="mb-3">
+        Additional Prompt:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>Create an HTML page with a contact form and explain why each input field is useful.</code>
+      </pre>
+      <p class="mb-3 italic">
+        Anecdote: My first "Hello World" was a milestone – it felt like I had created my first little world.
+      </p>
+      <h3 class="text-3xl font-semibold mt-8">2.3 Semantic Tags & Best Practices</h3>
+      <p class="mb-3">
+        Semantic tags like <code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;section&gt;</code>, and <code>&lt;footer&gt;</code> help search engines and screen readers understand the content better.
+      </p>
+      <p class="mb-3">
+        Tip: Keep your code clean and structured – it saves time later when debugging.
+      </p>
+      <p class="mb-3">
+        Useful Prompt:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>Create an example with semantic tags and explain how this positively affects SEO and accessibility.</code>
+      </pre>
+      <p class="mb-3">
+        Shortcut: Use Emmet (e.g., <code>html:5</code> in VS Code) in your editor to quickly generate an HTML5 skeleton.
+      </p>
+      <p class="mb-3 italic">
+        Anecdote: When I learned to use semantic tags, a whole new world opened up – my code became not only more beautiful but also more functional.
+      </p>
+      <h3 class="text-3xl font-semibold mt-8">2.4 Common Questions About HTML</h3>
+      <p class="mb-3">
+        <strong>Do I need the basic structure (<code>&lt;html&gt;</code>, <code>&lt;head&gt;</code>, <code>&lt;body&gt;</code>)?</strong> – Yes, because without it, the browser doesn't know where the content starts.
+      </p>
+      <p class="mb-3">
+        <strong>Do I have to specify UTF-8?</strong> – Yes, so that special characters and umlauts are displayed correctly.
+      </p>
+      <p class="mb-3">
+        Additional Prompt:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm">
+        <code>Explain the difference between UTF-8 and other character encodings and why UTF-8 is the standard in HTML.</code>
+      </pre>
+      <p class="mb-3">
+        Tip: Use the browser inspector to study the generated DOM tree when in doubt.
+      </p>
+      <a href="#top" class="block mt-4 text-blue-400 hover:underline">Back to top</a>
+    </section>
+    <!-- Chapter 3: CSS Explained Simply (and Tailwind as a Turbo) -->
+    <section id="chapter3" class="mb-16">
+      <h2 class="text-4xl font-bold border-b pb-4 mb-8">
+        Chapter 3: CSS Explained Simply (and Tailwind as a Turbo)
+      </h2>
+      <!-- First Part -->
+      <h3 class="text-3xl font-semibold mt-4">3.1 What Does CSS Do?</h3>
+      <p class="mb-3">
+        CSS (Cascading Style Sheets) ensures that your webpage not only functions but also looks appealing. It defines colors, fonts, spacing, layouts, and animations.
+      </p>
+      <p class="mb-3">
+        Tip: Compare CSS to the interior design of a house – it makes the difference between a raw structure and a dream home.
+      </p>
+      <p class="mb-3">
+        Useful Prompt:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>Explain how CSS affects the structure and appearance of a webpage – with an example of simple styling.</code>
+      </pre>
+      <!-- Second Part -->
+      <h3 class="text-3xl font-semibold mt-8">3.2 Classic CSS – Examples & Variations</h3>
+      <p class="mb-3">
+        Here's a basic example that you can expand:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Classic CSS Example&lt;/title&gt;
+  &lt;style&gt;
+    body {
+      background-color: #f0f0f0;
+      font-family: 'Helvetica Neue', sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      color: #007acc;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    p {
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;</code>
+      </pre>
+      <p class="mb-3">
+        Tip & Shortcut: Use the live preview function in your editor (e.g., Live Server in VS Code) to see CSS changes in real-time.
+      </p>
+      <p class="mb-3">
+        Additional Prompt:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>Create a CSS stylesheet that supports a dark mode and explain how to switch between light and dark mode.</code>
+      </pre>
+      <h3 class="text-3xl font-semibold mt-8">3.3 Tailwind CSS: The Turbo for Your Styling</h3>
+      <p class="mb-3">
+        Tailwind CSS is a modern utility-first framework that allows you to style directly in HTML – without maintaining separate CSS files. With predefined classes, you can create complex layouts quickly.
+      </p>
+      <p class="mb-3">
+        Tip: Learn the most common classes (e.g., <code>p-4</code>, <code>m-2</code>, <code>bg-gray-800</code>) – you'll be productive in no time.
+      </p>
+      <p class="mb-3">
+        Useful Prompt:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>Write a Tailwind code that displays a responsive card view for a portfolio and explain the key classes.</code>
+      </pre>
+      <p class="mb-3 italic">
+        Anecdote: When I discovered Tailwind, it was like having a turbo in my browser – everything went faster, and styling became much more fun.
+      </p>
+      <h3 class="text-3xl font-semibold mt-8">3.4 Common Pitfalls in CSS</h3>
+      <p class="mb-3">
+        Common mistakes: Incorrect selectors, missing curly braces, or conflicts due to inline styles. Learn how CSS specificity works and how to avoid these issues.
+      </p>
+      <p class="mb-3">
+        Tip: Use browser developer tools (e.g., Chrome DevTools) to test and debug CSS rules live.
+      </p>
+      <p class="mb-3">
+        Useful Prompt:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm">
+        <code>Explain what CSS specificity is and how to resolve conflicts between different CSS rules.</code>
+      </pre>
+      <p class="mb-3 italic">
+        Anecdote: I remember a day when a tiny error in CSS caused almost everything to be displayed incorrectly – so I learned that every detail counts!
+      </p>
+      <a href="#top" class="block mt-4 text-blue-400 hover:underline">Back to top</a>
+    </section>
+    <!-- Chapter 4: AI as a Code Generator – Step by Step -->
+    <section id="chapter4" class="mb-16">
+      <h2 class="text-4xl font-bold border-b pb-4 mb-8">
+        Chapter 4: AI as a Code Generator – Step by Step
+      </h2>
+      <!-- First Part -->
+      <h3 class="text-3xl font-semibold mt-4">4.1 How to Use AI</h3>
+      <p class="mb-3">
+        Modern AI tools revolutionize programming: They provide you with finished code in seconds and explain why something works the way it does. This saves you a lot of time and lets you focus on the essentials.
+      </p>
+      <p class="mb-3">
+        Tip: Formulate your prompts as precisely as possible. The more precise you are, the better the result – and you learn more automatically.
+      </p>
+      <p class="mb-3">
+        Useful Prompt:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>Create an HTML page with a responsive navbar, a hero section, and a footer section – all in a dark color scheme. Explain each step!</code>
+      </pre>
+      <!-- Second Part -->
+      <h3 class="text-3xl font-semibold mt-8">4.2 Example Prompt & Approach</h3>
+      <p class="mb-3">
+        A concrete prompt could read: "Create an HTML page with Tailwind CSS. The page should have a header with a navigation menu (3 links), a hero section with text overlay, and an area with 3 features. Use a dark color scheme and explain how to proceed."
+      </p>
+      <p class="mb-3">
+        Tip: Let AI show you different variants to get a feel for different approaches.
+      </p>
+      <p class="mb-3">
+        Useful Prompt:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>Compare Flexbox and CSS Grid in an example that shows the advantages of both layout systems.</code>
+      </pre>
+      <p class="mb-3 italic">
+        Anecdote: I remember the first time I tried a completely AI-generated code – it was like having a mentor who explained every step to me.
+      </p>
+      <h3 class="text-3xl font-semibold mt-8">4.3 AI as a Teacher</h3>
+      <p class="mb-3">
+        Use follow-up questions: "How does Flexbox work?" or "What is the purpose of <code>justify-center</code>?" – this way, you deepen your knowledge continuously.
+      </p>
+      <p class="mb-3">
+        Tip: Write down important explanations for later reference. This creates a personal learning archive.
+      </p>
+      <p class="mb-3">
+        Useful Prompt:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>Explain the difference between Flexbox and CSS Grid using a practical example.</code>
+      </pre>
+      <h3 class="text-3xl font-semibold mt-8">4.4 AI Ethics: Trustworthy but Critical</h3>
+      <p class="mb-3">
+        Even though AI delivers impressive results, you should always check the code yourself. Test it, analyze its functionality, and question whether the solution is long-term viable.
+      </p>
+      <p class="mb-3">
+        Tip: Work in small steps and test each section – this way, you'll notice early if something is wrong.
+      </p>
+      <p class="mb-3">
+        Useful Prompt:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>Analyze this HTML code for potential security vulnerabilities and explain how to fix them.</code>
+      </pre>
+      <p class="mb-3 italic">
+        Anecdote: Sometimes it's good to make sure you're not blindly following AI – I remember a situation where an AI-suggested code was improved through my own questioning.
+      </p>
+      <a href="#top" class="block mt-4 text-blue-400 hover:underline">Back to top</a>
+    </section>
+    <!-- Chapter 5: Debugging & Error Handling – Without Frustration -->
+    <section id="chapter5" class="mb-16">
+      <h2 class="text-4xl font-bold border-b pb-4 mb-8">
+        Chapter 5: Debugging & Error Handling – Without Frustration
+      </h2>
+      <!-- First Part -->
+      <h3 class="text-3xl font-semibold mt-4">5.1 Common Beginner Mistakes</h3>
+      <p class="mb-3">
+        Common sources of errors: missing closing tags, typos in class names, incorrect file paths, or faulty CSS specificity. Even a small error can throw your entire layout off.
+      </p>
+      <p class="mb-3">
+        Tip: Work in small steps and test your code continuously to catch errors early.
+      </p>
+      <p class="mb-3">
+        Useful Prompt:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>Find the error in this code and explain why the layout is not displayed correctly:</code>
+      </pre>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>&lt;div class="container"&gt;
+  &lt;h1&gt;Welcome&lt;h1&gt;
+  &lt;p&gt;Example text without proper tag closing.&lt;/p&gt;
+&lt;/div&gt;</code>
+      </pre>
+      <!-- Second Part -->
+      <h3 class="text-3xl font-semibold mt-8">5.2 AI as a Lifesaver in Debugging</h3>
+      <p class="mb-3">
+        If you're stuck, ask AI: "My page is not rendering correctly – please check my code." Often, it shows you the tiny error you missed.
+      </p>
+      <p class="mb-3">
+        Tip: Use systematic debugging methods, like gradually commenting out code blocks.
+      </p>
+      <p class="mb-3">
+        Useful Prompt:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>Explain how to find and fix JavaScript errors using Chrome Developer Tools.</code>
+      </pre>
+      <p class="mb-3 italic">
+        Anecdote: I remember spending hours looking for a small typo – a moment I'll never forget, but it also taught me to approach systematically.
+      </p>
+      <h3 class="text-3xl font-semibold mt-8">5.3 Developer Tools: Your Debugging Partner</h3>
+      <p class="mb-3">
+        Browser developer tools like those in Chrome or Firefox are invaluable. They show you the DOM, CSS rules, and JavaScript errors in real-time.
+      </p>
+      <p class="mb-3">
+        Tip: Learn the key functions of developer tools – like setting breakpoints in JavaScript.
+      </p>
+      <p class="mb-3">
+        Useful Prompt:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>Provide a step-by-step guide on how to fix CSS errors using Chrome DevTools.</code>
+      </pre>
+      <h3 class="text-3xl font-semibold mt-8">5.4 Practical Debugging Exercises & Shortcuts</h3>
+      <p class="mb-3">
+        Practice makes perfect: Intentionally change small parts of your code and observe which error messages appear. This way, you learn to recognize problems faster.
+      </p>
+      <p class="mb-3">
+        Shortcut: In Chrome, you can jump directly to the console with <code>Ctrl+Shift+J</code>.
+      </p>
+      <p class="mb-3">
+        Additional Prompt:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm">
+        <code>Create a small project with intentional errors and conduct a step-by-step debugging session.</code>
+      </pre>
+      <p class="mb-3 italic">
+        Anecdote: There's nothing more satisfying than finding a stubborn error – it feels like you've uncovered a secret!
+      </p>
+      <a href="#top" class="block mt-4 text-blue-400 hover:underline">Back to top</a>
+    </section>
+    <!-- Chapter 6: Mobile Optimization & Responsive Design -->
+    <section id="chapter6" class="mb-16">
+      <h2 class="text-4xl font-bold border-b pb-4 mb-8">
+        Chapter 6: Mobile Optimization & Responsive Design
+      </h2>
+      <!-- First Part -->
+      <h3 class="text-3xl font-semibold mt-4">6.1 Why Mobile Optimization?</h3>
+      <p class="mb-3">
+        More than 60% of users browse on mobile. A mobile-optimized webpage not only improves user experience but also boosts your ranking in search engines.
+      </p>
+      <p class="mb-3">
+        Tip: Regularly test your site on various devices – simulated tests in the browser are good, but real devices give the best impression.
+      </p>
+      <p class="mb-3">
+        Useful Prompt:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>Explain why responsive design is essential for modern webpages and how it improves conversion rates.</code>
+      </pre>
+      <!-- Second Part -->
+      <h3 class="text-3xl font-semibold mt-8">6.2 Simple Techniques: Viewport & Breakpoints</h3>
+      <p class="mb-3">
+        Start with the viewport meta tag:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</code>
+      </pre>
+      <p class="mb-3">
+        With Tailwind, you define breakpoints like <code>sm:</code>, <code>md:</code>, or <code>lg:</code>. This allows you to adapt your layout dynamically to different screen sizes.
+      </p>
+      <p class="mb-3">
+        Additional Prompt:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>Create a responsive grid layout with Tailwind CSS that turns into a single column on smaller screens.</code>
+      </pre>
+      <h3 class="text-3xl font-semibold mt-8">6.3 Testing on Mobile Devices & Tips</h3>
+      <p class="mb-3">
+        Use the device toolbar in browser developer tools, but also test on real smartphones and tablets. This way, you see if interactive elements are large enough and text is readable.
+      </p>
+      <p class="mb-3">
+        Tip: Use tools like BrowserStack or real devices to test different operating systems and screen sizes.
+      </p>
+      <p class="mb-3">
+        Useful Prompt:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>Create a responsive navigation menu that turns into a hamburger menu on mobile devices.</code>
+      </pre>
+      <p class="mb-3 italic">
+        Anecdote: When I first tested my site on an old smartphone, I realized that small buttons are a real nuisance – a quick fix and everything was optimal again!
+      </p>
+      <h3 class="text-3xl font-semibold mt-8">6.4 Common Mobile Errors & Shortcuts</h3>
+      <p class="mb-3">
+        Errors like too small buttons, tight spacing, or missing touch optimizations can severely impact the mobile user experience.
+      </p>
+      <p class="mb-3">
+        Tip: Ensure that all interactive elements are at least 44px large – this is the recommended standard for touchscreens.
+      </p>
+      <p class="mb-3">
+        Useful Prompt:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>Provide a list of best practices for optimizing webpages for mobile devices.</code>
+      </pre>
+      <a href="#top" class="block mt-4 text-blue-400 hover:underline">Back to top</a>
+    </section>
+    <!-- Chapter 7: GitHub Pages – Your Website Goes Live -->
+    <section id="chapter7" class="mb-16">
+      <h2 class="text-4xl font-bold border-b pb-4 mb-8">
+        Chapter 7: GitHub Pages – Your Website Goes Live
+      </h2>
+      <!-- First Part -->
+      <h3 class="text-3xl font-semibold mt-4">7.1 Why GitHub Pages?</h3>
+      <p class="mb-3">
+        GitHub Pages offers a free and hassle-free way to host static webpages. Perfect for portfolios, prototypes, and small projects – without complicated server configuration.
+      </p>
+      <p class="mb-3">
+        Tip: Use GitHub Pages to make your projects accessible worldwide and practice using Git at the same time.
+      </p>
+      <p class="mb-3">
+        Useful Prompt:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>Create a step-by-step guide on how to publish my static webpage using GitHub Pages.</code>
+      </pre>
+      <!-- Second Part -->
+      <h3 class="text-3xl font-semibold mt-8">7.2 Uploading Changes & Version Control</h3>
+      <p class="mb-3">
+        Use Git to version your code. With commands like <code>git add</code>, <code>git commit</code>, and <code>git push</code>, you always have an overview and can revert to an earlier version if needed.
+      </p>
+      <p class="mb-3">
+        Shortcut: In the command line, <code>git commit -am "message"</code> saves time when you commit all changes at once.
+      </p>
+      <p class="mb-3">
+        Useful Prompt:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>How do I set up automated deployment for my GitHub Pages site?</code>
+      </pre>
+      <p class="mb-3 italic">
+        Anecdote: The first push to GitHub Pages was a special moment – my code was suddenly visible to the whole world, and the feeling was indescribable!
+      </p>
+      <h3 class="text-3xl font-semibold mt-8">7.3 FAQ About GitHub Pages</h3>
+      <p class="mb-3">
+        <strong>Can I use server-side scripts?</strong> – No, GitHub Pages supports only static content.
+      </p>
+      <p class="mb-3">
+        <strong>How long will my site stay online?</strong> – As long as your repository is active and GitHub Pages supports this feature.
+      </p>
+      <p class="mb-3">
+        Useful Prompt:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>Explain the differences between static and dynamic hosting and when to use each option.</code>
+      </pre>
+      <a href="#top" class="block mt-4 text-blue-400 hover:underline">Back to top</a>
+    </section>
+    <!-- Chapter 8: First Interactions with JavaScript -->
+    <section id="chapter8" class="mb-16">
+      <h2 class="text-4xl font-bold border-b pb-4 mb-8">
+        Chapter 8: First Interactions with JavaScript
+      </h2>
+      <!-- First Part -->
+      <h3 class="text-3xl font-semibold mt-4">8.1 What is JavaScript?</h3>
+      <p class="mb-3">
+        JavaScript brings your webpage to life – it allows you to respond to user interactions, create animations, and display dynamic content.
+      </p>
+      <p class="mb-3">
+        Tip: Start with small, simple scripts and gradually expand them. This way, you develop a good feel for logic and error handling.
+      </p>
+      <p class="mb-3">
+        Useful Prompt:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>Create a simple JavaScript example that processes a button click and displays a message.</code>
+      </pre>
+      <!-- Second Part -->
+      <h3 class="text-3xl font-semibold mt-8">8.2 Mini-Examples & Practical Applications</h3>
+      <p class="mb-3">
+        Example: A button that shows a popup:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>&lt;button onclick="alert('You clicked!')"&gt;Click me&lt;/button&gt;</code>
+      </pre>
+      <p class="mb-3">
+        Extension: Create a function that changes the background color randomly:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>&lt;button onclick="changeBackground()"&gt;Change background&lt;/button&gt;
+&lt;script&gt;
+  function changeBackground() {
+    const colors = ['#FF5733', '#33FF57', '#3357FF', '#F3FF33'];
+    document.body.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+  }
+&lt;/script&gt;</code>
+      </pre>
+      <p class="mb-3">
+        Tip: Use browser tools to see the effect of your JavaScript changes in real-time.
+      </p>
+      <p class="mb-3">
+        Useful Prompt:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>Create a JavaScript function that generates an animated image carousel and explain how it works.</code>
+      </pre>
+      <p class="mb-3 italic">
+        Anecdote: My first JavaScript project was a small game – I remember the joy when I saw my code came to life and interacted with me.
+      </p>
+      <h3 class="text-3xl font-semibold mt-8">8.3 Common Questions and Best Practices in JS</h3>
+      <p class="mb-3">
+        <strong>Where do I place the <code>&lt;script&gt;</code> tag?</strong> – At the end of the <code>&lt;body&gt;</code> or in the <code>&lt;head&gt;</code> with the <code>defer</code> attribute for optimal loading.
+      </p>
+      <p class="mb-3">
+        <strong>Do I need to create an external .js file?</strong> – For small projects, an inline script is enough; for larger ones, you should outsource the code.
+      </p>
+      <p class="mb-3">
+        Useful Prompt:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>Explain how JavaScript modules work and when they are useful.</code>
+      </pre>
+      <a href="#top" class="block mt-4 text-blue-400 hover:underline">Back to top</a>
+    </section>
+    <!-- Chapter 9: Dynamic Content & APIs – A Taste -->
+    <section id="chapter9" class="mb-16">
+      <h2 class="text-4xl font-bold border-b pb-4 mb-8">
+        Chapter 9: Dynamic Content & APIs – A Taste
+      </h2>
+      <!-- First Part -->
+      <h3 class="text-3xl font-semibold mt-4">9.1 What are APIs?</h3>
+      <p class="mb-3">
+        APIs (Application Programming Interfaces) allow your webpage to communicate with external services – from weather data to stock prices. They make your site dynamic and interactive.
+      </p>
+      <p class="mb-3">
+        Tip: Learn how to read API documentation – it's the key to success in integrating external data.
+      </p>
+      <p class="mb-3">
+        Useful Prompt:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>Explain what RESTful APIs are and how to integrate them into my web project.</code>
+      </pre>
+      <!-- Second Part -->
+      <h3 class="text-3xl font-semibold mt-8">9.2 Example with <code>fetch()</code> and More</h3>
+      <p class="mb-3">
+        Here's a simple example to fetch data from a demo API and display it:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>fetch('https://jsonplaceholder.typicode.com/posts')
+  .then(response => response.json())
+  .then(data => {
+    console.log(data);
+    const ul = document.createElement('ul');
+    data.slice(0, 5).forEach(item => {
+      const li = document.createElement('li');
+      li.textContent = item.title;
+      ul.appendChild(li);
+    });
+    document.body.appendChild(ul);
+  })
+  .catch(error => console.error(error));</code>
+      </pre>
+      <p class="mb-3">
+        Tip: Play with the data – change the number of displayed items or present them in a different layout.
+      </p>
+      <p class="mb-3">
+        Useful Prompt:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>Create an interactive dashboard that fetches data from a public API and updates it in real-time.</code>
+      </pre>
+      <h3 class="text-3xl font-semibold mt-8">9.3 From Static to Dynamic</h3>
+      <p class="mb-3">
+        Show how to display dynamic content not just in the console but directly on the webpage – for example, as cards, lists, or tables.
+      </p>
+      <p class="mb-3">
+        Tip: Use JavaScript to dynamically create HTML elements and style them attractively with CSS.
+      </p>
+      <p class="mb-3">
+        Useful Prompt:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>Create a complete code that fetches data from a weather API and displays current temperatures in attractive cards.</code>
+      </pre>
+      <p class="mb-3 italic">
+        Anecdote: The moment I saw my first dynamic API integration, it was overwhelming – suddenly, I could fetch and display live data as if my site was "alive".
+      </p>
+      <a href="#top" class="block mt-4 text-blue-400 hover:underline">Back to top</a>
+    </section>
+    <!-- Chapter 10: SEO for Beginners – Getting Found -->
+    <section id="chapter10" class="mb-16">
+      <h2 class="text-4xl font-bold border-b pb-4 mb-8">
+        Chapter 10: SEO for Beginners – Getting Found
+      </h2>
+      <!-- First Part -->
+      <h3 class="text-3xl font-semibold mt-4">10.1 Important Elements (Title, Meta, Structure)</h3>
+      <p class="mb-3">
+        SEO (Search Engine Optimization) ensures that your webpage is found by search engines. A catchy <code>&lt;title&gt;</code> and a compelling <code>&lt;meta name="description"&gt;</code> are essential.
+      </p>
+      <p class="mb-3">
+        Tip: A clear heading structure (<code>&lt;h1&gt;</code>, <code>&lt;h2&gt;</code>, etc.) helps not only search engines but also visitors understand your content better.
+      </p>
+      <p class="mb-3">
+        Useful Prompt:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>Create a list of the most important SEO measures for a beginner website and show how to implement them in HTML.</code>
+      </pre>
+      <!-- Second Part -->
+      <h3 class="text-3xl font-semibold mt-8">10.2 Mobile-Friendliness & Performance</h3>
+      <p class="mb-3">
+        A fast, mobile-optimized webpage is not only user-friendly but also a crucial ranking factor. Compress images, minimize CSS/JS, and use caching.
+      </p>
+      <p class="mb-3">
+        Tip: Use tools like Google Lighthouse to identify and fix performance bottlenecks.
+      </p>
+      <p class="mb-3">
+        Useful Prompt:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>How do I optimize the loading speed of my website and which tools can help?</code>
+      </pre>
+      <h3 class="text-3xl font-semibold mt-8">10.3 AI Help in SEO Optimization</h3>
+      <p class="mb-3">
+        Let AI generate SEO-friendly meta tags, keywords, and even entire text suggestions. This way, you save time and increase your site's visibility.
+      </p>
+      <p class="mb-3">
+        Tip: Test different meta descriptions and analyze which variant performs best.
+      </p>
+      <p class="mb-3">
+        Useful Prompt:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>Find 5 relevant keywords for a beginner website about AI-supported web development and create a suitable meta description.</code>
+      </pre>
+      <h3 class="text-3xl font-semibold mt-8">10.4 Local vs. Global SEO</h3>
+      <p class="mb-3">
+        Local SEO focuses on regional search queries (e.g., "Web Design Munich"), while global SEO uses more general terms. Adjust your content accordingly.
+      </p>
+      <p class="mb-3">
+        Tip: Use Google My Business to improve local search results and ensure local keywords are integrated into your texts.
+      </p>
+      <p class="mb-3">
+        Useful Prompt:
+      </p>
+      <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+        <code>Create a comparison between local and global SEO and show which measures are useful for both scenarios.</code>
+      </pre>
+      <a href="#top" class="block mt-4 text-blue-400 hover:underline">Back to top</a>
+    </section>
+    <!-- Conclusion: Your Path to the AI-Web Development Future -->
+    <section id="conclusion" class="mb-16">
+      <h2 class="text-4xl font-bold border-b pb-4 mb-8">
+        Conclusion: Your Path to the AI-Web Development Future
+      </h2>
+      <!-- First Part -->
+      <p class="mb-3">
+        You now have a deep insight into the world of web development – from the basics in HTML and CSS to dynamic JavaScript applications, using APIs, and SEO optimization. With the support of AI, you are well-equipped to implement your own projects.
+      </p>
+      <p class="mb-3">
+        Tip: Set small goals and work on projects that interest you personally. The fun of coding is the best engine for continuous learning.
+      </p>
+      <!-- Second Part -->
+      <h3 class="text-3xl font-semibold mt-8">Next Steps & Inspiration</h3>
+      <ul class="list-disc pl-6 mb-3">
+        <li>Create a fictional landing page with interactive elements and responsive design.</li>
+        <li>Experiment with advanced JavaScript techniques like Async/Await and modular programming.</li>
+        <li>Engage in web development communities – the exchange with others is often the best learning source.</li>
+        <li>Deepen your knowledge in SEO, performance optimization, and modern technologies like Progressive Web Apps (PWAs).</li>
+    </ul>
+    <p class="mb-3">
+      Always remember: Every mistake is an opportunity to learn something new. With the support of AI, you are never alone – you always have a virtual mentor by your side.
+    </p>
+    <p class="mb-3">
+      Useful Conclusion Prompt:
+    </p>
+    <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-x-auto text-sm mb-3">
+      <code>Create a comprehensive learning plan for the next 3 months to become an advanced web developer – including practical projects and resources.</code>
+    </pre>
+    <p class="mb-3 italic">
+      Anecdote: The path to expertise always begins with the first step – and every step you take brings you closer to your goal. Remember that even the greatest developers were once beginners.
+    </p>
+    <a href="#top" class="block mt-4 text-blue-400 hover:underline">Back to top</a>
+  </section>
+</main>
+<!-- Back-to-top Anchor -->
+<a id="top"></a>
+<!-- Scroll-to-top Button -->
+<button id="scrollToTop" class="fixed bottom-4 right-4 bg-blue-800 text-white p-3 rounded-full shadow-lg hidden">
+  ↑
+</button>
+<!-- Dummy API Key (hard-coded, for demonstration purposes only) -->
+<script>
+  const DUMMY_API_KEY = "1234567890abcdef";
+  console.log("Dummy API Key:", DUMMY_API_KEY);
+
+  // Scroll-to-top Button Logic
+  const scrollToTopBtn = document.getElementById("scrollToTop");
+  window.addEventListener("scroll", () => {
+    if (window.pageYOffset > 300) {
+      scrollToTopBtn.classList.remove("hidden");
+    } else {
+      scrollToTopBtn.classList.add("hidden");
+    }
+  });
+  scrollToTopBtn.addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  // =========== Burger Menu Control ==============
+  // 1. Get references to the elements
+  const burgerButton = document.getElementById("burgerBtn");
+  const mobileNav = document.getElementById("mobileNav");
+
+  // 2. Click event on the burger button
+  burgerButton.addEventListener("click", () => {
+    // Toggles the CSS display (using Tailwind or your own .hidden class)
+    // Here you can toggle between "block" or "none"; we use Tailwind's "hidden"
+    if (mobileNav.style.display === "block") {
+      mobileNav.style.display = "none";
+    } else {
+      mobileNav.style.display = "block";
+    }
+  });
+</script>
+</body>
+</html>

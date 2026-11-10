@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>KI-Academy Vorschau</title>
+<style>
+  :root { --bg:#0a0a0f; --card:#151522; --line:rgba(148,163,184,.2); --text:#f1f5f9; --muted:#94a3b8; --cyan:#06b6d4; --pink:#ec4899; --gold:#fbbf24; }
+  @media (prefers-color-scheme: light) { :root { --bg:#f6f8fc; --card:#fff; --line:rgba(15,23,42,.14); --text:#0f172a; --muted:#475569; --cyan:#0e7490; --pink:#be185d; --gold:#b45309; } }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); line-height: 1.55; padding: 0 16px 60px; }
+  .wrap { max-width: 900px; margin: 0 auto; }
+  header { padding: 48px 0 20px; }
+  h1 { font-size: clamp(1.8rem, 5vw, 2.8rem); letter-spacing: -.02em; }
+  h1 span { background: linear-gradient(90deg, var(--cyan), var(--pink)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .lead { color: var(--muted); margin-top: 10px; max-width: 640px; }
+  .proto { margin-top: 16px; padding: 10px 14px; border-radius: 10px; background: color-mix(in srgb, var(--gold) 18%, transparent); border: 1px dashed var(--gold); font-size: .9rem; }
+  h2 { margin: 34px 0 12px; font-size: 1.15rem; }
+  .grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  a.card { display: block; text-decoration: none; color: inherit; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; }
+  a.card:hover { border-color: var(--cyan); }
+  a.card:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+  a.card b { display: block; margin-bottom: 4px; }
+  a.card span { color: var(--muted); font-size: .92rem; }
+  footer { margin-top: 40px; color: var(--muted); font-size: .85rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>KI-Academy <span>Vorschau</span></h1>
+    <p class="lead">Zum Live-Testen: Kursbereich mit Tools, Slides zum Mitmachen und die Landingpage.</p>
+    <p class="proto">Prototyp-Stand. Gelbe Platzhalter, Termine und Checkout-Links sind noch nicht gefüllt.</p>
+  </header>
+
+  <h2>Starten</h2>
+  <div class="grid">
+    <a class="card" href="academy/"><b>Academy (Kursbereich)</b><span>Sidebar mit Reihe 1 bis 3, Tools, Slides und Prompts</span></a>
+    <a class="card" href="product/"><b>Landingpage</b><span>Angebot mit Bundle und drei Reihen</span></a>
+    <a class="card" href="release-slides/prompts/reihe-1-promptbibliothek.html"><b>Prompt-Bibliothek Reihe 1</b><span>25 kopierfertige Prompts</span></a>
+  </div>
+
+  <h2>Slides mit Live-Code</h2>
+  <p class="lead" style="margin-top:0">Pfeiltasten zum Blättern, N für Notizen, L für Quiz-Lösung. In Live-Folien links tippen, rechts aktualisiert sich die Vorschau.</p>
+  <div class="grid" style="margin-top:12px">
+    <a class="card" href="release-slides/praesentation/verkaufswebinar.html"><b>Verkaufswebinar</b><span>25 Folien, Angebotsrechner live</span></a>
+    <a class="card" href="release-slides/praesentation/agentic-ai-einfuehrung.html"><b>Agentic AI Einführung</b><span>18 Folien, Agenten-Simulator live</span></a>
+    <a class="card" href="release-slides/praesentation/r1-m0-start-und-setup.html"><b>Reihe 1, Modul 0: Start und Setup</b><span>12 Folien</span></a>
+    <a class="card" href="release-slides/praesentation/r1-m1-html.html"><b>Reihe 1, Modul 1: HTML</b><span>13 Folien, 3 Live-Folien</span></a>
+    <a class="card" href="release-slides/praesentation/r1-m2-css.html"><b>Reihe 1, Modul 2: CSS</b><span>13 Folien, 3 Live-Folien</span></a>
+    <a class="card" href="release-slides/praesentation/r1-m3-javascript.html"><b>Reihe 1, Modul 3: JavaScript</b><span>12 Folien, 3 Live-Folien</span></a>
+    <a class="card" href="release-slides/praesentation/r1-m4-prompting.html"><b>Reihe 1, Modul 4: Prompting</b><span>13 Folien</span></a>
+    <a class="card" href="release-slides/praesentation/r1-m5-portfolio-und-hosting.html"><b>Reihe 1, Modul 5: Portfolio und Hosting</b><span>14 Folien</span></a>
+  </div>
+
+  <footer>Alle Rechte vorbehalten. Inhalte dienen der Vorschau und dürfen nicht ohne Erlaubnis weiterverwendet werden.</footer>
+</div>
+</body>
+</html>

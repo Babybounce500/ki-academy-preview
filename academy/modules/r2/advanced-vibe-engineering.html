@@ -1,0 +1,3405 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ ADVANCED VIBE ENGINEERING</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&family=Inter:wght@300;500;700;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #000000;
+            --surface: #0d0d0d;
+            --border: #1a1a1a;
+            --text: #e0e0e0;
+            --text-dim: #707070;
+            --accent: #00ff88;
+            --accent-dim: #00aa55;
+            --error: #ff3366;
+            --warning: #ffaa00;
+            --mono: 'JetBrains Mono', monospace;
+            --sans: 'Inter', sans-serif;
+        }
+
+        body {
+            font-family: var(--sans);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            font-size: 15px;
+            font-weight: 300;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 60px 40px;
+        }
+
+        header {
+            margin-bottom: 80px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            letter-spacing: -2px;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--accent), #00ffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-dim);
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        nav {
+            display: flex;
+            gap: 24px;
+            margin: 60px 0;
+            border-bottom: 1px solid var(--border);
+            overflow-x: auto;
+            padding-bottom: 2px;
+        }
+
+        nav button {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            font-family: var(--mono);
+            font-size: 0.85rem;
+            padding: 12px 0;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            white-space: nowrap;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        nav button:hover {
+            color: var(--text);
+            border-bottom-color: var(--accent-dim);
+        }
+
+        nav button.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 60px 0 32px;
+            letter-spacing: -1px;
+            color: var(--text);
+        }
+
+        h2:first-child {
+            margin-top: 0;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            font-weight: 500;
+            margin: 48px 0 20px;
+            color: var(--accent);
+            font-family: var(--mono);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin: 24px 0 12px;
+            color: var(--text);
+        }
+
+        p {
+            margin: 16px 0;
+            color: var(--text-dim);
+        }
+
+        code {
+            font-family: var(--mono);
+            background: var(--surface);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: var(--accent);
+            border: 1px solid var(--border);
+        }
+
+        pre {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            overflow-x: auto;
+            margin: 24px 0;
+            position: relative;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            border: none;
+            display: block;
+            color: var(--text);
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        .lang-label {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            font-family: var(--mono);
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 24px;
+            margin: 32px 0;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            transition: border-color 0.2s;
+        }
+
+        .card:hover {
+            border-color: var(--accent-dim);
+        }
+
+        .card h4 {
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--mono);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card h4::before {
+            content: '▸';
+            color: var(--accent);
+        }
+
+        ul, ol {
+            margin: 16px 0;
+            padding-left: 24px;
+        }
+
+        li {
+            margin: 8px 0;
+            color: var(--text-dim);
+        }
+
+        li strong {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .warning {
+            background: rgba(255, 170, 0, 0.05);
+            border-left: 3px solid var(--warning);
+            padding: 20px;
+            margin: 24px 0;
+            border-radius: 4px;
+        }
+
+        .warning h4 {
+            color: var(--warning);
+            margin-top: 0;
+        }
+
+        .info {
+            background: rgba(0, 255, 136, 0.05);
+            border-left: 3px solid var(--accent);
+            padding: 20px;
+            margin: 24px 0;
+            border-radius: 4px;
+        }
+
+        .info h4 {
+            color: var(--accent);
+            margin-top: 0;
+        }
+
+        .error {
+            background: rgba(255, 51, 102, 0.05);
+            border-left: 3px solid var(--error);
+            padding: 20px;
+            margin: 24px 0;
+            border-radius: 4px;
+        }
+
+        .error h4 {
+            color: var(--error);
+            margin-top: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0;
+            font-family: var(--mono);
+            font-size: 0.85rem;
+        }
+
+        th {
+            text-align: left;
+            padding: 12px;
+            background: var(--surface);
+            border-bottom: 2px solid var(--accent);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.75rem;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:hover {
+            background: var(--surface);
+        }
+
+        .metric {
+            display: inline-block;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-family: var(--mono);
+            font-size: 0.85rem;
+            margin: 4px;
+        }
+
+        .metric.good {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .metric.bad {
+            border-color: var(--error);
+            color: var(--error);
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        a:hover {
+            border-bottom-color: var(--accent);
+        }
+
+        .inline-code-block {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 16px;
+            margin: 16px 0;
+            font-family: var(--mono);
+            font-size: 0.85rem;
+        }
+
+        .technique {
+            margin: 32px 0;
+            padding: 24px;
+            background: var(--surface);
+            border-left: 4px solid var(--accent);
+            border-radius: 4px;
+        }
+
+        .technique-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .technique-title {
+            font-family: var(--mono);
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .technique-level {
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 20px;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .terminal {
+            background: #0a0a0a;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 24px 0;
+            font-family: var(--mono);
+            font-size: 0.85rem;
+        }
+
+        .terminal-line {
+            margin: 4px 0;
+        }
+
+        .terminal-prompt {
+            color: var(--accent);
+        }
+
+        .terminal-output {
+            color: var(--text-dim);
+        }
+
+        .benchmark {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 16px;
+            align-items: center;
+            padding: 12px 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            margin: 8px 0;
+            font-family: var(--mono);
+            font-size: 0.85rem;
+        }
+
+        .benchmark-name {
+            color: var(--text);
+        }
+
+        .benchmark-value {
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        .benchmark-diff {
+            color: var(--text-dim);
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚡ ADVANCED VIBE ENGINEERING</h1>
+            <p class="subtitle">Hardcore Patterns & Bleeding-Edge Techniques for Professionals</p>
+        </header>
+
+        <nav>
+            <button class="active" onclick="showSection('architecture')">ARCHITECTURE</button>
+            <button onclick="showSection('patterns')">ADVANCED PATTERNS</button>
+            <button onclick="showSection('performance')">PERFORMANCE</button>
+            <button onclick="showSection('ai-workflow')">AI WORKFLOW</button>
+            <button onclick="showSection('hyper-vibe')">HYPER VIBE</button>
+            <button onclick="showSection('deployment')">DEPLOYMENT</button>
+            <button onclick="showSection('meta')">META-PROGRAMMING</button>
+        </nav>
+
+        <!-- ARCHITECTURE SECTION -->
+        <section id="architecture" class="section active">
+            <h2>System Architecture für Production</h2>
+
+            <h3>Micro-Frontend Architecture</h3>
+            <div class="info">
+                <h4>Wann Micro-Frontends Sinn machen</h4>
+                <ul>
+                    <li>Team-Autonomie: Verschiedene Teams arbeiten an verschiedenen Features</li>
+                    <li>Tech-Stack Flexibility: Verschiedene Frameworks im gleichen Projekt</li>
+                    <li>Independent Deployment: Features unabhängig voneinander deployen</li>
+                    <li>Legacy Migration: Schrittweise von altem zu neuem Stack</li>
+                </ul>
+            </div>
+
+            <pre><div class="lang-label">webpack.config.js</div><code>// Module Federation - Share code between apps
+const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
+
+module.exports = {
+  plugins: [
+    new ModuleFederationPlugin({
+      name: 'app1',
+      filename: 'remoteEntry.js',
+      exposes: {
+        './Button': './src/components/Button',
+        './hooks': './src/hooks',
+      },
+      shared: {
+        react: { singleton: true, requiredVersion: '^18.0.0' },
+        'react-dom': { singleton: true },
+      },
+    }),
+  ],
+};</code></pre>
+
+            <h3>Event-Driven Architecture</h3>
+            <pre><div class="lang-label">typescript</div><code>// Type-safe Event Bus Pattern
+type EventMap = {
+  'user:login': { userId: string; timestamp: number };
+  'user:logout': { userId: string };
+  'data:update': { entity: string; id: string; changes: Record<string, any> };
+};
+
+class EventBus<T extends Record<string, any>> {
+  private listeners = new Map<keyof T, Set<(data: any) => void>>();
+
+  on<K extends keyof T>(event: K, callback: (data: T[K]) => void): () => void {
+    if (!this.listeners.has(event)) {
+      this.listeners.set(event, new Set());
+    }
+    this.listeners.get(event)!.add(callback);
+    
+    // Return unsubscribe function
+    return () => this.listeners.get(event)?.delete(callback);
+  }
+
+  emit<K extends keyof T>(event: K, data: T[K]): void {
+    this.listeners.get(event)?.forEach(cb => cb(data));
+  }
+
+  once<K extends keyof T>(event: K, callback: (data: T[K]) => void): void {
+    const unsubscribe = this.on(event, (data) => {
+      callback(data);
+      unsubscribe();
+    });
+  }
+}
+
+const bus = new EventBus<EventMap>();
+
+// Type-safe usage
+bus.on('user:login', ({ userId, timestamp }) => {
+  console.log(`User ${userId} logged in at ${timestamp}`);
+});
+
+bus.emit('user:login', { userId: '123', timestamp: Date.now() });</code></pre>
+
+            <h3>CQRS Pattern (Command Query Responsibility Segregation)</h3>
+            <pre><div class="lang-label">typescript</div><code>// Separate read and write models for complex domains
+interface Command {
+  type: string;
+  payload: any;
+}
+
+interface Query {
+  type: string;
+  params: any;
+}
+
+class CommandHandler {
+  async handle(command: Command): Promise<void> {
+    switch (command.type) {
+      case 'CREATE_USER':
+        await this.createUser(command.payload);
+        await this.publishEvent('USER_CREATED', command.payload);
+        break;
+      case 'UPDATE_USER':
+        await this.updateUser(command.payload);
+        await this.publishEvent('USER_UPDATED', command.payload);
+        break;
+    }
+  }
+
+  private async publishEvent(type: string, data: any) {
+    // Publish to event store / message queue
+    await eventStore.append({ type, data, timestamp: Date.now() });
+  }
+}
+
+class QueryHandler {
+  async handle(query: Query): Promise<any> {
+    // Read from optimized read models
+    switch (query.type) {
+      case 'GET_USER_PROFILE':
+        return await readModel.getUserProfile(query.params.userId);
+      case 'SEARCH_USERS':
+        return await readModel.searchUsers(query.params);
+    }
+  }
+}
+
+// Usage
+await commandHandler.handle({
+  type: 'CREATE_USER',
+  payload: { name: 'Max', email: 'max@example.com' }
+});
+
+const profile = await queryHandler.handle({
+  type: 'GET_USER_PROFILE',
+  params: { userId: '123' }
+});</code></pre>
+
+            <h3>Hexagonal Architecture (Ports & Adapters)</h3>
+            <pre><div class="lang-label">typescript</div><code>// Domain layer - Pure business logic
+class User {
+  constructor(
+    public readonly id: string,
+    public name: string,
+    public email: string
+  ) {}
+
+  changeName(newName: string): void {
+    if (!newName || newName.length < 2) {
+      throw new Error('Invalid name');
+    }
+    this.name = newName;
+  }
+}
+
+// Port - Interface for data access
+interface UserRepository {
+  findById(id: string): Promise<User | null>;
+  save(user: User): Promise<void>;
+  delete(id: string): Promise<void>;
+}
+
+// Adapter - Concrete implementation
+class PostgresUserRepository implements UserRepository {
+  async findById(id: string): Promise<User | null> {
+    const row = await db.query('SELECT * FROM users WHERE id = $1', [id]);
+    return row ? new User(row.id, row.name, row.email) : null;
+  }
+
+  async save(user: User): Promise<void> {
+    await db.query(
+      'INSERT INTO users (id, name, email) VALUES ($1, $2, $3) ON CONFLICT (id) DO UPDATE SET name = $2, email = $3',
+      [user.id, user.name, user.email]
+    );
+  }
+
+  async delete(id: string): Promise<void> {
+    await db.query('DELETE FROM users WHERE id = $1', [id]);
+  }
+}
+
+// Use Case / Application Service
+class UpdateUserName {
+  constructor(private userRepo: UserRepository) {}
+
+  async execute(userId: string, newName: string): Promise<void> {
+    const user = await this.userRepo.findById(userId);
+    if (!user) throw new Error('User not found');
+    
+    user.changeName(newName);
+    await this.userRepo.save(user);
+  }
+}
+
+// Easy to test - inject mock repository
+const useCase = new UpdateUserName(new PostgresUserRepository());
+await useCase.execute('123', 'New Name');</code></pre>
+
+            <h3>Event Sourcing Pattern</h3>
+            <pre><div class="lang-label">typescript</div><code>// Advanced: Event Sourcing for full audit trail & time travel
+
+type Event = {
+  id: string;
+  aggregateId: string;
+  type: string;
+  data: any;
+  timestamp: number;
+  version: number;
+};
+
+class EventStore {
+  private events: Event[] = [];
+  
+  async append(aggregateId: string, type: string, data: any): Promise<void> {
+    const event: Event = {
+      id: crypto.randomUUID(),
+      aggregateId,
+      type,
+      data,
+      timestamp: Date.now(),
+      version: this.getVersion(aggregateId) + 1,
+    };
+    
+    this.events.push(event);
+    await this.persist(event);
+  }
+  
+  async getEvents(aggregateId: string): Promise<Event[]> {
+    return this.events.filter(e => e.aggregateId === aggregateId);
+  }
+  
+  private getVersion(aggregateId: string): number {
+    const events = this.events.filter(e => e.aggregateId === aggregateId);
+    return events.length > 0 ? Math.max(...events.map(e => e.version)) : 0;
+  }
+}
+
+// Aggregate that rebuilds from events
+class UserAggregate {
+  private id: string;
+  private name: string;
+  private email: string;
+  private version: number = 0;
+  
+  static async load(id: string, eventStore: EventStore): Promise<UserAggregate> {
+    const user = new UserAggregate();
+    const events = await eventStore.getEvents(id);
+    
+    for (const event of events) {
+      user.apply(event);
+    }
+    
+    return user;
+  }
+  
+  private apply(event: Event): void {
+    switch (event.type) {
+      case 'UserCreated':
+        this.id = event.data.id;
+        this.name = event.data.name;
+        this.email = event.data.email;
+        break;
+      case 'UserNameChanged':
+        this.name = event.data.name;
+        break;
+      case 'UserEmailChanged':
+        this.email = event.data.email;
+        break;
+    }
+    this.version = event.version;
+  }
+  
+  async changeName(newName: string, eventStore: EventStore): Promise<void> {
+    await eventStore.append(this.id, 'UserNameChanged', { name: newName });
+    this.name = newName;
+    this.version++;
+  }
+}
+
+// Time travel: rebuild state at any point in time
+async function getUserStateAt(userId: string, timestamp: number): Promise<UserAggregate> {
+  const allEvents = await eventStore.getEvents(userId);
+  const eventsUpToTime = allEvents.filter(e => e.timestamp <= timestamp);
+  
+  const user = new UserAggregate();
+  for (const event of eventsUpToTime) {
+    user['apply'](event); // Rebuild state
+  }
+  
+  return user;
+}</code></pre>
+
+            <h3>Saga Pattern für Distributed Transactions</h3>
+            <pre><div class="lang-label">typescript</div><code>// Orchestrate complex workflows across microservices
+
+type SagaStep = {
+  execute: () => Promise<any>;
+  compensate: () => Promise<void>;
+};
+
+class Saga {
+  private steps: SagaStep[] = [];
+  private completed: SagaStep[] = [];
+  
+  addStep(execute: () => Promise<any>, compensate: () => Promise<void>): this {
+    this.steps.push({ execute, compensate });
+    return this;
+  }
+  
+  async run(): Promise<void> {
+    try {
+      for (const step of this.steps) {
+        await step.execute();
+        this.completed.push(step);
+      }
+    } catch (error) {
+      // Rollback all completed steps in reverse order
+      for (const step of this.completed.reverse()) {
+        try {
+          await step.compensate();
+        } catch (compensationError) {
+          console.error('Compensation failed:', compensationError);
+          // Log to monitoring system
+        }
+      }
+      throw error;
+    }
+  }
+}
+
+// Example: Order processing saga
+async function processOrder(order: Order) {
+  const saga = new Saga();
+  
+  saga
+    .addStep(
+      () => paymentService.charge(order.total),
+      () => paymentService.refund(order.id)
+    )
+    .addStep(
+      () => inventoryService.reserve(order.items),
+      () => inventoryService.release(order.items)
+    )
+    .addStep(
+      () => shippingService.schedule(order),
+      () => shippingService.cancel(order.id)
+    )
+    .addStep(
+      () => emailService.sendConfirmation(order),
+      () => emailService.sendCancellation(order)
+    );
+  
+  await saga.run();
+}</code></pre>
+        </section>
+
+        <!-- ADVANCED PATTERNS SECTION -->
+        <section id="patterns" class="section">
+            <h2>Advanced Patterns & Techniques</h2>
+
+            <h3>Render Props + HOC + Hooks Hybrid Pattern</h3>
+            <pre><div class="lang-label">typescript</div><code>// Combine patterns for maximum flexibility
+type RenderProp<T> = (data: T) => React.ReactNode;
+
+interface DataFetcherProps<T> {
+  url: string;
+  children?: RenderProp<{ data: T | null; loading: boolean; error: Error | null }>;
+  render?: RenderProp<{ data: T | null; loading: boolean; error: Error | null }>;
+}
+
+function DataFetcher<T>({ url, children, render }: DataFetcherProps<T>) {
+  const state = useDataFetch<T>(url);
+  const renderFn = children || render;
+  return renderFn ? <>{renderFn(state)}</> : null;
+}
+
+// Custom hook for reusability
+function useDataFetch<T>(url: string) {
+  const [data, setData] = useState<T | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    
+    fetch(url)
+      .then(r => r.json())
+      .then(d => !cancelled && setData(d))
+      .catch(e => !cancelled && setError(e))
+      .finally(() => !cancelled && setLoading(false));
+    
+    return () => { cancelled = true; };
+  }, [url]);
+
+  return { data, loading, error };
+}
+
+// HOC wrapper
+function withDataFetch<T, P extends { data?: T }>(
+  Component: React.ComponentType<P>,
+  url: string
+) {
+  return (props: Omit<P, 'data'>) => (
+    <DataFetcher<T> url={url}>
+      {({ data }) => <Component {...(props as P)} data={data ?? undefined} />}
+    </DataFetcher>
+  );
+}
+
+// All three usage styles
+// 1. Render prop
+<DataFetcher url="/api/users">
+  {({ data, loading }) => loading ? <Spinner /> : <List data={data} />}
+</DataFetcher>
+
+// 2. Hook
+const UserList = () => {
+  const { data, loading } = useDataFetch('/api/users');
+  return loading ? <Spinner /> : <List data={data} />;
+};
+
+// 3. HOC
+const UserListWithData = withDataFetch(List, '/api/users');</code></pre>
+
+            <h3>State Machines mit XState</h3>
+            <pre><div class="lang-label">typescript</div><code>import { createMachine, interpret } from 'xstate';
+
+// Complex form state machine
+const formMachine = createMachine({
+  id: 'form',
+  initial: 'editing',
+  context: {
+    data: {},
+    errors: [],
+    retries: 0
+  },
+  states: {
+    editing: {
+      on: {
+        SUBMIT: {
+          target: 'validating',
+          actions: 'clearErrors'
+        }
+      }
+    },
+    validating: {
+      invoke: {
+        src: 'validateForm',
+        onDone: {
+          target: 'submitting',
+          actions: 'clearErrors'
+        },
+        onError: {
+          target: 'editing',
+          actions: 'setErrors'
+        }
+      }
+    },
+    submitting: {
+      invoke: {
+        src: 'submitForm',
+        onDone: 'success',
+        onError: [
+          {
+            target: 'retrying',
+            cond: 'canRetry',
+            actions: 'incrementRetries'
+          },
+          {
+            target: 'error',
+            actions: 'setErrors'
+          }
+        ]
+      }
+    },
+    retrying: {
+      after: {
+        2000: 'submitting'
+      }
+    },
+    success: {
+      type: 'final'
+    },
+    error: {
+      on: {
+        RETRY: 'editing'
+      }
+    }
+  }
+}, {
+  guards: {
+    canRetry: (ctx) => ctx.retries < 3
+  },
+  actions: {
+    clearErrors: assign({ errors: [] }),
+    setErrors: assign({ errors: (_, event) => event.data }),
+    incrementRetries: assign({ retries: (ctx) => ctx.retries + 1 })
+  }
+});
+
+// Use in React
+function FormComponent() {
+  const [state, send] = useMachine(formMachine);
+  
+  return (
+    <form onSubmit={() => send('SUBMIT')}>
+      {state.matches('validating') && <Spinner />}
+      {state.matches('error') && <ErrorDisplay errors={state.context.errors} />}
+      {state.matches('success') && <SuccessMessage />}
+    </form>
+  );
+}</code></pre>
+
+            <h3>Advanced Caching Strategies</h3>
+            <pre><div class="lang-label">typescript</div><code>// Multi-layer cache with TTL and invalidation
+class CacheLayer<K, V> {
+  private cache = new Map<K, { value: V; expires: number }>();
+  
+  constructor(private ttl: number) {}
+  
+  get(key: K): V | undefined {
+    const entry = this.cache.get(key);
+    if (!entry) return undefined;
+    if (Date.now() > entry.expires) {
+      this.cache.delete(key);
+      return undefined;
+    }
+    return entry.value;
+  }
+  
+  set(key: K, value: V): void {
+    this.cache.set(key, {
+      value,
+      expires: Date.now() + this.ttl
+    });
+  }
+  
+  invalidate(key: K): void {
+    this.cache.delete(key);
+  }
+  
+  invalidatePattern(pattern: (key: K) => boolean): void {
+    for (const [key] of this.cache) {
+      if (pattern(key)) this.cache.delete(key);
+    }
+  }
+}
+
+class MultiLayerCache<K, V> {
+  private l1 = new CacheLayer<K, V>(5000);    // 5s in-memory
+  private l2 = new CacheLayer<K, V>(60000);   // 1min localStorage
+  
+  async get(key: K, fetcher: () => Promise<V>): Promise<V> {
+    // L1 check
+    let value = this.l1.get(key);
+    if (value !== undefined) return value;
+    
+    // L2 check
+    value = this.l2.get(key);
+    if (value !== undefined) {
+      this.l1.set(key, value);
+      return value;
+    }
+    
+    // Fetch from source
+    value = await fetcher();
+    this.l1.set(key, value);
+    this.l2.set(key, value);
+    
+    return value;
+  }
+  
+  invalidate(key: K): void {
+    this.l1.invalidate(key);
+    this.l2.invalidate(key);
+  }
+}
+
+// Usage
+const cache = new MultiLayerCache<string, User>();
+
+const user = await cache.get('user:123', async () => {
+  const res = await fetch('/api/users/123');
+  return res.json();
+});
+
+// Invalidate on mutation
+await updateUser(userId, data);
+cache.invalidate(`user:${userId}`);</code></pre>
+
+            <h3>Reactive Programming mit RxJS</h3>
+            <pre><div class="lang-label">typescript</div><code>import { fromEvent, merge, interval } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, switchMap, retry, shareReplay } from 'rxjs/operators';
+
+// Autocomplete with debouncing, deduplication, and cancellation
+const searchInput = document.querySelector('#search');
+
+const search$ = fromEvent(searchInput, 'input').pipe(
+  map((e: any) => e.target.value),
+  debounceTime(300),                    // Wait for user to stop typing
+  distinctUntilChanged(),               // Only if value changed
+  switchMap(query =>                    // Cancel previous request
+    fetch(`/api/search?q=${query}`)
+      .then(r => r.json())
+      .catch(() => [])
+  ),
+  retry(3),                             // Retry on error
+  shareReplay(1)                        // Share result with multiple subscribers
+);
+
+search$.subscribe(results => {
+  displayResults(results);
+});
+
+// Real-time data synchronization
+const dataSync$ = interval(5000).pipe(
+  switchMap(() => fetch('/api/data').then(r => r.json())),
+  distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b))
+);
+
+dataSync$.subscribe(data => {
+  updateUI(data);
+});
+
+// Combine multiple streams
+const user$ = fromEvent(userEvents, 'change');
+const preferences$ = fromEvent(prefEvents, 'change');
+
+merge(user$, preferences$).pipe(
+  debounceTime(1000),
+  switchMap(() => saveToBackend())
+).subscribe();</code></pre>
+
+            <h3>Worker Pool für Heavy Computation</h3>
+            <pre><div class="lang-label">typescript</div><code>// Worker pool for parallel processing
+class WorkerPool {
+  private workers: Worker[] = [];
+  private queue: Array<{ task: any; resolve: Function; reject: Function }> = [];
+  private activeWorkers = new Set<Worker>();
+  
+  constructor(private poolSize: number, workerScript: string) {
+    for (let i = 0; i < poolSize; i++) {
+      const worker = new Worker(workerScript);
+      this.workers.push(worker);
+      
+      worker.onmessage = (e) => {
+        this.activeWorkers.delete(worker);
+        this.processQueue();
+      };
+      
+      worker.onerror = (e) => {
+        this.activeWorkers.delete(worker);
+        this.processQueue();
+      };
+    }
+  }
+  
+  async execute<T>(task: any): Promise<T> {
+    return new Promise((resolve, reject) => {
+      this.queue.push({ task, resolve, reject });
+      this.processQueue();
+    });
+  }
+  
+  private processQueue(): void {
+    if (this.queue.length === 0) return;
+    
+    const availableWorker = this.workers.find(w => !this.activeWorkers.has(w));
+    if (!availableWorker) return;
+    
+    const { task, resolve, reject } = this.queue.shift()!;
+    this.activeWorkers.add(availableWorker);
+    
+    const handler = (e: MessageEvent) => {
+      availableWorker.removeEventListener('message', handler);
+      resolve(e.data);
+    };
+    
+    availableWorker.addEventListener('message', handler);
+    availableWorker.postMessage(task);
+  }
+  
+  terminate(): void {
+    this.workers.forEach(w => w.terminate());
+  }
+}
+
+// Usage
+const pool = new WorkerPool(4, '/worker.js');
+
+const results = await Promise.all([
+  pool.execute({ type: 'process', data: chunk1 }),
+  pool.execute({ type: 'process', data: chunk2 }),
+  pool.execute({ type: 'process', data: chunk3 }),
+  pool.execute({ type: 'process', data: chunk4 }),
+]);</code></pre>
+        </section>
+
+        <!-- PERFORMANCE SECTION -->
+        <section id="performance" class="section">
+            <h2>Performance Optimization Deep Dive</h2>
+
+            <h3>Virtual Scrolling Implementation</h3>
+            <pre><div class="lang-label">typescript</div><code>// Custom virtual scroll for 100k+ items
+function VirtualList({ items, itemHeight, containerHeight }) {
+  const [scrollTop, setScrollTop] = useState(0);
+  
+  const totalHeight = items.length * itemHeight;
+  const startIndex = Math.floor(scrollTop / itemHeight);
+  const endIndex = Math.min(
+    startIndex + Math.ceil(containerHeight / itemHeight) + 1,
+    items.length
+  );
+  
+  const visibleItems = items.slice(startIndex, endIndex);
+  const offsetY = startIndex * itemHeight;
+  
+  return (
+    <div
+      style={{ height: containerHeight, overflow: 'auto' }}
+      onScroll={(e) => setScrollTop(e.currentTarget.scrollTop)}
+    >
+      <div style={{ height: totalHeight, position: 'relative' }}>
+        <div style={{ transform: `translateY(${offsetY}px)` }}>
+          {visibleItems.map((item, i) => (
+            <div key={startIndex + i} style={{ height: itemHeight }}>
+              {item}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Advanced: Dynamic heights with offset cache
+class VirtualScroller {
+  private heights = new Map<number, number>();
+  private offsets = new Map<number, number>();
+  
+  getItemOffset(index: number): number {
+    if (this.offsets.has(index)) {
+      return this.offsets.get(index)!;
+    }
+    
+    let offset = 0;
+    for (let i = 0; i < index; i++) {
+      offset += this.heights.get(i) || this.defaultHeight;
+    }
+    
+    this.offsets.set(index, offset);
+    return offset;
+  }
+  
+  setItemHeight(index: number, height: number): void {
+    this.heights.set(index, height);
+    // Invalidate offset cache from this index onwards
+    for (let i = index; i < this.offsets.size; i++) {
+      this.offsets.delete(i);
+    }
+  }
+}</code></pre>
+
+            <h3>Bundle Optimization Strategies</h3>
+            <div class="terminal">
+                <div class="terminal-line"><span class="terminal-prompt">$</span> npm install --save-dev webpack-bundle-analyzer</div>
+                <div class="terminal-line"><span class="terminal-output">Analyzing bundle...</span></div>
+            </div>
+
+            <pre><div class="lang-label">vite.config.ts</div><code>import { defineConfig } from 'vite';
+import { visualizer } from 'rollup-plugin-visualizer';
+
+export default defineConfig({
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Vendor splitting
+          'react-vendor': ['react', 'react-dom'],
+          'ui-vendor': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu'],
+          'utils': ['lodash-es', 'date-fns'],
+        },
+      },
+    },
+    // Compression
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
+  },
+  plugins: [
+    visualizer({
+      open: true,
+      gzipSize: true,
+      brotliSize: true,
+    }),
+  ],
+});</code></pre>
+
+            <div class="info">
+                <h4>Bundle Size Benchmarks</h4>
+                <div class="benchmark">
+                    <span class="benchmark-name">Initial Load</span>
+                    <span class="benchmark-value">< 100KB</span>
+                    <span class="benchmark-diff">gzipped</span>
+                </div>
+                <div class="benchmark">
+                    <span class="benchmark-name">Time to Interactive</span>
+                    <span class="benchmark-value">< 2s</span>
+                    <span class="benchmark-diff">on 4G</span>
+                </div>
+                <div class="benchmark">
+                    <span class="benchmark-name">Lighthouse Score</span>
+                    <span class="benchmark-value">95+</span>
+                    <span class="benchmark-diff">all categories</span>
+                </div>
+            </div>
+
+            <h3>Memory Leak Prevention</h3>
+            <pre><div class="lang-label">typescript</div><code>// Common leak patterns and fixes
+
+// ❌ BAD - Event listener leak
+useEffect(() => {
+  window.addEventListener('resize', handleResize);
+  // Missing cleanup!
+}, []);
+
+// ✅ GOOD - Proper cleanup
+useEffect(() => {
+  window.addEventListener('resize', handleResize);
+  return () => window.removeEventListener('resize', handleResize);
+}, []);
+
+// ❌ BAD - Timer leak
+useEffect(() => {
+  const interval = setInterval(() => {
+    updateData();
+  }, 1000);
+  // Missing cleanup!
+}, []);
+
+// ✅ GOOD - Clear timer
+useEffect(() => {
+  const interval = setInterval(updateData, 1000);
+  return () => clearInterval(interval);
+}, []);
+
+// ❌ BAD - Subscription leak
+useEffect(() => {
+  const subscription = dataStream.subscribe(handleData);
+  // Missing cleanup!
+}, []);
+
+// ✅ GOOD - Unsubscribe
+useEffect(() => {
+  const subscription = dataStream.subscribe(handleData);
+  return () => subscription.unsubscribe();
+}, []);
+
+// Advanced: Detect leaks in development
+if (process.env.NODE_ENV === 'development') {
+  let mountCount = 0;
+  let unmountCount = 0;
+  
+  const originalUseEffect = React.useEffect;
+  React.useEffect = (effect, deps) => {
+    mountCount++;
+    return originalUseEffect(() => {
+      const cleanup = effect();
+      return () => {
+        unmountCount++;
+        cleanup?.();
+        
+        if (mountCount - unmountCount > 100) {
+          console.warn('Potential memory leak: Too many active effects');
+        }
+      };
+    }, deps);
+  };
+}</code></pre>
+
+            <h3>Request Deduplication & Batching</h3>
+            <pre><div class="lang-label">typescript</div><code>// Deduplicate identical requests
+class RequestDeduplicator {
+  private pending = new Map<string, Promise<any>>();
+  
+  async fetch<T>(key: string, fetcher: () => Promise<T>): Promise<T> {
+    if (this.pending.has(key)) {
+      return this.pending.get(key)!;
+    }
+    
+    const promise = fetcher().finally(() => {
+      this.pending.delete(key);
+    });
+    
+    this.pending.set(key, promise);
+    return promise;
+  }
+}
+
+// Batch requests with DataLoader pattern
+class DataLoader<K, V> {
+  private queue: Array<{ key: K; resolve: Function; reject: Function }> = [];
+  private scheduled = false;
+  
+  constructor(
+    private batchFn: (keys: K[]) => Promise<V[]>,
+    private maxBatchSize = 100
+  ) {}
+  
+  load(key: K): Promise<V> {
+    return new Promise((resolve, reject) => {
+      this.queue.push({ key, resolve, reject });
+      
+      if (!this.scheduled) {
+        this.scheduled = true;
+        queueMicrotask(() => this.dispatch());
+      }
+    });
+  }
+  
+  private async dispatch(): Promise<void> {
+    const batch = this.queue.splice(0, this.maxBatchSize);
+    this.scheduled = false;
+    
+    try {
+      const keys = batch.map(item => item.key);
+      const values = await this.batchFn(keys);
+      
+      batch.forEach((item, i) => {
+        item.resolve(values[i]);
+      });
+    } catch (error) {
+      batch.forEach(item => item.reject(error));
+    }
+    
+    if (this.queue.length > 0) {
+      this.scheduled = true;
+      queueMicrotask(() => this.dispatch());
+    }
+  }
+}
+
+// Usage
+const userLoader = new DataLoader(async (ids: string[]) => {
+  const response = await fetch('/api/users', {
+    method: 'POST',
+    body: JSON.stringify({ ids }),
+  });
+  return response.json();
+});
+
+// These will be batched into a single request
+const [user1, user2, user3] = await Promise.all([
+  userLoader.load('1'),
+  userLoader.load('2'),
+  userLoader.load('3'),
+]);</code></pre>
+
+            <h3>WebAssembly Integration</h3>
+            <pre><div class="lang-label">rust</div><code>// Rust code compiled to WASM for performance-critical operations
+use wasm_bindgen::prelude::*;
+
+#[wasm_bindgen]
+pub fn process_large_dataset(data: &[f64]) -> Vec<f64> {
+    data.iter()
+        .map(|x| {
+            // Complex computation
+            let mut result = *x;
+            for _ in 0..1000 {
+                result = (result * 1.5).sin();
+            }
+            result
+        })
+        .collect()
+}</code></pre>
+
+            <pre><div class="lang-label">typescript</div><code>// Use WASM in TypeScript
+import init, { process_large_dataset } from './wasm_module';
+
+async function processData(data: Float64Array) {
+  await init(); // Initialize WASM
+  
+  const result = process_large_dataset(data);
+  return result;
+}
+
+// Benchmark: WASM vs JS
+const data = new Float64Array(1000000);
+for (let i = 0; i < data.length; i++) {
+  data[i] = Math.random();
+}
+
+console.time('WASM');
+const wasmResult = await processData(data);
+console.timeEnd('WASM'); // ~50ms
+
+console.time('JS');
+const jsResult = data.map(x => {
+  let result = x;
+  for (let i = 0; i < 1000; i++) {
+    result = Math.sin(result * 1.5);
+  }
+  return result;
+});
+console.timeEnd('JS'); // ~500ms</code></pre>
+
+            <h3>Advanced Rendering Optimization</h3>
+            <pre><div class="lang-label">typescript</div><code>// Fine-grained reactivity with Signals (Preact/SolidJS pattern)
+
+import { signal, computed, effect } from '@preact/signals-react';
+
+// Signal: Atomic state primitive
+const count = signal(0);
+const multiplier = signal(2);
+
+// Computed: Automatically tracks dependencies
+const doubled = computed(() => count.value * multiplier.value);
+
+// Effect: Runs when dependencies change
+effect(() => {
+  console.log(`Count is now ${doubled.value}`);
+});
+
+// Update - only re-renders components that use this signal
+count.value++; // Surgical update, not full re-render
+
+// React Component - ultra efficient
+function Counter() {
+  // Component doesn't re-render, only this text node updates
+  return <div>Count: {count}</div>;
+}
+
+// Advanced: Custom signal for optimistic updates
+function createOptimisticSignal<T>(initial: T) {
+  const optimistic = signal<T | null>(null);
+  const confirmed = signal<T>(initial);
+  
+  return {
+    get value() {
+      return optimistic.value ?? confirmed.value;
+    },
+    optimisticUpdate(value: T) {
+      optimistic.value = value;
+    },
+    confirm(value: T) {
+      confirmed.value = value;
+      optimistic.value = null;
+    },
+    rollback() {
+      optimistic.value = null;
+    },
+  };
+}
+
+// Usage
+const userData = createOptimisticSignal({ name: 'Max' });
+
+// UI updates immediately
+userData.optimisticUpdate({ name: 'New Name' });
+
+// API call
+try {
+  await api.updateUser({ name: 'New Name' });
+  userData.confirm({ name: 'New Name' });
+} catch {
+  userData.rollback(); // Revert to confirmed state
+}</code></pre>
+
+            <h3>GPU Acceleration für Heavy Computation</h3>
+            <pre><div class="lang-label">typescript</div><code>// WebGL/WebGPU for parallel processing on GPU
+
+class GPUCompute {
+  private device: GPUDevice;
+  
+  async init() {
+    const adapter = await navigator.gpu.requestAdapter();
+    this.device = await adapter!.requestDevice();
+  }
+  
+  async matrixMultiply(a: Float32Array, b: Float32Array, size: number): Promise<Float32Array> {
+    // GPU shader for matrix multiplication
+    const shader = `
+      @group(0) @binding(0) var<storage, read> a: array<f32>;
+      @group(0) @binding(1) var<storage, read> b: array<f32>;
+      @group(0) @binding(2) var<storage, read_write> result: array<f32>;
+      
+      @compute @workgroup_size(16, 16)
+      fn main(@builtin(global_invocation_id) global_id: vec3<u32>) {
+        let row = global_id.x;
+        let col = global_id.y;
+        
+        var sum = 0.0;
+        for (var i = 0u; i < ${size}u; i = i + 1u) {
+          sum = sum + a[row * ${size}u + i] * b[i * ${size}u + col];
+        }
+        
+        result[row * ${size}u + col] = sum;
+      }
+    `;
+    
+    // Create compute pipeline
+    const shaderModule = this.device.createShaderModule({ code: shader });
+    const pipeline = this.device.createComputePipeline({
+      layout: 'auto',
+      compute: { module: shaderModule, entryPoint: 'main' },
+    });
+    
+    // Create buffers
+    const aBuffer = this.createBuffer(a);
+    const bBuffer = this.createBuffer(b);
+    const resultBuffer = this.createBuffer(new Float32Array(size * size));
+    
+    // Execute on GPU
+    const commandEncoder = this.device.createCommandEncoder();
+    const passEncoder = commandEncoder.beginComputePass();
+    
+    passEncoder.setPipeline(pipeline);
+    passEncoder.setBindGroup(0, this.createBindGroup(aBuffer, bBuffer, resultBuffer));
+    passEncoder.dispatchWorkgroups(Math.ceil(size / 16), Math.ceil(size / 16));
+    passEncoder.end();
+    
+    this.device.queue.submit([commandEncoder.finish()]);
+    
+    // Read result
+    return await this.readBuffer(resultBuffer);
+  }
+}
+
+// Benchmark
+const gpu = new GPUCompute();
+await gpu.init();
+
+const size = 1024;
+const a = new Float32Array(size * size).map(() => Math.random());
+const b = new Float32Array(size * size).map(() => Math.random());
+
+console.time('GPU');
+const resultGPU = await gpu.matrixMultiply(a, b, size);
+console.timeEnd('GPU'); // ~10ms
+
+console.time('CPU');
+const resultCPU = cpuMatrixMultiply(a, b, size);
+console.timeEnd('CPU'); // ~2000ms
+
+// 200x faster on GPU!</code></pre>
+
+            <h3>Service Worker mit Advanced Caching Strategy</h3>
+            <pre><div class="lang-label">typescript</div><code>// Multi-tier caching with intelligent invalidation
+
+// sw.ts
+const CACHE_VERSION = 'v1';
+const STATIC_CACHE = `static-${CACHE_VERSION}`;
+const DYNAMIC_CACHE = `dynamic-${CACHE_VERSION}`;
+const API_CACHE = `api-${CACHE_VERSION}`;
+
+// Cache strategies
+const strategies = {
+  // Network first, cache fallback (for API)
+  networkFirst: async (request: Request) => {
+    try {
+      const response = await fetch(request);
+      const cache = await caches.open(API_CACHE);
+      cache.put(request, response.clone());
+      return response;
+    } catch {
+      return (await caches.match(request)) || new Response('Offline');
+    }
+  },
+  
+  // Cache first, network fallback (for static assets)
+  cacheFirst: async (request: Request) => {
+    const cached = await caches.match(request);
+    if (cached) return cached;
+    
+    const response = await fetch(request);
+    const cache = await caches.open(STATIC_CACHE);
+    cache.put(request, response.clone());
+    return response;
+  },
+  
+  // Stale while revalidate (best UX)
+  staleWhileRevalidate: async (request: Request) => {
+    const cached = await caches.match(request);
+    
+    const fetchPromise = fetch(request).then(response => {
+      const cache = caches.open(DYNAMIC_CACHE);
+      cache.then(c => c.put(request, response.clone()));
+      return response;
+    });
+    
+    return cached || fetchPromise;
+  },
+};
+
+self.addEventListener('fetch', (event: FetchEvent) => {
+  const url = new URL(event.request.url);
+  
+  // Route to appropriate strategy
+  if (url.pathname.startsWith('/api/')) {
+    event.respondWith(strategies.networkFirst(event.request));
+  } else if (url.pathname.match(/\.(js|css|png|jpg|svg)$/)) {
+    event.respondWith(strategies.cacheFirst(event.request));
+  } else {
+    event.respondWith(strategies.staleWhileRevalidate(event.request));
+  }
+});
+
+// Background sync for offline actions
+self.addEventListener('sync', (event: SyncEvent) => {
+  if (event.tag === 'sync-data') {
+    event.waitUntil(syncOfflineData());
+  }
+});
+
+async function syncOfflineData() {
+  const db = await openDB('offline-queue');
+  const requests = await db.getAll('pending');
+  
+  for (const req of requests) {
+    try {
+      await fetch(req.url, req.options);
+      await db.delete('pending', req.id);
+    } catch {
+      // Will retry on next sync
+    }
+  }
+}</code></pre>
+
+            <h3>Incremental Static Regeneration (ISR) Pattern</h3>
+            <pre><div class="lang-label">typescript</div><code>// Next.js-style ISR for any framework
+
+class ISRCache {
+  private cache = new Map<string, {
+    data: any;
+    timestamp: number;
+    revalidateAfter: number;
+  }>();
+  
+  async get(key: string, fetcher: () => Promise<any>, revalidate: number = 60) {
+    const cached = this.cache.get(key);
+    const now = Date.now();
+    
+    // Cache hit and not stale
+    if (cached && now < cached.timestamp + cached.revalidateAfter * 1000) {
+      return cached.data;
+    }
+    
+    // Cache hit but stale - serve stale, revalidate in background
+    if (cached) {
+      // Return stale immediately
+      setTimeout(async () => {
+        const fresh = await fetcher();
+        this.cache.set(key, {
+          data: fresh,
+          timestamp: Date.now(),
+          revalidateAfter: revalidate,
+        });
+      }, 0);
+      
+      return cached.data;
+    }
+    
+    // Cache miss - fetch and cache
+    const data = await fetcher();
+    this.cache.set(key, {
+      data,
+      timestamp: now,
+      revalidateAfter: revalidate,
+    });
+    
+    return data;
+  }
+  
+  invalidate(pattern: string | RegExp) {
+    for (const [key] of this.cache) {
+      if (typeof pattern === 'string' ? key.includes(pattern) : pattern.test(key)) {
+        this.cache.delete(key);
+      }
+    }
+  }
+}
+
+// Usage
+const isr = new ISRCache();
+
+// Page that regenerates every 60 seconds
+app.get('/product/:id', async (req, res) => {
+  const product = await isr.get(
+    `product:${req.params.id}`,
+    () => db.products.findById(req.params.id),
+    60 // revalidate after 60s
+  );
+  
+  res.json(product);
+});
+
+// Invalidate on update
+app.post('/product/:id', async (req, res) => {
+  await db.products.update(req.params.id, req.body);
+  isr.invalidate(`product:${req.params.id}`);
+  res.json({ success: true });
+});</code></pre>
+        </section>
+
+        <!-- AI WORKFLOW SECTION -->
+        <section id="ai-workflow" class="section">
+            <h2>Professional AI-Assisted Workflow</h2>
+
+            <h3>Multi-Agent Architecture Pattern</h3>
+            <div class="info">
+                <h4>Orchestrating Multiple AI Agents</h4>
+                <p>Für komplexe Projekte: Verschiedene Agents für verschiedene Aspekte</p>
+            </div>
+
+            <pre><div class="lang-label">workflow</div><code>// Agent Roles & Responsibilities
+
+1. ARCHITECT AGENT (Claude Opus)
+   └─ System design decisions
+   └─ Tech stack recommendations  
+   └─ High-level architecture
+   └─ Performance considerations
+
+2. IMPLEMENTATION AGENT (Replit / Claude Sonnet)
+   └─ Feature implementation
+   └─ Boilerplate generation
+   └─ API integration
+   └─ Quick prototyping
+
+3. REFACTOR AGENT (Claude Sonnet)
+   └─ Code quality improvement
+   └─ Pattern extraction
+   └─ Type safety enhancement
+   └─ Documentation generation
+
+4. TEST AGENT (Specialized)
+   └─ Test case generation
+   └─ Edge case identification
+   └─ E2E test scenarios
+   └─ Performance testing
+
+5. OPTIMIZATION AGENT (Claude Sonnet)
+   └─ Bundle size reduction
+   └─ Performance profiling
+   └─ Memory leak detection
+   └─ Accessibility audit</code></pre>
+
+            <h3>Prompt Engineering für Production Code</h3>
+            <div class="technique">
+                <div class="technique-header">
+                    <span class="technique-title">Constraint-Based Prompting</span>
+                    <span class="technique-level">Advanced</span>
+                </div>
+                <pre><code>Generate a [component/function/module] with these constraints:
+
+ARCHITECTURE:
+- Pattern: [Hexagonal/CQRS/Event-Driven/etc]
+- Dependencies: [list specific libraries]
+- Integration points: [APIs/services it connects to]
+
+QUALITY:
+- TypeScript strict mode
+- 100% type coverage
+- No any types without explicit reason
+- Pure functions where possible
+- Immutable data structures
+
+PERFORMANCE:
+- O(n log n) max complexity
+- Memoization for expensive operations
+- Lazy loading for large data
+- Virtual scrolling if list > 100 items
+
+TESTING:
+- Include unit tests
+- Mock external dependencies
+- Cover edge cases: empty, null, large datasets
+- Test error scenarios
+
+DOCUMENTATION:
+- JSDoc for all public APIs
+- Usage examples
+- Performance characteristics
+- Known limitations</code></pre>
+            </div>
+
+            <div class="technique">
+                <div class="technique-header">
+                    <span class="technique-title">Incremental Refinement Protocol</span>
+                    <span class="technique-level">Expert</span>
+                </div>
+                <pre><code>// Phase 1: Skeleton
+Prompt: "Create skeleton for [feature] with:
+- Type definitions only
+- Interface contracts
+- No implementation
+- Comprehensive JSDoc"
+
+// Phase 2: Implementation
+Prompt: "Implement the following interfaces:
+[paste interfaces from Phase 1]
+
+Requirements:
+- Follow functional programming principles
+- Handle all edge cases
+- Performance-optimized"
+
+// Phase 3: Testing
+Prompt: "Generate comprehensive tests for:
+[paste implementation from Phase 2]
+
+Cover:
+- Happy path
+- Edge cases
+- Error scenarios
+- Performance benchmarks"
+
+// Phase 4: Integration
+Prompt: "Integrate this module into the existing system:
+[paste context about existing architecture]
+
+Ensure:
+- No breaking changes
+- Backward compatibility
+- Migration path for existing code"</code></pre>
+            </div>
+
+            <h3>Context Management Strategies</h3>
+            <pre><div class="lang-label">strategy</div><code>// Managing large codebases with AI
+
+1. CHUNKING STRATEGY
+   └─ Break large files into logical chunks
+   └─ Provide relevant context only
+   └─ Use symbolic references for related code
+
+2. BREADCRUMB TECHNIQUE
+   └─ Maintain conversation continuity
+   └─ Reference previous decisions
+   └─ Build on established patterns
+
+3. DIFF-BASED EDITS
+   └─ Show only changes, not full files
+   └─ Preserve existing functionality
+   └─ Minimize token usage
+
+Example Prompt Template:
+```
+Context from previous conversation:
+- We're using [architecture pattern]
+- Current tech stack: [list]
+- Performance budget: [metrics]
+
+Current file structure:
+[relevant imports and types]
+
+Task:
+[specific implementation request]
+
+Constraints:
+- Maintain existing API contracts
+- Follow established patterns
+- Don't modify [protected sections]
+```</code></pre>
+
+            <h3>Quality Gates für AI-Generated Code</h3>
+            <div class="card">
+                <h4>Automated Quality Checks</h4>
+                <pre><code>// .github/workflows/ai-code-quality.yml
+name: AI Code Quality Gates
+
+on: [pull_request]
+
+jobs:
+  quality-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Type Check
+        run: npm run type-check
+        # Must pass strict TypeScript
+      
+      - name: Lint
+        run: npm run lint
+        # ESLint with strict rules
+      
+      - name: Test Coverage
+        run: npm run test:coverage
+        # Minimum 80% coverage
+      
+      - name: Bundle Size
+        run: npm run build && npm run size-limit
+        # Max bundle increase: 5KB
+      
+      - name: Performance Budget
+        run: npm run lighthouse-ci
+        # Min score: 90 across all metrics
+      
+      - name: Security Audit
+        run: npm audit --audit-level=moderate
+        # No moderate+ vulnerabilities
+      
+      - name: Accessibility Check
+        run: npm run a11y-test
+        # Must pass WCAG 2.1 AA</code></pre>
+            </div>
+
+            <h3>Advanced Debugging with AI</h3>
+            <pre><div class="lang-label">debugging-protocol</div><code>// Systematic debugging with AI assistance
+
+Step 1: REPRODUCE
+Provide:
+- Minimal reproduction code
+- Expected vs actual behavior
+- Environment details
+- Error stack trace
+
+Step 2: ANALYZE
+Ask AI to:
+- Identify root cause
+- Explain why bug occurs
+- Suggest multiple solutions
+- Compare trade-offs
+
+Step 3: FIX
+Request:
+- Implementation of chosen solution
+- Tests that prevent regression
+- Performance impact analysis
+
+Step 4: DOCUMENT
+Generate:
+- Root cause documentation
+- Prevention guidelines
+- Related issue references
+
+Example Debugging Prompt:
+```
+Bug Report:
+[code snippet]
+
+Expected: [behavior]
+Actual: [behavior]
+Error: [stack trace]
+
+Environment:
+- Node: 18.x
+- React: 18.2
+- Browser: Chrome 120
+
+Please:
+1. Identify root cause
+2. Explain why it happens
+3. Suggest 2-3 solutions with trade-offs
+4. Implement the best solution
+5. Add tests to prevent regression
+```</code></pre>
+        </section>
+
+        <!-- AI WORKFLOW SECTION -->
+        <section id="ai-workflow" class="section">
+            <h2>Professional AI-Assisted Workflow</h2>
+
+            <h3>Multi-Agent Architecture Pattern</h3>
+            <div class="info">
+                <h4>Orchestrating Multiple AI Agents</h4>
+                <p>Für komplexe Projekte: Verschiedene Agents für verschiedene Aspekte</p>
+            </div>
+
+            <pre><div class="lang-label">workflow</div><code>// Agent Roles & Responsibilities
+
+1. ARCHITECT AGENT (Claude Opus)
+   └─ System design decisions
+   └─ Tech stack recommendations  
+   └─ High-level architecture
+   └─ Performance considerations
+
+2. IMPLEMENTATION AGENT (Replit / Claude Sonnet)
+   └─ Feature implementation
+   └─ Boilerplate generation
+   └─ API integration
+   └─ Quick prototyping
+
+3. REFACTOR AGENT (Claude Sonnet)
+   └─ Code quality improvement
+   └─ Pattern extraction
+   └─ Type safety enhancement
+   └─ Documentation generation
+
+4. TEST AGENT (Specialized)
+   └─ Test case generation
+   └─ Edge case identification
+   └─ E2E test scenarios
+   └─ Performance testing
+
+5. OPTIMIZATION AGENT (Claude Sonnet)
+   └─ Bundle size reduction
+   └─ Performance profiling
+   └─ Memory leak detection
+   └─ Accessibility audit</code></pre>
+
+            <h3>Prompt Engineering für Production Code</h3>
+            <div class="technique">
+                <div class="technique-header">
+                    <span class="technique-title">Constraint-Based Prompting</span>
+                    <span class="technique-level">Advanced</span>
+                </div>
+                <pre><code>Generate a [component/function/module] with these constraints:
+
+ARCHITECTURE:
+- Pattern: [Hexagonal/CQRS/Event-Driven/etc]
+- Dependencies: [list specific libraries]
+- Integration points: [APIs/services it connects to]
+
+QUALITY:
+- TypeScript strict mode
+- 100% type coverage
+- No any types without explicit reason
+- Pure functions where possible
+- Immutable data structures
+
+PERFORMANCE:
+- O(n log n) max complexity
+- Memoization for expensive operations
+- Lazy loading for large data
+- Virtual scrolling if list > 100 items
+
+TESTING:
+- Include unit tests
+- Mock external dependencies
+- Cover edge cases: empty, null, large datasets
+- Test error scenarios
+
+DOCUMENTATION:
+- JSDoc for all public APIs
+- Usage examples
+- Performance characteristics
+- Known limitations</code></pre>
+            </div>
+
+            <div class="technique">
+                <div class="technique-header">
+                    <span class="technique-title">Incremental Refinement Protocol</span>
+                    <span class="technique-level">Expert</span>
+                </div>
+                <pre><code>// Phase 1: Skeleton
+Prompt: "Create skeleton for [feature] with:
+- Type definitions only
+- Interface contracts
+- No implementation
+- Comprehensive JSDoc"
+
+// Phase 2: Implementation
+Prompt: "Implement the following interfaces:
+[paste interfaces from Phase 1]
+
+Requirements:
+- Follow functional programming principles
+- Handle all edge cases
+- Performance-optimized"
+
+// Phase 3: Testing
+Prompt: "Generate comprehensive tests for:
+[paste implementation from Phase 2]
+
+Cover:
+- Happy path
+- Edge cases
+- Error scenarios
+- Performance benchmarks"
+
+// Phase 4: Integration
+Prompt: "Integrate this module into the existing system:
+[paste context about existing architecture]
+
+Ensure:
+- No breaking changes
+- Backward compatibility
+- Migration path for existing code"</code></pre>
+            </div>
+
+            <h3>Context Management Strategies</h3>
+            <pre><div class="lang-label">strategy</div><code>// Managing large codebases with AI
+
+1. CHUNKING STRATEGY
+   └─ Break large files into logical chunks
+   └─ Provide relevant context only
+   └─ Use symbolic references for related code
+
+2. BREADCRUMB TECHNIQUE
+   └─ Maintain conversation continuity
+   └─ Reference previous decisions
+   └─ Build on established patterns
+
+3. DIFF-BASED EDITS
+   └─ Show only changes, not full files
+   └─ Preserve existing functionality
+   └─ Minimize token usage
+
+Example Prompt Template:
+```
+Context from previous conversation:
+- We're using [architecture pattern]
+- Current tech stack: [list]
+- Performance budget: [metrics]
+
+Current file structure:
+[relevant imports and types]
+
+Task:
+[specific implementation request]
+
+Constraints:
+- Maintain existing API contracts
+- Follow established patterns
+- Don't modify [protected sections]
+```</code></pre>
+
+            <h3>Quality Gates für AI-Generated Code</h3>
+            <div class="card">
+                <h4>Automated Quality Checks</h4>
+                <pre><code>// .github/workflows/ai-code-quality.yml
+name: AI Code Quality Gates
+
+on: [pull_request]
+
+jobs:
+  quality-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Type Check
+        run: npm run type-check
+        # Must pass strict TypeScript
+      
+      - name: Lint
+        run: npm run lint
+        # ESLint with strict rules
+      
+      - name: Test Coverage
+        run: npm run test:coverage
+        # Minimum 80% coverage
+      
+      - name: Bundle Size
+        run: npm run build && npm run size-limit
+        # Max bundle increase: 5KB
+      
+      - name: Performance Budget
+        run: npm run lighthouse-ci
+        # Min score: 90 across all metrics
+      
+      - name: Security Audit
+        run: npm audit --audit-level=moderate
+        # No moderate+ vulnerabilities
+      
+      - name: Accessibility Check
+        run: npm run a11y-test
+        # Must pass WCAG 2.1 AA</code></pre>
+            </div>
+
+            <h3>Advanced Debugging with AI</h3>
+            <pre><div class="lang-label">debugging-protocol</div><code>// Systematic debugging with AI assistance
+
+Step 1: REPRODUCE
+Provide:
+- Minimal reproduction code
+- Expected vs actual behavior
+- Environment details
+- Error stack trace
+
+Step 2: ANALYZE
+Ask AI to:
+- Identify root cause
+- Explain why bug occurs
+- Suggest multiple solutions
+- Compare trade-offs
+
+Step 3: FIX
+Request:
+- Implementation of chosen solution
+- Tests that prevent regression
+- Performance impact analysis
+
+Step 4: DOCUMENT
+Generate:
+- Root cause documentation
+- Prevention guidelines
+- Related issue references
+
+Example Debugging Prompt:
+```
+Bug Report:
+[code snippet]
+
+Expected: [behavior]
+Actual: [behavior]
+Error: [stack trace]
+
+Environment:
+- Node: 18.x
+- React: 18.2
+- Browser: Chrome 120
+
+Please:
+1. Identify root cause
+2. Explain why it happens
+3. Suggest 2-3 solutions with trade-offs
+4. Implement the best solution
+5. Add tests to prevent regression
+```</code></pre>
+        </section>
+
+        <!-- HYPER VIBE SECTION -->
+        <section id="hyper-vibe" class="section">
+            <h2>Hyper Vibe Coding: Next-Level Flow State</h2>
+
+            <div class="info">
+                <h4>What is Hyper Vibe?</h4>
+                <p>Hyper Vibe Coding ist die ultimative Symbiose zwischen menschlicher Intuition und AI-Power. Es geht nicht mehr um "AI hilft mir" sondern "AI und ich sind ein Organismus". State-of-the-art Workflow für 10x Produktivität.</p>
+            </div>
+
+            <h3>The Hyper Vibe Stack</h3>
+            <div class="grid">
+                <div class="card">
+                    <h4>Primary AI: Claude Sonnet 4</h4>
+                    <ul>
+                        <li><strong>Use case:</strong> Architektur, komplexe Algorithmen, Code Reviews</li>
+                        <li><strong>Strength:</strong> Reasoning, lange Context Windows, Code Quality</li>
+                        <li><strong>Workflow:</strong> Design → Validate → Iterate</li>
+                    </ul>
+                    <pre><code>// Claude Excellence Pattern
+1. Design Phase (Opus/Sonnet)
+   - Architecture decisions
+   - API design
+   - Data models
+   
+2. Validation Phase (Sonnet)
+   - Review generated code
+   - Identify edge cases
+   - Suggest optimizations
+   
+3. Iteration Phase (Sonnet)
+   - Refine based on feedback
+   - Add tests
+   - Documentation</code></pre>
+                </div>
+
+                <div class="card">
+                    <h4>Secondary AI: Cursor/GitHub Copilot</h4>
+                    <ul>
+                        <li><strong>Use case:</strong> Inline completion, boilerplate, refactoring</li>
+                        <li><strong>Strength:</strong> Context-aware, IDE integration, speed</li>
+                        <li><strong>Workflow:</strong> Type → Accept → Move</li>
+                    </ul>
+                    <pre><code>// Cursor Superpowers
+- Cmd+K: Inline edit
+- Cmd+L: Chat with codebase
+- Tab: Accept suggestion
+- Ctrl+Enter: Generate
+
+// Best practices
+- Write descriptive comments
+- Use meaningful variable names
+- Copilot learns from your style</code></pre>
+                </div>
+
+                <div class="card">
+                    <h4>Execution AI: Replit Agent</h4>
+                    <ul>
+                        <li><strong>Use case:</strong> Full-stack implementation, deployment, debugging</li>
+                        <li><strong>Strength:</strong> End-to-end ownership, environment setup</li>
+                        <li><strong>Workflow:</strong> Describe → Execute → Deploy</li>
+                    </ul>
+                    <pre><code>// Replit Agent Pattern
+"Build a [feature] with:
+- Tech stack: [specific versions]
+- Database: [PostgreSQL/etc]
+- Auth: [JWT/OAuth]
+- Deploy to production when ready
+- Run tests before deployment"
+
+Agent handles:
+- Package installation
+- Environment variables
+- Database migrations
+- CI/CD pipeline
+- Deployment</code></pre>
+                </div>
+
+                <div class="card">
+                    <h4>Specialist AIs</h4>
+                    <ul>
+                        <li><strong>v0.dev:</strong> UI component generation</li>
+                        <li><strong>Vercel AI SDK:</strong> AI-powered features</li>
+                        <li><strong>LangChain:</strong> Complex AI workflows</li>
+                        <li><strong>AutoGPT:</strong> Autonomous task execution</li>
+                    </ul>
+                    <pre><code>// Specialist Integration
+v0.dev:
+  "Create dashboard with charts"
+  → Get React component
+  → Refine with Claude
+  → Integrate with Cursor
+
+Vercel AI SDK:
+  useChat() for chatbots
+  useCompletion() for autocomplete
+  → Production-ready AI features</code></pre>
+                </div>
+            </div>
+
+            <h3>Hyper Vibe Workflow: The 3-Brain System</h3>
+            <div class="technique">
+                <div class="technique-header">
+                    <span class="technique-title">The 3-Brain Parallel Processing</span>
+                    <span class="technique-level">Expert</span>
+                </div>
+                <pre><code>┌─────────────────────────────────────────────────────────┐
+│                    PARALLEL EXECUTION                     │
+├─────────────────────────────────────────────────────────┤
+│                                                           │
+│  Brain 1: ARCHITECT (You + Claude)                      │
+│  └─ High-level design                                    │
+│  └─ System architecture                                  │
+│  └─ Technology decisions                                 │
+│  └─ API contracts                                        │
+│                                                           │
+│  Brain 2: BUILDER (Replit Agent)                        │
+│  └─ Implementation                                       │
+│  └─ Boilerplate generation                              │
+│  └─ Integration work                                     │
+│  └─ Deployment pipeline                                  │
+│                                                           │
+│  Brain 3: REFINER (Cursor + Copilot)                   │
+│  └─ Code completion                                      │
+│  └─ Inline refinements                                   │
+│  └─ Style consistency                                    │
+│  └─ Quick fixes                                          │
+│                                                           │
+└─────────────────────────────────────────────────────────┘
+
+WORKFLOW:
+1. Design with Claude (5 min)
+2. Kickoff Replit Agent (runs in background)
+3. Refine details with Cursor (parallel to #2)
+4. Review & integrate all outputs (5 min)
+
+Total time: 15-20 min for full feature
+Traditional time: 2-4 hours</code></pre>
+            </div>
+
+            <h3>Advanced Prompting: The Hyper Vibe Method</h3>
+            <pre><div class="lang-label">meta-prompt</div><code>// Meta-Prompt Template for Maximum Output Quality
+
+[CONTEXT]
+Project: [Name and purpose]
+Architecture: [Current patterns being used]
+Tech Stack: [Specific versions]
+Constraints: [Performance/budget/timeline]
+Recent Decisions: [Link to last conversation]
+
+[TASK]
+Primary Goal: [What we're building]
+Success Criteria: [How we measure success]
+Non-Goals: [What we're explicitly NOT doing]
+
+[REQUIREMENTS]
+Functional:
+- [Requirement 1 with acceptance criteria]
+- [Requirement 2 with acceptance criteria]
+
+Non-Functional:
+- Performance: [Specific metrics]
+- Security: [Specific requirements]
+- Accessibility: [WCAG level]
+- Scalability: [Expected load]
+
+[TECHNICAL CONSTRAINTS]
+Must Use: [Required libraries/patterns]
+Must Avoid: [Anti-patterns/deprecated approaches]
+Compatibility: [Browser/Node versions]
+Bundle Size: [Max KB]
+
+[OUTPUT FORMAT]
+Please provide:
+1. Architecture overview (high-level)
+2. Implementation (with types)
+3. Tests (unit + integration)
+4. Documentation (JSDoc + README)
+5. Performance analysis
+6. Migration guide (if changing existing code)
+
+[VALIDATION]
+Before finalizing:
+- [ ] All types are explicit (no 'any')
+- [ ] Error handling is comprehensive
+- [ ] Edge cases are covered
+- [ ] Performance is within budget
+- [ ] Tests achieve >80% coverage
+- [ ] Documentation is complete</code></pre>
+
+            <h3>Real-Time Collaboration Pattern</h3>
+            <pre><div class="lang-label">typescript</div><code>// Live coding with multiple AI assistants simultaneously
+
+// Terminal 1: Claude Design Session
+$ claude chat
+> "Design a real-time collaboration system with:
+  - WebSocket for live updates
+  - CRDT for conflict resolution
+  - Optimistic UI updates
+  - Offline support with sync
+  
+  Provide:
+  - System architecture diagram
+  - Data flow
+  - API contracts
+  - Security considerations"
+
+// Terminal 2: Replit Agent Implementation
+$ replit agent
+> "Implement the design from Terminal 1:
+  [paste Claude's architecture]
+  
+  Use:
+  - Socket.io for WebSocket
+  - Yjs for CRDT
+  - IndexedDB for offline storage
+  
+  Include:
+  - Full error handling
+  - Reconnection logic
+  - Conflict resolution UI"
+
+// Terminal 3: Cursor Refinement
+// Open files generated by Replit
+// Use Cmd+K to refine:
+> "Add TypeScript types for all socket events"
+> "Extract hook for WebSocket connection"
+> "Add loading states and error boundaries"
+
+// Terminal 4: Quality Check
+$ npm run test:coverage
+$ npm run build
+$ npm run lighthouse
+
+// All terminals working in parallel
+// Total time: 30 minutes
+// Output: Production-ready feature</code></pre>
+
+            <h3>The Hot-Swap Development Pattern</h3>
+            <div class="technique">
+                <div class="technique-header">
+                    <span class="technique-title">Instant Context Switching</span>
+                    <span class="technique-level">Advanced</span>
+                </div>
+                <pre><code>// Work on multiple features simultaneously by hot-swapping AI context
+
+Session Manager:
+├── session-1.json (Feature A - Claude)
+├── session-2.json (Feature B - Replit)
+├── session-3.json (Refactor C - Cursor)
+└── session-4.json (Bug Fix D - Claude)
+
+// Quick context load
+$ vibe load session-1
+> Restored: Feature A (Authentication)
+> Last message: "Implement JWT refresh token rotation"
+> Continue...
+
+$ vibe switch session-2
+> Saved session-1
+> Loaded: Feature B (Payment Integration)
+> Last message: "Add Stripe webhook handlers"
+> Continue...
+
+// Benefits:
+- No mental context switching cost
+- AI maintains conversation continuity
+- Work on 4-5 features in parallel
+- Each session stays focused</code></pre>
+            </div>
+
+            <h3>Feedback Loop Optimization</h3>
+            <pre><div class="lang-label">optimization</div><code>// Minimize time between idea and validation
+
+Traditional Flow:
+Idea → Plan → Code → Test → Deploy → Validate
+⏱️ 2-4 hours per iteration
+
+Hyper Vibe Flow:
+Idea → AI Code → Hot Reload → Validate
+⏱️ 2-5 minutes per iteration
+
+// Setup for instant feedback
+// vite.config.ts
+export default defineConfig({
+  server: {
+    hmr: true,           // Hot module replacement
+    port: 3000,
+  },
+  build: {
+    target: 'esnext',    // Fastest build
+    sourcemap: true,     // Easy debugging
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom'], // Pre-bundle deps
+  },
+});
+
+// Automatic reload on AI code generation
+// watch-ai-output.ts
+import chokidar from 'chokidar';
+
+const watcher = chokidar.watch('./ai-output/**/*.{ts,tsx}', {
+  persistent: true,
+});
+
+watcher.on('change', async (path) => {
+  console.log(`AI updated: ${path}`);
+  
+  // Auto-format
+  await exec(`prettier --write ${path}`);
+  
+  // Auto-lint
+  await exec(`eslint --fix ${path}`);
+  
+  // Run relevant tests
+  const testFile = path.replace('.ts', '.test.ts');
+  await exec(`vitest run ${testFile}`);
+  
+  // Browser auto-refreshes via HMR
+});
+
+// Result: See changes in <1 second</code></pre>
+
+            <h3>Advanced AI Chaining Patterns</h3>
+            <pre><div class="lang-label">typescript</div><code>// Chain multiple AI calls for complex workflows
+
+class AIChain {
+  private steps: Array<{
+    ai: 'claude' | 'replit' | 'cursor';
+    prompt: (prev: any) => string;
+    validate?: (output: any) => boolean;
+  }> = [];
+  
+  add(ai: string, prompt: Function, validate?: Function) {
+    this.steps.push({ ai, prompt, validate });
+    return this;
+  }
+  
+  async execute(initialInput: any) {
+    let result = initialInput;
+    
+    for (const step of this.steps) {
+      const prompt = step.prompt(result);
+      
+      // Call appropriate AI
+      const output = await this.callAI(step.ai, prompt);
+      
+      // Validate if provided
+      if (step.validate && !step.validate(output)) {
+        throw new Error(`Validation failed at step ${step.ai}`);
+      }
+      
+      result = output;
+    }
+    
+    return result;
+  }
+  
+  private async callAI(ai: string, prompt: string) {
+    switch (ai) {
+      case 'claude':
+        return await anthropic.messages.create({
+          model: 'claude-sonnet-4-5-20250929',
+          messages: [{ role: 'user', content: prompt }],
+        });
+      case 'replit':
+        return await replit.agent.execute(prompt);
+      case 'cursor':
+        return await cursor.complete(prompt);
+    }
+  }
+}
+
+// Usage: Complex feature development
+const chain = new AIChain();
+
+chain
+  .add('claude', () => 
+    'Design a caching layer with Redis and in-memory fallback'
+  )
+  .add('claude', (design) => 
+    `Review this design for edge cases:\n${design}`
+  )
+  .add('replit', (validatedDesign) => 
+    `Implement:\n${validatedDesign}\nInclude tests and docs`
+  )
+  .add('cursor', (implementation) => 
+    `Add TypeScript strict mode and refine error handling`
+  );
+
+const result = await chain.execute(null);
+// Fully validated, implemented, and refined code</code></pre>
+
+            <h3>The Vibe Multiplier Effect</h3>
+            <div class="info">
+                <h4>Exponential Productivity Through Compounding</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Technique</th>
+                            <th>Productivity Gain</th>
+                            <th>Compounds With</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>AI Code Generation</td>
+                            <td class="metric good">3x</td>
+                            <td>Hot Reload, Quality Gates</td>
+                        </tr>
+                        <tr>
+                            <td>Parallel AI Agents</td>
+                            <td class="metric good">2x</td>
+                            <td>Context Management, Chaining</td>
+                        </tr>
+                        <tr>
+                            <td>Instant Feedback Loop</td>
+                            <td class="metric good">2x</td>
+                            <td>HMR, Auto-testing</td>
+                        </tr>
+                        <tr>
+                            <td>Hot-Swap Sessions</td>
+                            <td class="metric good">1.5x</td>
+                            <td>Parallel Work, Focus</td>
+                        </tr>
+                        <tr>
+                            <td>Quality Automation</td>
+                            <td class="metric good">1.5x</td>
+                            <td>CI/CD, Pre-commit hooks</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Total Compound</strong></td>
+                            <td class="metric good"><strong>27x</strong></td>
+                            <td><strong>vs Traditional Dev</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Debugging in Hyper Vibe Mode</h3>
+            <pre><div class="lang-label">debugging-flow</div><code>// AI-Assisted Debugging at Speed
+
+Step 1: Capture Full Context (5 seconds)
+$ vibe debug capture
+> Captured:
+  - Current file state
+  - Recent git commits
+  - Error stack trace
+  - Browser console logs
+  - Network requests
+  - Redux/state tree
+  - Performance profile
+
+Step 2: AI Analysis (10 seconds)
+$ vibe debug analyze
+> Claude analyzing...
+> Root cause identified:
+  - Race condition in useEffect
+  - Missing cleanup function
+  - Memory leak in event listener
+
+Step 3: AI Fix Generation (15 seconds)
+$ vibe debug fix --apply
+> Generated fix:
+  - Added cleanup function
+  - Implemented AbortController
+  - Added loading state guard
+> Applied to codebase
+> Tests passing ✓
+
+Step 4: Validation (5 seconds)
+$ vibe debug validate
+> Running validation suite...
+  - Unit tests: ✓
+  - Integration tests: ✓
+  - Performance impact: +2ms (acceptable)
+  - Memory profile: No leaks ✓
+
+Total debug time: 35 seconds
+Traditional debug time: 30-60 minutes</code></pre>
+
+            <h3>Hyper Vibe Dotfiles Setup</h3>
+            <pre><div class="lang-label">shell</div><code># ~/.vibe/config.yml
+ai:
+  primary: claude-sonnet-4
+  secondary: cursor
+  execution: replit
+  
+  context_limit: 200000
+  auto_commit: true
+  auto_test: true
+  auto_format: true
+
+workflows:
+  feature:
+    - design: claude
+    - implement: replit
+    - refine: cursor
+    - test: claude
+    - deploy: replit
+  
+  bugfix:
+    - analyze: claude
+    - fix: cursor
+    - test: claude
+    - verify: manual
+
+quality_gates:
+  typescript: strict
+  test_coverage: 80
+  bundle_size_max: 200kb
+  lighthouse_min: 90
+  
+hotkeys:
+  design: "ctrl+shift+d"
+  implement: "ctrl+shift+i"
+  refine: "ctrl+shift+r"
+  test: "ctrl+shift+t"
+  switch_session: "ctrl+shift+s"
+
+# ~/.zshrc additions
+alias vibe="npx vibe-cli"
+alias v="vibe"
+alias vd="vibe design"
+alias vi="vibe implement"
+alias vr="vibe refine"
+alias vt="vibe test"
+alias vdb="vibe debug"
+alias vs="vibe switch"</code></pre>
+
+            <h3>The Hyper Vibe Mindset</h3>
+            <div class="warning">
+                <h4>⚡ Critical Mental Shifts</h4>
+                <ul>
+                    <li><strong>From "Writing Code" to "Conducting Code":</strong> Du bist der Dirigent, AIs sind die Musiker</li>
+                    <li><strong>From "Solving Problems" to "Architecting Solutions":</strong> Denke in Systemen, nicht in Zeilen</li>
+                    <li><strong>From "Feature Development" to "Value Delivery":</strong> Ship fast, iterate faster</li>
+                    <li><strong>From "Perfect First Time" to "Perfect Through Iteration":</strong> V1 in 5 min, V10 in 50 min</li>
+                    <li><strong>From "Solo Developer" to "AI Orchestra Leader":</strong> Manage multiple agents simultaneously</li>
+                </ul>
+            </div>
+
+            <h3>Measuring Hyper Vibe Performance</h3>
+            <pre><div class="lang-label">metrics</div><code>// Track your hyper vibe efficiency
+
+class VibeMetrics {
+  private startTime: number;
+  private aiTokens: number = 0;
+  private iterations: number = 0;
+  
+  startFeature() {
+    this.startTime = Date.now();
+  }
+  
+  recordAIInteraction(tokens: number) {
+    this.aiTokens += tokens;
+    this.iterations++;
+  }
+  
+  complete() {
+    const duration = Date.now() - this.startTime;
+    const tokensPerMin = (this.aiTokens / duration) * 60000;
+    
+    return {
+      timeToShip: duration / 1000 / 60, // minutes
+      iterations: this.iterations,
+      efficiency: tokensPerMin,
+      vibeScore: this.calculateVibeScore(),
+    };
+  }
+  
+  calculateVibeScore(): number {
+    // Higher score = more efficient hyper vibe
+    const timeScore = 100 / (this.timeToShip || 1);
+    const iterationScore = this.iterations * 5;
+    const tokenScore = this.aiTokens / 1000;
+    
+    return Math.min(100, timeScore + iterationScore + tokenScore);
+  }
+}
+
+// Target Metrics for Hyper Vibe
+const benchmarks = {
+  simple_feature: {
+    time: '5-10 min',
+    iterations: '2-3',
+    vibeScore: '> 80',
+  },
+  complex_feature: {
+    time: '20-30 min',
+    iterations: '5-8',
+    vibeScore: '> 70',
+  },
+  full_module: {
+    time: '60-90 min',
+    iterations: '10-15',
+    vibeScore: '> 60',
+  },
+};</code></pre>
+
+            <div class="info">
+                <h4>🚀 The Ultimate Hyper Vibe Goal</h4>
+                <p><strong>From Idea to Production in Under 1 Hour</strong></p>
+                <ul>
+                    <li>0-5 min: Design & Architecture (Claude)</li>
+                    <li>5-25 min: Implementation (Replit Agent)</li>
+                    <li>25-40 min: Refinement & Testing (Cursor + Claude)</li>
+                    <li>40-50 min: Quality Gates & Optimization</li>
+                    <li>50-60 min: Deploy to Production</li>
+                </ul>
+                <p>Das ist keine Theorie - das ist der neue Standard. Welcome to Hyper Vibe. 🔥</p>
+            </div>
+        </section>
+
+        <!-- DEPLOYMENT SECTION -->
+        <section id="deployment" class="section">
+            <h2>Production Deployment Strategies</h2>
+
+            <h3>Zero-Downtime Deployment Pattern</h3>
+            <pre><div class="lang-label">kubernetes</div><code># Rolling update configuration
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1        # Max 1 extra pod during update
+      maxUnavailable: 0  # Always maintain full capacity
+  template:
+    spec:
+      containers:
+      - name: app
+        image: app:v2
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 10</code></pre>
+
+            <h3>Feature Flags & Progressive Rollout</h3>
+            <pre><div class="lang-label">typescript</div><code>// Feature flag system for gradual rollout
+class FeatureFlags {
+  private flags = new Map<string, {
+    enabled: boolean;
+    rollout: number; // 0-100 percentage
+    userFilter?: (userId: string) => boolean;
+  }>();
+  
+  isEnabled(feature: string, userId?: string): boolean {
+    const flag = this.flags.get(feature);
+    if (!flag) return false;
+    if (!flag.enabled) return false;
+    
+    // User-specific override
+    if (userId && flag.userFilter) {
+      return flag.userFilter(userId);
+    }
+    
+    // Percentage-based rollout
+    if (userId) {
+      const hash = this.hashUserId(userId);
+      return hash < flag.rollout;
+    }
+    
+    return flag.rollout === 100;
+  }
+  
+  private hashUserId(userId: string): number {
+    // Consistent hash: same user always gets same result
+    let hash = 0;
+    for (let i = 0; i < userId.length; i++) {
+      hash = ((hash << 5) - hash) + userId.charCodeAt(i);
+      hash = hash & hash;
+    }
+    return Math.abs(hash % 100);
+  }
+}
+
+// Usage
+const flags = new FeatureFlags();
+
+// Enable for 10% of users
+flags.set('new-ui', { enabled: true, rollout: 10 });
+
+// Beta users only
+flags.set('advanced-features', {
+  enabled: true,
+  rollout: 100,
+  userFilter: (userId) => betaUsers.includes(userId)
+});
+
+// In code
+if (flags.isEnabled('new-ui', currentUser.id)) {
+  return <NewUI />;
+} else {
+  return <OldUI />;
+}</code></pre>
+
+            <h3>Canary Deployment Strategy</h3>
+            <pre><div class="lang-label">nginx</div><code># Nginx config for canary deployment
+upstream backend_stable {
+    server app-v1-1:3000;
+    server app-v1-2:3000;
+    server app-v1-3:3000;
+}
+
+upstream backend_canary {
+    server app-v2-1:3000;
+}
+
+split_clients "${remote_addr}${http_user_agent}" $backend {
+    5%     canary;   # 5% to new version
+    *      stable;   # 95% to stable version
+}
+
+server {
+    location / {
+        if ($backend = "canary") {
+            proxy_pass http://backend_canary;
+            add_header X-Canary-Version "v2";
+        }
+        if ($backend = "stable") {
+            proxy_pass http://backend_stable;
+            add_header X-Canary-Version "v1";
+        }
+    }
+}</code></pre>
+
+            <h3>Monitoring & Observability</h3>
+            <pre><div class="lang-label">typescript</div><code>// Comprehensive monitoring setup
+import * as Sentry from '@sentry/node';
+import { trace, context, SpanStatusCode } from '@opentelemetry/api';
+
+class Monitoring {
+  private tracer = trace.getTracer('app');
+  
+  // Error tracking
+  captureError(error: Error, context?: Record<string, any>) {
+    Sentry.captureException(error, {
+      contexts: { custom: context },
+      level: 'error',
+    });
+  }
+  
+  // Performance monitoring
+  async measureAsync<T>(
+    name: string,
+    fn: () => Promise<T>,
+    attributes?: Record<string, any>
+  ): Promise<T> {
+    const span = this.tracer.startSpan(name, { attributes });
+    
+    try {
+      const result = await fn();
+      span.setStatus({ code: SpanStatusCode.OK });
+      return result;
+    } catch (error) {
+      span.setStatus({
+        code: SpanStatusCode.ERROR,
+        message: error.message,
+      });
+      throw error;
+    } finally {
+      span.end();
+    }
+  }
+  
+  // Custom metrics
+  recordMetric(name: string, value: number, tags?: Record<string, string>) {
+    // Send to DataDog/Grafana/etc
+    metrics.gauge(name, value, tags);
+  }
+  
+  // User analytics
+  trackEvent(event: string, properties?: Record<string, any>) {
+    // Send to Mixpanel/Amplitude/etc
+    analytics.track(event, properties);
+  }
+}
+
+// Usage
+const monitoring = new Monitoring();
+
+app.get('/api/users/:id', async (req, res) => {
+  try {
+    const user = await monitoring.measureAsync(
+      'fetch_user',
+      () => db.users.findById(req.params.id),
+      { userId: req.params.id }
+    );
+    
+    monitoring.trackEvent('user_fetched', { userId: user.id });
+    res.json(user);
+  } catch (error) {
+    monitoring.captureError(error, { userId: req.params.id });
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});</code></pre>
+
+            <h3>Database Migration Strategy</h3>
+            <pre><div class="lang-label">typescript</div><code>// Zero-downtime migration pattern
+// Step 1: Add new column (nullable)
+export async function up(db: Database) {
+  await db.schema.alterTable('users', (table) => {
+    table.string('email_v2').nullable();
+  });
+}
+
+// Step 2: Dual-write to both columns
+class UserService {
+  async updateEmail(userId: string, email: string) {
+    await db.users.update(userId, {
+      email: email,      // Old column
+      email_v2: email,   // New column
+    });
+  }
+}
+
+// Step 3: Backfill old data
+export async function backfill(db: Database) {
+  const batchSize = 1000;
+  let offset = 0;
+  
+  while (true) {
+    const users = await db.users
+      .select()
+      .whereNull('email_v2')
+      .limit(batchSize)
+      .offset(offset);
+    
+    if (users.length === 0) break;
+    
+    await db.users.update(
+      users.map(u => u.id),
+      users.map(u => ({ email_v2: u.email }))
+    );
+    
+    offset += batchSize;
+  }
+}
+
+// Step 4: Switch reads to new column
+class UserService {
+  async getEmail(userId: string) {
+    const user = await db.users.findById(userId);
+    return user.email_v2 || user.email; // Fallback during migration
+  }
+}
+
+// Step 5: Remove old column (after verification)
+export async function cleanup(db: Database) {
+  await db.schema.alterTable('users', (table) => {
+    table.dropColumn('email');
+  });
+  
+  await db.schema.alterTable('users', (table) => {
+    table.renameColumn('email_v2', 'email');
+  });
+}</code></pre>
+        </section>
+
+        <!-- META-PROGRAMMING SECTION -->
+        <section id="meta" class="section">
+            <h2>Meta-Programming & Code Generation</h2>
+
+            <h3>AST Manipulation für Code Transformation</h3>
+            <pre><div class="lang-label">typescript</div><code>import { parse, traverse, generate } from '@babel/core';
+import * as t from '@babel/types';
+
+// Auto-generate memoized versions of functions
+function autoMemoize(code: string): string {
+  const ast = parse(code, { sourceType: 'module' });
+  
+  traverse(ast, {
+    FunctionDeclaration(path) {
+      const node = path.node;
+      
+      // Skip if already memoized
+      if (node.leadingComments?.some(c => c.value.includes('@memoize'))) {
+        const memoized = t.variableDeclaration('const', [
+          t.variableDeclarator(
+            node.id,
+            t.callExpression(
+              t.identifier('memoize'),
+              [t.functionExpression(null, node.params, node.body)]
+            )
+          )
+        ]);
+        
+        path.replaceWith(memoized);
+      }
+    }
+  });
+  
+  return generate(ast).code;
+}
+
+// Input
+const input = `
+// @memoize
+function fibonacci(n) {
+  if (n <= 1) return n;
+  return fibonacci(n - 1) + fibonacci(n - 2);
+}
+`;
+
+// Output
+const output = autoMemoize(input);
+/*
+const fibonacci = memoize(function(n) {
+  if (n <= 1) return n;
+  return fibonacci(n - 1) + fibonacci(n - 2);
+});
+*/</code></pre>
+
+            <h3>Type-Safe API Client Generator</h3>
+            <pre><div class="lang-label">typescript</div><code>// Generate fully-typed API clients from OpenAPI spec
+import type { paths } from './api-schema'; // Auto-generated from OpenAPI
+
+type ApiClient<Paths> = {
+  [K in keyof Paths]: {
+    [M in keyof Paths[K]]: Paths[K][M] extends {
+      parameters?: infer P;
+      responses: infer R;
+    }
+      ? (params: P) => Promise<R[200]>
+      : never;
+  };
+};
+
+function createApiClient<T extends Record<string, any>>(): ApiClient<T> {
+  return new Proxy({} as any, {
+    get(target, path: string) {
+      return new Proxy({} as any, {
+        get(target, method: string) {
+          return async (params: any) => {
+            const url = buildUrl(path, params?.path);
+            const response = await fetch(url, {
+              method: method.toUpperCase(),
+              headers: params?.headers,
+              body: params?.body ? JSON.stringify(params.body) : undefined,
+            });
+            return response.json();
+          };
+        },
+      });
+    },
+  });
+}
+
+// Usage - Fully typed!
+const api = createApiClient<paths>();
+
+const user = await api['/users/{id}'].get({
+  path: { id: '123' },
+  headers: { authorization: 'Bearer token' },
+});
+// user is typed as User interface</code></pre>
+
+            <h3>Runtime Type Validation Generator</h3>
+            <pre><div class="lang-label">typescript</div><code>// Generate runtime validators from TypeScript types
+import { z } from 'zod';
+
+// Macro that converts TypeScript interface to Zod schema
+type User = {
+  id: string;
+  name: string;
+  email: string;
+  age?: number;
+  roles: ('admin' | 'user')[];
+};
+
+// Auto-generated:
+const UserSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  email: z.string().email(),
+  age: z.number().optional(),
+  roles: z.array(z.enum(['admin', 'user'])),
+});
+
+// Type-safe validation
+function validateUser(data: unknown): User {
+  return UserSchema.parse(data);
+}
+
+// Custom validator generator
+function createValidator<T>() {
+  return {
+    validate(data: unknown): T {
+      // Generate validation logic based on T
+      return data as T;
+    },
+    assert(data: unknown): asserts data is T {
+      if (!this.validate(data)) {
+        throw new Error('Validation failed');
+      }
+    },
+  };
+}
+
+const userValidator = createValidator<User>();
+userValidator.assert(data); // data is now typed as User</code></pre>
+
+            <h3>Compile-Time Optimization Macros</h3>
+            <pre><div class="lang-label">typescript</div><code>// Babel plugin for compile-time optimizations
+function optimizationPlugin() {
+  return {
+    visitor: {
+      // Replace Array.map().filter() with single loop
+      CallExpression(path) {
+        if (isMapFilterChain(path)) {
+          path.replaceWith(optimizedSingleLoop(path));
+        }
+      },
+      
+      // Inline constant functions
+      FunctionDeclaration(path) {
+        if (isConstantFunction(path)) {
+          path.replaceWith(inlineConstant(path));
+        }
+      },
+      
+      // Remove debug code in production
+      IfStatement(path) {
+        if (isDebugBlock(path) && process.env.NODE_ENV === 'production') {
+          path.remove();
+        }
+      },
+    },
+  };
+}
+
+// Before optimization:
+const result = arr
+  .map(x => x * 2)
+  .filter(x => x > 10)
+  .map(x => x + 1);
+
+// After optimization:
+const result = [];
+for (let i = 0; i < arr.length; i++) {
+  const temp = arr[i] * 2;
+  if (temp > 10) {
+    result.push(temp + 1);
+  }
+}</code></pre>
+
+            <div class="warning">
+                <h4>⚠️ Meta-Programming Caveats</h4>
+                <ul>
+                    <li>Debugging wird komplexer - generated code ist schwer zu tracen</li>
+                    <li>Build-Zeit increases significantly</li>
+                    <li>Team muss Pattern verstehen - nicht für alle zugänglich</li>
+                    <li>Type safety kann bei dynamischen Generierungen verloren gehen</li>
+                </ul>
+            </div>
+
+            <h3>Template-Based Code Generator</h3>
+            <pre><div class="lang-label">typescript</div><code>// Generate CRUD operations from entity definition
+interface EntityDefinition {
+  name: string;
+  fields: Record<string, { type: string; required: boolean }>;
+}
+
+function generateCRUD(entity: EntityDefinition): string {
+  return `
+// Auto-generated CRUD for ${entity.name}
+import { db } from './db';
+import type { ${entity.name} } from './types';
+
+export class ${entity.name}Repository {
+  async findById(id: string): Promise<${entity.name} | null> {
+    return db.${entity.name.toLowerCase()}.findUnique({ where: { id } });
+  }
+
+  async findAll(): Promise<${entity.name}[]> {
+    return db.${entity.name.toLowerCase()}.findMany();
+  }
+
+  async create(data: Omit<${entity.name}, 'id'>): Promise<${entity.name}> {
+    return db.${entity.name.toLowerCase()}.create({ data });
+  }
+
+  async update(id: string, data: Partial<${entity.name}>): Promise<${entity.name}> {
+    return db.${entity.name.toLowerCase()}.update({ where: { id }, data });
+  }
+
+  async delete(id: string): Promise<void> {
+    await db.${entity.name.toLowerCase()}.delete({ where: { id } });
+  }
+}
+
+export const ${entity.name.toLowerCase()}Repo = new ${entity.name}Repository();
+  `.trim();
+}
+
+// Usage
+const code = generateCRUD({
+  name: 'User',
+  fields: {
+    id: { type: 'string', required: true },
+    name: { type: 'string', required: true },
+    email: { type: 'string', required: true },
+  },
+});</code></pre>
+        </section>
+    </div>
+
+    <script>
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(id).classList.add('active');
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

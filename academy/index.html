@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>ORBITRON VIBE CODING — Workshell Monolith</title>
+    <meta name="theme-color" content="#0a0a0f" id="themeColorMeta">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="VIBE CODING">
+    <meta name="description" content="Orbitron Vibe Coding — installierbarer Workshell für AI Coding Bots, Cloud IDEs, Prompt Engineering und Web-Dev-Seminare.">
+    <meta name="color-scheme" content="dark light">
+
+    <link rel="manifest" href="./manifest.json">
+    <link rel="icon" href="./assets/icons/favicon-32.png" sizes="32x32" type="image/png">
+    <link rel="icon" href="./assets/icons/favicon-16.png" sizes="16x16" type="image/png">
+    <link rel="icon" href="./assets/icons/icon-192.png" sizes="192x192" type="image/png">
+    <link rel="apple-touch-icon" href="./assets/icons/apple-touch-icon.png">
+
+    <!-- FontAwesome 6.5.1 & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;600;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #06b6d4;
+            --magenta: #ec4899;
+            --gold: #fbbf24;
+            --green: #10b981;
+            --purple: #8b5cf6;
+            --blue: #3b82f6;
+            --bg-dark: #0a0a0f;
+            --bg-grad2: #1a0f2e;
+            --bg-card: #0f1117;
+            --text-light: #f1f5f9;
+            --text-muted: #94a3b8;
+            --chrome-bg: rgba(15, 17, 23, 0.88);
+            --chrome-border: rgba(6, 182, 212, 0.15);
+            --tooltip-bg: rgba(10, 10, 15, 0.98);
+            --tooltip-text: #f1f5f9;
+            --scrollbar-thumb: rgba(6, 182, 212, 0.4);
+            --scrollbar-thumb-hover: rgba(6, 182, 212, 0.6);
+            --iframe-bg: rgba(10, 10, 15, 0.5);
+            --sat: env(safe-area-inset-top, 0px);
+            --sab: env(safe-area-inset-bottom, 0px);
+            --sal: env(safe-area-inset-left, 0px);
+            --sar: env(safe-area-inset-right, 0px);
+        }
+
+        :root.light-theme {
+            --bg-dark: #f4f7fb;
+            --bg-grad2: #eef0fa;
+            --bg-card: #ffffff;
+            --text-light: #1c2530;
+            --text-muted: #5b6b80;
+            --chrome-bg: rgba(255, 255, 255, 0.88);
+            --chrome-border: rgba(6, 182, 212, 0.18);
+            --tooltip-bg: rgba(28, 37, 48, 0.96);
+            --tooltip-text: #f1f5f9;
+            --scrollbar-thumb: rgba(6, 182, 212, 0.45);
+            --scrollbar-thumb-hover: rgba(6, 182, 212, 0.65);
+            --iframe-bg: rgba(255, 255, 255, 0.6);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            overscroll-behavior: none;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-grad2) 100%);
+            color: var(--text-light);
+            transition: background 0.3s, color 0.3s;
+            min-height: 100dvh;
+            padding-top: var(--sat);
+            padding-bottom: var(--sab);
+            padding-left: var(--sal);
+            padding-right: var(--sar);
+        }
+
+        .dashboard {
+            display: flex;
+            width: 100%;
+            height: 100dvh;
+            overflow: hidden;
+            isolation: isolate;
+        }
+
+        /* ============ ORBITRON SIDEBAR ============ */
+        .sidebar {
+            width: 56px;
+            background: var(--chrome-bg);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid var(--chrome-border);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+            overflow-x: visible;
+            z-index: 100;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .sidebar,
+        .sidebar .logo,
+        .sidebar .section-title,
+        .sidebar .app-item,
+        .sidebar .app-name,
+        .sidebar .app-tooltip,
+        .sidebar .sidebar-footer {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .sidebar.expanded { width: 280px; box-shadow: 0 0 30px rgba(6, 182, 212, 0.08); }
+
+        .sidebar-header {
+            padding: 8px;
+            border-bottom: 1px solid rgba(6, 182, 212, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 56px;
+            flex-shrink: 0;
+        }
+
+        .sidebar.expanded .sidebar-header { padding: 12px 14px; }
+
+        .logo {
+            font-size: 13px;
+            font-weight: 900;
+            background: linear-gradient(90deg, var(--primary), var(--magenta), var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 0.08em;
+            white-space: nowrap;
+            opacity: 0;
+            width: 0;
+            transition: all 0.3s;
+        }
+
+        .logo span { color: var(--text-light); font-weight: 400; }
+
+        .toggle-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 5px;
+            background: rgba(6, 182, 212, 0.12);
+            border: 1px solid rgba(6, 182, 212, 0.35);
+            color: var(--primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s ease;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .toggle-btn:hover { background: rgba(6, 182, 212, 0.2); box-shadow: 0 0 15px rgba(6, 182, 212, 0.3); transform: scale(1.05); }
+        .sidebar.expanded .logo { opacity: 1; width: auto; }
+
+        .app-list { flex: 1; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; padding: 4px; gap: 2px; }
+
+        .sidebar-section { display: flex; flex-direction: column; gap: 2px; padding: 6px 2px; border-bottom: 1px solid rgba(6, 182, 212, 0.06); }
+        .sidebar-section:last-child { border-bottom: none; }
+
+        .section-title {
+            font-size: 9px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 8px 10px 4px 10px;
+            font-weight: 700;
+            opacity: 0;
+            height: 0;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .sidebar.expanded .section-title { opacity: 0.85; height: auto; }
+
+        .app-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 8px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.25s;
+            position: relative;
+            color: var(--text-light);
+            border: 1px solid transparent;
+            min-height: 38px;
+            font-size: 12px;
+        }
+
+        .sidebar.expanded .app-item { justify-content: flex-start; }
+        .app-item:hover { background: rgba(6, 182, 212, 0.12); border-color: rgba(6, 182, 212, 0.25); transform: translateX(2px); }
+
+        .app-item.active {
+            background: rgba(6, 182, 212, 0.18);
+            border-color: rgba(6, 182, 212, 0.4);
+            color: var(--primary);
+            box-shadow: 0 0 12px rgba(6, 182, 212, 0.15);
+        }
+
+        .app-icon { font-size: 14px; flex-shrink: 0; width: 20px; display: flex; align-items: center; justify-content: center; }
+        .app-name { font-size: 11px; white-space: nowrap; opacity: 0; width: 0; transition: all 0.3s; letter-spacing: 0.01em; overflow: hidden; text-overflow: ellipsis; }
+        .sidebar.expanded .app-name { opacity: 1; width: auto; }
+
+        .app-tooltip {
+            position: absolute;
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%) translateX(8px);
+            background: var(--tooltip-bg);
+            color: var(--tooltip-text);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.25s;
+            z-index: 200;
+            backdrop-filter: blur(10px);
+        }
+
+        .app-item:hover .app-tooltip { opacity: 1; transform: translateY(-50%) translateX(6px); }
+        .sidebar.expanded .app-tooltip { display: none; }
+
+        .sidebar-footer {
+            padding: 8px;
+            border-top: 1px solid rgba(6, 182, 212, 0.06);
+            text-align: center;
+            font-size: 9px;
+            color: var(--text-muted);
+            opacity: 0;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+
+        .sidebar.expanded .sidebar-footer { opacity: 0.6; padding: 10px 12px; }
+
+        .app-list { scrollbar-width: thin; scrollbar-color: var(--scrollbar-thumb) transparent; }
+        .app-list::-webkit-scrollbar { width: 5px; }
+        .app-list::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 4px; }
+
+        /* ============ MAIN WORKSPACE ============ */
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; width: 100%; min-width: 0; }
+
+        .topnav {
+            height: 56px;
+            background: var(--chrome-bg);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--chrome-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 12px;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .tabs-container {
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            flex: 1;
+            overflow-x: auto;
+            overflow-y: hidden;
+            height: 100%;
+            padding-top: 8px;
+            scrollbar-width: none;
+        }
+        .tabs-container::-webkit-scrollbar { display: none; }
+
+        .tab-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: rgba(6, 182, 212, 0.06);
+            border: 1px solid rgba(6, 182, 212, 0.15);
+            border-bottom: none;
+            border-radius: 6px 6px 0 0;
+            font-size: 12px;
+            color: var(--text-muted);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+            max-width: 200px;
+            height: 38px;
+            user-select: none;
+        }
+
+        .tab-item:hover { background: rgba(6, 182, 212, 0.12); color: var(--text-light); }
+
+        .tab-item.active {
+            background: var(--bg-card);
+            border-color: rgba(6, 182, 212, 0.35);
+            color: var(--primary);
+            font-weight: 600;
+            box-shadow: 0 -2px 10px rgba(6, 182, 212, 0.1);
+        }
+
+        .tab-item .tab-title {
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 0.02em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .tab-item .tab-close {
+            font-size: 11px;
+            opacity: 0.6;
+            padding: 2px 4px;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+        .tab-item .tab-close:hover { opacity: 1; background: rgba(236, 72, 153, 0.2); color: var(--magenta); }
+
+        .topnav-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+        .status { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); font-family: 'Orbitron', sans-serif; }
+        .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+        .status.is-offline .status-dot { background: #ef4444; animation: none; }
+        .status.is-offline span { color: #ef4444; }
+
+        .btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 5px;
+            background: rgba(6, 182, 212, 0.08);
+            border: 1px solid rgba(6, 182, 212, 0.25);
+            color: var(--primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .btn:hover { background: rgba(6, 182, 212, 0.15); box-shadow: 0 0 12px rgba(6, 182, 212, 0.2); transform: scale(1.04); }
+        .btn[hidden] { display: none; }
+
+        .content-area { flex: 1 1 auto; min-height: 0; overflow: hidden; position: relative; width: 100%; }
+
+        iframe {
+            display: none;
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: var(--iframe-bg);
+        }
+        iframe.active { display: block; }
+
+        .welcome {
+            width: 100%; height: 100%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 0.75rem; text-align: center; padding: 2rem;
+        }
+        .welcome i { font-size: 2.8rem; color: var(--primary); opacity: 0.8; }
+        .welcome h2 { font-family: 'Orbitron', sans-serif; font-size: 1.4rem; color: var(--text-light); letter-spacing: 1px; }
+        .welcome p { color: var(--text-muted); font-size: 0.88rem; max-width: 30rem; line-height: 1.5; }
+
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        /* ============ INSTALL HINT (iOS Add to Home Screen) ============ */
+        .install-hint {
+            position: fixed;
+            left: 50%;
+            bottom: calc(16px + var(--sab));
+            transform: translateX(-50%);
+            z-index: 1000;
+            max-width: min(340px, calc(100vw - 32px));
+            background: var(--tooltip-bg);
+            color: var(--tooltip-text);
+            border: 1px solid rgba(6, 182, 212, 0.35);
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 12.5px;
+            line-height: 1.5;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+        .install-hint[hidden] { display: none; }
+        .install-hint i.fa-share-from-square { color: var(--primary); margin-top: 2px; }
+        .install-hint strong { color: var(--primary); }
+        .install-hint-close {
+            margin-left: auto;
+            background: transparent;
+            border: 0;
+            color: inherit;
+            opacity: 0.7;
+            cursor: pointer;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed; height: 100dvh; z-index: 1000; left: -56px; top: 0; width: 56px;
+                transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .sidebar.expanded { left: 0; width: min(280px, 86vw); box-shadow: 8px 0 32px rgba(0, 0, 0, 0.5); }
+            .status { display: none; }
+            #menuBtn { display: flex !important; margin-right: 4px; }
+            .tab-item { max-width: 120px; font-size: 11px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- ORBITRON VIBE CODING SIDEBAR -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">ORBITRON <span>VIBE CODING</span></div>
+                <button class="toggle-btn" id="toggleBtn" type="button" aria-label="Sidebar togglen">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+
+            <div class="app-list">
+
+                <div class="sidebar-section">
+                    <div class="section-title"><i class="fa-solid fa-rocket"></i> Start hier</div>
+
+                    <div class="app-item" data-id="ki-check" data-url="modules/start/ki-readiness-check.html">
+                        <div class="app-icon"><i class="fa-solid fa-clipboard-check" style="color: #10b981;"></i></div>
+                        <div class="app-name"><span title="Finde heraus, wo du stehst">KI-Readiness-Check</span></div>
+                        <div class="app-tooltip">KI-Readiness-Check</div>
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="section-title"><i class="fa-solid fa-seedling"></i> Reihe 1 · Anfänger</div>
+
+                    <div class="app-item" data-id="r1-vc" data-url="modules/r1/vibe-coding-grundlagen.html">
+                        <div class="app-icon"><i class="fa-solid fa-book-open" style="color: #06b6d4;"></i></div>
+                        <div class="app-name"><span title="Einstieg für Sachbearbeiter und Berufstätige">Vibe Coding Grundlagen</span></div>
+                        <div class="app-tooltip">Vibe Coding Grundlagen</div>
+                    </div>
+
+                    <div class="app-item" data-id="r1-guide" data-url="modules/r1/ultimate-vibe-coding-guide.html">
+                        <div class="app-icon"><i class="fa-solid fa-compass" style="color: #3b82f6;"></i></div>
+                        <div class="app-name"><span title="Der komplette Leitfaden">Ultimate Vibe Coding Guide</span></div>
+                        <div class="app-tooltip">Ultimate Vibe Coding Guide</div>
+                    </div>
+
+                    <div class="app-item" data-id="r1-ebook" data-url="modules/r1/ebook-ai-to-web-developer-en.html">
+                        <div class="app-icon"><i class="fa-solid fa-book" style="color: #8b5cf6;"></i></div>
+                        <div class="app-name"><span title="Kursbuch HTML, CSS, JS mit KI">E-Book: AI to Web Developer (EN)</span></div>
+                        <div class="app-tooltip">E-Book: AI to Web Developer (EN)</div>
+                    </div>
+
+                    <div class="app-item" data-id="r1-tasks" data-url="modules/r1/aufgaben-challenges.html">
+                        <div class="app-icon"><i class="fa-solid fa-list-check" style="color: #06b6d4;"></i></div>
+                        <div class="app-name"><span title="Praxisaufgaben zum Kurs">Aufgaben und Challenges</span></div>
+                        <div class="app-tooltip">Aufgaben und Challenges</div>
+                    </div>
+
+                    <div class="app-item" data-id="r1-challenge" data-url="modules/r1/challenge-guide-en.html">
+                        <div class="app-icon"><i class="fa-solid fa-flag-checkered" style="color: #ec4899;"></i></div>
+                        <div class="app-name"><span title="10 Kapitel mit Aufgaben und Quiz">Challenge Guide (EN)</span></div>
+                        <div class="app-tooltip">Challenge Guide (EN)</div>
+                    </div>
+
+                    <div class="app-item" data-id="r1-quiz" data-url="modules/r1/quiz-40-fragen.html">
+                        <div class="app-icon"><i class="fa-solid fa-circle-question" style="color: #fbbf24;"></i></div>
+                        <div class="app-name"><span title="Teste dein Wissen">Quiz mit 40 Fragen</span></div>
+                        <div class="app-tooltip">Quiz mit 40 Fragen</div>
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="section-title"><i class="fa-solid fa-bolt"></i> Reihe 2 · Advanced</div>
+
+                    <div class="app-item" data-id="r2-praxis" data-url="modules/r2/vibe-coding-praxiskurs.html">
+                        <div class="app-icon"><i class="fa-solid fa-hammer" style="color: #06b6d4;"></i></div>
+                        <div class="app-name"><span title="Praxiskurs">Vibe Coding Praxiskurs</span></div>
+                        <div class="app-tooltip">Vibe Coding Praxiskurs</div>
+                    </div>
+
+                    <div class="app-item" data-id="r2-agents" data-url="modules/r2/agent-workflows.html">
+                        <div class="app-icon"><i class="fa-solid fa-diagram-project" style="color: #ec4899;"></i></div>
+                        <div class="app-name"><span title="Agent-Workflows für Power-User">Agent-Workflows</span></div>
+                        <div class="app-tooltip">Agent-Workflows</div>
+                    </div>
+
+                    <div class="app-item" data-id="r2-adv" data-url="modules/r2/advanced-vibe-engineering.html">
+                        <div class="app-icon"><i class="fa-solid fa-gears" style="color: #3b82f6;"></i></div>
+                        <div class="app-name"><span title="Fortgeschrittene Techniken">Advanced Vibe Engineering</span></div>
+                        <div class="app-tooltip">Advanced Vibe Engineering</div>
+                    </div>
+
+                    <div class="app-item" data-id="r2-pe" data-url="modules/r2/prompt-engineering-ebook.html">
+                        <div class="app-icon"><i class="fa-solid fa-wand-magic-sparkles" style="color: #8b5cf6;"></i></div>
+                        <div class="app-name"><span title="Das große Prompt-Buch">Prompt Engineering eBook</span></div>
+                        <div class="app-tooltip">Prompt Engineering eBook</div>
+                    </div>
+
+                    <div class="app-item" data-id="r2-toolkit" data-url="modules/r2/prompt-engineering-toolkit.html">
+                        <div class="app-icon"><i class="fa-solid fa-toolbox" style="color: #fbbf24;"></i></div>
+                        <div class="app-name"><span title="Prompt-Sammlung zum Arbeiten">Prompt Engineering Toolkit</span></div>
+                        <div class="app-tooltip">Prompt Engineering Toolkit</div>
+                    </div>
+
+                    <div class="app-item" data-id="r2-guide" data-url="modules/r2/prompt-engineering-guide.html">
+                        <div class="app-icon"><i class="fa-solid fa-bolt" style="color: #06b6d4;"></i></div>
+                        <div class="app-name"><span title="Systematisch prompten">Prompt Engineering Guide</span></div>
+                        <div class="app-tooltip">Prompt Engineering Guide</div>
+                    </div>
+
+                    <div class="app-item" data-id="r2-train" data-url="modules/r2/praxis-training.html">
+                        <div class="app-icon"><i class="fa-solid fa-graduation-cap" style="color: #10b981;"></i></div>
+                        <div class="app-name"><span title="Training Modul">Praxis-Training</span></div>
+                        <div class="app-tooltip">Praxis-Training</div>
+                    </div>
+
+                    <div class="app-item" data-id="r2-stripe" data-url="modules/r2/stripe-zahlungen.html">
+                        <div class="app-icon"><i class="fa-solid fa-credit-card" style="color: #ec4899;"></i></div>
+                        <div class="app-name"><span title="Stripe in Web-Apps einbauen">Zahlungen mit Stripe</span></div>
+                        <div class="app-tooltip">Zahlungen mit Stripe</div>
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="section-title"><i class="fa-solid fa-crown"></i> Reihe 3 · Expert</div>
+
+                    <div class="app-item" data-id="r3-reasoning" data-url="modules/r3/reasoning-mode.html">
+                        <div class="app-icon"><i class="fa-solid fa-brain" style="color: #8b5cf6;"></i></div>
+                        <div class="app-name"><span title="Wie KI wirklich denkt">Reasoning Mode</span></div>
+                        <div class="app-tooltip">Reasoning Mode</div>
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="section-title"><i class="fa-solid fa-display"></i> Slides und Prompts</div>
+
+                    <div class="app-item" data-id="s-web" data-url="modules/slides/verkaufswebinar.html">
+                        <div class="app-icon"><i class="fa-solid fa-bullhorn" style="color: #ec4899;"></i></div>
+                        <div class="app-name"><span title="In 60 Minuten zur ersten KI-gebauten Web-App">Verkaufswebinar</span></div>
+                        <div class="app-tooltip">Verkaufswebinar</div>
+                    </div>
+
+                    <div class="app-item" data-id="s-m0" data-url="modules/slides/r1-m0-start-und-setup.html">
+                        <div class="app-icon"><i class="fa-solid fa-flag-checkered" style="color: #06b6d4;"></i></div>
+                        <div class="app-name"><span title="Arbeitsplatz einrichten">R1 Modul 0: Start und Setup</span></div>
+                        <div class="app-tooltip">R1 Modul 0: Start und Setup</div>
+                    </div>
+
+                    <div class="app-item" data-id="s-m1" data-url="modules/slides/r1-m1-html.html">
+                        <div class="app-icon"><i class="fa-solid fa-code" style="color: #06b6d4;"></i></div>
+                        <div class="app-name"><span title="Gerüst jeder Webseite, mit Live-Code">R1 Modul 1: HTML</span></div>
+                        <div class="app-tooltip">R1 Modul 1: HTML</div>
+                    </div>
+
+                    <div class="app-item" data-id="s-m2" data-url="modules/slides/r1-m2-css.html">
+                        <div class="app-icon"><i class="fa-solid fa-palette" style="color: #3b82f6;"></i></div>
+                        <div class="app-name"><span title="Gestaltung und Layout, mit Live-Code">R1 Modul 2: CSS</span></div>
+                        <div class="app-tooltip">R1 Modul 2: CSS</div>
+                    </div>
+
+                    <div class="app-item" data-id="s-m3" data-url="modules/slides/r1-m3-javascript.html">
+                        <div class="app-icon"><i class="fa-solid fa-bolt" style="color: #fbbf24;"></i></div>
+                        <div class="app-name"><span title="Interaktion, mit Live-Code">R1 Modul 3: JavaScript</span></div>
+                        <div class="app-tooltip">R1 Modul 3: JavaScript</div>
+                    </div>
+
+                    <div class="app-item" data-id="s-m4" data-url="modules/slides/r1-m4-prompting.html">
+                        <div class="app-icon"><i class="fa-solid fa-wand-magic-sparkles" style="color: #8b5cf6;"></i></div>
+                        <div class="app-name"><span title="KI präzise steuern">R1 Modul 4: Prompting</span></div>
+                        <div class="app-tooltip">R1 Modul 4: Prompting</div>
+                    </div>
+
+                    <div class="app-item" data-id="s-m5" data-url="modules/slides/r1-m5-portfolio-und-hosting.html">
+                        <div class="app-icon"><i class="fa-solid fa-rocket" style="color: #10b981;"></i></div>
+                        <div class="app-name"><span title="Portfolio online stellen">R1 Modul 5: Portfolio und Hosting</span></div>
+                        <div class="app-tooltip">R1 Modul 5: Portfolio und Hosting</div>
+                    </div>
+
+                    <div class="app-item" data-id="s-agent" data-url="modules/slides/agentic-ai-einfuehrung.html">
+                        <div class="app-icon"><i class="fa-solid fa-diagram-project" style="color: #ec4899;"></i></div>
+                        <div class="app-name"><span title="Agentenschleife live ausprobieren">Agentic AI Einführung</span></div>
+                        <div class="app-tooltip">Agentic AI Einführung</div>
+                    </div>
+
+                    <div class="app-item" data-id="s-prompts" data-url="modules/slides/promptbibliothek-reihe-1.html">
+                        <div class="app-icon"><i class="fa-solid fa-clipboard-list" style="color: #fbbf24;"></i></div>
+                        <div class="app-name"><span title="Kopierfertige Prompts">Prompt-Bibliothek Reihe 1</span></div>
+                        <div class="app-tooltip">Prompt-Bibliothek Reihe 1</div>
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="section-title"><i class="fa-solid fa-code"></i> Tools und Bots</div>
+
+                    <div class="app-item" data-id="t-lecode" data-url="modules/tools/lecode-studio.html">
+                        <div class="app-icon"><i class="fa-solid fa-terminal" style="color: #06b6d4;"></i></div>
+                        <div class="app-name"><span title="KI-Entwicklungsumgebung">LeCODE Studio</span></div>
+                        <div class="app-tooltip">LeCODE Studio</div>
+                    </div>
+
+                    <div class="app-item" data-id="t-claude" data-url="modules/tools/claude-ide.html">
+                        <div class="app-icon"><i class="fa-solid fa-brain" style="color: #10b981;"></i></div>
+                        <div class="app-name"><span title="Neural Terminal">Claude IDE</span></div>
+                        <div class="app-tooltip">Claude IDE</div>
+                    </div>
+
+                    <div class="app-item" data-id="t-html" data-url="modules/tools/ai-html-studio.html">
+                        <div class="app-icon"><i class="fa-solid fa-wand-magic-sparkles" style="color: #3b82f6;"></i></div>
+                        <div class="app-name"><span title="Editor mit Live-Vorschau und KI">AI HTML Studio</span></div>
+                        <div class="app-tooltip">AI HTML Studio</div>
+                    </div>
+
+                    <div class="app-item" data-id="t-htmlfree" data-url="modules/tools/ai-html-studio-free.html">
+                        <div class="app-icon"><i class="fa-solid fa-feather" style="color: #94a3b8;"></i></div>
+                        <div class="app-name"><span title="Schlanke Version">AI HTML Studio Free</span></div>
+                        <div class="app-tooltip">AI HTML Studio Free</div>
+                    </div>
+
+                    <div class="app-item" data-id="t-rag" data-url="modules/tools/rag-vector-ide.html">
+                        <div class="app-icon"><i class="fa-solid fa-database" style="color: #8b5cf6;"></i></div>
+                        <div class="app-name"><span title="IDE mit Vektor-Suche">RAG und Vector IDE</span></div>
+                        <div class="app-tooltip">RAG und Vector IDE</div>
+                    </div>
+
+                    <div class="app-item" data-id="t-python" data-url="modules/tools/python-ide.html">
+                        <div class="app-icon"><i class="fa-solid fa-terminal" style="color: #fbbf24;"></i></div>
+                        <div class="app-name"><span title="Python im Browser">Python IDE</span></div>
+                        <div class="app-tooltip">Python IDE</div>
+                    </div>
+
+                    <div class="app-item" data-id="t-vision" data-url="modules/tools/vision-bot.html">
+                        <div class="app-icon"><i class="fa-solid fa-eye" style="color: #ec4899;"></i></div>
+                        <div class="app-name"><span title="Bildanalyse-Chatbot">Vision Bot</span></div>
+                        <div class="app-tooltip">Vision Bot</div>
+                    </div>
+
+                    <div class="app-item" data-id="t-batch" data-url="modules/tools/batch-prozessor.html">
+                        <div class="app-icon"><i class="fa-solid fa-server" style="color: #06b6d4;"></i></div>
+                        <div class="app-name"><span title="Massenverarbeitung per API">Batch-Prozessor</span></div>
+                        <div class="app-tooltip">Batch-Prozessor</div>
+                    </div>
+
+                    <div class="app-item" data-id="t-css" data-url="modules/tools/css-stripper.html">
+                        <div class="app-icon"><i class="fa-solid fa-scissors" style="color: #ec4899;"></i></div>
+                        <div class="app-name"><span title="Stylesheets bereinigen">CSS Stripper</span></div>
+                        <div class="app-tooltip">CSS Stripper</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="sidebar-footer">
+                <div style="font-size: 9px; margin-bottom: 2px; letter-spacing: 0.05em;">ORBITRON VIBE CODING</div>
+                <div style="font-size: 8px; opacity: 0.6;">Persistent Dev Stack</div>
+            </div>
+        </div>
+
+        <!-- MAIN WORKSPACE CONTENT AREA -->
+        <div class="main-content">
+            <div class="topnav">
+                <button class="btn" id="menuBtn" type="button" style="display: none;" aria-label="Desktops öffnen">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+
+                <!-- Dynamic Tab Bar -->
+                <div class="tabs-container" id="tabsContainer"></div>
+
+                <div class="topnav-right">
+                    <div class="status" id="statusPill">
+                        <div class="status-dot"></div>
+                        <span id="statusLabel">Orbitron Vibe Engine Active</span>
+                    </div>
+                    <button class="btn" id="installBtn" aria-label="App installieren" title="Im neuen Tab öffnen und installieren">
+                        <i class="fa-solid fa-download"></i>
+                    </button>
+                    <button class="btn" id="themeBtn" aria-label="Theme wechseln" title="Theme Umschalten">
+                        <i class="fa-solid fa-sun"></i>
+                    </button>
+                    <a class="btn" id="openExternalBtn" href="#" target="_blank" rel="noopener noreferrer" aria-label="In neuem Tab öffnen" title="In neuem Tab öffnen">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="content-area" id="contentArea">
+                <div class="welcome" id="welcome">
+                    <i class="fa-solid fa-code"></i>
+                    <h2>ORBITRON VIBE CODING</h2>
+                    <p>Wähle links einen Kursbaustein oder ein Tool: Start mit dem KI-Check, dann Reihe 1 bis 3. Alle Werkzeuge findest du unter Tools und Bots.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="install-hint" id="installHint" hidden>
+        <i class="fa-solid fa-share-from-square"></i>
+        <div>
+            <div><strong>Zum Home-Bildschirm hinzufügen:</strong></div>
+            <div>Tippe unten auf <strong>Teilen</strong> und dann auf <strong>„Zum Home-Bildschirm“</strong>.</div>
+        </div>
+        <button class="install-hint-close" id="installHintClose" aria-label="Schließen">&times;</button>
+    </div>
+
+    <script>
+        // DOM Elements
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.getElementById('toggleBtn');
+        const menuBtn = document.getElementById('menuBtn');
+        const appItems = document.querySelectorAll('.app-item');
+        const tabsContainer = document.getElementById('tabsContainer');
+        const contentArea = document.getElementById('contentArea');
+        const welcome = document.getElementById('welcome');
+        const openExternalBtn = document.getElementById('openExternalBtn');
+        const themeBtn = document.getElementById('themeBtn');
+        const themeColorMeta = document.getElementById('themeColorMeta');
+        const statusPill = document.getElementById('statusPill');
+        const statusLabel = document.getElementById('statusLabel');
+        const installBtn = document.getElementById('installBtn');
+        const installHint = document.getElementById('installHint');
+        const installHintClose = document.getElementById('installHintClose');
+
+        // State Machine & Persistence Constants
+        const STORAGE_KEY_TABS = 'orbitron_vibe_open_tabs';
+        const STORAGE_KEY_ACTIVE = 'orbitron_vibe_active_tab';
+        const STORAGE_KEY_SIDEBAR = 'orbitron_vibe_sidebar_expanded';
+        const STORAGE_KEY_THEME = 'orbitron_vibe_theme';
+
+        const THEME_COLORS = { dark: '#0a0a0f', light: '#f4f7fb' };
+
+        let activeTabId = null;
+        let openTabs = []; // Holds objects: { id, title, url, iconClass }
+
+        // Persistent State Helpers
+        function saveState() {
+            localStorage.setItem(STORAGE_KEY_TABS, JSON.stringify(openTabs));
+            localStorage.setItem(STORAGE_KEY_ACTIVE, activeTabId || '');
+            localStorage.setItem(STORAGE_KEY_SIDEBAR, sidebar.classList.contains('expanded'));
+        }
+
+        // Toggle Sidebar
+        toggleBtn.addEventListener('click', () => {
+            if (window.innerWidth < 768) {
+                closeSidebar();
+            } else {
+                sidebar.classList.toggle('expanded');
+                syncSidebarState();
+            }
+            saveState();
+        });
+
+        function updateToggleIcon() {
+            const icon = toggleBtn.querySelector('i');
+            icon.className = sidebar.classList.contains('expanded') ? 'fa-solid fa-chevron-left' : 'fa-solid fa-chevron-right';
+        }
+
+        function syncSidebarState() {
+            const expanded = sidebar.classList.contains('expanded');
+            const mobile = window.innerWidth < 768;
+            updateToggleIcon();
+            toggleBtn.setAttribute('aria-expanded', String(expanded));
+            menuBtn.setAttribute('aria-expanded', String(mobile && expanded));
+        }
+
+        menuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('expanded');
+            syncSidebarState();
+            saveState();
+        });
+
+        function closeSidebar() {
+            sidebar.classList.remove('expanded');
+            syncSidebarState();
+        }
+
+        // Core App Routing & Tab Management
+        function openApp(id, title, url, iconClass, save = true) {
+            welcome.style.display = 'none';
+
+            let existingFrame = document.getElementById(`frame-${id}`);
+            let existingTab = document.getElementById(`tab-${id}`);
+
+            if (!existingFrame) {
+                existingFrame = document.createElement('iframe');
+                existingFrame.id = `frame-${id}`;
+                existingFrame.src = url;
+                existingFrame.title = title;
+                contentArea.appendChild(existingFrame);
+            }
+
+            if (!existingTab) {
+                existingTab = document.createElement('div');
+                existingTab.className = 'tab-item';
+                existingTab.id = `tab-${id}`;
+                existingTab.innerHTML = `
+                    <i class="${iconClass}"></i>
+                    <span class="tab-title">${title}</span>
+                    <i class="fa-solid fa-xmark tab-close" title="Schließen"></i>
+                `;
+
+                existingTab.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('tab-close')) {
+                        e.stopPropagation();
+                        closeTab(id);
+                    } else {
+                        switchTab(id);
+                    }
+                });
+
+                tabsContainer.appendChild(existingTab);
+                if (!openTabs.some(tab => tab.id === id)) {
+                    openTabs.push({ id, title, url, iconClass });
+                }
+            }
+
+            switchTab(id, save);
+
+            if (window.innerWidth < 768) {
+                closeSidebar();
+            }
+        }
+
+        function switchTab(id, save = true) {
+            activeTabId = id;
+
+            document.querySelectorAll('.content-area iframe').forEach(frame => {
+                frame.classList.remove('active');
+            });
+            const targetFrame = document.getElementById(`frame-${id}`);
+            if (targetFrame) targetFrame.classList.add('active');
+
+            document.querySelectorAll('.tab-item').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            const targetTab = document.getElementById(`tab-${id}`);
+            if (targetTab) {
+                targetTab.classList.add('active');
+                targetTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+            }
+
+            appItems.forEach(item => {
+                item.classList.toggle('active', item.dataset.id === id);
+            });
+
+            if (save) saveState();
+        }
+
+        function closeTab(id) {
+            const frame = document.getElementById(`frame-${id}`);
+            const tab = document.getElementById(`tab-${id}`);
+
+            if (frame) frame.remove();
+            if (tab) tab.remove();
+
+            openTabs = openTabs.filter(t => t.id !== id);
+
+            if (activeTabId === id) {
+                if (openTabs.length > 0) {
+                    const nextTab = openTabs[openTabs.length - 1];
+                    switchTab(nextTab.id);
+                } else {
+                    activeTabId = null;
+                    welcome.style.display = 'flex';
+                    appItems.forEach(item => item.classList.remove('active'));
+                }
+            }
+            saveState();
+        }
+
+        appItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const id = item.dataset.id;
+                const title = item.querySelector('.app-name span').textContent;
+                const url = item.dataset.url;
+                const iconClass = item.querySelector('.app-icon i').className;
+
+                openApp(id, title, url, iconClass);
+            });
+        });
+
+        openExternalBtn.addEventListener('click', (event) => {
+            if (activeTabId) {
+                const activeFrame = document.getElementById(`frame-${activeTabId}`);
+                if (activeFrame && activeFrame.src) openExternalBtn.href = activeFrame.src;
+                else event.preventDefault();
+            } else {
+                event.preventDefault();
+            }
+        });
+
+        // Theme Engine
+        function applyTheme(isDark) {
+            document.documentElement.classList.toggle('light-theme', !isDark);
+            themeBtn.querySelector('i').className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+            localStorage.setItem(STORAGE_KEY_THEME, isDark ? 'dark' : 'light');
+            if (themeColorMeta) {
+                themeColorMeta.setAttribute('content', isDark ? THEME_COLORS.dark : THEME_COLORS.light);
+            }
+        }
+
+        themeBtn.addEventListener('click', () => {
+            const isCurrentlyDark = !document.documentElement.classList.contains('light-theme');
+            applyTheme(!isCurrentlyDark);
+        });
+
+        // Online / offline status (reflects real connectivity instead of a static label)
+        function updateOnlineStatus() {
+            const online = navigator.onLine;
+            statusPill.classList.toggle('is-offline', !online);
+            statusLabel.textContent = online ? 'Orbitron Vibe Engine Active' : 'Offline';
+        }
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+        updateOnlineStatus();
+
+        // Initialize Responsive & Persistent State
+        function checkMobile() {
+            if (window.innerWidth < 768) {
+                menuBtn.style.display = 'flex';
+                closeSidebar();
+            } else {
+                menuBtn.style.display = 'none';
+                const savedExpanded = localStorage.getItem(STORAGE_KEY_SIDEBAR);
+                if (savedExpanded === 'false') {
+                    sidebar.classList.remove('expanded');
+                } else {
+                    sidebar.classList.add('expanded');
+                }
+                syncSidebarState();
+            }
+        }
+
+        function restorePersistentSession() {
+            // Restore Theme
+            const savedTheme = localStorage.getItem(STORAGE_KEY_THEME);
+            applyTheme(savedTheme !== 'light');
+
+            // Restore Tabs
+            const savedTabs = localStorage.getItem(STORAGE_KEY_TABS);
+            const savedActive = localStorage.getItem(STORAGE_KEY_ACTIVE);
+
+            if (savedTabs) {
+                try {
+                    const parsedTabs = JSON.parse(savedTabs);
+                    if (Array.isArray(parsedTabs) && parsedTabs.length > 0) {
+                        parsedTabs.forEach(tab => openApp(tab.id, tab.title, tab.url, tab.iconClass, false));
+                        if (savedActive && parsedTabs.some(t => t.id === savedActive)) {
+                            switchTab(savedActive, false);
+                        } else {
+                            switchTab(parsedTabs[parsedTabs.length - 1].id, false);
+                        }
+                        return;
+                    }
+                } catch (e) {
+                    console.error("Orbitron Vibe Restore Error:", e);
+                }
+            }
+
+            // Fallback Default: Launch LeCODE Sandbox
+            const defaultApp = document.querySelector('[data-id="lecode-app"]');
+            if (defaultApp) defaultApp.click();
+        }
+
+        window.addEventListener('resize', checkMobile);
+
+        // Boot Init
+        checkMobile();
+        restorePersistentSession();
+
+        // Keyboard Shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'b') {
+                e.preventDefault();
+                sidebar.classList.toggle('expanded');
+                syncSidebarState();
+                saveState();
+            }
+        });
+
+        // ============ INSTALL FLOW ============
+        function isStandalone() {
+            return window.matchMedia('(display-mode: standalone)').matches
+                || window.navigator.standalone === true;
+        }
+
+        const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent)
+            || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+        let deferredInstallPrompt = null;
+
+        window.addEventListener('beforeinstallprompt', (event) => {
+            event.preventDefault();
+            deferredInstallPrompt = event;
+            if (!isStandalone()) installBtn.hidden = false;
+        });
+
+        window.addEventListener('appinstalled', () => {
+            deferredInstallPrompt = null;
+            installBtn.hidden = true;
+            installHint.hidden = true;
+        });
+
+        installBtn.addEventListener('click', async () => {
+            if (window.top !== window.self) {
+                const standaloneLink = document.createElement('a');
+                standaloneLink.href = new URL('./', document.baseURI).href;
+                standaloneLink.target = '_blank';
+                standaloneLink.rel = 'noopener noreferrer';
+                standaloneLink.click();
+                return;
+            }
+            if (deferredInstallPrompt) {
+                deferredInstallPrompt.prompt();
+                await deferredInstallPrompt.userChoice;
+                deferredInstallPrompt = null;
+                installBtn.hidden = true;
+                return;
+            }
+            if (isIos) {
+                installHint.hidden = false;
+            }
+        });
+
+        installHintClose.addEventListener('click', () => {
+            installHint.hidden = true;
+        });
+
+        if (!isStandalone() && isIos) {
+            installBtn.hidden = false;
+        }
+    </script>
+    <script src="./pwa-update.js"></script>
+</body>
+</html>

@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>NextGen AI Development Studio - LeCode Fusion</title>
+    
+    <!-- External CDN Libraries -->
+    <link href="https://unpkg.com/spectre.css/dist/spectre.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-tomorrow.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet"/>
+    
+    <!-- Consolidated Styles: LeCode CSS + Inline Styles -->
+    <style>
+        /* BASE STYLES */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Orbitron', 'Helvetica Neue', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background: #1a1a2e;
+            color: #FFFFFF;
+            padding: 5px 15px;
+            font-size: 18px;
+            font-weight: 900;
+            font-family: 'Orbitron', sans-serif;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            height: 40px;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #matrixCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .navbar span {
+            position: relative;
+            z-index: 10;
+            text-shadow: 0 0 10px #FFFFFF, 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+
+        /* CONTAINER */
+        .container {
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: calc(100% - 40px);
+        }
+
+        /* CHAT CONTAINER */
+        #chat-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background: #1e1e1e;
+            overflow: hidden;
+            position: relative;
+            margin: 0;
+        }
+
+        #chatHistory {
+            flex-grow: 1;
+            padding: 10px;
+            overflow-y: auto;
+            border-radius: 4px;
+            background: #1e1e1e;
+            word-wrap: break-word;
+            color: #fff;
+            scrollbar-width: thin;
+            scrollbar-color: #888 #333;
+        }
+
+        #chatHistory::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #chatHistory::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        #chatHistory::-webkit-scrollbar-track {
+            background: #333;
+        }
+
+        .user-message, .assistant-message {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            white-space: pre-wrap;
+        }
+
+        .user-message {
+            background-color: #4b0082;
+            text-align: left;
+        }
+
+        .assistant-message {
+            background-color: #008000;
+            text-align: left;
+        }
+
+        /* INPUT GROUP */
+        .input-group {
+            display: flex;
+            width: 100%;
+            margin-top: auto;
+            position: sticky;
+            bottom: 0;
+            background-color: #1e1e1e;
+            padding: 10px 0;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 4px 0 0 4px;
+            font-size: 16px;
+            background-color: #fff;
+            color: #333;
+        }
+
+        .input-group button {
+            padding: 10px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            border-radius: 0 4px 4px 0;
+            font-size: 16px;
+        }
+
+        .input-group button:hover {
+            background-color: #0056b3;
+        }
+
+        /* BUTTONS */
+        .form-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .form-buttons button {
+            flex: 1 1 18%;
+            padding: 5px;
+            font-size: 14px;
+        }
+
+        /* LOADING SPINNER */
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            text-align: center;
+            display: none;
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        #loading .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* FILE PREVIEW */
+        .file-preview {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #1a1a2e;
+            border-radius: 4px;
+            min-height: 30px;
+        }
+
+        .file-preview-item {
+            padding: 5px 10px;
+            background-color: #0099ff;
+            color: white;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+        }
+
+        .file-preview-item button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            padding: 0;
+        }
+
+        /* CODE BLOCKS */
+        pre {
+            background: #2d2d2d;
+            padding: 10px;
+            border-radius: 5px;
+            overflow: auto;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+        }
+
+        .highlighted {
+            background-color: #ffeb3b;
+            color: #000;
+        }
+
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 600px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 5px 10px;
+                height: auto;
+            }
+            .container {
+                height: calc(100% - 50px);
+            }
+            #chat-container {
+                height: 100%;
+                margin-bottom: 0;
+            }
+            #chatHistory {
+                height: calc(100% - 80px);
+            }
+            .input-group {
+                margin-top: 0;
+            }
+            .form-buttons {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+            }
+            .form-buttons button {
+                flex: 0 0 auto;
+                width: 20%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <canvas id="matrixCanvas"></canvas>
+        <span style="font-family: 'Orbitron', sans-serif; font-weight: 900; letter-spacing: 2px;">Genitus Inc - LeCode</span>
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <label style="display: flex; align-items: center; gap: 6px; color: #0099ff; cursor: pointer; font-size: 12px;">
+                <input type="checkbox" id="autoContinueCheckbox" onchange="toggleAutoContinue()" style="cursor: pointer; width: 14px; height: 14px;">
+                <span>Auto-Continue</span>
+            </label>
+            <select id="modelSelect" onchange="switchModel()" style="padding: 5px 10px; border-radius: 4px; border: 1px solid #0099ff; background-color: #1e1e1e; color: #fff; cursor: pointer;">
+                <option value="mistral">🔮 Codestral</option>
+                <option value="claude">🤖 Claude 4.5</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="chat-container">
+            <div id="chatHistory"></div>
+            <div id="loading">
+                <div class="spinner"></div>
+            </div>
+
+            <div class="file-preview" id="filePreview">
+                <span style="color: #888;">No files uploaded</span>
+            </div>
+
+            <div class="input-group">
+                <input class="form-input" id="userPrompt" placeholder="Enter your message..." type="text"/>
+                <button class="btn btn-primary input-group-btn" onclick="fetchChatCompletion()">
+                    <i class="fas fa-paper-plane"></i>Send
+                </button>
+            </div>
+
+            <div class="form-buttons">
+                <button class="btn btn-success" onclick="runGeneratedHtml()"><i class="fas fa-play"></i>HTML</button>
+                <button class="btn btn-primary" onclick="window.open('https://html-editor.replit.app', '_blank')"><i class="fas fa-edit"></i>Editor</button>
+                <button class="btn btn-info" onclick="downloadSnippet()"><i class="fas fa-download"></i>DL</button>
+                <button class="btn btn-warning" onclick="highlightLastAssistantResponse()"><i class="fas fa-highlighter"></i>Copy</button>
+                <button class="btn btn-secondary" onclick="continueMessage()" style="display: none;" title="Continue incomplete response"><i class="fas fa-ellipsis-h"></i>Continue</button>
+                
+                <input type="file" id="chatFileInput" class="form-input" style="display:none;" onchange="uploadChatFile()">
+                <input type="file" id="mediaFileInput" class="form-input" style="display:none;" accept="image/*,application/pdf" onchange="uploadMediaFile()">
+                
+                <button class="btn btn-secondary" onclick="document.getElementById('chatFileInput').click()">
+                    <i class="fas fa-upload"></i>TXT
+                </button>
+                <button class="btn btn-secondary" onclick="document.getElementById('mediaFileInput').click()">
+                    <i class="fas fa-image"></i>Media
+                </button>
+                
+                <button class="btn btn-danger" onclick="deleteUploadedFile()"><i class="fas fa-trash"></i>Delete</button>
+                <button class="btn btn-dark" onclick="clearChatHistory()"><i class="fas fa-times"></i>Clear</button>
+                <button class="btn btn-warning" onclick="saveConversation()"><i class="fas fa-save"></i>Convo</button>
+            </div>
+        </div>
+    </div>
+
+    <textarea id="generatedHtml" style="display:none;"></textarea>
+
+    <!-- External JavaScript Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ext-language_tools.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-html.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+    <!-- Consolidated JavaScript: All LeCode Functions -->
+    <script>
+        // ╔════════════════════════════════════════════════════════════════╗
+        // ║         LeCode AI - Dual Model System (Mistral + Claude)       ║
+        // ║                   STANDALONE MONOLITH EDITION                  ║
+        // ╚════════════════════════════════════════════════════════════════╝
+
+        const MISTRAL_ENDPOINT = 'https://theserver-open-ai.replit.app/mistral/chat';
+        const CLAUDE_ENDPOINT = 'https://theserver-open-ai.replit.app/claude/messages';
+
+        let currentModel = 'mistral';
+        let chatHistory = [];
+        let uploadedFiles = [];
+        let isLoading = false;
+        let isIncomplete = false;
+        let autoContinueEnabled = false;
+        let continuationTimeout = null;
+        let updateScheduled = false;
+
+        let userPromptElement = document.getElementById("userPrompt");
+        let chatHistoryElement = document.getElementById("chatHistory");
+        let filePreviewElement = document.getElementById("filePreview");
+
+        // Throttled chat display update
+        function scheduleUpdateChatDisplay() {
+            if (updateScheduled) return;
+            updateScheduled = true;
+            requestAnimationFrame(() => {
+                updateChatDisplay();
+                updateScheduled = false;
+            });
+        }
+
+        // Configure PDF.js
+        if (typeof pdfjsLib !== 'undefined') {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        }
+
+        // ══════════════════════ MODEL SWITCHING ══════════════════════
+        function switchModel() {
+            const newModel = document.getElementById('modelSelect').value;
+            currentModel = newModel;
+            localStorage.setItem('selectedModel', currentModel);
+            isIncomplete = false;
+        }
+
+        // ══════════════════════ AUTO-CONTINUE TOGGLE ══════════════════════
+        function toggleAutoContinue() {
+            const checkbox = document.getElementById('autoContinueCheckbox');
+            if (checkbox) {
+                autoContinueEnabled = checkbox.checked;
+                localStorage.setItem('autoContinueEnabled', autoContinueEnabled);
+            }
+        }
+
+        // ══════════════════════ FILE UPLOAD HANDLERS ══════════════════════
+        async function uploadMediaFile() {
+            const fileInput = document.getElementById("mediaFileInput");
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            if (file.type.startsWith('image/')) {
+                handleImageUpload(file);
+            } else if (file.type === 'application/pdf') {
+                handlePDFUpload(file);
+            } else {
+                alert("Only images (JPEG, PNG, GIF, WebP) and PDFs supported");
+            }
+            fileInput.value = '';
+        }
+
+        function handleImageUpload(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64Data = e.target.result;
+                uploadedFiles.push({
+                    name: file.name,
+                    type: 'image',
+                    mediaType: file.type,
+                    base64: base64Data
+                });
+                updateFilePreview();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function handlePDFUpload(file) {
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const typedarray = new Uint8Array(e.target.result);
+                    const pdf = await pdfjsLib.getDocument(typedarray).promise;
+                    
+                    let fullText = `PDF: ${file.name} (${pdf.numPages} pages)\n\n`;
+                    for (let i = 1; i <= pdf.numPages; i++) {
+                        const page = await pdf.getPage(i);
+                        const textContent = await page.getTextContent();
+                        const pageText = textContent.items.map(item => item.str).join(' ');
+                        fullText += `--- Page ${i} ---\n${pageText}\n\n`;
+                    }
+
+                    uploadedFiles.push({
+                        name: file.name,
+                        type: 'pdf',
+                        text: fullText,
+                        pages: pdf.numPages
+                    });
+                    updateFilePreview();
+
+                    if (currentModel === 'claude') {
+                        const firstPage = await pdf.getPage(1);
+                        const viewport = firstPage.getViewport({ scale: 1.5 });
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        canvas.width = viewport.width;
+                        canvas.height = viewport.height;
+
+                        await firstPage.render({
+                            canvasContext: ctx,
+                            viewport: viewport
+                        }).promise;
+
+                        const imageBase64 = canvas.toDataURL('image/png').split(',')[1];
+                        uploadedFiles[uploadedFiles.length - 1].imageBase64 = imageBase64;
+                    }
+                } catch (error) {
+                    alert('Error processing PDF: ' + error.message);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function updateFilePreview() {
+            if (uploadedFiles.length === 0) {
+                filePreviewElement.innerHTML = '';
+                filePreviewElement.style.display = 'none';
+            } else {
+                filePreviewElement.style.display = 'block';
+                filePreviewElement.innerHTML = uploadedFiles.map((file, idx) => `
+                    <div class="file-preview-item">
+                        <i class="fas fa-${file.type === 'image' ? 'image' : 'file-pdf'}"></i>
+                        ${file.name} <button onclick="removeFile(${idx})">×</button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function removeFile(index) {
+            uploadedFiles.splice(index, 1);
+            updateFilePreview();
+        }
+
+        // ══════════════════════ MAIN API CALL WITH STREAMING ══════════════════════
+        async function fetchChatCompletion() {
+            const prompt = userPromptElement.value.trim();
+            if (!prompt) {
+                alert("Please enter a message");
+                return;
+            }
+
+            isLoading = true;
+            document.getElementById('loading').style.display = 'block';
+            updateButtonStates();
+
+            const userMessage = {
+                role: 'user',
+                content: prompt,
+                files: uploadedFiles.length > 0 ? uploadedFiles : null,
+                model: currentModel
+            };
+            chatHistory.push(userMessage);
+            updateChatDisplay();
+
+            try {
+                let response = '';
+                const assistantMessageIndex = chatHistory.length;
+                
+                chatHistory.push({
+                    role: 'assistant',
+                    content: '',
+                    model: currentModel
+                });
+                
+                if (currentModel === 'mistral') {
+                    response = await callMistralAPIStream(prompt, (chunk) => {
+                        chatHistory[assistantMessageIndex].content += chunk;
+                        scheduleUpdateChatDisplay();
+                        document.getElementById('generatedHtml').value = chatHistory[assistantMessageIndex].content;
+                    });
+                } else if (currentModel === 'claude') {
+                    response = await callClaudeAPIStream(prompt, (chunk) => {
+                        chatHistory[assistantMessageIndex].content += chunk;
+                        scheduleUpdateChatDisplay();
+                        document.getElementById('generatedHtml').value = chatHistory[assistantMessageIndex].content;
+                    });
+                } else {
+                    throw new Error('Unknown model: ' + currentModel);
+                }
+                
+                updateChatDisplay();
+
+                isIncomplete = response.endsWith('...') || 
+                              response.toLowerCase().includes('continued') ||
+                              response.length > 7500;
+                
+                updateButtonStates();
+
+                if (autoContinueEnabled && isIncomplete) {
+                    if (continuationTimeout) clearTimeout(continuationTimeout);
+                    continuationTimeout = setTimeout(() => {
+                        continueMessage();
+                    }, 2000);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert(`Error with ${currentModel}: ${error.message}`);
+            } finally {
+                isLoading = false;
+                document.getElementById('loading').style.display = 'none';
+                userPromptElement.value = "";
+                uploadedFiles = [];
+                updateFilePreview();
+                updateButtonStates();
+            }
+        }
+
+        // ══════════════════════ CONTINUE MESSAGE (STREAMING) ══════════════════════
+        async function continueMessage() {
+            if (!isIncomplete || isLoading) return;
+            
+            isLoading = true;
+            document.getElementById('loading').style.display = 'block';
+            updateButtonStates();
+
+            try {
+                const continuePrompt = "Please continue your previous response where it left off.";
+                let response = '';
+                const lastMessageIndex = chatHistory.length - 1;
+                
+                if (currentModel === 'mistral') {
+                    response = await callMistralAPIStream(continuePrompt, (chunk) => {
+                        chatHistory[lastMessageIndex].content += chunk;
+                        scheduleUpdateChatDisplay();
+                        document.getElementById('generatedHtml').value = chatHistory[lastMessageIndex].content;
+                    });
+                } else if (currentModel === 'claude') {
+                    response = await callClaudeAPIStream(continuePrompt, (chunk) => {
+                        chatHistory[lastMessageIndex].content += chunk;
+                        scheduleUpdateChatDisplay();
+                        document.getElementById('generatedHtml').value = chatHistory[lastMessageIndex].content;
+                    });
+                } else {
+                    throw new Error('Unknown model for continue: ' + currentModel);
+                }
+                
+                updateChatDisplay();
+                
+                if (chatHistory.length > 0 && chatHistory[lastMessageIndex].role === 'assistant') {
+                    isIncomplete = response.endsWith('...') || 
+                                response.toLowerCase().includes('continued') ||
+                                response.length > 7500;
+                    
+                    updateButtonStates();
+
+                    if (autoContinueEnabled && isIncomplete) {
+                        if (continuationTimeout) clearTimeout(continuationTimeout);
+                        continuationTimeout = setTimeout(() => {
+                            continueMessage();
+                        }, 1500);
+                    }
+                }
+            } catch (error) {
+                console.error("Continue error:", error);
+                alert(`Error continuing: ${error.message}`);
+            } finally {
+                isLoading = false;
+                document.getElementById('loading').style.display = 'none';
+                updateButtonStates();
+            }
+        }
+
+        function updateButtonStates() {
+            const sendBtn = document.querySelector('button[onclick="fetchChatCompletion()"]');
+            const continueBtn = document.querySelector('button[onclick="continueMessage()"]');
+            
+            if (sendBtn) sendBtn.style.display = isLoading ? 'none' : 'block';
+            if (continueBtn) continueBtn.style.display = (isIncomplete && !isLoading) ? 'block' : 'none';
+        }
+
+        // ══════════════════════ MISTRAL API - STREAMING ══════════════════════
+        async function callMistralAPIStream(prompt, onChunk) {
+            const messages = chatHistory
+                .filter(msg => {
+                    if (msg.role === 'user') {
+                        return !msg.files || msg.files.length === 0;
+                    }
+                    return msg.role === 'assistant' && msg.model === 'mistral' && msg.content.trim().length > 0;
+                })
+                .map(msg => ({
+                    role: msg.role,
+                    content: msg.content
+                }));
+
+            const requestBody = {
+                model: "codestral-latest",
+                temperature: 0.7,
+                top_p: 1,
+                max_tokens: 256000,
+                stream: true,
+                messages: [
+                    { 
+                        role: "system", 
+                        content: "You are a high-end senior web developer with expertise in HTML5, CSS3, Media Queries, and JavaScript." 
+                    },
+                    ...messages
+                ],
+                response_format: { type: 'text' },
+                safe_prompt: false
+            };
+
+            const response = await fetch(MISTRAL_ENDPOINT, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(requestBody)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+                throw new Error(errorData.message || errorData.error || `HTTP ${response.status}`);
+            }
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let fullResponse = '';
+
+            try {
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    const chunk = decoder.decode(value);
+                    const lines = chunk.split('\n').filter(line => line.trim().startsWith('data: '));
+                    
+                    for (const line of lines) {
+                        const data = line.replace('data: ', '');
+                        if (data === '[DONE]') return fullResponse;
+                        
+                        try {
+                            const parsed = JSON.parse(data);
+                            const content = parsed.choices[0]?.delta?.content;
+                            if (content) {
+                                onChunk(content);
+                                fullResponse += content;
+                            }
+                        } catch (e) {
+                            // JSON parse error - skip
+                        }
+                    }
+                }
+            } finally {
+                reader.cancel();
+            }
+
+            return fullResponse;
+        }
+
+        // ══════════════════════ CLAUDE API - STREAMING ══════════════════════
+        async function callClaudeAPIStream(prompt, onChunk) {
+            const messages = [];
+
+            chatHistory.forEach(msg => {
+                if (msg.role === 'user') {
+                    const content = [];
+                    
+                    if (msg.files && msg.files.length > 0) {
+                        msg.files.forEach(file => {
+                            if (file.type === 'image') {
+                                content.push({
+                                    type: 'image',
+                                    source: {
+                                        type: 'base64',
+                                        media_type: file.mediaType,
+                                        data: file.base64.split(',')[1]
+                                    }
+                                });
+                            } else if (file.type === 'pdf' && file.imageBase64) {
+                                content.push({
+                                    type: 'image',
+                                    source: {
+                                        type: 'base64',
+                                        media_type: 'image/png',
+                                        data: file.imageBase64
+                                    }
+                                });
+                            }
+                        });
+                    }
+
+                    content.push({ type: 'text', text: msg.content });
+                    messages.push({ role: 'user', content });
+                } else if (msg.role === 'assistant' && msg.model === 'claude' && msg.content.trim().length > 0) {
+                    messages.push({ role: 'assistant', content: msg.content });
+                }
+            });
+
+            const requestBody = {
+                model: "claude-sonnet-4-20250514",
+                max_tokens: 8192,
+                temperature: 0.7,
+                stream: true,
+                messages: messages
+            };
+
+            const response = await fetch(CLAUDE_ENDPOINT, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(requestBody)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+                throw new Error(errorData.message || errorData.error || `HTTP ${response.status}`);
+            }
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let fullResponse = '';
+
+            try {
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    const chunk = decoder.decode(value);
+                    const lines = chunk.split('\n').filter(line => line.trim().startsWith('data: '));
+                    
+                    for (const line of lines) {
+                        const data = line.replace('data: ', '');
+                        if (data === '[DONE]') return fullResponse;
+                        
+                        try {
+                            const parsed = JSON.parse(data);
+                            const content = parsed.delta?.text || parsed.choices?.[0]?.delta?.text;
+                            if (content) {
+                                onChunk(content);
+                                fullResponse += content;
+                            }
+                        } catch (e) {
+                            // JSON parse error - skip
+                        }
+                    }
+                }
+            } finally {
+                reader.cancel();
+            }
+
+            return fullResponse;
+        }
+
+        // ══════════════════════ CHAT DISPLAY WITH CODE HIGHLIGHTING ══════════════════════
+        function updateChatDisplay() {
+            chatHistoryElement.innerHTML = "";
+            chatHistory.forEach(message => {
+                const messageDiv = document.createElement("div");
+                messageDiv.classList.add(message.role === "user" ? "user-message" : "assistant-message");
+                
+                if (message.model) {
+                    const badge = document.createElement("small");
+                    badge.style.cssText = 'color: #0099ff; display: block; margin-bottom: 5px; font-size: 10px;';
+                    badge.textContent = message.model === 'mistral' ? '🔮 Codestral' : '🤖 Claude';
+                    messageDiv.appendChild(badge);
+                }
+
+                if (message.files && message.files.length > 0) {
+                    const fileIndicator = document.createElement("small");
+                    fileIndicator.style.cssText = 'color: #888; display: block; margin-bottom: 5px; font-size: 11px;';
+                    fileIndicator.textContent = `📎 ${message.files.map(f => f.name).join(', ')}`;
+                    messageDiv.appendChild(fileIndicator);
+                }
+
+                const codeBlockRegex = /```(?:html|javascript|js|css|python|java|cpp|c|json|xml|sql|php|ruby|go|rust|typescript|ts|markdown|md|yaml|yml)?\n?([\s\S]*?)\n?```/gi;
+                let lastIndex = 0;
+                let match;
+
+                while ((match = codeBlockRegex.exec(message.content)) !== null) {
+                    if (match.index > lastIndex) {
+                        const text = message.content.substring(lastIndex, match.index);
+                        if (text.trim()) {
+                            messageDiv.appendChild(document.createTextNode(text));
+                        }
+                    }
+
+                    const codeContent = match[1];
+                    let language = 'plaintext';
+                    
+                    if (codeContent.includes('<!DOCTYPE') || codeContent.includes('<html')) language = 'html';
+                    else if (codeContent.includes('function ') || codeContent.includes('const ') || codeContent.includes('let ')) language = 'javascript';
+                    else if (codeContent.includes('def ')) language = 'python';
+                    else if (codeContent.includes('import ')) language = 'java';
+                    
+                    const pre = document.createElement("pre");
+                    const codeElement = document.createElement("code");
+                    codeElement.className = `language-${language}`;
+                    codeElement.textContent = codeContent.trim();
+                    pre.appendChild(codeElement);
+                    messageDiv.appendChild(pre);
+
+                    lastIndex = codeBlockRegex.lastIndex;
+                }
+
+                if (lastIndex < message.content.length) {
+                    const remainingText = message.content.substring(lastIndex);
+                    if (remainingText.trim()) {
+                        messageDiv.appendChild(document.createTextNode(remainingText));
+                    }
+                }
+
+                chatHistoryElement.appendChild(messageDiv);
+            });
+
+            if (typeof Prism !== 'undefined') {
+                try {
+                    Prism.highlightAll();
+                } catch (e) {
+                    console.warn('Prism highlighting failed:', e);
+                }
+            }
+            chatHistoryElement.scrollTop = chatHistoryElement.scrollHeight;
+        }
+
+        // ══════════════════════ FILE & TEXT OPERATIONS ══════════════════════
+        function uploadChatFile() {
+            const fileInput = document.getElementById("chatFileInput");
+            const selectedFile = fileInput.files[0];
+            if (!selectedFile) {
+                alert("Please select a file to upload.");
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const content = event.target.result;
+                chatHistory.push({
+                    role: 'user',
+                    content: `📄 File: ${selectedFile.name}\n\n${content}`,
+                    model: currentModel
+                });
+                updateChatDisplay();
+            };
+            reader.readAsText(selectedFile);
+        }
+
+        function deleteUploadedFile() {
+            uploadedFiles = [];
+            updateFilePreview();
+            alert("Uploaded files deleted.");
+        }
+
+        // ══════════════════════ HTML OPERATIONS ══════════════════════
+        function runGeneratedHtml() {
+            const htmlContent = document.getElementById('generatedHtml').value;
+            if (!htmlContent) {
+                alert("No HTML content to run!");
+                return;
+            }
+            const newWindow = window.open();
+            newWindow.document.open();
+            newWindow.document.write(htmlContent);
+            newWindow.document.close();
+        }
+
+        function downloadSnippet() {
+            const assistantMessages = document.querySelectorAll(".assistant-message pre code");
+            if (assistantMessages.length > 0) {
+                const lastCodeBlock = assistantMessages[assistantMessages.length - 1];
+                const snippet = lastCodeBlock.textContent;
+                const blob = new Blob([snippet], { type: "text/html" });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "snippet.html";
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            } else {
+                alert("No code snippet to download!");
+            }
+        }
+
+        function highlightLastAssistantResponse() {
+            const assistantMessages = document.querySelectorAll(".assistant-message pre code");
+            if (assistantMessages.length > 0) {
+                const lastCodeBlock = assistantMessages[assistantMessages.length - 1];
+                lastCodeBlock.classList.add("highlighted");
+                const range = document.createRange();
+                range.selectNodeContents(lastCodeBlock);
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+                try {
+                    document.execCommand("copy");
+                    alert("Code snippet copied to clipboard!");
+                } catch (err) {
+                    console.error("Error copying text: ", err);
+                }
+                setTimeout(() => {
+                    lastCodeBlock.classList.remove("highlighted");
+                    selection.removeAllRanges();
+                }, 1000);
+            } else {
+                alert("No code snippet to highlight!");
+            }
+        }
+
+        // ══════════════════════ STORAGE & PREFERENCES ══════════════════════
+        function saveConversation() {
+            localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+            alert("Conversation saved!");
+        }
+
+        function loadConversation() {
+            const storedChatHistory = localStorage.getItem('chatHistory');
+            if (storedChatHistory) {
+                try {
+                    chatHistory = JSON.parse(storedChatHistory);
+                    updateChatDisplay();
+                } catch (e) {
+                    console.error('Error loading chat history:', e);
+                }
+            }
+        }
+
+        function clearChatHistory() {
+            if (confirm('Clear all chat history?')) {
+                chatHistory = [];
+                uploadedFiles = [];
+                isIncomplete = false;
+                updateChatDisplay();
+                updateFilePreview();
+                updateButtonStates();
+                localStorage.removeItem('chatHistory');
+                alert("Chat history cleared!");
+            }
+        }
+
+        // ══════════════════════ INITIALIZATION ══════════════════════
+        document.addEventListener("DOMContentLoaded", function() {
+            const savedModel = localStorage.getItem('selectedModel');
+            if (savedModel && (savedModel === 'mistral' || savedModel === 'claude')) {
+                currentModel = savedModel;
+            } else {
+                currentModel = 'mistral';
+                localStorage.setItem('selectedModel', 'mistral');
+            }
+            document.getElementById('modelSelect').value = currentModel;
+
+            const savedAutoContinue = localStorage.getItem('autoContinueEnabled');
+            if (savedAutoContinue === 'true') {
+                autoContinueEnabled = true;
+            } else {
+                autoContinueEnabled = false;
+            }
+            const checkbox = document.getElementById('autoContinueCheckbox');
+            if (checkbox) checkbox.checked = autoContinueEnabled;
+
+            let textArea = document.getElementById("userPrompt");
+            textArea.addEventListener("keydown", function(event) {
+                if (event.key === "Enter" && !event.shiftKey) {
+                    event.preventDefault();
+                    fetchChatCompletion();
+                }
+            });
+
+            loadConversation();
+        });
+
+        // ══════════════════════ NAVBAR ANIMATION ══════════════════════
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+        const navbar = document.querySelector('.navbar');
+        
+        function resizeCanvas() {
+            canvas.width = navbar.offsetWidth;
+            canvas.height = navbar.offsetHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        
+        const orbs = [
+            { x: 0.2, y: 0.5, vx: 0.0003, vy: 0.0002, r: 60, color: [0, 255, 136] },
+            { x: 0.8, y: 0.5, vx: -0.0002, vy: 0.0003, r: 80, color: [0, 150, 255] },
+            { x: 0.5, y: 0.3, vx: 0.0002, vy: -0.0002, r: 50, color: [150, 100, 255] }
+        ];
+        
+        let time = 0;
+        
+        function drawSmoothGradient() {
+            ctx.fillStyle = 'rgba(26, 26, 46, 0.02)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            orbs.forEach((orb, idx) => {
+                orb.x += orb.vx;
+                orb.y += orb.vy;
+                
+                if (orb.x < 0) orb.x = 1;
+                if (orb.x > 1) orb.x = 0;
+                if (orb.y < 0) orb.y = 1;
+                if (orb.y > 1) orb.y = 0;
+                
+                const screenX = orb.x * canvas.width;
+                const screenY = orb.y * canvas.height;
+                
+                const gradient = ctx.createRadialGradient(screenX, screenY, 0, screenX, screenY, orb.r);
+                const color = orb.color;
+                const alpha = 0.15 + 0.05 * Math.sin(time * 0.002 + idx);
+                
+                gradient.addColorStop(0, `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${alpha})`);
+                gradient.addColorStop(1, `rgba(${color[0]}, ${color[1]}, ${color[2]}, 0)`);
+                
+                ctx.fillStyle = gradient;
+                ctx.fillRect(screenX - orb.r, screenY - orb.r, orb.r * 2, orb.r * 2);
+            });
+            
+            time++;
+        }
+        
+        function animate() {
+            drawSmoothGradient();
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // ══════════════════════ WELCOME MESSAGE ══════════════════════
+        window.addEventListener('load', function() {
+            const welcomeMsg = {
+                role: 'assistant',
+                content: `🚀 Welcome to Genitus Inc - LeCode
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✨ FEATURES:
+• AI-Powered Web Development with Mistral Codestral
+• Real-time HTML/CSS/JavaScript Chat Assistance
+• Instant Code Preview & Generation
+• File Upload for Context & Reference
+• Download & Copy Code Snippets
+• Persistent Chat History
+
+💡 BENEFITS:
+• ⚡ Accelerate Your Development Workflow
+• 🎨 Professional-Grade HTML/CSS Solutions
+• 🧠 Expert AI Guidance for Web Projects
+• 📱 Responsive & Mobile-Friendly Code
+• 💾 Auto-Save Conversations Locally
+`
+            };
+            
+            if (!chatHistory || chatHistory.length === 0) {
+                chatHistory = [welcomeMsg];
+                updateChatDisplay();
+            }
+        });
+    </script>
+</body>
+</html>
