@@ -1,233 +1,552 @@
 <!DOCTYPE html>
 <html lang="de">
-<head><meta charset="UTF-8"><title>Vibe Coding für Sachbearbeiter</title></head>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vibe Coding für Sachbearbeiter</title>
+<meta name="description" content="Praxis-Leitfaden für Verwaltung, Büro und Behörde: Excel-Makros, Automatisierungen und Web-Tools mit KI-Unterstützung entwickeln.">
+<style>
+:root{--bg:#0a0a0f;--card:#151522;--line:rgba(148,163,184,.2);--text:#f1f5f9;--muted:#94a3b8;--cyan:#06b6d4;--pink:#ec4899;--gold:#fbbf24;--ok:#10b981;--bad:#ef4444;--code:#0d0d17;--radius:14px}
+@media (prefers-color-scheme:light){:root{--bg:#f6f8fc;--card:#fff;--line:rgba(15,23,42,.14);--text:#0f172a;--muted:#475569;--cyan:#0e7490;--pink:#be185d;--gold:#b45309;--ok:#047857;--bad:#b91c1c;--code:#f1f5f9}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:76px}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+a{color:var(--cyan)}
+#lf{position:fixed;top:0;left:0;height:4px;width:0;background:linear-gradient(90deg,var(--cyan),var(--pink));z-index:50;transition:width .1s}
+.wrap{max-width:1160px;margin:0 auto;padding:0 16px 60px}
+.hero{padding:34px 0 18px}
+.hero h1{margin:0;font-size:clamp(1.8rem,5vw,2.8rem);line-height:1.15;background:linear-gradient(90deg,var(--cyan),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{margin:.7rem 0 0;color:var(--muted);max-width:46rem;font-size:1.05rem}
+.stand{margin-top:14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:.92rem}
+.stand .bar{flex:0 1 220px;height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.stand .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--pink));transition:width .3s}
+.layout{display:grid;grid-template-columns:280px minmax(0,1fr);gap:36px;align-items:start}
+.toc{position:sticky;top:14px;max-height:calc(100vh - 28px);overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:12px}
+.toc summary{list-style:none;cursor:pointer;font-weight:700;min-height:44px;display:flex;align-items:center;justify-content:space-between}
+.toc summary::-webkit-details-marker{display:none}
+.toc ol{list-style:none;margin:6px 0 0;padding:0}
+.toc a{display:flex;gap:10px;align-items:center;text-decoration:none;color:var(--text);padding:8px 8px;border-radius:10px;min-height:44px;font-size:.9rem;line-height:1.3}
+.toc a:hover{background:rgba(6,182,212,.1)}
+.toc a.aktiv{background:rgba(6,182,212,.14);box-shadow:inset 3px 0 0 var(--cyan)}
+.toc .tn{flex:none;width:26px;height:26px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-size:.78rem;color:var(--muted)}
+.toc .tt{flex:1}
+.toc .chk{flex:none;width:18px;color:var(--ok);font-weight:700}
+.toc a.gelesen .chk::before{content:"\2713"}
+.toc a.gelesen .tn{border-color:var(--ok);color:var(--ok)}
+article{min-width:0}
+.kap{max-width:46rem;padding:30px 0 20px;border-bottom:1px solid var(--line)}
+.kap:first-child{padding-top:6px}
+.knr{margin:0 0 4px;color:var(--muted);font-size:.85rem;letter-spacing:.04em;text-transform:uppercase}
+.kap h2{margin:0 0 14px;font-size:clamp(1.4rem,3.6vw,1.9rem);line-height:1.25;background:linear-gradient(90deg,var(--cyan),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+.kap h3{margin:1.8rem 0 .4rem;font-size:1.15rem;color:var(--text)}
+.kap p,.kap li{font-size:1.04rem;line-height:1.75}
+.kap>p:first-of-type{font-size:1.12rem}
+.kap p{margin:.7rem 0}
+.prompt{margin:1.1rem 0;border:1px solid var(--line);border-left:4px solid var(--cyan);border-radius:var(--radius);background:var(--card);overflow:hidden}
+.ph{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 8px 4px 14px;border-bottom:1px solid var(--line);font-weight:700;font-size:.9rem;color:var(--cyan)}
+.pc{padding:12px 14px}
+.pc code{font:.92rem/1.6 ui-monospace,Consolas,Menlo,monospace;white-space:pre-wrap;word-break:break-word;background:none;padding:0}
+button{font:inherit;color:inherit;cursor:pointer;min-height:44px;padding:8px 16px;border-radius:10px;border:1px solid var(--line);background:transparent}
+button:hover{border-color:var(--cyan)}
+.copy{min-width:44px;font-size:.88rem}
+.copy.ok{color:var(--ok);border-color:var(--ok)}
+.box{margin:1.2rem 0;border-radius:var(--radius);padding:12px 16px;border:1px solid var(--line);background:var(--card)}
+.box .bt{display:block;margin-bottom:4px;font-size:.85rem;text-transform:uppercase;letter-spacing:.05em}
+.box p{margin:0}
+.box ul{margin:.3rem 0 0;padding-left:1.2rem}
+.box li{margin:.35rem 0}
+.box.tip{border-left:4px solid var(--ok)}.box.tip .bt{color:var(--ok)}
+.box.warn{border-left:4px solid var(--gold);background:rgba(251,191,36,.07)}.box.warn .bt{color:var(--gold)}
+.jetzt{margin:2rem 0 1rem;border:2px solid var(--pink);border-radius:var(--radius);padding:14px 16px;background:linear-gradient(135deg,rgba(6,182,212,.07),rgba(236,72,153,.07))}
+.jetzt .jt{color:var(--pink);font-size:1.05rem}
+.jetzt p{margin:.4rem 0 .6rem}
+.nl{display:block;font-size:.85rem;color:var(--muted);margin-bottom:4px}
+.jetzt textarea{width:100%;font:inherit;font-size:.95rem;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--text);resize:vertical}
+.gel{margin:1rem 0}
+.readbtn[aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:#fff}
+.pn{display:flex;justify-content:space-between;gap:10px;margin-top:14px;flex-wrap:wrap}
+.pn a{display:inline-flex;align-items:center;min-height:44px;padding:8px 16px;border:1px solid var(--line);border-radius:10px;text-decoration:none;background:var(--card)}
+.pn a:hover{border-color:var(--cyan)}
+.module{margin-top:20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.module a{display:block;text-decoration:none;color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;min-height:44px}
+.module a:hover{border-color:var(--cyan)}
+.module small{color:var(--cyan);font-weight:700;display:block}
+@media (max-width:900px){
+  .layout{grid-template-columns:1fr;gap:0}
+  .toc{position:sticky;top:6px;z-index:40;max-height:70vh;margin-bottom:12px}
+  .toc:not([open]) ol{display:none}
+}
+@media (min-width:901px){.toc summary{pointer-events:none}.toc summary .pf{display:none}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+@media print{
+  :root{--bg:#fff;--card:#fff;--text:#000;--muted:#333;--line:#bbb;--cyan:#000;--pink:#000;--code:#fff}
+  #lf,.toc,.copy,.pn,.gel,.jetzt textarea,.nl{display:none!important}
+  .layout{display:block}
+  body{font-size:11pt}
+  .kap{max-width:none;break-inside:auto;border:0}
+  .kap h2{color:#000;background:none;-webkit-text-fill-color:#000}
+  .hero h1{color:#000;background:none;-webkit-text-fill-color:#000}
+  .prompt,.box,.jetzt{break-inside:avoid;border:1px solid #888}
+  .kap:not(:first-child){break-before:page}
+  a{color:#000;text-decoration:none}
+}
+</style>
+</head>
 <body>
-<h1>Vibe Coding für Sachbearbeiter</h1>
-<p><em>Der Praxis-Leitfaden für Verwaltung, Büro und Behörde: Excel-Makros, Automatisierungen und Web-Tools bauen ohne Informatikstudium.</em></p>
+<div id="lf" role="progressbar" aria-label="Lesefortschritt" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+<div class="wrap">
+  <header class="hero">
+    <h1>Vibe Coding für Sachbearbeiter</h1>
+    <p>Der Praxis-Leitfaden für Verwaltung, Büro und Behörde: Excel-Makros, Automatisierungen und Web-Tools bauen ohne Informatikstudium.</p>
+    <div class="stand"><span id="standtxt">0 von 14 Kapiteln gelesen</span><span class="bar"><i id="standbar"></i></span></div>
+  </header>
+  <div class="layout">
+    <details class="toc" id="toc" open>
+      <summary><span>Inhalt</span><span class="pf" aria-hidden="true">Aus-/einklappen</span></summary>
+      <ol>
+<li><a href="#k1" data-k="k1"><span class="tn">1</span><span class="tt">Warum Sie kein Programmierer sein müssen, um zu programmieren</span><span class="chk" aria-hidden="true"></span></a></li>
+<li><a href="#k2" data-k="k2"><span class="tn">2</span><span class="tt">Was ist „Vibe Coding“? — Software erschaffen durch natürliche Sprache</span><span class="chk" aria-hidden="true"></span></a></li>
+<li><a href="#k3" data-k="k3"><span class="tn">3</span><span class="tt">Das richtige KI-Werkzeug wählen</span><span class="chk" aria-hidden="true"></span></a></li>
+<li><a href="#k4" data-k="k4"><span class="tn">4</span><span class="tt">Datensicherheit und DSGVO im Verwaltungsalltag</span><span class="chk" aria-hidden="true"></span></a></li>
+<li><a href="#k5" data-k="k5"><span class="tn">5</span><span class="tt">Schluss mit manuellem Copy-Paste — VBA-Makros per Sprachbefehl generieren</span><span class="chk" aria-hidden="true"></span></a></li>
+<li><a href="#k6" data-k="k6"><span class="tn">6</span><span class="tt">Komplexe Formeln, Wenn-Dann-Wüsten und Power Query per Prompt bändigen</span><span class="chk" aria-hidden="true"></span></a></li>
+<li><a href="#k7" data-k="k7"><span class="tn">7</span><span class="tt">Outlook-Automatisierung: E-Mail-Verteiler und Serienmails fehlerfrei steuern</span><span class="chk" aria-hidden="true"></span></a></li>
+<li><a href="#k8" data-k="k8"><span class="tn">8</span><span class="tt">Der erste eigene Mini-Web-Helfer: Formulare und Rechner im Browser</span><span class="chk" aria-hidden="true"></span></a></li>
+<li><a href="#k9" data-k="k9"><span class="tn">9</span><span class="tt">PDFs auslesen, zusammenführen und strukturieren ohne teure Spezialsoftware</span><span class="chk" aria-hidden="true"></span></a></li>
+<li><a href="#k10" data-k="k10"><span class="tn">10</span><span class="tt">Schnittstellen-Magie: Wie CSV-Dateien und Datenbanken plötzlich zusammenarbeiten</span><span class="chk" aria-hidden="true"></span></a></li>
+<li><a href="#k11" data-k="k11"><span class="tn">11</span><span class="tt">„Das Tool spuckt einen Fehler aus!“ — Debugging im Dialog mit der KI</span><span class="chk" aria-hidden="true"></span></a></li>
+<li><a href="#k12" data-k="k12"><span class="tn">12</span><span class="tt">Kollegenschutz und Wissenstransfer: Wie Sie Ihr Tool im Team dokumentieren</span><span class="chk" aria-hidden="true"></span></a></li>
+<li><a href="#k13" data-k="k13"><span class="tn">13</span><span class="tt">Wartung und Anpassung: Wenn sich Gesetze, Formulare oder Prozesse ändern</span><span class="chk" aria-hidden="true"></span></a></li>
+<li><a href="#k14" data-k="k14"><span class="tn">14</span><span class="tt">Die Zukunft der Sachbearbeitung: Vom Ausführenden zum Prozess-Architekten</span><span class="chk" aria-hidden="true"></span></a></li>
+<li><a href="#anhang" data-k="anhang"><span class="tn">A</span><span class="tt">Anhang: Prompt-Vorlagen</span><span class="chk" aria-hidden="true"></span></a></li>
+<li><a href="#module" data-k="module"><span class="tn">&rarr;</span><span class="tt">Die Slide-Module</span><span class="chk" aria-hidden="true"></span></a></li>
+      </ol>
+    </details>
+    <article>
 
-<h2>Kapitel 1: Warum Sie kein Programmierer sein müssen, um zu programmieren</h2>
-<p>Jeden Tag dasselbe Bild im Büro: Zehn Excel-Tabellen offen, Daten werden manuell von System A nach System B übertragen, E-Mails nach bestimmten Schlagworten durchsucht und standardisierte Berichte im Word-Format zusammengeklickt. Wer das über Jahre macht, entwickelt eine fast schmerzhafte Routine für monotone digitale Handgriffe.</p>
+<section class="kap" id="k1" data-kid="k1" aria-labelledby="h-k1">
+  <p class="knr">Kapitel 1 von 14 &middot; ca. 3 Min. Lesezeit</p>
+  <h2 id="h-k1">Warum Sie kein Programmierer sein müssen, um zu programmieren</h2>
+  <p>Jeden Tag dasselbe Bild im Büro: Zehn Excel-Tabellen offen, Daten werden manuell von System A nach System B übertragen, E-Mails nach bestimmten Schlagworten durchsucht und standardisierte Berichte im Word-Format zusammengeklickt. Wer das über Jahre macht, entwickelt eine fast schmerzhafte Routine für monotone digitale Handgriffe.</p>
 <p>Dieses Buch zeigt Ihnen einen radikal neuen Weg. Sie müssen keine Programmiersprachen wie Python, JavaScript oder VBA auswendig lernen. Ihre Muttersprache reicht vollkommen aus.</p>
-<div class="info-box dvag-box"><strong>Prompt-Vorlage:</strong> <code>Du bist ein erfahrener Excel-VBA-Experte. Schreibe ein kurzes Makro für folgendes Problem: Durchsuche die aktive Tabelle in Spalte C nach dem Begriff "Erledigt". Wenn gefunden, verschiebe die gesamte Zeile in das Tabellenblatt "Archiv".</code></div>
+<div class="prompt"><div class="ph"><span>Prompt-Vorlage</span><button type="button" class="copy" aria-label="Prompt-Vorlage kopieren">Kopieren</button></div><div class="pc"><code>Du bist ein erfahrener Excel-VBA-Experte. Schreibe ein kurzes Makro für folgendes Problem: Durchsuche die aktive Tabelle in Spalte C nach dem Begriff "Erledigt". Wenn gefunden, verschiebe die gesamte Zeile in das Tabellenblatt "Archiv".</code></div></div>
 <h3>Was sich wirklich ändert</h3>
 <p>Klassisches Programmieren bedeutet, eine Idee in eine exakte, fehlerfreie Syntax zu übersetzen — ein einziges falsch gesetztes Komma, eine vergessene Klammer, und nichts funktioniert mehr. Genau diese Hürde hat Generationen von Sachbearbeitern davon abgehalten, eigene Werkzeuge zu bauen, obwohl sie ihre Arbeitsabläufe besser kennen als jeder externe Dienstleister. Vibe Coding verschiebt die Aufgabe: Die KI übernimmt die Syntax, Sie übernehmen das Denken. Ihre Aufgabe ist es, präzise zu beschreiben, was passieren soll, an welchen Stellen es Ausnahmen gibt und woran Sie erkennen, dass das Ergebnis stimmt.</p>
-<p>Das klingt zunächst simpel, ist aber die eigentliche Kernkompetenz dieses Buches. Wer schwammig formuliert — "mach die Tabelle mal automatisch schöner" — bekommt schwammige, oft unbrauchbare Ergebnisse. Wer dagegen so präzise beschreibt, wie er es einem neuen, sehr gründlichen Auszubildenden erklären würde, bekommt verblüffend gute Resultate. Diese Fähigkeit zur präzisen Beschreibung ist erlernbar, und genau darauf ist jedes Kapitel dieses Buches ausgerichtet.</p>
+<p>Das klingt zunächst simpel, ist aber die eigentliche Kernkompetenz dieses Buches. Wer schwammig formuliert — „mach die Tabelle mal automatisch schöner“ — bekommt schwammige, oft unbrauchbare Ergebnisse. Wer dagegen so präzise beschreibt, wie er es einem neuen, sehr gründlichen Auszubildenden erklären würde, bekommt verblüffend gute Resultate. Diese Fähigkeit zur präzisen Beschreibung ist erlernbar, und genau darauf ist jedes Kapitel dieses Buches ausgerichtet.</p>
 <h3>Ihr erster Selbstversuch</h3>
 <p>Nehmen Sie sich zehn Minuten Zeit für folgendes Experiment. Öffnen Sie ein beliebiges, für Ihre Dienststelle freigegebenes KI-Chatprogramm und beschreiben Sie eine kleine, wiederkehrende Aufgabe aus Ihrem Alltag — zum Beispiel das Formatieren einer Spalte mit Datumsangaben in ein einheitliches Format. Lassen Sie sich zunächst nur die Formel oder den Code-Vorschlag geben, ohne echte Daten zu nennen. Kopieren Sie das Ergebnis in eine leere Testmappe, prüfen Sie es an drei bis vier Beispielzeilen und beobachten Sie genau, ob es das tut, was Sie sich vorgestellt haben.</p>
-<p>Meistens wird der erste Versuch nicht perfekt sein — und das ist völlig normal. Der eigentliche Trick besteht darin, dem Ergebnis eine konkrete Rückmeldung zu geben: "Das funktioniert fast, aber bei leeren Zellen kommt ein Fehler. Bitte ergänze eine Prüfung, die leere Zellen einfach überspringt." Diese Dialogschleife aus Beschreiben, Testen und Nachbessern ist der eigentliche Arbeitsmodus von Vibe Coding, und Sie werden sie in jedem der folgenden Kapitel wiederfinden.</p>
-<div class="info-box dvag-box"><strong>Prompt-Vorlage:</strong> <code>Ich arbeite in der Sachbearbeitung und bin kein Programmierer. Erkläre mir in einfachen Worten, in maximal fünf Sätzen, was eine Excel-Formel mit SVERWEIS oder INDEX/VERGLEICH macht, und gib danach ein einfaches Beispiel mit Platzhalter-Daten.</code></div>
-<h3>Drei Grundregeln für den Einstieg</h3>
+<p>Meistens wird der erste Versuch nicht perfekt sein — und das ist völlig normal. Der eigentliche Trick besteht darin, dem Ergebnis eine konkrete Rückmeldung zu geben: „Das funktioniert fast, aber bei leeren Zellen kommt ein Fehler. Bitte ergänze eine Prüfung, die leere Zellen einfach überspringt.“ Diese Dialogschleife aus Beschreiben, Testen und Nachbessern ist der eigentliche Arbeitsmodus von Vibe Coding, und Sie werden sie in jedem der folgenden Kapitel wiederfinden.</p>
+<div class="prompt"><div class="ph"><span>Prompt-Vorlage</span><button type="button" class="copy" aria-label="Prompt-Vorlage kopieren">Kopieren</button></div><div class="pc"><code>Ich arbeite in der Sachbearbeitung und bin kein Programmierer. Erkläre mir in einfachen Worten, in maximal fünf Sätzen, was eine Excel-Formel mit SVERWEIS oder INDEX/VERGLEICH macht, und gib danach ein einfaches Beispiel mit Platzhalter-Daten.</code></div></div>
+<h3>Vier Grundregeln für den Einstieg</h3>
 <p>Bevor Sie in die einzelnen Werkzeuge und Anwendungsfälle der folgenden Kapitel eintauchen, lohnt sich ein kurzer Blick auf die Spielregeln, die für jedes einzelne Projekt gelten — unabhängig davon, ob Sie ein Makro, eine Formel oder ein kleines Web-Tool bauen.</p>
-<div class="info-box expert-box">
-<ul>
-<li>Testen Sie jedes von der KI erzeugte Ergebnis zunächst an einer Kopie der echten Datei, nie am Original oder an produktiven Daten.</li>
+<aside class="box tip" role="note"><strong class="bt">Merkliste</strong><ul><li>Testen Sie jedes von der KI erzeugte Ergebnis zunächst an einer Kopie der echten Datei, nie am Original oder an produktiven Daten.</li>
 <li>Zerlegen Sie größere Aufgaben in kleine, einzeln überprüfbare Schritte statt eine komplette Lösung auf einmal zu verlangen.</li>
 <li>Akzeptieren Sie kein Ergebnis, das Sie nicht in eigenen Worten erklären könnten — lassen Sie sich unklare Stellen von der KI erläutern.</li>
-<li>Geben Sie niemals ungeprüft echte personenbezogene Daten oder Aktenzeichen in einen Prompt ein (mehr dazu in Kapitel 4).</li>
-</ul>
-</div>
+<li>Geben Sie niemals ungeprüft echte personenbezogene Daten oder Aktenzeichen in einen Prompt ein (mehr dazu in Kapitel 4).</li></ul></aside>
 <p>Mit diesen vier Grundsätzen im Hinterkopf sind Sie bereits besser vorbereitet als die meisten Menschen, die zum ersten Mal mit KI-gestützter Automatisierung experimentieren. Die restlichen Kapitel bauen systematisch darauf auf: vom richtigen Werkzeug über den sicheren Umgang mit Daten bis hin zu konkreten Bausteinen für Makros, Formeln, E-Mail-Automatisierung, kleine Web-Tools und die Frage, wie Sie das alles im Team am Leben halten.</p>
+  <div class="jetzt"><strong class="jt">Jetzt du</strong><p>Wählen Sie eine kleine, wiederkehrende Aufgabe aus Ihrem Alltag. Formulieren Sie in drei Sätzen: Ausgangslage, gewünschtes Ergebnis und woran Sie erkennen, dass das Ergebnis stimmt.</p>
+    <label class="nl" for="note-k1">Ihre Notizen (Stichworte: Aufgabe, Ausgangslage, Ergebnis, Prüfkriterium)</label>
+    <textarea id="note-k1" data-note="k1" rows="3" placeholder="Nur in Ihrem Browser gespeichert. Keine echten personenbezogenen Daten eintragen."></textarea>
+  </div>
+  <div class="gel"><button type="button" class="readbtn" data-read="k1" aria-pressed="false">Als gelesen markieren</button></div>
+  <nav class="pn" aria-label="Kapitelnavigation"><span></span><a class="nx" href="#k2">Kapitel 2 &rarr;</a></nav>
+</section>
 
-<h2>Kapitel 2: Was ist „Vibe Coding"? — Software erschaffen durch natürliche Sprache</h2>
-<p>Vibe Coding beschreibt den Prozess, Software-Ergebnisse durch iteratives, natürlichsprachliches Beschreiben zu erzeugen, statt Syntax von Hand zu schreiben. Sie beschreiben das gewünschte Verhalten, die KI liefert einen Vorschlag, Sie testen ihn an einem echten Beispiel und verfeinern die Beschreibung, bis das Ergebnis passt. Der entscheidende Unterschied zum klassischen Programmieren: Der Denkprozess verlagert sich vom "Wie schreibe ich das?" zum "Was genau will ich eigentlich, und wie erkenne ich, ob es richtig funktioniert?"</p>
+<section class="kap" id="k2" data-kid="k2" aria-labelledby="h-k2">
+  <p class="knr">Kapitel 2 von 14 &middot; ca. 2 Min. Lesezeit</p>
+  <h2 id="h-k2">Was ist „Vibe Coding“? — Software erschaffen durch natürliche Sprache</h2>
+  <p>Vibe Coding beschreibt den Prozess, Software-Ergebnisse durch iteratives, natürlichsprachliches Beschreiben zu erzeugen, statt Syntax von Hand zu schreiben. Sie beschreiben das gewünschte Verhalten, die KI liefert einen Vorschlag, Sie testen ihn an einem echten Beispiel und verfeinern die Beschreibung, bis das Ergebnis passt. Der entscheidende Unterschied zum klassischen Programmieren: Der Denkprozess verlagert sich vom „Wie schreibe ich das?“ zum „Was genau will ich eigentlich, und wie erkenne ich, ob es richtig funktioniert?“</p>
 <h3>Der Begriff und seine Herkunft</h3>
-<p>Der Ausdruck stammt ursprünglich aus der Softwareentwicklung, wo erfahrene Programmierer damit beschreiben, wie sie sich beim Formulieren einer Aufgabe an eine KI stärker auf das "Gefühl" für das gewünschte Ergebnis verlassen als auf die exakte technische Umsetzung. Für Verwaltungsangestellte ist diese Denkweise sogar noch zugänglicher, weil sie ohnehin täglich in Prozessen, Formularen und Fristen denken — also in Abläufen, nicht in Programmcode. Sie müssen dieses Vorwissen nur in klare, nachvollziehbare Sätze übersetzen.</p>
+<p>Der Ausdruck stammt ursprünglich aus der Softwareentwicklung, wo erfahrene Programmierer damit beschreiben, wie sie sich beim Formulieren einer Aufgabe an eine KI stärker auf das „Gefühl“ für das gewünschte Ergebnis verlassen als auf die exakte technische Umsetzung. Für Verwaltungsangestellte ist diese Denkweise sogar noch zugänglicher, weil sie ohnehin täglich in Prozessen, Formularen und Fristen denken — also in Abläufen, nicht in Programmcode. Sie müssen dieses Vorwissen nur in klare, nachvollziehbare Sätze übersetzen.</p>
 <h3>Der typische Ablauf einer Vibe-Coding-Sitzung</h3>
 <p>Ein typischer Durchlauf gliedert sich in vier wiederkehrende Phasen: Erstens die Beschreibung der Ausgangslage — welche Daten, welches Format, welches System. Zweitens die Beschreibung des gewünschten Ergebnisses — möglichst konkret, am besten mit einem Beispiel. Drittens das Testen des Vorschlags an echten, aber nicht sensiblen Beispieldaten. Viertens das gezielte Nachbessern einzelner Schwachstellen, statt die gesamte Anfrage neu zu formulieren. Diese vier Phasen wiederholen sich so oft, bis das Ergebnis zuverlässig funktioniert.</p>
-<div class="info-box dvag-box"><strong>Prompt-Vorlage:</strong> <code>Ich beschreibe dir jetzt eine Büroaufgabe in eigenen Worten, du übersetzt sie in einen konkreten technischen Vorschlag (Excel-Formel, VBA-Makro oder kleines Skript – schlage die passende Lösung selbst vor). Aufgabe: Ich erhalte wöchentlich eine Liste mit Kundenanfragen und möchte automatisch markieren, welche davon älter als 5 Werktage sind und noch nicht bearbeitet wurden (Spalte "Status" ist leer).</code></div>
+<div class="prompt"><div class="ph"><span>Prompt-Vorlage</span><button type="button" class="copy" aria-label="Prompt-Vorlage kopieren">Kopieren</button></div><div class="pc"><code>Ich beschreibe dir jetzt eine Büroaufgabe in eigenen Worten, du übersetzt sie in einen konkreten technischen Vorschlag (Excel-Formel, VBA-Makro oder kleines Skript – schlage die passende Lösung selbst vor). Aufgabe: Ich erhalte wöchentlich eine Liste mit Kundenanfragen und möchte automatisch markieren, welche davon älter als 5 Werktage sind und noch nicht bearbeitet wurden (Spalte "Status" ist leer).</code></div></div>
 <h3>Warum sich das für Nicht-Programmierer besonders eignet</h3>
 <p>Klassische Programmierausbildung investiert viel Zeit in Syntaxregeln, Compiler-Fehlermeldungen und Werkzeugketten. Vibe Coding überspringt einen Großteil davon, weil die KI diese Ebene übernimmt. Was übrig bleibt, ist genau die Fähigkeit, die erfahrene Sachbearbeiterinnen und Sachbearbeiter ohnehin mitbringen: ein Prozess in seine Einzelschritte zerlegen, Ausnahmefälle erkennen und beurteilen, ob ein Ergebnis fachlich plausibel ist. Diese Fachkenntnis ist in der Praxis oft wertvoller als reines Syntaxwissen, weil sie darüber entscheidet, ob eine Automatisierung tatsächlich zum echten Arbeitsablauf passt oder nur oberflächlich funktioniert.</p>
 <h3>Die Grenzen des Ansatzes ehrlich benennen</h3>
 <p>Vibe Coding ersetzt nicht das Verständnis für die eigene Fachaufgabe, und es ersetzt auch nicht die Sorgfaltspflicht bei sensiblen Daten oder rechtlich bindenden Prozessen. Es ist außerdem kein Freifahrtschein, jedes Ergebnis blind zu übernehmen: Eine KI kann plausibel klingende, aber inhaltlich falsche Vorschläge liefern, gerade bei komplexeren Formeln oder rechtlichen Fristberechnungen. Die gesunde Grundhaltung lautet daher: Vertrauen Sie der KI beim Formulieren der Lösung, aber behalten Sie selbst die Kontrolle über die fachliche Prüfung des Ergebnisses. Genau dieses Wechselspiel aus Delegieren und Prüfen macht den professionellen Umgang mit Vibe Coding aus und wird Sie durch alle weiteren Kapitel begleiten.</p>
+  <div class="jetzt"><strong class="jt">Jetzt du</strong><p>Schreiben Sie die vier Phasen einer Vibe-Coding-Sitzung für Ihre Aufgabe aus Kapitel 1 auf, je einen Satz: Ausgangslage, gewünschtes Ergebnis, Test mit Beispieldaten, gezieltes Nachbessern.</p>
+    <label class="nl" for="note-k2">Ihre Notizen (Stichworte: Vier Sätze, einer je Phase)</label>
+    <textarea id="note-k2" data-note="k2" rows="3" placeholder="Nur in Ihrem Browser gespeichert. Keine echten personenbezogenen Daten eintragen."></textarea>
+  </div>
+  <div class="gel"><button type="button" class="readbtn" data-read="k2" aria-pressed="false">Als gelesen markieren</button></div>
+  <nav class="pn" aria-label="Kapitelnavigation"><a class="pv" href="#k1">&larr; Kapitel 1</a><a class="nx" href="#k3">Kapitel 3 &rarr;</a></nav>
+</section>
 
-<h2>Kapitel 3: Das richtige KI-Werkzeug wählen</h2>
-<p>Für den Büroalltag zählt weniger, welches Modell theoretisch am leistungsfähigsten ist, sondern welches sich rechtssicher in die eigene IT-Landschaft einbinden lässt. Enterprise-Varianten mit vertraglich zugesichertem Trainingsausschluss sind für dienstliche Daten Pflicht, kostenlose Consumer-Versionen sind es nicht. Für kurze, ungefährliche Formel- oder Struktur-Fragen ohne Bezug zu echten Daten reicht oft auch ein einfacher Chat-Zugang.</p>
+<section class="kap" id="k3" data-kid="k3" aria-labelledby="h-k3">
+  <p class="knr">Kapitel 3 von 14 &middot; ca. 2 Min. Lesezeit</p>
+  <h2 id="h-k3">Das richtige KI-Werkzeug wählen</h2>
+  <p>Für den Büroalltag zählt weniger, welches Modell theoretisch am leistungsfähigsten ist, sondern welches sich rechtssicher in die eigene IT-Landschaft einbinden lässt. Enterprise-Varianten mit vertraglich zugesichertem Trainingsausschluss sind für dienstliche Daten Pflicht, kostenlose Consumer-Versionen sind es nicht. Für kurze, ungefährliche Formel- oder Struktur-Fragen ohne Bezug zu echten Daten reicht oft auch ein einfacher Chat-Zugang.</p>
 <h3>Drei Kategorien von Werkzeugen</h3>
 <p>In der Praxis lassen sich die verfügbaren Werkzeuge grob in drei Kategorien einteilen. Erstens allgemeine Chat-Assistenten, die Sie über einen Browser oder eine App ansprechen und die sich gut für Formeln, kurze Skripte und Erklärungen eignen. Zweitens direkt in Office-Programme integrierte Assistenten, die den Vorteil haben, unmittelbar auf die geöffnete Tabelle oder das Dokument zugreifen zu können, ohne dass Sie Inhalte manuell kopieren müssen. Drittens spezialisierte Entwicklungsumgebungen, die für den Aufbau umfangreicherer Werkzeuge wie kleiner Web-Anwendungen gedacht sind und in diesem Buch vor allem in Kapitel 8 eine Rolle spielen.</p>
 <h3>Worauf Sie bei der Auswahl wirklich achten sollten</h3>
 <p>Fragen Sie in Ihrer Organisation aktiv nach, welche KI-Werkzeuge für dienstliche Zwecke freigegeben sind, bevor Sie mit echten Arbeitsinhalten experimentieren. Eine Freigabe bedeutet in der Regel, dass ein Auftragsverarbeitungsvertrag besteht, Eingaben nicht zu Trainingszwecken verwendet werden und die Datenverarbeitung innerhalb eines definierten rechtlichen Rahmens stattfindet. Klären Sie außerdem, ob es Vorgaben zur Protokollierung, zu erlaubten Datenkategorien oder zu bestimmten Freigabeprozessen für selbstgebaute Tools gibt — diese Informationen bekommen Sie meist von der IT-Abteilung oder dem Datenschutzbeauftragten.</p>
-<div class="info-box dvag-box"><strong>Prompt-Vorlage:</strong> <code>Ich möchte ein KI-Werkzeug für dienstliche Excel- und Textaufgaben in der Verwaltung nutzen. Erstelle mir eine kurze, verständliche Checkliste mit Fragen, die ich vor der Nutzung an meine IT-Abteilung oder meinen Datenschutzbeauftragten stellen sollte (z. B. zu Datenverarbeitung, Protokollierung, Freigabe).</code></div>
+<div class="prompt"><div class="ph"><span>Prompt-Vorlage</span><button type="button" class="copy" aria-label="Prompt-Vorlage kopieren">Kopieren</button></div><div class="pc"><code>Ich möchte ein KI-Werkzeug für dienstliche Excel- und Textaufgaben in der Verwaltung nutzen. Erstelle mir eine kurze, verständliche Checkliste mit Fragen, die ich vor der Nutzung an meine IT-Abteilung oder meinen Datenschutzbeauftragten stellen sollte (z. B. zu Datenverarbeitung, Protokollierung, Freigabe).</code></div></div>
 <h3>Kostenlos versus kostenpflichtig — eine praktische Einordnung</h3>
 <p>Kostenlose Zugänge sind für das Erlernen von Grundprinzipien, für allgemeine Formelfragen oder für Experimente mit frei erfundenen Beispieldaten meist ausreichend. Sobald Sie jedoch mit tatsächlichen Arbeitsinhalten arbeiten wollen — selbst wenn diese anonymisiert erscheinen — braucht es in aller Regel eine dienstlich freigegebene, kostenpflichtige oder speziell lizenzierte Variante. Der Unterschied liegt selten in der reinen Antwortqualität, sondern fast immer im rechtlichen Rahmen der Datenverarbeitung. Betrachten Sie eine dienstliche Lizenz daher nicht als Luxus, sondern als notwendige Voraussetzung, sobald reale Arbeitsprozesse betroffen sind.</p>
-<div class="info-box warning-box">Nutzen Sie niemals einen privaten, nicht freigegebenen KI-Zugang für dienstliche Inhalte, auch nicht "nur zum Testen". Selbst scheinbar harmlose Formulierungen können Rückschlüsse auf interne Abläufe, Kundenstrukturen oder schutzwürdige Informationen zulassen.</div>
+<aside class="box warn" role="note"><strong class="bt">Achtung</strong><p>Nutzen Sie niemals einen privaten, nicht freigegebenen KI-Zugang für dienstliche Inhalte, auch nicht „nur zum Testen“. Selbst scheinbar harmlose Formulierungen können Rückschlüsse auf interne Abläufe, Kundenstrukturen oder schutzwürdige Informationen zulassen.</p></aside>
 <h3>Ein pragmatischer Einstieg</h3>
 <p>Beginnen Sie im Zweifel klein: Klären Sie zunächst die Freigabesituation in Ihrem Haus, testen Sie das freigegebene Werkzeug anhand harmloser, frei erfundener Beispiele aus diesem Buch, und wagen Sie sich erst danach schrittweise an echte, aber anonymisierte Arbeitsszenarien heran. Diese Reihenfolge schützt Sie vor unangenehmen Überraschungen und schafft gleichzeitig die Grundlage, auf der die folgenden Kapitel aufbauen.</p>
+  <div class="jetzt"><strong class="jt">Jetzt du</strong><p>Notieren Sie, welche KI-Werkzeuge in Ihrer Organisation für dienstliche Zwecke freigegeben sind, oder wen Sie danach fragen. Formulieren Sie drei Fragen an die IT-Abteilung oder den Datenschutzbeauftragten (Prompt-Vorlage oben als Hilfe).</p>
+    <label class="nl" for="note-k3">Ihre Notizen (Stichworte: Freigegebene Werkzeuge, Ansprechperson, drei Fragen)</label>
+    <textarea id="note-k3" data-note="k3" rows="3" placeholder="Nur in Ihrem Browser gespeichert. Keine echten personenbezogenen Daten eintragen."></textarea>
+  </div>
+  <div class="gel"><button type="button" class="readbtn" data-read="k3" aria-pressed="false">Als gelesen markieren</button></div>
+  <nav class="pn" aria-label="Kapitelnavigation"><a class="pv" href="#k2">&larr; Kapitel 2</a><a class="nx" href="#k4">Kapitel 4 &rarr;</a></nav>
+</section>
 
-<h2>Kapitel 4: Datensicherheit und DSGVO im Verwaltungsalltag</h2>
-<p>Die wichtigste Regel des gesamten Buches: Niemals echte personenbezogene Daten, Aktenzeichen oder interne Vorgangsnummern in einen KI-Prompt eingeben, sofern die eingesetzte KI-Lösung nicht ausdrücklich für den dienstlichen Einsatz mit entsprechendem Auftragsverarbeitungsvertrag freigegeben ist. Arbeiten Sie stattdessen mit anonymisierten Platzhaltern ("Mitarbeiter A", "Betrag X") — die KI braucht die Struktur des Problems, nicht die echten Daten, um Ihnen zu helfen.</p>
+<section class="kap" id="k4" data-kid="k4" aria-labelledby="h-k4">
+  <p class="knr">Kapitel 4 von 14 &middot; ca. 2 Min. Lesezeit</p>
+  <h2 id="h-k4">Datensicherheit und DSGVO im Verwaltungsalltag</h2>
+  <p>Die wichtigste Regel des gesamten Buches: Niemals echte personenbezogene Daten, Aktenzeichen oder interne Vorgangsnummern in einen KI-Prompt eingeben, sofern die eingesetzte KI-Lösung nicht ausdrücklich für den dienstlichen Einsatz mit entsprechendem Auftragsverarbeitungsvertrag freigegeben ist. Arbeiten Sie stattdessen mit anonymisierten Platzhaltern („Mitarbeiter A“, „Betrag X“) — die KI braucht die Struktur des Problems, nicht die echten Daten, um Ihnen zu helfen.</p>
 <h3>Warum Struktur oft ausreicht</h3>
-<p>Ein weit verbreitetes Missverständnis lautet, eine KI könne einer Aufgabe nur dann wirklich helfen, wenn sie die echten Daten "sieht". Für die allermeisten Verwaltungsaufgaben stimmt das nicht. Eine Formel, ein Makro oder ein Skript orientiert sich an der Struktur der Daten — Spaltenüberschriften, Datentypen, Größenordnungen, wiederkehrende Muster — nicht am konkreten Inhalt einer einzelnen Zeile. Ersetzen Sie in Ihren Beispielen daher konsequent Namen durch "Person A", "Person B", Beträge durch runde Platzhalterzahlen und Aktenzeichen durch ein frei erfundenes, aber strukturell ähnliches Muster.</p>
+<p>Ein weit verbreitetes Missverständnis lautet, eine KI könne einer Aufgabe nur dann wirklich helfen, wenn sie die echten Daten „sieht“. Für die allermeisten Verwaltungsaufgaben stimmt das nicht. Eine Formel, ein Makro oder ein Skript orientiert sich an der Struktur der Daten — Spaltenüberschriften, Datentypen, Größenordnungen, wiederkehrende Muster — nicht am konkreten Inhalt einer einzelnen Zeile. Ersetzen Sie in Ihren Beispielen daher konsequent Namen durch „Person A“, „Person B“, Beträge durch runde Platzhalterzahlen und Aktenzeichen durch ein frei erfundenes, aber strukturell ähnliches Muster.</p>
 <h3>Eine einfache Drei-Schritte-Prüfung vor jedem Prompt</h3>
-<p>Bevor Sie eine Anfrage absenden, lohnt sich ein kurzer gedanklicher Check: Enthält der Text echte Namen, Adressen oder Kontaktdaten? Enthält er ein echtes Aktenzeichen, eine echte Kundennummer oder eine eindeutig zuordenbare Kombination aus mehreren Merkmalen? Würde ich diesen Text auch einem außenstehenden Dritten am Telefon vorlesen? Wenn eine dieser Fragen mit "Nein, das wäre mir unangenehm" beantwortet wird, muss der Text vor dem Absenden weiter anonymisiert werden.</p>
-<div class="info-box dvag-box"><strong>Prompt-Vorlage:</strong> <code>Ich möchte dir eine Beispieltabelle mit meiner Datenstruktur beschreiben, ohne echte Daten zu nennen. Spalten: Vorgangsnummer (Platzhalter "V-0001"), Bearbeiter (Platzhalter "Person A"), Eingangsdatum, Status (offen/in Bearbeitung/erledigt), Frist (Datum). Erstelle mir eine Beispieltabelle mit fünf frei erfundenen Zeilen mit genau dieser Struktur, damit ich sie zum Testen einer Formel verwenden kann.</code></div>
+<p>Bevor Sie eine Anfrage absenden, lohnt sich ein kurzer gedanklicher Check: Enthält der Text echte Namen, Adressen oder Kontaktdaten? Enthält er ein echtes Aktenzeichen, eine echte Kundennummer oder eine eindeutig zuordenbare Kombination aus mehreren Merkmalen? Würde ich diesen Text auch einem außenstehenden Dritten am Telefon vorlesen? Wenn eine dieser Fragen mit „Nein, das wäre mir unangenehm“ beantwortet wird, muss der Text vor dem Absenden weiter anonymisiert werden.</p>
+<div class="prompt"><div class="ph"><span>Prompt-Vorlage</span><button type="button" class="copy" aria-label="Prompt-Vorlage kopieren">Kopieren</button></div><div class="pc"><code>Ich möchte dir eine Beispieltabelle mit meiner Datenstruktur beschreiben, ohne echte Daten zu nennen. Spalten: Vorgangsnummer (Platzhalter "V-0001"), Bearbeiter (Platzhalter "Person A"), Eingangsdatum, Status (offen/in Bearbeitung/erledigt), Frist (Datum). Erstelle mir eine Beispieltabelle mit fünf frei erfundenen Zeilen mit genau dieser Struktur, damit ich sie zum Testen einer Formel verwenden kann.</code></div></div>
 <h3>Besondere Vorsicht bei Dokumenten und Anhängen</h3>
 <p>Noch riskanter als das Abtippen einzelner Werte ist das Hochladen ganzer Dokumente, PDF-Dateien oder Screenshots in ein KI-Werkzeug, weil dabei häufig mehr Informationen preisgegeben werden, als der eigentlichen Aufgabe dient — etwa Briefköpfe, vollständige Namenslisten oder Metadaten in der Datei selbst. Prüfen Sie vor jedem Upload, ob wirklich das gesamte Dokument nötig ist oder ob ein anonymisierter Auszug oder eine Beschreibung der Struktur genügt.</p>
-<div class="info-box warning-box">Auch scheinbar anonyme Kombinationen können re-identifizierbar sein: Eine seltene Kombination aus Position, Abteilung, Eintrittsdatum und Standort kann in einer kleinen Behörde bereits ausreichen, um eine Einzelperson eindeutig zu erkennen. Denken Sie bei der Anonymisierung nicht nur an einzelne Felder, sondern an die Kombination aller Angaben in einem Prompt.</div>
+<aside class="box warn" role="note"><strong class="bt">Achtung</strong><p>Auch scheinbar anonyme Kombinationen können re-identifizierbar sein: Eine seltene Kombination aus Position, Abteilung, Eintrittsdatum und Standort kann in einer kleinen Behörde bereits ausreichen, um eine Einzelperson eindeutig zu erkennen. Denken Sie bei der Anonymisierung nicht nur an einzelne Felder, sondern an die Kombination aller Angaben in einem Prompt.</p></aside>
 <h3>Wenn eine dienstliche Freigabe vorliegt</h3>
 <p>Liegt für Ihr Haus tatsächlich eine geprüfte, dienstlich freigegebene KI-Lösung mit entsprechendem vertraglichen Rahmen vor, ändern sich die Regeln nicht grundsätzlich, wohl aber der Spielraum: Dann dürfen unter Umständen auch reale, aber weiterhin sparsam ausgewählte Daten verarbeitet werden, sofern dies mit den internen Richtlinien, dem Need-to-know-Prinzip und etwaigen Betriebs- oder Personalvereinbarungen vereinbar ist. Klären Sie diesen Rahmen verbindlich mit Ihrem Datenschutzbeauftragten, bevor Sie ihn ausnutzen, und dokumentieren Sie, für welche Aufgaben und Datenkategorien die Freigabe konkret gilt. Im Zweifel gilt weiterhin: Je weniger echte Daten den Prompt erreichen, desto geringer das Risiko — unabhängig davon, wie vertrauenswürdig das eingesetzte Werkzeug erscheint.</p>
+  <div class="jetzt"><strong class="jt">Jetzt du</strong><p>Nehmen Sie einen Prompt-Entwurf für eine Ihrer Aufgaben und prüfen Sie ihn mit den drei Fragen aus diesem Kapitel. Ersetzen Sie alle echten Angaben durch Platzhalter und erstellen Sie eine Beispieltabelle mit fünf frei erfundenen Zeilen.</p>
+    <label class="nl" for="note-k4">Ihre Notizen (Stichworte: Anonymisierter Prompt, Beispieltabelle)</label>
+    <textarea id="note-k4" data-note="k4" rows="3" placeholder="Nur in Ihrem Browser gespeichert. Keine echten personenbezogenen Daten eintragen."></textarea>
+  </div>
+  <div class="gel"><button type="button" class="readbtn" data-read="k4" aria-pressed="false">Als gelesen markieren</button></div>
+  <nav class="pn" aria-label="Kapitelnavigation"><a class="pv" href="#k3">&larr; Kapitel 3</a><a class="nx" href="#k5">Kapitel 5 &rarr;</a></nav>
+</section>
 
-<h2>Kapitel 5: Schluss mit manuellem Copy-Paste — VBA-Makros per Sprachbefehl generieren</h2>
-<p>Die häufigste Zeitfalle im Büroalltag ist repetitives Kopieren zwischen Tabellenblättern. Beschreiben Sie der KI präzise die Ausgangslage (Spaltenstruktur, Kriterium) und das gewünschte Ergebnis — testen Sie den generierten Code zunächst immer an einer Kopie der echten Tabelle, nie am Original.</p>
+<section class="kap" id="k5" data-kid="k5" aria-labelledby="h-k5">
+  <p class="knr">Kapitel 5 von 14 &middot; ca. 2 Min. Lesezeit</p>
+  <h2 id="h-k5">Schluss mit manuellem Copy-Paste — VBA-Makros per Sprachbefehl generieren</h2>
+  <p>Die häufigste Zeitfalle im Büroalltag ist repetitives Kopieren zwischen Tabellenblättern. Beschreiben Sie der KI präzise die Ausgangslage (Spaltenstruktur, Kriterium) und das gewünschte Ergebnis — testen Sie den generierten Code zunächst immer an einer Kopie der echten Tabelle, nie am Original.</p>
 <h3>Der Aufbau eines guten Makro-Prompts</h3>
 <p>Ein Makro-Prompt, der zuverlässig funktioniert, enthält typischerweise fünf Bestandteile: den Namen oder Zweck des Tabellenblatts, die relevanten Spalten mit Buchstaben oder Überschriften, das genaue Kriterium für die Auswahl, die gewünschte Aktion (kopieren, verschieben, löschen, markieren) und den Zielort des Ergebnisses. Je konkreter diese fünf Punkte benannt sind, desto seltener muss nachgebessert werden. Fehlt zum Beispiel die Angabe, was mit der Kopfzeile passieren soll, entscheidet die KI das nach eigenem Ermessen — was selten dem entspricht, was Sie eigentlich wollten.</p>
 <h3>Schritt für Schritt zum ersten eigenen Makro</h3>
 <p>Öffnen Sie zunächst eine Kopie Ihrer Arbeitsmappe, niemals das Original. Aktivieren Sie über die Entwicklertools den Visual-Basic-Editor und legen Sie ein neues Modul an. Lassen Sie sich von der KI den Code erzeugen, fügen Sie ihn in das leere Modul ein und führen Sie ihn zunächst auf wenigen Testzeilen mit frei erfundenen Beispieldaten aus. Beobachten Sie das Ergebnis genau: Wurden wirklich nur die richtigen Zeilen verschoben? Ist die Formatierung erhalten geblieben? Wurde die Kopfzeile korrekt behandelt? Erst wenn all das stimmt, übertragen Sie das Vorgehen schrittweise auf die vollständige, echte Datei.</p>
-<div class="info-box dvag-box"><strong>Prompt-Vorlage:</strong> <code>Erstelle ein VBA-Makro für Excel mit folgenden Anforderungen: Tabellenblatt "Eingang" hat in Spalte A eine Vorgangsnummer, in Spalte D ein Datum und in Spalte F den Status. Wenn der Status "abgeschlossen" ist und das Datum älter als 30 Tage ist, soll die komplette Zeile in das Tabellenblatt "Archiv" verschoben und aus "Eingang" gelöscht werden. Die Kopfzeile in Zeile 1 soll dabei nicht angefasst werden. Kommentiere den Code kurz auf Deutsch, damit ich ihn nachvollziehen kann.</code></div>
+<div class="prompt"><div class="ph"><span>Prompt-Vorlage</span><button type="button" class="copy" aria-label="Prompt-Vorlage kopieren">Kopieren</button></div><div class="pc"><code>Erstelle ein VBA-Makro für Excel mit folgenden Anforderungen: Tabellenblatt "Eingang" hat in Spalte A eine Vorgangsnummer, in Spalte D ein Datum und in Spalte F den Status. Wenn der Status "abgeschlossen" ist und das Datum älter als 30 Tage ist, soll die komplette Zeile in das Tabellenblatt "Archiv" verschoben und aus "Eingang" gelöscht werden. Die Kopfzeile in Zeile 1 soll dabei nicht angefasst werden. Kommentiere den Code kurz auf Deutsch, damit ich ihn nachvollziehen kann.</code></div></div>
 <h3>Typische Stolperfallen bei Makros</h3>
-<p>Ein häufiger Fehler besteht darin, ein Makro zu bauen, das beim erneuten Ausführen Zeilen doppelt verarbeitet, weil die Schleife nicht berücksichtigt, dass sich Zeilennummern beim Löschen verschieben. Bitten Sie die KI explizit, das Makro "von unten nach oben" durch die Tabelle laufen zu lassen, wenn gleichzeitig Zeilen gelöscht werden — das ist eine bewährte VBA-Technik gegen genau dieses Problem. Ein zweiter klassischer Fehler ist das versehentliche Überschreiben von Formeln durch feste Werte; lassen Sie sich im Zweifel erklären, ob der generierte Code Formeln oder nur Werte kopiert.</p>
+<p>Ein häufiger Fehler besteht darin, ein Makro zu bauen, das beim erneuten Ausführen Zeilen doppelt verarbeitet, weil die Schleife nicht berücksichtigt, dass sich Zeilennummern beim Löschen verschieben. Bitten Sie die KI explizit, das Makro „von unten nach oben“ durch die Tabelle laufen zu lassen, wenn gleichzeitig Zeilen gelöscht werden — das ist eine bewährte VBA-Technik gegen genau dieses Problem. Ein zweiter klassischer Fehler ist das versehentliche Überschreiben von Formeln durch feste Werte; lassen Sie sich im Zweifel erklären, ob der generierte Code Formeln oder nur Werte kopiert.</p>
 <h3>Makros absichern und wiederverwendbar machen</h3>
 <p>Sobald ein Makro zuverlässig läuft, lohnt es sich, es über eine Schaltfläche in der Tabelle aufrufbar zu machen, statt es jedes Mal über den Entwicklermodus zu starten. Lassen Sie sich zusätzlich eine kurze Sicherheitsabfrage einbauen, die vor dem eigentlichen Lauf anzeigt, wie viele Zeilen betroffen sein werden — so erkennen Sie sofort, wenn ein Kriterium versehentlich zu breit oder zu eng gefasst ist, bevor Schaden entsteht.</p>
+  <div class="jetzt"><strong class="jt">Jetzt du</strong><p>Schreiben Sie einen Makro-Prompt für eine Ihrer Aufgaben und kennzeichnen Sie darin die fünf Bestandteile: Tabellenblatt, Spalten, Kriterium, Aktion, Zielort. Fehlt einer, ergänzen Sie ihn.</p>
+    <label class="nl" for="note-k5">Ihre Notizen (Stichworte: Makro-Prompt mit fünf markierten Bestandteilen)</label>
+    <textarea id="note-k5" data-note="k5" rows="3" placeholder="Nur in Ihrem Browser gespeichert. Keine echten personenbezogenen Daten eintragen."></textarea>
+  </div>
+  <div class="gel"><button type="button" class="readbtn" data-read="k5" aria-pressed="false">Als gelesen markieren</button></div>
+  <nav class="pn" aria-label="Kapitelnavigation"><a class="pv" href="#k4">&larr; Kapitel 4</a><a class="nx" href="#k6">Kapitel 6 &rarr;</a></nav>
+</section>
 
-<h2>Kapitel 6: Komplexe Formeln, Wenn-Dann-Wüsten und Power Query per Prompt bändigen</h2>
-<p>Verschachtelte WENN-Formeln mit sieben Ebenen sind ein klassisches Wartungsrisiko — niemand außer dem ursprünglichen Autor versteht sie später noch. Lassen Sie die KI solche Formeln nicht nur erzeugen, sondern auch in Klartext erklären, damit Sie und Ihre Kollegen sie auch in einem Jahr noch nachvollziehen können.</p>
+<section class="kap" id="k6" data-kid="k6" aria-labelledby="h-k6">
+  <p class="knr">Kapitel 6 von 14 &middot; ca. 2 Min. Lesezeit</p>
+  <h2 id="h-k6">Komplexe Formeln, Wenn-Dann-Wüsten und Power Query per Prompt bändigen</h2>
+  <p>Verschachtelte WENN-Formeln mit sieben Ebenen sind ein klassisches Wartungsrisiko — niemand außer dem ursprünglichen Autor versteht sie später noch. Lassen Sie die KI solche Formeln nicht nur erzeugen, sondern auch in Klartext erklären, damit Sie und Ihre Kollegen sie auch in einem Jahr noch nachvollziehen können.</p>
 <h3>Von der Wenn-Dann-Wüste zur lesbaren Lösung</h3>
 <p>Viele über Jahre gewachsene Excel-Tabellen enthalten Formeln, die aus zahlreichen ineinander verschachtelten WENN-Funktionen bestehen, weil im Laufe der Zeit immer neue Sonderfälle ergänzt wurden. Solche Formeln lassen sich häufig durch modernere, deutlich lesbarere Alternativen ersetzen, etwa durch die WENNS-Funktion für mehrere aufeinanderfolgende Bedingungen oder durch eine kleine Referenztabelle in Kombination mit SVERWEIS oder INDEX/VERGLEICH. Beschreiben Sie der KI die bestehende Formel und bitten Sie ausdrücklich um eine übersichtlichere Alternative mit gleichem Ergebnis, nicht nur um eine Reparatur der bestehenden Struktur.</p>
 <h3>Formeln verstehen statt nur kopieren</h3>
 <p>Der größte Mehrwert entsteht nicht durch das bloße Einfügen einer fertigen Formel, sondern durch das Verständnis, warum sie funktioniert. Bitten Sie deshalb grundsätzlich um eine Erklärung Schritt für Schritt: Welcher Teil der Formel prüft welche Bedingung, was passiert bei einer leeren Zelle, was passiert bei einem Tippfehler in der Bezugsspalte. Dieses Verständnis zahlt sich spätestens dann aus, wenn sich eine Rahmenbedingung ändert und die Formel angepasst werden muss, ohne dass die ursprüngliche Person noch verfügbar ist.</p>
-<div class="info-box dvag-box"><strong>Prompt-Vorlage:</strong> <code>Hier ist eine verschachtelte WENN-Formel aus unserer Bearbeitungstabelle: [Formel einfügen]. Erkläre mir erstens in einfachen Worten, was jeder Teil der Formel macht. Zweitens: Schlage eine übersichtlichere, leichter wartbare Alternative vor, die zum gleichen Ergebnis kommt, zum Beispiel mit WENNS oder einer kleinen Hilfstabelle.</code></div>
+<div class="prompt"><div class="ph"><span>Prompt-Vorlage</span><button type="button" class="copy" aria-label="Prompt-Vorlage kopieren">Kopieren</button></div><div class="pc"><code>Hier ist eine verschachtelte WENN-Formel aus unserer Bearbeitungstabelle: [Formel einfügen]. Erkläre mir erstens in einfachen Worten, was jeder Teil der Formel macht. Zweitens: Schlage eine übersichtlichere, leichter wartbare Alternative vor, die zum gleichen Ergebnis kommt, zum Beispiel mit WENNS oder einer kleinen Hilfstabelle.</code></div></div>
 <h3>Power Query als stiller Helfer im Hintergrund</h3>
 <p>Power Query ist in modernen Excel-Versionen bereits enthalten und eignet sich besonders gut, um wiederkehrende Aufbereitungsschritte — Spalten umbenennen, Datentypen anpassen, mehrere Tabellen zusammenführen, Duplikate entfernen — einmalig festzulegen und danach per Knopfdruck erneut auf aktualisierte Rohdaten anzuwenden. Der Umgang mit der zugrundeliegenden Abfragesprache M schreckt viele Sachbearbeiter ab, dabei lässt sich der gesamte Ablauf oft in natürlicher Sprache beschreiben und von der KI in eine funktionierende Abfrage übersetzen, die Sie anschließend über die Benutzeroberfläche von Power Query nachvollziehen und leicht anpassen können.</p>
-<div class="info-box dvag-box"><strong>Prompt-Vorlage:</strong> <code>Ich nutze Power Query in Excel. Ich habe zwei Tabellen: "Bestand" mit den Spalten Kundennummer, Name, Region und "Umsatz" mit den Spalten Kundennummer, Monat, Betrag. Beschreibe mir Schritt für Schritt, wie ich in Power Query beide Tabellen über die Kundennummer zusammenführe und danach die Summe pro Region und Monat berechne. Schlage die passenden Power-Query-Schritte in verständlicher Reihenfolge vor.</code></div>
+<div class="prompt"><div class="ph"><span>Prompt-Vorlage</span><button type="button" class="copy" aria-label="Prompt-Vorlage kopieren">Kopieren</button></div><div class="pc"><code>Ich nutze Power Query in Excel. Ich habe zwei Tabellen: "Bestand" mit den Spalten Kundennummer, Name, Region und "Umsatz" mit den Spalten Kundennummer, Monat, Betrag. Beschreibe mir Schritt für Schritt, wie ich in Power Query beide Tabellen über die Kundennummer zusammenführe und danach die Summe pro Region und Monat berechne. Schlage die passenden Power-Query-Schritte in verständlicher Reihenfolge vor.</code></div></div>
 <h3>Wann eine Formel zu komplex wird</h3>
 <p>Eine gute Faustregel: Sobald eine Formel nicht mehr in einen einzigen Blick auf der Bearbeitungsleiste passt oder mehr als drei bis vier Verschachtelungsebenen enthält, lohnt sich die Frage, ob eine Hilfsspalte, eine kleine Referenztabelle oder ein Power-Query-Schritt die gleiche Aufgabe klarer lösen würde. Lassen Sie sich von der KI aktiv auf diese Möglichkeit hinweisen, statt immer nur die nächste Ebene an die bestehende Formel anzuhängen — langfristig sparen Sie damit erheblich mehr Zeit, als Sie beim erstmaligen Umbau investieren.</p>
+  <div class="jetzt"><strong class="jt">Jetzt du</strong><p>Nehmen Sie eine verschachtelte Formel aus Ihrer Arbeit (oder erfinden Sie eine) und notieren Sie in je einem Satz, was jeder Teil prüft. Lassen Sie danach die KI eine übersichtlichere Alternative vorschlagen und vergleichen Sie beide Ergebnisse an drei Testzeilen.</p>
+    <label class="nl" for="note-k6">Ihre Notizen (Stichworte: Erklärung je Formelteil, Vergleich an drei Testzeilen)</label>
+    <textarea id="note-k6" data-note="k6" rows="3" placeholder="Nur in Ihrem Browser gespeichert. Keine echten personenbezogenen Daten eintragen."></textarea>
+  </div>
+  <div class="gel"><button type="button" class="readbtn" data-read="k6" aria-pressed="false">Als gelesen markieren</button></div>
+  <nav class="pn" aria-label="Kapitelnavigation"><a class="pv" href="#k5">&larr; Kapitel 5</a><a class="nx" href="#k7">Kapitel 7 &rarr;</a></nav>
+</section>
 
-<h2>Kapitel 7: Outlook-Automatisierung: E-Mail-Verteiler und Serienmails fehlerfrei steuern</h2>
-<p>Automatisierte Verteiler bergen ein Risiko: der versehentliche Versand an den falschen Empfängerkreis. Lassen Sie sich von der KI generierte Makros immer zunächst mit einer Testadresse und einer kleinen Stichprobe laufen, bevor der volle Verteiler angeschrieben wird.</p>
+<section class="kap" id="k7" data-kid="k7" aria-labelledby="h-k7">
+  <p class="knr">Kapitel 7 von 14 &middot; ca. 2 Min. Lesezeit</p>
+  <h2 id="h-k7">Outlook-Automatisierung: E-Mail-Verteiler und Serienmails fehlerfrei steuern</h2>
+  <p>Automatisierte Verteiler bergen ein Risiko: der versehentliche Versand an den falschen Empfängerkreis. Lassen Sie sich von der KI generierte Makros immer zunächst mit einer Testadresse und einer kleinen Stichprobe laufen, bevor der volle Verteiler angeschrieben wird.</p>
 <h3>Typische Anwendungsfälle im Verwaltungsalltag</h3>
 <p>Zu den häufigsten Aufgaben zählen personalisierte Serienmails auf Basis einer Excel-Liste, automatische Erinnerungen an Fristen, die aus einer Tabelle ausgelesen werden, sowie das automatische Sortieren und Kennzeichnen eingehender E-Mails nach Betreffzeile oder Absender in Outlook-Regeln oder per VBA-Makro. In allen drei Fällen gilt derselbe Grundsatz: Die Automatisierung soll Zeit sparen, ohne dass dabei die Kontrolle über den tatsächlichen Empfängerkreis verloren geht.</p>
 <h3>Serienmails mit personalisiertem Inhalt sicher aufsetzen</h3>
 <p>Statt der klassischen Word-Seriendruck-Funktion lässt sich mit einem kleinen, von der KI erzeugten VBA-Makro aus Excel heraus direkt eine personalisierte E-Mail je Zeile erzeugen — inklusive individuell eingesetztem Namen, Datum oder Betrag. Der entscheidende Sicherheitsschritt: Lassen Sie das Makro zunächst so bauen, dass alle E-Mails nur als Entwurf im Postausgang erzeugt werden, nicht automatisch versendet. So können Sie vor dem eigentlichen Versand jeden einzelnen Entwurf stichprobenartig kontrollieren, bevor Sie die Freigabe zum tatsächlichen Versenden erteilen.</p>
-<div class="info-box dvag-box"><strong>Prompt-Vorlage:</strong> <code>Erstelle ein VBA-Makro, das aus Excel heraus Outlook steuert. Aus einer Tabelle mit den Spalten E-Mail, Name und Frist soll für jede Zeile eine personalisierte E-Mail-Erinnerung erzeugt werden ("Sehr geehrte/r [Name], Ihre Frist am [Frist] steht bevor."). Wichtig: Die E-Mails sollen zunächst nur als Entwurf gespeichert werden, NICHT automatisch versendet werden, damit ich sie vor dem Versand noch prüfen kann.</code></div>
+<div class="prompt"><div class="ph"><span>Prompt-Vorlage</span><button type="button" class="copy" aria-label="Prompt-Vorlage kopieren">Kopieren</button></div><div class="pc"><code>Erstelle ein VBA-Makro, das aus Excel heraus Outlook steuert. Aus einer Tabelle mit den Spalten E-Mail, Name und Frist soll für jede Zeile eine personalisierte E-Mail-Erinnerung erzeugt werden ("Sehr geehrte/r [Name], Ihre Frist am [Frist] steht bevor."). Wichtig: Die E-Mails sollen zunächst nur als Entwurf gespeichert werden, NICHT automatisch versendet werden, damit ich sie vor dem Versand noch prüfen kann.</code></div></div>
 <h3>Die Testphase ernst nehmen</h3>
 <p>Bevor ein Verteiler-Makro auf den vollständigen, echten Empfängerkreis losgelassen wird, sollte es mindestens einmal komplett mit einer kleinen, kontrollierten Liste eigener oder interner Testadressen durchlaufen. Prüfen Sie dabei nicht nur, ob überhaupt eine E-Mail ankommt, sondern auch, ob Platzhalter korrekt ersetzt wurden, ob Sonderzeichen und Umlaute richtig dargestellt werden und ob Anhänge — falls vorhanden — dem richtigen Empfänger zugeordnet sind. Erst nach einer fehlerfreien Testrunde sollte der volle Lauf freigegeben werden.</p>
-<div class="info-box warning-box">Fügen Sie bei Serienmails niemals mehrere externe Empfänger in das offene CC- oder An-Feld ein — das gibt jedem Empfänger die E-Mail-Adressen aller anderen preis. Lassen Sie sich vom generierten Code ausdrücklich bestätigen, dass jede E-Mail einzeln und nicht als Sammelversand erzeugt wird.</div>
+<aside class="box warn" role="note"><strong class="bt">Achtung</strong><p>Fügen Sie bei Serienmails niemals mehrere externe Empfänger in das offene CC- oder An-Feld ein — das gibt jedem Empfänger die E-Mail-Adressen aller anderen preis. Lassen Sie sich vom generierten Code ausdrücklich bestätigen, dass jede E-Mail einzeln und nicht als Sammelversand erzeugt wird.</p></aside>
 <h3>Eingehende Post automatisch sortieren</h3>
-<p>Neben dem Versand lässt sich auch der Posteingang deutlich entlasten: Ein einfaches Outlook-Makro oder eine Kombination aus Regeln kann eingehende E-Mails automatisch nach Absenderdomäne, Schlagwort im Betreff oder Anhangstyp in passende Ordner einsortieren oder farblich kennzeichnen. Beschreiben Sie der KI Ihre typischen Fallgruppen — etwa "alle E-Mails mit 'Frist' im Betreff bekommen die Kategorie Dringend" — und lassen Sie sich sowohl eine Lösung über die Bordmittel von Outlook als auch eine Makro-Variante vorschlagen, damit Sie die für Ihr Haus einfachste Option wählen können.</p>
+<p>Neben dem Versand lässt sich auch der Posteingang deutlich entlasten: Ein einfaches Outlook-Makro oder eine Kombination aus Regeln kann eingehende E-Mails automatisch nach Absenderdomäne, Schlagwort im Betreff oder Anhangstyp in passende Ordner einsortieren oder farblich kennzeichnen. Beschreiben Sie der KI Ihre typischen Fallgruppen — etwa „alle E-Mails mit 'Frist' im Betreff bekommen die Kategorie Dringend“ — und lassen Sie sich sowohl eine Lösung über die Bordmittel von Outlook als auch eine Makro-Variante vorschlagen, damit Sie die für Ihr Haus einfachste Option wählen können.</p>
+  <div class="jetzt"><strong class="jt">Jetzt du</strong><p>Entwerfen Sie einen Testplan für ein Verteiler-Makro: Welche Testadressen verwenden Sie, wie groß ist die Stichprobe, und welche vier Punkte prüfen Sie vor dem echten Versand (z. B. Platzhalter, Umlaute, Anhänge, Entwurf statt Versand)?</p>
+    <label class="nl" for="note-k7">Ihre Notizen (Stichworte: Testadressen, Stichprobe, vier Prüfpunkte)</label>
+    <textarea id="note-k7" data-note="k7" rows="3" placeholder="Nur in Ihrem Browser gespeichert. Keine echten personenbezogenen Daten eintragen."></textarea>
+  </div>
+  <div class="gel"><button type="button" class="readbtn" data-read="k7" aria-pressed="false">Als gelesen markieren</button></div>
+  <nav class="pn" aria-label="Kapitelnavigation"><a class="pv" href="#k6">&larr; Kapitel 6</a><a class="nx" href="#k8">Kapitel 8 &rarr;</a></nav>
+</section>
 
-<h2>Kapitel 8: Der erste eigene Mini-Web-Helfer: Formulare und Rechner im Browser</h2>
-<p>Ein einfacher interner Rechner (etwa für Urlaubstage, Reisekostenpauschalen oder Fristenberechnung) lässt sich heute als eigenständige HTML-Datei erzeugen, die ohne Serverinstallation im Browser läuft. Für den internen Gebrauch im Team ist das oft schneller umgesetzt als jede offizielle IT-Anfrage.</p>
+<section class="kap" id="k8" data-kid="k8" aria-labelledby="h-k8">
+  <p class="knr">Kapitel 8 von 14 &middot; ca. 2 Min. Lesezeit</p>
+  <h2 id="h-k8">Der erste eigene Mini-Web-Helfer: Formulare und Rechner im Browser</h2>
+  <p>Ein einfacher interner Rechner (etwa für Urlaubstage, Reisekostenpauschalen oder Fristenberechnung) lässt sich heute als eigenständige HTML-Datei erzeugen, die ohne Serverinstallation im Browser läuft. Für den internen Gebrauch im Team ist das oft schneller umgesetzt als jede offizielle IT-Anfrage.</p>
 <h3>Warum eine einzelne HTML-Datei so praktisch ist</h3>
 <p>Der große Vorteil eines solchen Mini-Tools liegt in seiner Einfachheit: Eine einzige Datei, die per Doppelklick im Browser geöffnet wird, benötigt keine Installation, keinen Server und keine besonderen Rechte auf dem Dienstrechner. Alle Berechnungen laufen lokal im Browser ab, es werden keine Daten irgendwohin übertragen, solange das Tool keine externen Verbindungen aufbaut. Das macht diesen Ansatz auch aus Datenschutzsicht vergleichsweise unkritisch — die Eingaben verlassen den eigenen Rechner nicht.</p>
 <h3>Ein Beispielprojekt Schritt für Schritt</h3>
-<p>Beschreiben Sie der KI zunächst in eigenen Worten, was das Tool berechnen soll, welche Eingabefelder benötigt werden und wie das Ergebnis dargestellt werden soll. Lassen Sie sich den vollständigen Inhalt einer einzelnen HTML-Datei erzeugen, speichern Sie diesen Text mit der Endung ".html" und öffnen Sie die Datei per Doppelklick im Browser. Testen Sie alle Eingabefelder mit Extremwerten — leer, negativ, sehr groß — bevor Sie das Tool an Kollegen weitergeben. Bitten Sie bei Bedarf um Ergänzung einer einfachen Fehlermeldung, wenn eine Eingabe unplausibel ist, etwa ein negatives Datum oder ein Enddatum vor dem Startdatum.</p>
-<div class="info-box dvag-box"><strong>Prompt-Vorlage:</strong> <code>Erstelle eine einzelne, eigenständige HTML-Datei (kein Server nötig) mit einem einfachen Fristenrechner: Der Nutzer gibt ein Startdatum und eine Anzahl Werktage ein, das Tool berechnet das Fristende unter Ausschluss von Samstag und Sonntag und zeigt es deutlich sichtbar an. Füge eine einfache, freundliche Fehlermeldung hinzu, falls kein gültiges Datum eingegeben wurde. Die Datei soll ohne Internetverbindung funktionieren.</code></div>
+<p>Beschreiben Sie der KI zunächst in eigenen Worten, was das Tool berechnen soll, welche Eingabefelder benötigt werden und wie das Ergebnis dargestellt werden soll. Lassen Sie sich den vollständigen Inhalt einer einzelnen HTML-Datei erzeugen, speichern Sie diesen Text mit der Endung „.html“ und öffnen Sie die Datei per Doppelklick im Browser. Testen Sie alle Eingabefelder mit Extremwerten — leer, negativ, sehr groß — bevor Sie das Tool an Kollegen weitergeben. Bitten Sie bei Bedarf um Ergänzung einer einfachen Fehlermeldung, wenn eine Eingabe unplausibel ist, etwa ein negatives Datum oder ein Enddatum vor dem Startdatum.</p>
+<div class="prompt"><div class="ph"><span>Prompt-Vorlage</span><button type="button" class="copy" aria-label="Prompt-Vorlage kopieren">Kopieren</button></div><div class="pc"><code>Erstelle eine einzelne, eigenständige HTML-Datei (kein Server nötig) mit einem einfachen Fristenrechner: Der Nutzer gibt ein Startdatum und eine Anzahl Werktage ein, das Tool berechnet das Fristende unter Ausschluss von Samstag und Sonntag und zeigt es deutlich sichtbar an. Füge eine einfache, freundliche Fehlermeldung hinzu, falls kein gültiges Datum eingegeben wurde. Die Datei soll ohne Internetverbindung funktionieren.</code></div></div>
 <h3>Von der Einzeldatei zum kleinen Team-Tool</h3>
-<p>Sobald ein einfacher Rechner zuverlässig funktioniert, lassen sich weitere sinnvolle Ergänzungen ergänzen: ein Druckbutton, der das Ergebnis übersichtlich für die Akte aufbereitet, eine Kopierfunktion für das Ergebnis in die Zwischenablage, oder eine kleine Historie der letzten Berechnungen innerhalb derselben Browsersitzung. Wichtig bleibt dabei immer die Grundregel aus Kapitel 4: Sobald ein solches Tool anfängt, Daten zu speichern, zu versenden oder mit anderen Systemen zu verbinden, verändert sich seine datenschutzrechtliche Einordnung — und die einfache "läuft nur lokal im Browser"-Logik greift nicht mehr uneingeschränkt.</p>
-<div class="info-box expert-box">
-<ul>
-<li>Prüfen Sie vor der Weitergabe an Kollegen, ob das Tool wirklich keine Daten an externe Adressen sendet.</li>
+<p>Sobald ein einfacher Rechner zuverlässig funktioniert, lassen sich weitere sinnvolle Erweiterungen hinzufügen: ein Druckbutton, der das Ergebnis übersichtlich für die Akte aufbereitet, eine Kopierfunktion für das Ergebnis in die Zwischenablage, oder eine kleine Historie der letzten Berechnungen innerhalb derselben Browsersitzung. Wichtig bleibt dabei immer die Grundregel aus Kapitel 4: Sobald ein solches Tool anfängt, Daten zu speichern, zu versenden oder mit anderen Systemen zu verbinden, verändert sich seine datenschutzrechtliche Einordnung — und die einfache „läuft nur lokal im Browser“-Logik greift nicht mehr uneingeschränkt.</p>
+<aside class="box tip" role="note"><strong class="bt">Checkliste</strong><ul><li>Prüfen Sie vor der Weitergabe an Kollegen, ob das Tool wirklich keine Daten an externe Adressen sendet.</li>
 <li>Testen Sie das Tool in den Browsern, die in Ihrem Haus tatsächlich im Einsatz sind, nicht nur in Ihrem eigenen.</li>
 <li>Dokumentieren Sie kurz, wofür das Tool gedacht ist und wofür ausdrücklich nicht (siehe auch Kapitel 12).</li>
-<li>Klären Sie vor breiterer interner Verteilung, ob eine formlose Information an die IT-Abteilung sinnvoll ist.</li>
-</ul>
-</div>
+<li>Klären Sie vor breiterer interner Verteilung, ob eine formlose Information an die IT-Abteilung sinnvoll ist.</li></ul></aside>
 <p>Ein solcher Mini-Web-Helfer ist oft der Einstiegspunkt, an dem Sachbearbeiterinnen und Sachbearbeiter zum ersten Mal spüren, wie viel Gestaltungsspielraum sie durch Vibe Coding tatsächlich gewonnen haben — ein Werkzeug, das exakt auf den eigenen Arbeitsablauf zugeschnitten ist, ganz ohne Wartezeit auf eine offizielle Softwarelösung.</p>
+  <div class="jetzt"><strong class="jt">Jetzt du</strong><p>Beschreiben Sie in fünf Sätzen einen kleinen Rechner für Ihren Alltag: Eingaben, Berechnung, Ergebnisanzeige. Nennen Sie drei Extremwerte, mit denen Sie ihn testen würden (leer, negativ, sehr groß).</p>
+    <label class="nl" for="note-k8">Ihre Notizen (Stichworte: Kurzbeschreibung, drei Testwerte)</label>
+    <textarea id="note-k8" data-note="k8" rows="3" placeholder="Nur in Ihrem Browser gespeichert. Keine echten personenbezogenen Daten eintragen."></textarea>
+  </div>
+  <div class="gel"><button type="button" class="readbtn" data-read="k8" aria-pressed="false">Als gelesen markieren</button></div>
+  <nav class="pn" aria-label="Kapitelnavigation"><a class="pv" href="#k7">&larr; Kapitel 7</a><a class="nx" href="#k9">Kapitel 9 &rarr;</a></nav>
+</section>
 
-<h2>Kapitel 9: PDFs auslesen, zusammenführen und strukturieren ohne teure Spezialsoftware</h2>
-<p>Viele Verwaltungsprozesse drehen sich um das Zusammenführen und Umsortieren von PDF-Dokumenten. Mit den richtigen Prompts lassen sich kleine Skripte erzeugen, die wiederkehrende PDF-Aufgaben automatisieren — vorausgesetzt, die eingesetzte Umgebung darf mit den entsprechenden Dokumenten überhaupt arbeiten (siehe Kapitel 4).</p>
+<section class="kap" id="k9" data-kid="k9" aria-labelledby="h-k9">
+  <p class="knr">Kapitel 9 von 14 &middot; ca. 2 Min. Lesezeit</p>
+  <h2 id="h-k9">PDFs auslesen, zusammenführen und strukturieren ohne teure Spezialsoftware</h2>
+  <p>Viele Verwaltungsprozesse drehen sich um das Zusammenführen und Umsortieren von PDF-Dokumenten. Mit den richtigen Prompts lassen sich kleine Skripte erzeugen, die wiederkehrende PDF-Aufgaben automatisieren — vorausgesetzt, die eingesetzte Umgebung darf mit den entsprechenden Dokumenten überhaupt arbeiten (siehe Kapitel 4).</p>
 <h3>Typische PDF-Aufgaben im Büroalltag</h3>
 <p>Zu den häufigsten wiederkehrenden Aufgaben zählen das Zusammenführen mehrerer Einzeldokumente zu einer Akte in korrekter Reihenfolge, das Extrahieren einzelner Seiten aus einem großen Sammeldokument, das automatische Umbenennen von Dateien anhand ihres Inhalts (etwa nach Vorgangsnummer oder Datum) sowie das Auslesen bestimmter, immer an gleicher Stelle stehender Werte aus standardisierten Formularen, um sie in eine Excel-Übersicht zu übernehmen. Für all diese Aufgaben existieren etablierte, gut dokumentierte Bibliotheken, sodass die KI hier auf besonders bewährte technische Lösungen zurückgreifen kann.</p>
 <h3>Der richtige Werkzeugkasten</h3>
 <p>Für PDF-Automatisierung eignen sich vor allem kleine Skripte, die auf verbreiteten, quelloffenen Programmierbibliotheken aufbauen, etwa zum Zusammenführen und Aufteilen von Seiten oder zum Auslesen von reinem Text aus PDF-Dateien. Wichtig zu wissen: Reine Text-Erkennung funktioniert zuverlässig nur bei PDFs, die tatsächlich digitalen Text enthalten. Bei eingescannten Papierdokumenten ohne Texterkennung braucht es zusätzlich eine Texterkennungs-Komponente (OCR), die Bildinhalte in maschinenlesbaren Text umwandelt — fragen Sie die KI gezielt danach, ob Ihr Anwendungsfall eine solche OCR-Komponente benötigt, bevor Sie ein Skript aufsetzen.</p>
-<div class="info-box dvag-box"><strong>Prompt-Vorlage:</strong> <code>Ich möchte ein Python-Skript, das in einem Ordner alle PDF-Dateien einliest, deren Dateiname mit "Antrag_" beginnt, und sie in der Reihenfolge ihres Dateidatums zu einer einzigen PDF-Datei namens "Sammelakte.pdf" zusammenführt. Nutze eine verbreitete, gut gewartete PDF-Bibliothek. Erkläre mir außerdem in zwei Sätzen, wie ich das Skript ohne Programmierkenntnisse ausführen kann.</code></div>
+<div class="prompt"><div class="ph"><span>Prompt-Vorlage</span><button type="button" class="copy" aria-label="Prompt-Vorlage kopieren">Kopieren</button></div><div class="pc"><code>Ich möchte ein Python-Skript, das in einem Ordner alle PDF-Dateien einliest, deren Dateiname mit "Antrag_" beginnt, und sie in der Reihenfolge ihres Dateidatums zu einer einzigen PDF-Datei namens "Sammelakte.pdf" zusammenführt. Nutze eine verbreitete, gut gewartete PDF-Bibliothek. Erkläre mir außerdem in zwei Sätzen, wie ich das Skript ohne Programmierkenntnisse ausführen kann.</code></div></div>
 <h3>Qualitätssicherung bei automatisiertem Auslesen</h3>
 <p>Wenn ein Skript Werte aus PDF-Formularen automatisch in eine Tabelle überträgt, ist eine stichprobenartige manuelle Kontrolle unverzichtbar — insbesondere bei uneinheitlich formatierten oder handschriftlich ausgefüllten Dokumenten, bei denen die Erkennungsqualität stark schwanken kann. Lassen Sie sich das Skript so erweitern, dass es zusätzlich zur ausgelesenen Übersichtstabelle eine Spalte mit einem Verweis auf die jeweilige Ursprungsdatei mitführt, damit jeder ausgelesene Wert im Zweifelsfall schnell am Original überprüft werden kann.</p>
-<div class="info-box warning-box">PDF-Dateien können unsichtbare Metadaten enthalten — etwa den Namen des ursprünglichen Verfassers, frühere Bearbeitungshistorie oder eingebettete Kommentare. Bevor Sie eine automatisiert erzeugte PDF-Datei an Externe weitergeben, lassen Sie sich von der KI zeigen, wie Sie diese Metadaten vorher bereinigen oder zumindest überprüfen.</div>
+<aside class="box warn" role="note"><strong class="bt">Achtung</strong><p>PDF-Dateien können unsichtbare Metadaten enthalten — etwa den Namen des ursprünglichen Verfassers, frühere Bearbeitungshistorie oder eingebettete Kommentare. Bevor Sie eine automatisiert erzeugte PDF-Datei an Externe weitergeben, lassen Sie sich von der KI zeigen, wie Sie diese Metadaten vorher bereinigen oder zumindest überprüfen.</p></aside>
 <h3>Wenn keine externe Skriptumgebung zur Verfügung steht</h3>
 <p>Nicht jede Dienststelle erlaubt die Ausführung eigener Skripte auf dem Arbeitsplatzrechner. In diesem Fall lohnt sich der Blick auf Bordmittel: Viele PDF-Betrachter und Büroprogramme bieten bereits einfache Zusammenführungs- und Extraktionsfunktionen über die Benutzeroberfläche an. Lassen Sie sich von der KI in diesem Fall keine Skripte, sondern eine konkrete Klick-für-Klick-Anleitung für das in Ihrem Haus tatsächlich verfügbare Programm geben — das ist oft der pragmatischere und schneller freigegebene Weg.</p>
+  <div class="jetzt"><strong class="jt">Jetzt du</strong><p>Prüfen Sie, welche Ihrer PDF-Aufgaben digitalen Text enthalten und welche eingescannt sind. Notieren Sie, bei welchen eine Texterkennung (OCR) nötig wäre, und ob in Ihrem Haus Skripte ausgeführt werden dürfen.</p>
+    <label class="nl" for="note-k9">Ihre Notizen (Stichworte: Liste der PDF-Aufgaben mit OCR-Bedarf)</label>
+    <textarea id="note-k9" data-note="k9" rows="3" placeholder="Nur in Ihrem Browser gespeichert. Keine echten personenbezogenen Daten eintragen."></textarea>
+  </div>
+  <div class="gel"><button type="button" class="readbtn" data-read="k9" aria-pressed="false">Als gelesen markieren</button></div>
+  <nav class="pn" aria-label="Kapitelnavigation"><a class="pv" href="#k8">&larr; Kapitel 8</a><a class="nx" href="#k10">Kapitel 10 &rarr;</a></nav>
+</section>
 
-<h2>Kapitel 10: Schnittstellen-Magie: Wie CSV-Dateien und Datenbanken plötzlich zusammenarbeiten</h2>
-<p>Zwei Fachverfahren, die nicht miteinander sprechen, sind der Klassiker der Verwaltungs-IT. Ein kleines, von der KI generiertes Konvertierungsskript zwischen zwei CSV-Formaten kann tagelange manuelle Nacharbeit einsparen — solange die Datenqualität der Quelle vorher stichprobenartig geprüft wird.</p>
+<section class="kap" id="k10" data-kid="k10" aria-labelledby="h-k10">
+  <p class="knr">Kapitel 10 von 14 &middot; ca. 2 Min. Lesezeit</p>
+  <h2 id="h-k10">Schnittstellen-Magie: Wie CSV-Dateien und Datenbanken plötzlich zusammenarbeiten</h2>
+  <p>Zwei Fachverfahren, die nicht miteinander sprechen, sind der Klassiker der Verwaltungs-IT. Ein kleines, von der KI generiertes Konvertierungsskript zwischen zwei CSV-Formaten kann tagelange manuelle Nacharbeit einsparen — solange die Datenqualität der Quelle vorher stichprobenartig geprüft wird.</p>
 <h3>Warum CSV-Dateien so oft der gemeinsame Nenner sind</h3>
 <p>Auch wenn moderne Fachverfahren intern komplexe Datenbanken nutzen, bieten fast alle einen Export- und Importweg über das einfache CSV-Format an — eine reine Textdatei mit durch Kommas oder Semikolons getrennten Werten. Genau diese Schlichtheit macht CSV zum idealen Ausgangspunkt für kleine, selbstgebaute Konvertierungen: Es gibt kein proprietäres Format, das eine spezielle Software voraussetzt, und die Struktur lässt sich mit bloßem Auge in jedem Texteditor nachvollziehen.</p>
 <h3>Die häufigsten Stolperfallen beim CSV-Austausch</h3>
 <p>In der Praxis scheitern CSV-Konvertierungen selten an der grundsätzlichen Logik, sondern an kleinen, aber folgenreichen Details: unterschiedliche Trennzeichen (Komma versus Semikolon), unterschiedliche Zeichenkodierungen, die Umlaute und Sonderzeichen falsch darstellen, abweichende Datumsformate zwischen Tag-Monat-Jahr und Monat-Tag-Jahr, sowie führende Nullen in Kontonummern oder Postleitzahlen, die von manchen Programmen automatisch und unerwünscht entfernt werden. Beschreiben Sie der KI diese Besonderheiten explizit, statt sie als selbstverständlich vorauszusetzen.</p>
-<div class="info-box dvag-box"><strong>Prompt-Vorlage:</strong> <code>Ich habe eine CSV-Datei aus System A mit Semikolon als Trennzeichen und den Spalten Nachname;Vorname;PLZ;Betrag (Betrag im Format 1.234,56). System B benötigt eine CSV-Datei mit Komma als Trennzeichen, den Spalten Vorname,Nachname,PLZ,Betrag und dem Betragsformat 1234.56. Erstelle mir ein Skript, das diese Umwandlung automatisch vornimmt, führende Nullen in der PLZ erhält und Umlaute korrekt darstellt.</code></div>
+<div class="prompt"><div class="ph"><span>Prompt-Vorlage</span><button type="button" class="copy" aria-label="Prompt-Vorlage kopieren">Kopieren</button></div><div class="pc"><code>Ich habe eine CSV-Datei aus System A mit Semikolon als Trennzeichen und den Spalten Nachname;Vorname;PLZ;Betrag (Betrag im Format 1.234,56). System B benötigt eine CSV-Datei mit Komma als Trennzeichen, den Spalten Vorname,Nachname,PLZ,Betrag und dem Betragsformat 1234.56. Erstelle mir ein Skript, das diese Umwandlung automatisch vornimmt, führende Nullen in der PLZ erhält und Umlaute korrekt darstellt.</code></div></div>
 <h3>Datenqualität vor der Automatisierung prüfen</h3>
 <p>Bevor ein Konvertierungsskript auf den vollständigen, echten Datenbestand angewendet wird, lohnt sich eine kurze Prüfung der Ausgangsdatei: Gibt es leere Pflichtfelder? Gibt es doppelte Datensätze? Gibt es offensichtliche Ausreißer wie ein Geburtsdatum in der Zukunft? Lassen Sie sich vom generierten Skript zusätzlich eine kurze Prüfausgabe erzeugen, die solche Auffälligkeiten automatisch auflistet, statt sie stillschweigend zu übernehmen oder zu verwerfen. So wird aus einer reinen Konvertierung gleichzeitig eine kleine Qualitätskontrolle.</p>
-<div class="info-box expert-box">
-<ul>
-<li>Immer zuerst mit einem kleinen Ausschnitt der Datei (10-20 Zeilen) testen, nie direkt mit dem vollständigen Datenbestand.</li>
+<aside class="box tip" role="note"><strong class="bt">Checkliste</strong><ul><li>Immer zuerst mit einem kleinen Ausschnitt der Datei (10-20 Zeilen) testen, nie direkt mit dem vollständigen Datenbestand.</li>
 <li>Ausgabe stichprobenartig gegen die Ursprungsdatei prüfen, insbesondere bei Zahlen- und Datumsformaten.</li>
 <li>Führende Nullen, Sonderzeichen und Kodierung gezielt kontrollieren, das sind die häufigsten Fehlerquellen.</li>
-<li>Ergebnis niemals ungeprüft in ein produktives Zielsystem importieren, sondern zunächst in eine Testumgebung.</li>
-</ul>
-</div>
+<li>Ergebnis niemals ungeprüft in ein produktives Zielsystem importieren, sondern zunächst in eine Testumgebung.</li></ul></aside>
 <p>Wer diesen Ablauf einmal sauber etabliert hat, kann ihn für nahezu jede wiederkehrende Schnittstellenaufgabe zwischen zwei Verwaltungssystemen wiederverwenden — oft mit nur wenigen Anpassungen an Spaltennamen und Formaten, statt jedes Mal von vorne zu beginnen.</p>
+  <div class="jetzt"><strong class="jt">Jetzt du</strong><p>Beschreiben Sie in einer kleinen Tabelle Quell- und Zielformat einer Konvertierung: Trennzeichen, Kodierung, Datumsformat, Zahlenformat und Spalten mit führenden Nullen. Formulieren Sie daraus einen Prompt.</p>
+    <label class="nl" for="note-k10">Ihre Notizen (Stichworte: Formattabelle und Prompt)</label>
+    <textarea id="note-k10" data-note="k10" rows="3" placeholder="Nur in Ihrem Browser gespeichert. Keine echten personenbezogenen Daten eintragen."></textarea>
+  </div>
+  <div class="gel"><button type="button" class="readbtn" data-read="k10" aria-pressed="false">Als gelesen markieren</button></div>
+  <nav class="pn" aria-label="Kapitelnavigation"><a class="pv" href="#k9">&larr; Kapitel 9</a><a class="nx" href="#k11">Kapitel 11 &rarr;</a></nav>
+</section>
 
-<h2>Kapitel 11: „Das Tool spuckt einen Fehler aus!" — Debugging im Dialog mit der KI</h2>
-<p>Eine Fehlermeldung ist kein Grund zur Panik, sondern die wichtigste Information, die Sie der KI geben können. Kopieren Sie die komplette Fehlermeldung inklusive Zeilennummer in den Chat — die KI kann daraus meist präzise ableiten, was schiefgelaufen ist, ohne dass Sie den Code selbst lesen müssen.</p>
+<section class="kap" id="k11" data-kid="k11" aria-labelledby="h-k11">
+  <p class="knr">Kapitel 11 von 14 &middot; ca. 2 Min. Lesezeit</p>
+  <h2 id="h-k11">„Das Tool spuckt einen Fehler aus!“ — Debugging im Dialog mit der KI</h2>
+  <p>Eine Fehlermeldung ist kein Grund zur Panik, sondern die wichtigste Information, die Sie der KI geben können. Kopieren Sie die komplette Fehlermeldung inklusive Zeilennummer in den Chat — die KI kann daraus meist präzise ableiten, was schiefgelaufen ist, ohne dass Sie den Code selbst lesen müssen.</p>
 <h3>Die Grundhaltung beim Debugging</h3>
 <p>Viele Einsteiger reagieren auf eine Fehlermeldung, indem sie den gesamten Code verwerfen und noch einmal von vorne beginnen. Das ist fast immer der langsamere Weg. Eine Fehlermeldung enthält in aller Regel drei wertvolle Informationen: die Art des Fehlers, die betroffene Zeile oder Stelle im Code, und häufig einen Hinweis auf die vermutete Ursache. Diese drei Informationen zusammen mit dem betroffenen Code-Abschnitt reichen der KI meist aus, um eine treffsichere Diagnose zu stellen — deutlich zuverlässiger, als wenn Sie den Fehler nur mit eigenen Worten grob umschreiben.</p>
 <h3>Was Sie der KI mitgeben sollten</h3>
 <p>Für eine erfolgreiche Fehlersuche sollten Sie immer vier Dinge bereithalten: den vollständigen Wortlaut der Fehlermeldung, den betroffenen Code-Ausschnitt (nicht nur die eine fehlerhafte Zeile, sondern etwas Kontext davor und danach), eine kurze Beschreibung dessen, was Sie eigentlich erreichen wollten, und die konkreten Testdaten oder Bedingungen, unter denen der Fehler auftritt. Je vollständiger diese vier Angaben sind, desto seltener braucht es mehrere Nachfragerunden, bis das eigentliche Problem gefunden ist.</p>
-<div class="info-box dvag-box"><strong>Prompt-Vorlage:</strong> <code>Mein VBA-Makro wirft folgenden Fehler: "Laufzeitfehler '9': Index außerhalb des gültigen Bereichs" in Zeile 14. Hier ist der vollständige Code: [Code einfügen]. Ich wollte damit erreichen, dass Zeilen mit Status "erledigt" ins Tabellenblatt "Archiv" verschoben werden. Der Fehler tritt auf, sobald ich das Makro zum zweiten Mal hintereinander ausführe. Was ist die wahrscheinlichste Ursache, und wie behebe ich sie?</code></div>
+<div class="prompt"><div class="ph"><span>Prompt-Vorlage</span><button type="button" class="copy" aria-label="Prompt-Vorlage kopieren">Kopieren</button></div><div class="pc"><code>Mein VBA-Makro wirft folgenden Fehler: "Laufzeitfehler '9': Index außerhalb des gültigen Bereichs" in Zeile 14. Hier ist der vollständige Code: [Code einfügen]. Ich wollte damit erreichen, dass Zeilen mit Status "erledigt" ins Tabellenblatt "Archiv" verschoben werden. Der Fehler tritt auf, sobald ich das Makro zum zweiten Mal hintereinander ausführe. Was ist die wahrscheinlichste Ursache, und wie behebe ich sie?</code></div></div>
 <h3>Wenn kein klassischer Fehler, aber ein falsches Ergebnis auftritt</h3>
-<p>Nicht jeder Fehler zeigt sich als rote Fehlermeldung — oft läuft ein Makro oder eine Formel scheinbar reibungslos durch, liefert aber ein fachlich falsches Ergebnis. Diese "stillen" Fehler sind tückischer, weil sie leicht unentdeckt bleiben. Beschreiben Sie der KI in diesem Fall konkret, welches Ergebnis Sie erwartet hätten und welches Ergebnis tatsächlich herauskam, am besten mit einem konkreten Beispieldatensatz. Bitten Sie zusätzlich darum, den Code Zeile für Zeile durchzugehen und zu erklären, an welcher Stelle die Abweichung zwischen erwartetem und tatsächlichem Ergebnis entstehen könnte.</p>
+<p>Nicht jeder Fehler zeigt sich als rote Fehlermeldung — oft läuft ein Makro oder eine Formel scheinbar reibungslos durch, liefert aber ein fachlich falsches Ergebnis. Diese „stillen“ Fehler sind tückischer, weil sie leicht unentdeckt bleiben. Beschreiben Sie der KI in diesem Fall konkret, welches Ergebnis Sie erwartet hätten und welches Ergebnis tatsächlich herauskam, am besten mit einem konkreten Beispieldatensatz. Bitten Sie zusätzlich darum, den Code Zeile für Zeile durchzugehen und zu erklären, an welcher Stelle die Abweichung zwischen erwartetem und tatsächlichem Ergebnis entstehen könnte.</p>
 <h3>Eine gesunde Skepsis gegenüber schnellen Lösungen</h3>
 <p>Wenn eine vorgeschlagene Korrektur den Fehler zwar beseitigt, aber Sie nicht nachvollziehen können, warum, sollten Sie ausdrücklich um eine Erklärung bitten, bevor Sie die Änderung übernehmen. Eine Korrektur, die Sie nicht verstehen, kann im ungünstigen Fall ein neues, subtileres Problem an anderer Stelle erzeugen. Bauen Sie sich außerdem die Gewohnheit an, nach jeder Fehlerkorrektur erneut mit denselben Testdaten wie zuvor zu prüfen, ob das Ergebnis jetzt tatsächlich korrekt ist — und nicht nur, ob die Fehlermeldung verschwunden ist.</p>
+  <div class="jetzt"><strong class="jt">Jetzt du</strong><p>Denken Sie sich eine Fehlermeldung aus (oder nehmen Sie eine bekannte) und schreiben Sie die vier Angaben auf, die Sie der KI mitgeben würden: Wortlaut, Code-Ausschnitt, Ziel, Testbedingungen.</p>
+    <label class="nl" for="note-k11">Ihre Notizen (Stichworte: Vier Angaben für den Fehler-Prompt)</label>
+    <textarea id="note-k11" data-note="k11" rows="3" placeholder="Nur in Ihrem Browser gespeichert. Keine echten personenbezogenen Daten eintragen."></textarea>
+  </div>
+  <div class="gel"><button type="button" class="readbtn" data-read="k11" aria-pressed="false">Als gelesen markieren</button></div>
+  <nav class="pn" aria-label="Kapitelnavigation"><a class="pv" href="#k10">&larr; Kapitel 10</a><a class="nx" href="#k12">Kapitel 12 &rarr;</a></nav>
+</section>
 
-<h2>Kapitel 12: Kollegenschutz und Wissenstransfer: Wie Sie Ihr Tool im Team dokumentieren</h2>
-<p>Das größte Risiko selbstgebauter Tools: Sie funktionieren wunderbar, bis die Person, die sie gebaut hat, im Urlaub oder nicht mehr im Team ist. Lassen Sie sich von der KI zu jedem Tool eine kurze, laienverständliche Dokumentation erzeugen — was tut das Tool, welche Eingaben braucht es, was tun bei einem Fehler.</p>
+<section class="kap" id="k12" data-kid="k12" aria-labelledby="h-k12">
+  <p class="knr">Kapitel 12 von 14 &middot; ca. 2 Min. Lesezeit</p>
+  <h2 id="h-k12">Kollegenschutz und Wissenstransfer: Wie Sie Ihr Tool im Team dokumentieren</h2>
+  <p>Das größte Risiko selbstgebauter Tools: Sie funktionieren wunderbar, bis die Person, die sie gebaut hat, im Urlaub oder nicht mehr im Team ist. Lassen Sie sich von der KI zu jedem Tool eine kurze, laienverständliche Dokumentation erzeugen — was tut das Tool, welche Eingaben braucht es, was tun bei einem Fehler.</p>
 <h3>Warum Dokumentation kein Luxus ist</h3>
-<p>Ein selbstgebautes Makro oder Mini-Tool, das nur eine einzige Person versteht, ist auf Dauer ein stilles Risiko für die gesamte Abteilung — es entsteht eine Abhängigkeit von genau dieser Person, die im Krankheitsfall, bei einem Stellenwechsel oder schlicht im Urlaub sofort spürbar wird. Eine kurze, verständliche Dokumentation ist die günstigste Versicherung gegen dieses Risiko, und sie lässt sich mit KI-Unterstützung in wenigen Minuten erstellen, statt tagelang aufgeschoben zu werden, weil "dafür ohnehin keine Zeit ist".</p>
+<p>Ein selbstgebautes Makro oder Mini-Tool, das nur eine einzige Person versteht, ist auf Dauer ein stilles Risiko für die gesamte Abteilung — es entsteht eine Abhängigkeit von genau dieser Person, die im Krankheitsfall, bei einem Stellenwechsel oder schlicht im Urlaub sofort spürbar wird. Eine kurze, verständliche Dokumentation ist die günstigste Versicherung gegen dieses Risiko, und sie lässt sich mit KI-Unterstützung in wenigen Minuten erstellen, statt tagelang aufgeschoben zu werden, weil „dafür ohnehin keine Zeit ist“.</p>
 <h3>Die vier Bausteine einer guten Tool-Dokumentation</h3>
 <p>Eine praxistaugliche Dokumentation für ein selbstgebautes Verwaltungstool muss nicht umfangreich sein, sollte aber vier Fragen zuverlässig beantworten: Wofür ist das Tool gedacht, und wofür ausdrücklich nicht? Welche Eingaben oder Ausgangsdaten benötigt es, und in welchem Format? Wie wird es konkret bedient, Schritt für Schritt? Und was tut man, wenn eine bestimmte Fehlermeldung erscheint oder das Ergebnis unplausibel wirkt? Lassen Sie diese vier Fragen von der KI auf Basis Ihrer eigenen, mündlichen Beschreibung des Tools in klaren, kurzen Sätzen beantworten.</p>
-<div class="info-box dvag-box"><strong>Prompt-Vorlage:</strong> <code>Schreibe eine kurze, laienverständliche Dokumentation (maximal eine DIN-A4-Seite) für folgendes Tool: Ein Excel-Makro, das jeden Freitag alle Zeilen mit Status "abgeschlossen" ins Archivblatt verschiebt. Beantworte in der Dokumentation: 1) Wofür ist das Tool da, und wofür nicht? 2) Welche Voraussetzungen muss die Tabelle erfüllen? 3) Wie starte ich das Makro? 4) Was mache ich, wenn eine Fehlermeldung erscheint?</code></div>
+<div class="prompt"><div class="ph"><span>Prompt-Vorlage</span><button type="button" class="copy" aria-label="Prompt-Vorlage kopieren">Kopieren</button></div><div class="pc"><code>Schreibe eine kurze, laienverständliche Dokumentation (maximal eine DIN-A4-Seite) für folgendes Tool: Ein Excel-Makro, das jeden Freitag alle Zeilen mit Status "abgeschlossen" ins Archivblatt verschiebt. Beantworte in der Dokumentation: 1) Wofür ist das Tool da, und wofür nicht? 2) Welche Voraussetzungen muss die Tabelle erfüllen? 3) Wie starte ich das Makro? 4) Was mache ich, wenn eine Fehlermeldung erscheint?</code></div></div>
 <h3>Dokumentation direkt am Tool statt in einer separaten Datei</h3>
-<p>Eine separate Dokumentationsdatei geht in der Praxis erfahrungsgemäß schnell verloren oder wird nicht aktuell gehalten. Deutlich robuster ist es, die wichtigsten Informationen direkt im Tool selbst unterzubringen: als Kommentarzeilen am Anfang eines VBA-Moduls, als kurzer erklärender Text auf einem eigenen Tabellenblatt "Anleitung", oder als sichtbarer Hinweistext direkt auf der Oberfläche eines Mini-Web-Tools aus Kapitel 8. So finden auch Kolleginnen und Kollegen, die von der Existenz einer separaten Anleitung nichts wissen, die nötigen Informationen genau dort, wo sie gebraucht werden.</p>
-<div class="info-box expert-box">
-<ul>
-<li>Jedes Tool bekommt einen erkennbaren Verantwortlichen und ein Erstellungsdatum in der Dokumentation.</li>
+<p>Eine separate Dokumentationsdatei geht in der Praxis erfahrungsgemäß schnell verloren oder wird nicht aktuell gehalten. Deutlich robuster ist es, die wichtigsten Informationen direkt im Tool selbst unterzubringen: als Kommentarzeilen am Anfang eines VBA-Moduls, als kurzer erklärender Text auf einem eigenen Tabellenblatt „Anleitung“, oder als sichtbarer Hinweistext direkt auf der Oberfläche eines Mini-Web-Tools aus Kapitel 8. So finden auch Kolleginnen und Kollegen, die von der Existenz einer separaten Anleitung nichts wissen, die nötigen Informationen genau dort, wo sie gebraucht werden.</p>
+<aside class="box tip" role="note"><strong class="bt">Checkliste</strong><ul><li>Jedes Tool bekommt einen erkennbaren Verantwortlichen und ein Erstellungsdatum in der Dokumentation.</li>
 <li>Die Dokumentation liegt an einem Ort, den auch Vertretungen ohne Nachfrage finden (Teamlaufwerk, nicht privater Ordner).</li>
 <li>Bei jeder inhaltlichen Änderung am Tool wird die Dokumentation im selben Arbeitsschritt aktualisiert.</li>
-<li>Ein kurzer "Was tun bei Fehler"-Absatz ist Pflichtbestandteil, kein optionales Extra.</li>
-</ul>
-</div>
+<li>Ein kurzer „Was tun bei Fehler“-Absatz ist Pflichtbestandteil, kein optionales Extra.</li></ul></aside>
 <p>Eine gute Dokumentation ist letztlich auch ein Zeichen professioneller Sorgfalt: Sie zeigt, dass ein selbstgebautes Tool nicht als privater Trick, sondern als ernstzunehmender Teil der Arbeitsorganisation verstanden wird — und genau diese Haltung erleichtert auch die Akzeptanz solcher Werkzeuge durch Vorgesetzte und IT-Abteilung.</p>
+  <div class="jetzt"><strong class="jt">Jetzt du</strong><p>Schreiben Sie für ein Tool (real oder ausgedacht) die vier Bausteine der Dokumentation in je ein bis zwei Sätzen: Zweck, Eingaben, Bedienung, Vorgehen bei Fehlern. Ergänzen Sie die verantwortliche Person und Datum.</p>
+    <label class="nl" for="note-k12">Ihre Notizen (Stichworte: Vier Bausteine plus verantwortliche Person und Datum)</label>
+    <textarea id="note-k12" data-note="k12" rows="3" placeholder="Nur in Ihrem Browser gespeichert. Keine echten personenbezogenen Daten eintragen."></textarea>
+  </div>
+  <div class="gel"><button type="button" class="readbtn" data-read="k12" aria-pressed="false">Als gelesen markieren</button></div>
+  <nav class="pn" aria-label="Kapitelnavigation"><a class="pv" href="#k11">&larr; Kapitel 11</a><a class="nx" href="#k13">Kapitel 13 &rarr;</a></nav>
+</section>
 
-<h2>Kapitel 13: Wartung und Anpassung: Wenn sich Gesetze, Formulare oder Prozesse ändern</h2>
-<p>Selbstgebaute Automatisierungen sind kein "einmal bauen, für immer laufen lassen"-Produkt. Ändert sich eine gesetzliche Frist oder ein Formularfeld, muss auch das Tool angepasst werden. Planen Sie feste Prüftermine ein, an denen Sie Ihre wichtigsten Automatisierungen gegen die aktuelle Rechtslage gegenchecken.</p>
+<section class="kap" id="k13" data-kid="k13" aria-labelledby="h-k13">
+  <p class="knr">Kapitel 13 von 14 &middot; ca. 2 Min. Lesezeit</p>
+  <h2 id="h-k13">Wartung und Anpassung: Wenn sich Gesetze, Formulare oder Prozesse ändern</h2>
+  <p>Selbstgebaute Automatisierungen sind kein „einmal bauen, für immer laufen lassen“-Produkt. Ändert sich eine gesetzliche Frist oder ein Formularfeld, muss auch das Tool angepasst werden. Planen Sie feste Prüftermine ein, an denen Sie Ihre wichtigsten Automatisierungen gegen die aktuelle Rechtslage gegenchecken.</p>
 <h3>Warum Vergessen die größte Gefahr ist</h3>
 <p>Ein Makro, das eine Frist korrekt nach der Rechtslage von vor zwei Jahren berechnet, sieht auf den ersten Blick genauso vertrauenswürdig aus wie eines, das die aktuelle Rechtslage abbildet — der Unterschied wird erst sichtbar, wenn ein Fehler bereits Folgen hatte. Genau das macht veraltete Automatisierungen so tückisch: Sie scheitern nicht laut mit einer Fehlermeldung, sondern still und unbemerkt mit einem plausibel aussehenden, aber falschen Ergebnis. Deshalb braucht jedes Tool, das auf gesetzlichen Fristen, Formularfeldern oder Prozessvorgaben beruht, einen aktiv geplanten Wartungsrhythmus, statt sich auf zufälliges Auffallen zu verlassen.</p>
 <h3>Ein einfaches Wartungssystem aufbauen</h3>
 <p>Legen Sie für jedes wichtige selbstgebaute Tool fest, in welchem Rhythmus es überprüft werden muss — bei Tools mit Bezug zu gesetzlichen Fristen empfiehlt sich mindestens ein jährlicher, bei besonders änderungsanfälligen Bereichen ein halbjährlicher Prüftermin. Tragen Sie diesen Termin in denselben Kalender ein, den Sie auch für andere wiederkehrende Fachaufgaben nutzen, damit er nicht in Vergessenheit gerät. Nutzen Sie die KI bei jedem Prüftermin nicht nur zur technischen Anpassung, sondern auch, um sich die relevanten Regelungen noch einmal in eigenen Worten zusammenfassen zu lassen, bevor Sie den Code darauf abgleichen.</p>
-<div class="info-box dvag-box"><strong>Prompt-Vorlage:</strong> <code>Ich prüfe gerade mein Fristenrechner-Tool auf Aktualität. Bisher gilt folgende Regel im Code: [Regel beschreiben, z. B. "Frist = Eingangsdatum + 14 Kalendertage"]. Ich habe gehört, dass sich diese Frist möglicherweise geändert hat. Erkläre mir, welche Angaben ich brauche, um das sicher zu überprüfen, und wie ich anschließend die betroffene Formel oder Codezeile korrekt anpasse.</code></div>
+<div class="prompt"><div class="ph"><span>Prompt-Vorlage</span><button type="button" class="copy" aria-label="Prompt-Vorlage kopieren">Kopieren</button></div><div class="pc"><code>Ich prüfe gerade mein Fristenrechner-Tool auf Aktualität. Bisher gilt folgende Regel im Code: [Regel beschreiben, z. B. "Frist = Eingangsdatum + 14 Kalendertage"]. Ich habe gehört, dass sich diese Frist möglicherweise geändert hat. Erkläre mir, welche Angaben ich brauche, um das sicher zu überprüfen, und wie ich anschließend die betroffene Formel oder Codezeile korrekt anpasse.</code></div></div>
 <h3>Änderungen nachvollziehbar dokumentieren</h3>
 <p>Jede inhaltliche Anpassung an einem produktiv genutzten Tool sollte kurz protokolliert werden: Was wurde geändert, wann, aus welchem Anlass, und von wem geprüft. Das muss kein aufwändiges System sein — ein einfacher Änderungsverlauf am Ende der Dokumentation aus Kapitel 12 reicht in den meisten Fällen völlig aus. Dieser Verlauf wird spätestens dann wertvoll, wenn ein älteres Ergebnis nachträglich hinterfragt wird und rekonstruiert werden muss, welche Regel zu welchem Zeitpunkt tatsächlich im Tool aktiv war.</p>
-<div class="info-box warning-box">Verlassen Sie sich niemals darauf, dass eine KI von sich aus weiß, wann sich eine bestimmte Frist, ein Grenzwert oder ein Formular zuletzt geändert hat. Prüfen Sie rechtliche und fachliche Änderungen immer über die für Ihr Haus verbindliche Quelle, und nutzen Sie die KI ausschließlich zur technischen Umsetzung der bereits verifizierten neuen Regel.</div>
+<aside class="box warn" role="note"><strong class="bt">Achtung</strong><p>Verlassen Sie sich niemals darauf, dass eine KI von sich aus weiß, wann sich eine bestimmte Frist, ein Grenzwert oder ein Formular zuletzt geändert hat. Prüfen Sie rechtliche und fachliche Änderungen immer über die für Ihr Haus verbindliche Quelle, und nutzen Sie die KI ausschließlich zur technischen Umsetzung der bereits verifizierten neuen Regel.</p></aside>
 <h3>Tools rechtzeitig aussortieren</h3>
 <p>Nicht jedes selbstgebaute Tool verdient dauerhafte Pflege. Wenn sich ein Prozess grundlegend ändert oder ein offizielles Fachverfahren dieselbe Aufgabe künftig übernimmt, gehört ein Mini-Tool bewusst abgeschaltet und aus dem aktiven Gebrauch genommen, statt es parallel weiterlaufen zu lassen. Ein kurzer Vermerk in der Dokumentation, wann und warum ein Tool außer Betrieb genommen wurde, verhindert, dass es Monate später versehentlich wieder reaktiviert wird, obwohl die zugrunde liegende Regel längst überholt ist.</p>
+  <div class="jetzt"><strong class="jt">Jetzt du</strong><p>Legen Sie für Ihr wichtigstes Tool einen Prüfrhythmus fest, tragen Sie einen Termin in Ihren Kalender ein und schreiben Sie den ersten Eintrag eines Änderungsprotokolls (Was, wann, Anlass, geprüft von).</p>
+    <label class="nl" for="note-k13">Ihre Notizen (Stichworte: Prüfrhythmus, Termin, Protokolleintrag)</label>
+    <textarea id="note-k13" data-note="k13" rows="3" placeholder="Nur in Ihrem Browser gespeichert. Keine echten personenbezogenen Daten eintragen."></textarea>
+  </div>
+  <div class="gel"><button type="button" class="readbtn" data-read="k13" aria-pressed="false">Als gelesen markieren</button></div>
+  <nav class="pn" aria-label="Kapitelnavigation"><a class="pv" href="#k12">&larr; Kapitel 12</a><a class="nx" href="#k14">Kapitel 14 &rarr;</a></nav>
+</section>
 
-<h2>Kapitel 14: Die Zukunft der Sachbearbeitung: Vom Ausführenden zum Prozess-Architekten</h2>
-<p>Die Rolle der Sachbearbeitung verschiebt sich: weg vom manuellen Ausführen repetitiver Schritte, hin zum Entwerfen, Prüfen und Verantworten automatisierter Prozesse. Wer heute lernt, mit KI-Werkzeugen präzise zu kommunizieren, sichert sich diese neue, wertvollere Rolle in der Verwaltung von morgen.</p>
+<section class="kap" id="k14" data-kid="k14" aria-labelledby="h-k14">
+  <p class="knr">Kapitel 14 von 14 &middot; ca. 2 Min. Lesezeit</p>
+  <h2 id="h-k14">Die Zukunft der Sachbearbeitung: Vom Ausführenden zum Prozess-Architekten</h2>
+  <p>Die Rolle der Sachbearbeitung verschiebt sich: weg vom manuellen Ausführen repetitiver Schritte, hin zum Entwerfen, Prüfen und Verantworten automatisierter Prozesse. Wer heute lernt, mit KI-Werkzeugen präzise zu kommunizieren, bereitet sich auf diese neue Rolle in der Verwaltung von morgen vor.</p>
 <h3>Von der Ausführung zur Gestaltung</h3>
 <p>Über Jahrzehnte hat sich der Wert eines Sachbearbeiters oder einer Sachbearbeiterin stark daran bemessen, wie zuverlässig und schnell eine festgelegte Abfolge von Schritten manuell ausgeführt wurde. Mit den in diesem Buch beschriebenen Werkzeugen verschiebt sich dieser Wert spürbar: Die eigentliche Ausführung übernehmen zunehmend Makros, Formeln und kleine Tools, während der Mensch für das Entwerfen, Prüfen und Verantworten dieser automatisierten Abläufe zuständig bleibt. Das ist kein Abbau von Verantwortung, sondern eine Verlagerung auf eine anspruchsvollere Ebene — vom Ausführen zum Gestalten von Prozessen.</p>
 <h3>Welche Fähigkeiten jetzt wichtiger werden</h3>
 <p>In dieser neuen Rolle gewinnen bestimmte Fähigkeiten deutlich an Gewicht: die Fähigkeit, einen Arbeitsablauf präzise in Einzelschritte zu zerlegen und zu beschreiben; die Fähigkeit, ein automatisiert erzeugtes Ergebnis kritisch auf fachliche Plausibilität zu prüfen, statt es blind zu übernehmen; und die Fähigkeit, Kolleginnen und Kollegen sowie Vorgesetzten nachvollziehbar zu erklären, wie und warum eine bestimmte Automatisierung funktioniert. Diese drei Fähigkeiten lassen sich, wie die vorangegangenen Kapitel gezeigt haben, gezielt trainieren — sie sind kein angeborenes Talent, sondern das Ergebnis bewusster Übung im Alltag.</p>
-<div class="info-box dvag-box"><strong>Prompt-Vorlage:</strong> <code>Ich möchte meine bisherigen Arbeitsabläufe systematisch daraufhin prüfen, welche sich für eine Automatisierung eignen. Ich beschreibe dir gleich drei typische Aufgaben aus meinem Alltag in Stichworten. Bewerte für jede Aufgabe: Wie repetitiv ist sie, wie klar sind die Regeln formulierbar, und wie hoch wäre der Schaden bei einem Fehler? Gib mir am Ende eine Einschätzung, mit welcher Aufgabe ich am sinnvollsten anfangen sollte.</code></div>
+<div class="prompt"><div class="ph"><span>Prompt-Vorlage</span><button type="button" class="copy" aria-label="Prompt-Vorlage kopieren">Kopieren</button></div><div class="pc"><code>Ich möchte meine bisherigen Arbeitsabläufe systematisch daraufhin prüfen, welche sich für eine Automatisierung eignen. Ich beschreibe dir gleich drei typische Aufgaben aus meinem Alltag in Stichworten. Bewerte für jede Aufgabe: Wie repetitiv ist sie, wie klar sind die Regeln formulierbar, und wie hoch wäre der Schaden bei einem Fehler? Gib mir am Ende eine Einschätzung, mit welcher Aufgabe ich am sinnvollsten anfangen sollte.</code></div></div>
 <h3>Verantwortung bleibt beim Menschen</h3>
 <p>So leistungsfähig KI-gestützte Automatisierung auch wird — die fachliche und rechtliche Verantwortung für ein Ergebnis verlagert sich dadurch nicht auf die Maschine. Wer ein Tool baut oder einsetzt, bleibt dafür verantwortlich, dass dessen Ergebnisse fachlich korrekt sind und den geltenden Vorgaben entsprechen. Diese Verantwortung ernst zu nehmen bedeutet nicht, jeder Automatisierung misstrauisch gegenüberzustehen, sondern sie mit derselben Sorgfalt zu behandeln, mit der man auch eine neue Kollegin oder einen neuen Kollegen einarbeiten würde: anfangs eng begleiten und stichprobenartig prüfen, mit wachsendem Vertrauen schrittweise mehr Eigenständigkeit zugestehen.</p>
 <h3>Ein Ausblick zum Schluss</h3>
 <p>Die Werkzeuge, die in diesem Buch beschrieben wurden, werden sich in den kommenden Jahren weiter verändern und verbessern — die zugrunde liegende Denkweise aus präziser Beschreibung, sorgfältigem Testen und verantwortungsvollem Einsatz wird davon jedoch unberührt bleiben. Wer diese Denkweise heute einübt, investiert nicht in ein einzelnes Werkzeug, sondern in eine Fähigkeit, die in der Verwaltung von morgen zunehmend den Unterschied zwischen reiner Aufgabenerledigung und aktiver Prozessgestaltung ausmachen wird. Der erste Schritt dahin ist denkbar einfach: Suchen Sie sich noch heute eine einzige, kleine, wiederkehrende Aufgabe aus Ihrem Alltag aus und probieren Sie an ihr das, was Sie in diesem Buch gelernt haben.</p>
-
-<div class="info-box expert-box">
-<strong>Anhang A: Prompt-Vorlagen-Katalog (Auszug)</strong>
-<ul>
-<li><strong>Formel erklären:</strong> "Erkläre diese Excel-Formel Schritt für Schritt in einfachen Worten: [Formel einfügen]."</li>
-<li><strong>Makro-Fehlersuche:</strong> "Dieses VBA-Makro wirft folgenden Fehler: [Fehlermeldung]. Hier ist der Code: [Code einfügen]. Was ist die wahrscheinlichste Ursache?"</li>
-<li><strong>Dokumentation erzeugen:</strong> "Schreibe eine kurze, laienverständliche Anleitung für Kollegen, wie dieses Tool zu benutzen ist: [Tool-Beschreibung]."</li>
-<li><strong>Makro von Grund auf bauen:</strong> "Erstelle ein VBA-Makro, das [Ausgangslage: Tabellenblatt, Spalten, Kriterium] verarbeitet und [gewünschte Aktion: verschieben/kopieren/markieren/löschen] ausführt. Kommentiere den Code auf Deutsch."</li>
-<li><strong>Formel vereinfachen:</strong> "Hier ist eine verschachtelte WENN-Formel: [Formel einfügen]. Schlage eine übersichtlichere Alternative mit gleichem Ergebnis vor, zum Beispiel mit WENNS oder einer Hilfstabelle."</li>
-<li><strong>Anonymisierte Testdaten erzeugen:</strong> "Erstelle mir eine Beispieltabelle mit fünf frei erfundenen Zeilen mit folgender Spaltenstruktur: [Spalten auflisten], ohne echte Daten zu verwenden."</li>
-<li><strong>Serienmail-Entwurf:</strong> "Erstelle ein Makro, das aus einer Tabelle mit den Spalten [Spalten] für jede Zeile eine personalisierte E-Mail als Outlook-ENTWURF erzeugt, ohne automatischen Versand."</li>
-<li><strong>Mini-Web-Tool erzeugen:</strong> "Erstelle eine einzelne, eigenständige HTML-Datei ohne Serverbetrieb für folgenden Rechner: [Aufgabe beschreiben, Eingaben, gewünschtes Ergebnis]."</li>
-<li><strong>CSV-Format umwandeln:</strong> "Wandle eine CSV-Datei mit den Spalten [Ausgangsformat] in eine CSV-Datei mit den Spalten [Zielformat] um, unter Beachtung von Trennzeichen, Kodierung und führenden Nullen."</li>
-<li><strong>Prozess auf Automatisierungspotenzial prüfen:</strong> "Ich beschreibe dir eine wiederkehrende Aufgabe aus meinem Alltag: [Beschreibung]. Bewerte, wie repetitiv sie ist, wie klar sich die Regeln formulieren lassen, und wie hoch das Risiko bei einem Fehler wäre."</li>
-<li><strong>Wartungscheck durchführen:</strong> "Ich möchte prüfen, ob folgende im Tool hinterlegte Regel noch aktuell ist: [Regel beschreiben]. Erkläre mir, welche Angaben ich zur Prüfung brauche und wie ich die Codezeile bei Bedarf anpasse."</li>
-<li><strong>Power-Query-Abfrage aufbauen:</strong> "Ich habe zwei Tabellen mit den Spalten [Spalten Tabelle 1] und [Spalten Tabelle 2]. Beschreibe mir Schritt für Schritt, wie ich sie in Power Query über [gemeinsame Spalte] zusammenführe und danach [gewünschte Auswertung] berechne."</li>
-</ul>
+  <div class="jetzt"><strong class="jt">Jetzt du</strong><p>Bewerten Sie drei Aufgaben aus Ihrem Alltag nach Wiederholung, Klarheit der Regeln und Schaden bei einem Fehler (niedrig, mittel, hoch). Wählen Sie die Aufgabe für den Start und begründen Sie in zwei Sätzen.</p>
+    <label class="nl" for="note-k14">Ihre Notizen (Stichworte: Bewertungstabelle und Entscheidung)</label>
+    <textarea id="note-k14" data-note="k14" rows="3" placeholder="Nur in Ihrem Browser gespeichert. Keine echten personenbezogenen Daten eintragen."></textarea>
+  </div>
+  <div class="gel"><button type="button" class="readbtn" data-read="k14" aria-pressed="false">Als gelesen markieren</button></div>
+  <nav class="pn" aria-label="Kapitelnavigation"><a class="pv" href="#k13">&larr; Kapitel 13</a><a class="nx" href="#anhang">Anhang &rarr;</a></nav>
+</section>
+<section class="kap" id="anhang" data-kid="anhang" aria-labelledby="h-anhang">
+  <p class="knr">Anhang A</p>
+  <h2 id="h-anhang">Prompt-Vorlagen-Katalog (Auszug)</h2>
+  <p>Auszug aus dem Prompt-Katalog. Ersetzen Sie die Angaben in eckigen Klammern durch Ihre eigenen Platzhalter und geben Sie keine echten personenbezogenen Daten ein (siehe Kapitel 4).</p><div class="prompt"><div class="ph"><span>Formel erklären</span><button type="button" class="copy" aria-label="Formel erklären kopieren">Kopieren</button></div><div class="pc"><code>Erkläre diese Excel-Formel Schritt für Schritt in einfachen Worten: [Formel einfügen].</code></div></div>
+<div class="prompt"><div class="ph"><span>Makro-Fehlersuche</span><button type="button" class="copy" aria-label="Makro-Fehlersuche kopieren">Kopieren</button></div><div class="pc"><code>Dieses VBA-Makro wirft folgenden Fehler: [Fehlermeldung]. Hier ist der Code: [Code einfügen]. Was ist die wahrscheinlichste Ursache?</code></div></div>
+<div class="prompt"><div class="ph"><span>Dokumentation erzeugen</span><button type="button" class="copy" aria-label="Dokumentation erzeugen kopieren">Kopieren</button></div><div class="pc"><code>Schreibe eine kurze, laienverständliche Anleitung für Kollegen, wie dieses Tool zu benutzen ist: [Tool-Beschreibung].</code></div></div>
+<div class="prompt"><div class="ph"><span>Makro von Grund auf bauen</span><button type="button" class="copy" aria-label="Makro von Grund auf bauen kopieren">Kopieren</button></div><div class="pc"><code>Erstelle ein VBA-Makro, das [Ausgangslage: Tabellenblatt, Spalten, Kriterium] verarbeitet und [gewünschte Aktion: verschieben/kopieren/markieren/löschen] ausführt. Kommentiere den Code auf Deutsch.</code></div></div>
+<div class="prompt"><div class="ph"><span>Formel vereinfachen</span><button type="button" class="copy" aria-label="Formel vereinfachen kopieren">Kopieren</button></div><div class="pc"><code>Hier ist eine verschachtelte WENN-Formel: [Formel einfügen]. Schlage eine übersichtlichere Alternative mit gleichem Ergebnis vor, zum Beispiel mit WENNS oder einer Hilfstabelle.</code></div></div>
+<div class="prompt"><div class="ph"><span>Anonymisierte Testdaten erzeugen</span><button type="button" class="copy" aria-label="Anonymisierte Testdaten erzeugen kopieren">Kopieren</button></div><div class="pc"><code>Erstelle mir eine Beispieltabelle mit fünf frei erfundenen Zeilen mit folgender Spaltenstruktur: [Spalten auflisten], ohne echte Daten zu verwenden.</code></div></div>
+<div class="prompt"><div class="ph"><span>Serienmail-Entwurf</span><button type="button" class="copy" aria-label="Serienmail-Entwurf kopieren">Kopieren</button></div><div class="pc"><code>Erstelle ein Makro, das aus einer Tabelle mit den Spalten [Spalten] für jede Zeile eine personalisierte E-Mail als Outlook-ENTWURF erzeugt, ohne automatischen Versand.</code></div></div>
+<div class="prompt"><div class="ph"><span>Mini-Web-Tool erzeugen</span><button type="button" class="copy" aria-label="Mini-Web-Tool erzeugen kopieren">Kopieren</button></div><div class="pc"><code>Erstelle eine einzelne, eigenständige HTML-Datei ohne Serverbetrieb für folgenden Rechner: [Aufgabe beschreiben, Eingaben, gewünschtes Ergebnis].</code></div></div>
+<div class="prompt"><div class="ph"><span>CSV-Format umwandeln</span><button type="button" class="copy" aria-label="CSV-Format umwandeln kopieren">Kopieren</button></div><div class="pc"><code>Wandle eine CSV-Datei mit den Spalten [Ausgangsformat] in eine CSV-Datei mit den Spalten [Zielformat] um, unter Beachtung von Trennzeichen, Kodierung und führenden Nullen.</code></div></div>
+<div class="prompt"><div class="ph"><span>Prozess auf Automatisierungspotenzial prüfen</span><button type="button" class="copy" aria-label="Prozess auf Automatisierungspotenzial prüfen kopieren">Kopieren</button></div><div class="pc"><code>Ich beschreibe dir eine wiederkehrende Aufgabe aus meinem Alltag: [Beschreibung]. Bewerte, wie repetitiv sie ist, wie klar sich die Regeln formulieren lassen, und wie hoch das Risiko bei einem Fehler wäre.</code></div></div>
+<div class="prompt"><div class="ph"><span>Wartungscheck durchführen</span><button type="button" class="copy" aria-label="Wartungscheck durchführen kopieren">Kopieren</button></div><div class="pc"><code>Ich möchte prüfen, ob folgende im Tool hinterlegte Regel noch aktuell ist: [Regel beschreiben]. Erkläre mir, welche Angaben ich zur Prüfung brauche und wie ich die Codezeile bei Bedarf anpasse.</code></div></div>
+<div class="prompt"><div class="ph"><span>Power-Query-Abfrage aufbauen</span><button type="button" class="copy" aria-label="Power-Query-Abfrage aufbauen kopieren">Kopieren</button></div><div class="pc"><code>Ich habe zwei Tabellen mit den Spalten [Spalten Tabelle 1] und [Spalten Tabelle 2]. Beschreibe mir Schritt für Schritt, wie ich sie in Power Query über [gemeinsame Spalte] zusammenführe und danach [gewünschte Auswertung] berechne.</code></div></div>
+  <div class="gel"><button type="button" class="readbtn" data-read="anhang" aria-pressed="false">Als gelesen markieren</button></div>
+  <nav class="pn" aria-label="Kapitelnavigation"><a class="pv" href="#k14">&larr; Kapitel 14</a><a class="nx" href="#module">Slide-Module &rarr;</a></nav>
+</section>
+<section class="kap" id="module" data-kid="module" aria-labelledby="h-module">
+  <p class="knr">Weiterlernen</p>
+  <h2 id="h-module">Die Slide-Module</h2>
+  <p>Zu den Themen aus Reihe 1 gibt es Slide-Module. Sie führen Schritt für Schritt von Setup und Grundlagen bis zum veröffentlichten Portfolio.</p>
+  <div class="module">
+    <a href="../slides/r1-m0-start-und-setup.html"><small>Modul 0</small>Start und Setup</a>
+    <a href="../slides/r1-m1-html.html"><small>Modul 1</small>HTML</a>
+    <a href="../slides/r1-m2-css.html"><small>Modul 2</small>CSS</a>
+    <a href="../slides/r1-m3-javascript.html"><small>Modul 3</small>JavaScript</a>
+    <a href="../slides/r1-m4-prompting.html"><small>Modul 4</small>Prompting für Entwickler</a>
+    <a href="../slides/r1-m5-portfolio-und-hosting.html"><small>Modul 5</small>Dein Software-Portfolio geht online</a>
+  </div>
+  <nav class="pn" aria-label="Kapitelnavigation"><a class="pv" href="#anhang">&larr; Anhang</a><span></span></nav>
+</section>
+    </article>
+  </div>
 </div>
+<script>
+(function () {
+  "use strict";
+  var P = "grundlagen_", mem = {};
+  function sget(k) { try { var v = window.localStorage.getItem(P + k); return v === null ? (mem[k] === undefined ? null : mem[k]) : v; } catch (e) { return mem[k] === undefined ? null : mem[k]; } }
+  function sset(k, v) { mem[k] = v; try { window.localStorage.setItem(P + k, v); } catch (e) {} }
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
 
+  // Gelesen
+  var read = {};
+  try { read = JSON.parse(sget("gelesen") || "{}") || {}; } catch (e) { read = {}; }
+  function showRead() {
+    var n = 0;
+    $$("[data-read]").forEach(function (b) {
+      var id = b.getAttribute("data-read"), on = !!read[id];
+      b.setAttribute("aria-pressed", on ? "true" : "false");
+      b.textContent = on ? "Als gelesen markiert (zurücknehmen)" : "Als gelesen markieren";
+      var a = $('.toc a[data-k="' + id + '"]'); if (a) a.classList.toggle("gelesen", on);
+      if (on && /^k\d+$/.test(id)) n++;
+    });
+    $("#standtxt").textContent = n + " von 14 Kapiteln gelesen";
+    $("#standbar").style.width = (n / 14 * 100) + "%";
+  }
+  $$("[data-read]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var id = b.getAttribute("data-read"); if (read[id]) delete read[id]; else read[id] = 1;
+      sset("gelesen", JSON.stringify(read)); showRead();
+    });
+  });
+  showRead();
+
+  // Notizen
+  $$("textarea[data-note]").forEach(function (t) {
+    var k = "note_" + t.getAttribute("data-note"), v = sget(k); if (v) t.value = v;
+    t.addEventListener("input", function () { sset(k, t.value); });
+  });
+
+  // Kopieren
+  function fallbackCopy(txt) {
+    var t = document.createElement("textarea"); t.value = txt; t.setAttribute("readonly", ""); t.style.position = "fixed"; t.style.opacity = "0";
+    document.body.appendChild(t); t.select(); var ok = false; try { ok = document.execCommand("copy"); } catch (e) {} document.body.removeChild(t); return ok;
+  }
+  $$(".copy").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var txt = $(".pc code", b.closest(".prompt")).textContent;
+      function done(ok) { var o = b.textContent; b.textContent = ok ? "Kopiert" : "Nicht möglich"; b.classList.toggle("ok", ok); setTimeout(function () { b.textContent = "Kopieren"; b.classList.remove("ok"); }, 1600); }
+      if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(txt).then(function () { done(true); }, function () { done(fallbackCopy(txt)); }); }
+      else done(fallbackCopy(txt));
+    });
+  });
+
+  // Lesefortschritt + aktives Kapitel
+  var lf = $("#lf"), secs = $$("section[data-kid]");
+  function onScroll() {
+    var h = document.documentElement, max = h.scrollHeight - h.clientHeight, p = max > 0 ? Math.min(100, Math.max(0, (window.pageYOffset || h.scrollTop) / max * 100)) : 0;
+    lf.style.width = p + "%"; lf.setAttribute("aria-valuenow", String(Math.round(p)));
+    var cur = null, y = 120;
+    secs.forEach(function (s) { if (s.getBoundingClientRect().top <= y) cur = s; });
+    $$(".toc a").forEach(function (a) { a.classList.toggle("aktiv", !!cur && a.getAttribute("data-k") === cur.getAttribute("data-kid")); });
+  }
+  var tick = false;
+  window.addEventListener("scroll", function () { if (!tick) { tick = true; requestAnimationFrame(function () { tick = false; onScroll(); }); } }, { passive: true });
+  window.addEventListener("resize", onScroll);
+  onScroll();
+
+  // Mobiles Inhaltsverzeichnis
+  var toc = $("#toc"), mq = window.matchMedia ? window.matchMedia("(max-width:900px)") : null;
+  function tocMode() { if (!mq) return; if (mq.matches) toc.removeAttribute("open"); else toc.setAttribute("open", ""); }
+  tocMode(); if (mq) { if (mq.addEventListener) mq.addEventListener("change", tocMode); else if (mq.addListener) mq.addListener(tocMode); }
+  $$(".toc a").forEach(function (a) { a.addEventListener("click", function () { if (mq && mq.matches) toc.removeAttribute("open"); }); });
+})();
+</script>
 </body>
 </html>

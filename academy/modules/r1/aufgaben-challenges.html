@@ -1,759 +1,1332 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ultimativer KI-Webkurs – Extremer Aufgaben- & Challenge-Guide (MASTERPIECE)</title>
-  <!-- Tailwind CSS per CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    html { scroll-behavior: smooth; }
-    .feedback { font-weight: bold; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Übungen – KI-Webentwickler in 10 Stunden (Reihe 1)</title>
+<meta name="description" content="Interaktive Übungen, Quizfragen und Challenges zu HTML, CSS, JavaScript, Prompting und Hosting mit Live-Editor und Fortschrittsanzeige.">
+<style>
+:root{--bg:#0a0a0f;--card:#151522;--line:rgba(148,163,184,.2);--text:#f1f5f9;--muted:#94a3b8;--cyan:#06b6d4;--pink:#ec4899;--gold:#fbbf24;--ok:#10b981;--bad:#ef4444;--code:#0d0d17;--radius:14px}
+@media (prefers-color-scheme:light){:root{--bg:#f6f8fc;--card:#fff;--line:rgba(15,23,42,.14);--text:#0f172a;--muted:#475569;--cyan:#0e7490;--pink:#be185d;--gold:#b45309;--ok:#047857;--bad:#b91c1c;--code:#f1f5f9}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+a{color:var(--cyan)}
+.wrap{max-width:1180px;margin:0 auto;padding:20px 16px 60px}
+h1,h2{line-height:1.2;margin:0;background:linear-gradient(90deg,var(--cyan),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+h1{font-size:clamp(1.6rem,4.5vw,2.4rem)}
+h2{font-size:clamp(1.3rem,3.2vw,1.7rem)}
+.muted{color:var(--muted)}
+button{font:inherit;color:inherit;cursor:pointer;min-height:44px;padding:8px 16px;border-radius:10px;border:1px solid var(--line);background:transparent}
+button:hover{border-color:var(--cyan)}
+button[disabled]{opacity:.55;cursor:default}
+.btn-p{background:linear-gradient(90deg,var(--cyan),var(--pink));border:0;color:#fff;font-weight:600}
+.top{display:flex;gap:20px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:20px}
+.top p{margin:.5rem 0 0;max-width:46rem}
+.gesamt{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:12px 16px}
+.ring{width:72px;height:72px;flex:none}
+.ring circle{fill:none;stroke-width:8}
+.ring .bg{stroke:var(--line)}
+.ring .fg{stroke:url(#grad);stroke-linecap:round;transition:stroke-dashoffset .4s}
+.ring text{fill:var(--text);font:700 18px system-ui,sans-serif}
+.layout{display:grid;grid-template-columns:290px minmax(0,1fr);gap:24px;align-items:start}
+.side{position:sticky;top:12px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:10px;max-height:calc(100vh - 24px);overflow:auto}
+.side button.kap{display:flex;width:100%;text-align:left;justify-content:space-between;gap:8px;align-items:center;border:1px solid transparent;margin:2px 0;padding:8px 10px;font-size:.93rem}
+.side button.kap[aria-current="true"]{border-color:var(--cyan);background:rgba(6,182,212,.1)}
+.side .zaehl{color:var(--muted);font-size:.82rem;white-space:nowrap}
+.side .zaehl.fertig{color:var(--ok);font-weight:700}
+.mobsel{display:none}
+.mobsel label{display:block;font-weight:600;margin-bottom:6px}
+.mobsel select{width:100%;min-height:44px;font:inherit;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text)}
+.kaphead{margin-bottom:14px}
+.kaphead p{margin:.4rem 0 0}
+.balken{height:10px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:10px}
+.balken>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--pink));transition:width .4s}
+.tools{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0 16px;align-items:center}
+.tools label{display:inline-flex;align-items:center;gap:8px;min-height:44px}
+input[type=checkbox],input[type=radio]{width:20px;height:20px;accent-color:var(--cyan);flex:none}
+.karte{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:16px}
+.karte.erledigt{border-color:var(--ok)}
+.kopf{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.badge{font-size:.76rem;font-weight:700;padding:2px 10px;border-radius:99px;border:1px solid currentColor;text-transform:uppercase;letter-spacing:.04em}
+.b-aufgabe{color:var(--cyan)}.b-quiz{color:var(--pink)}.b-challenge{color:var(--gold)}.b-zusatz{color:var(--muted)}.b-kreativ{color:var(--ok)}
+.b-portfolio{color:var(--bg);background:var(--gold);border-color:var(--gold)}
+.nr{color:var(--muted);font-size:.85rem}
+.haken{margin-left:auto;display:inline-flex;align-items:center;gap:8px;min-height:44px;cursor:pointer}
+.titel{font-weight:600;margin:0 0 6px}
+.task{margin:0 0 10px}
+code,pre{font-family:ui-monospace,Consolas,Menlo,monospace}
+code{background:var(--code);padding:1px 6px;border-radius:6px;font-size:.9em}
+pre{background:var(--code);border:1px solid var(--line);border-radius:10px;padding:12px;overflow:auto;font-size:.85rem;margin:8px 0;white-space:pre}
+.aktionen{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.hinweise{margin-top:10px}
+.hinweis{border-left:4px solid var(--gold);padding:6px 12px;margin:8px 0;background:rgba(251,191,36,.08);border-radius:0 10px 10px 0}
+details.sol{margin-top:10px;border:1px solid var(--line);border-radius:10px;padding:0 12px}
+details.sol summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font-weight:600}
+details.sol .inh{padding:0 0 12px}
+.quiz label{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:10px;margin:6px 0;cursor:pointer;min-height:44px}
+.quiz label.richtig{border-color:var(--ok);background:rgba(16,185,129,.1)}
+.quiz label.falsch{border-color:var(--bad);background:rgba(239,68,68,.1)}
+.fb{margin:8px 0 0;font-weight:600}
+.fb.ok{color:var(--ok)}.fb.bad{color:var(--bad)}
+.ed{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.ed>div{min-width:0}
+.ed label.l{display:block;font-size:.85rem;color:var(--muted);margin-bottom:4px}
+.ed textarea{width:100%;height:300px;resize:vertical;background:var(--code);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:10px;font:13px/1.5 ui-monospace,Consolas,Menlo,monospace;tab-size:2}
+.ed iframe{width:100%;height:300px;border:1px solid var(--line);border-radius:10px;background:#fff;display:block}
+.konsole{margin-top:6px;background:var(--code);border:1px solid var(--line);border-radius:10px;padding:6px 10px;font:12px/1.5 ui-monospace,Consolas,monospace;max-height:90px;overflow:auto;display:none}
+.konsole.an{display:block}
+.konsole .err{color:var(--bad)}
+.edbar{grid-column:1/-1;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.edbar .hint{color:var(--muted);font-size:.85rem}
+.navi{display:flex;justify-content:space-between;gap:10px;margin-top:20px;flex-wrap:wrap}
+.leer{padding:16px;border:1px dashed var(--line);border-radius:var(--radius);color:var(--muted)}
+.hide{display:none!important}
+footer{margin-top:30px;color:var(--muted);font-size:.9rem}
+@media (max-width:900px){
+  .layout{grid-template-columns:1fr}
+  .side{display:none}
+  .mobsel{display:block;margin-bottom:12px}
+  .ed{grid-template-columns:1fr}
+  .ed textarea,.ed iframe{height:260px}
+  .haken{margin-left:0}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+@media print{.side,.mobsel,.tools,.navi,.aktionen,.top .gesamt button{display:none!important}body{background:#fff;color:#000}.karte{break-inside:avoid}}
+</style>
 </head>
-<body class="bg-gray-100 text-gray-800 p-4">
-
-  <!-- Header -->
-  <header class="mb-8 text-center">
-    <h1 class="text-4xl font-extrabold mb-2">
-      Ultimativer KI-Webkurs – Aufgaben, Quiz & Challenges
-    </h1>
-    <p class="text-lg">
-      Ein dermaßen umfangreiches Aufgaben-Dokument, das dich vom Anfänger zum Profi bringt!
-    </p>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Übungen: KI-Webentwickler in 10 Stunden</h1>
+      <p class="muted">Reihe 1. Aufgaben, Quizfragen und Challenges zu allen Kapiteln. Hake ab, was du erledigt hast, nutze bei Bedarf die Hinweise und teste Code direkt im Live-Editor. Aufgaben mit dem Badge „Portfolio“ zahlen direkt auf dein Software-Portfolio ein.</p>
+    </div>
+    <div class="gesamt" aria-live="polite">
+      <svg class="ring" viewBox="0 0 80 80" role="img" aria-label="Gesamtfortschritt">
+        <defs><linearGradient id="grad" x1="0" x2="1"><stop offset="0" stop-color="#06b6d4"/><stop offset="1" stop-color="#ec4899"/></linearGradient></defs>
+        <circle class="bg" cx="40" cy="40" r="34"/>
+        <circle class="fg" id="ringfg" cx="40" cy="40" r="34" transform="rotate(-90 40 40)" stroke-dasharray="213.6" stroke-dashoffset="213.6"/>
+        <text id="ringtxt" x="40" y="46" text-anchor="middle">0%</text>
+      </svg>
+      <div><strong id="gesamttxt">0 von 0 erledigt</strong><br><button id="reset" type="button" class="muted" style="min-height:44px;margin-top:4px">Fortschritt zurücksetzen</button></div>
+    </div>
   </header>
 
-  <!-- Inhaltsverzeichnis -->
-  <nav class="mb-12">
-    <ul class="flex flex-wrap justify-center gap-4 text-blue-600 font-semibold">
-      <li><a href="#chapter1">Kapitel 1</a></li>
-      <li><a href="#chapter2">Kapitel 2</a></li>
-      <li><a href="#chapter3">Kapitel 3</a></li>
-      <li><a href="#chapter4">Kapitel 4</a></li>
-      <li><a href="#chapter5">Kapitel 5</a></li>
-      <li><a href="#chapter6">Kapitel 6</a></li>
-      <li><a href="#chapter7">Kapitel 7</a></li>
-      <li><a href="#chapter8">Kapitel 8</a></li>
-      <li><a href="#chapter9">Kapitel 9</a></li>
-      <li><a href="#chapter10">Kapitel 10</a></li>
-      <li><a href="#abschluss">Abschluss</a></li>
+  <div class="layout">
+    <nav class="side" id="side" aria-label="Kapitel"></nav>
+    <main id="main" tabindex="-1">
+      <div class="mobsel"><label for="kapsel">Kapitel wählen</label><select id="kapsel"></select></div>
+      <section id="kapitel"></section>
+    </main>
+  </div>
+  <footer>Dein Fortschritt wird nur in deinem Browser gespeichert (localStorage). Ist der Speicher blockiert, funktioniert die Seite weiterhin, der Fortschritt geht dann beim Neuladen verloren.</footer>
+</div>
+
+<script>
+"use strict";
+var CH = [];
+function ch(id, title, intro, items) { items.forEach(function (it, i) { it.id = id + "-" + (i + 1); it.n = i + 1; }); CH.push({ id: id, title: title, intro: intro, items: items }); }
+function mk(type, o) { var r = { type: type }; for (var k in o) r[k] = o[k]; return r; }
+function F(title, task, h1, h2, sol, o) { return mk("aufgabe", Object.assign({ title: title, task: task, h: [h1, h2], sol: sol }, o || {})); }
+function Q(q, opts, c, why, h1, h2) { return mk("quiz", { title: q, q: { opts: opts, c: c, why: why }, h: [h1, h2] }); }
+function C(text, h1, h2, sol, o) { return mk("challenge", Object.assign({ task: text, h: [h1, h2], sol: sol }, o || {})); }
+function Z(text, h1, h2, sol, o) { return mk("zusatz", Object.assign({ task: text, h: [h1, h2], sol: sol }, o || {})); }
+function K(text, h1, h2, sol, o) { return mk("kreativ", Object.assign({ task: text, h: [h1, h2], sol: sol }, o || {})); }
+ch("k1","Kapitel 1: Was brauchst du als Neuling?","Rechner, Editor, Browser: Welche Grundausstattung du für den Start brauchst.",[
+F("Welche Hardware- und Softwarevoraussetzungen sind für den Einstieg in die Webentwicklung wichtig?",
+`Erstelle eine Liste (mindestens 3 Punkte pro Kategorie, Hardware und Software) und begründe kurz, warum jede Voraussetzung wichtig ist.`,
+`Teile in zwei Kategorien: Hardware (z. B. Rechner, Internetzugang, Bildschirm) und Software (z. B. Editor, Browser, Git).`,
+`Begründe jeden Punkt mit einem Satz nach dem Muster: "Ohne X wird Y schwieriger." Beispiel: Ohne Browser gibt es keine Vorschau deiner Seite.`,
+`Hardware: ein aktueller Rechner mit ausreichend Arbeitsspeicher (Webentwicklung braucht keine Hochleistungsmaschine), stabiler Internetzugang (für Dokumentation, KI-Tools, Hosting), ein ausreichend großer Bildschirm für Editor und Vorschau nebeneinander. Software: ein Code-Editor (z. B. Visual Studio Code), ein aktueller Browser mit Entwicklertools, Git für Versionierung, optional Node.js für spätere Projekte.`),
+Q("Welcher Editor wird im Kurs empfohlen?",["Notepad","Visual Studio Code","Sublime Text","Atom"],1,
+`Visual Studio Code ist kostenlos, weit verbreitet und hat Emmet, Live-Vorschau-Erweiterungen und KI-Anbindung. Notepad hat keine Code-Unterstützung. Atom wird seit Ende 2022 nicht mehr weiterentwickelt.`,
+`Gesucht ist ein kostenloser Editor mit Syntaxhervorhebung, Erweiterungen und aktiver Pflege.`,
+`Einer der vier Editoren wird nicht mehr weiterentwickelt, ein anderer hat keine Code-Funktionen.`),
+C("Starte deinen Editor, erstelle eine Datei namens index.html und nutze Emmet (html:5) für ein HTML5-Grundgerüst. Bonus: Füge einen Kommentar hinzu, in dem du dein persönliches Motto für das Portfolio notierst.",
+`Ergänze im Editor unten das Grundgerüst so, dass es dem Emmet-Ergebnis entspricht, und schreibe ein Motto als Kommentar. In VS Code tippst du html:5 und drückst Tab.`,
+`In VS Code: neue Datei index.html, dann html:5 eingeben und Tab drücken. Ein HTML-Kommentar sieht so aus: &lt;!-- Text --&gt;.`,
+`Das Grundgerüst braucht: doctype, html mit lang="de", head mit meta charset, meta viewport und title, sowie body. Prüfe, ob in der Vorschau dein Titel und deine Überschrift erscheinen.`,
+{p:1,ed:`<\!-- Motto: (hier dein Motto eintragen) -->
+<!doctype html>
+<html>
+<head>
+  <\!-- TODO: lang-Attribut ergänzen, charset, viewport und title hinzufügen -->
+</head>
+<body>
+  <h1>Mein Portfolio</h1>
+</body>
+</html>`,sc:`<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mein Portfolio</title>
+</head>
+<body>
+  <\!-- Motto: Lernen durch Bauen -->
+  <h1>Mein Portfolio</h1>
+</body>
+</html>`}),
+Z("Recherchiere und vergleiche zwei moderne Browser (z. B. Brave und Vivaldi). Erstelle eine Tabelle mit mindestens fünf Vor- und Nachteilen.",
+`Nutze die offiziellen Seiten der Hersteller als Quelle und notiere, was du geprüft hast und was nur behauptet wird.`,
+`Vergleiche Kriterien wie Entwicklertools, Datenschutz-Einstellungen, Erweiterungen, Synchronisierung, Ressourcenverbrauch und Basis (beide nutzen Chromium).`,
+`Die Tabelle hat Zeilen je Kriterium und je eine Spalte pro Browser mit Vorteil und Nachteil. Wichtig für Webentwicklung: Beide nutzen die Chromium-Engine, du solltest also zusätzlich in Firefox oder Safari testen, weil dort andere Engines laufen.`),
+K("Schreibe einen kurzen Prompt für eine KI (z. B. ChatGPT), der dir hilft, den passenden Code-Editor für Webentwicklung zu finden. Erkläre, warum du den Prompt so formuliert hast.",
+`Ein guter Prompt nennt dein Betriebssystem, dein Vorwissen, dein Budget und das gewünschte Ergebnis (z. B. Vergleichstabelle).`,
+`Bitte die KI, Rückfragen zu stellen, wenn ihr Informationen fehlen, und lass sie die Empfehlung begründen.`,
+`Beispiel: "Ich bin Einsteiger und nutze Windows 11. Ich will statische Webseiten mit HTML, CSS und JavaScript bauen. Nenne drei kostenlose Code-Editoren als Tabelle mit Vor- und Nachteilen und empfiehl einen für mein Level. Frage nach, wenn dir Angaben fehlen." Begründung: Kontext, Format und Rückfragen sorgen für eine passende Antwort.`),
+F("Welche Rolle spielt die Betriebssystemversion für die Webentwicklung?",
+`Recherchiere, welche Vorteile ein aktuelles Betriebssystem bietet, und erstelle eine kurze Übersicht.`,
+`Denke an Sicherheitsupdates, Kompatibilität mit aktuellen Tools (Editor, Browser, Node.js) und Unterstützung durch Hersteller.`,
+`Prüfe die Systemanforderungen von Visual Studio Code und deinem Browser. Ältere Systeme bekommen oft keine neuen Versionen mehr.`,
+`Aktuelle Systeme bekommen Sicherheitsupdates, unterstützen neue Browser- und Tool-Versionen und bieten moderne Terminals und Dateisysteme. Webentwicklung läuft auf Windows, macOS und Linux; entscheidend ist, dass System, Editor und Browser noch Updates erhalten.`),
+Q("Welche Aussage zum Datenschutz im Browser stimmt?",["Datenschutz hängt allein vom Browser-Hersteller ab, Einstellungen spielen keine Rolle.","In jedem gängigen Browser lassen sich Tracking-Schutz, Cookie-Regeln und Erweiterungen selbst konfigurieren.","Der Inkognito-Modus macht dich gegenüber Websites und Internetanbieter anonym.","Ein Browser ohne Updates ist am sichersten, weil sich nichts ändert."],1,
+`Datenschutz ergibt sich aus Standardeinstellungen und deiner Konfiguration. Der Inkognito-Modus speichert nur lokal keinen Verlauf, verbirgt aber nichts vor Websites oder Provider. Updates schließen Sicherheitslücken.`,
+`Zwei Aussagen sind klassische Irrtümer: Inkognito bedeutet nicht anonym, fehlende Updates sind kein Schutz.`,
+`Frage dich, was du selbst in den Einstellungen ändern kannst.`),
+C("Erstelle ein kurzes Video oder eine Präsentation (maximal 5 Minuten), in der du erklärst, warum aktuelle Tools und Betriebssysteme die Entwicklung erleichtern.",
+`Nutze die Aufnahmefunktion deines Systems oder eine Präsentationssoftware und halte dich an die Zeitgrenze.`,
+`Gliedere in drei Punkte: Sicherheit, Kompatibilität, Komfort (z. B. Entwicklertools, Autovervollständigung).`,
+`Gute Struktur: 1 Minute Ausgangslage, 3 Minuten drei konkrete Beispiele aus deiner Erfahrung oder Recherche, 1 Minute Fazit. Zeige mindestens ein Beispiel live, z. B. die Entwicklertools im Browser.`),
+Z("Entwickle eine Mindmap, die die benötigte Infrastruktur (Hardware, Software, Browser, Tools) darstellt, und erkläre, wie die Teile zusammenspielen.",
+`Papier, ein Mindmap-Tool oder ein Whiteboard genügen. Die Mitte ist "Meine Webseite".`,
+`Zeichne Pfeile mit Beschriftung: Editor schreibt Dateien, Browser zeigt sie an, Git speichert Versionen, Hosting veröffentlicht sie.`,
+`Ein Beispiel für den Fluss: Editor (Datei speichern) → lokaler Ordner → Browser (Vorschau) → Git (Commit) → GitHub (Push) → GitHub Pages (Hosting) → öffentliche URL. KI-Tools hängen am Editor und liefern Code-Vorschläge, die du prüfst.`)
+]);
+
+ch("k2","Kapitel 2: HTML-Grundlagen","Struktur, semantische Tags, Formulare und saubere Seiten.",[
+F("Was sind semantische Tags in HTML und welchen Nutzen haben sie für SEO und Barrierefreiheit?",
+`Erkläre in eigenen Worten (mindestens 3 Sätze) die Rolle von &lt;header&gt;, &lt;nav&gt; und &lt;footer&gt;.`,
+`Semantisch heißt: Das Tag beschreibt die Bedeutung des Inhalts, nicht sein Aussehen.`,
+`Denke an Screenreader, die per Landmarken (Kopfbereich, Navigation, Fußbereich) springen, und an Suchmaschinen, die Strukturen besser erkennen.`,
+`&lt;header&gt; fasst Kopfbereich oder Einleitung einer Seite oder eines Abschnitts zusammen (Logo, Titel). &lt;nav&gt; kennzeichnet Hauptnavigation, sodass Hilfstechnologien direkt dorthin springen können. &lt;footer&gt; enthält Abschlussinformationen wie Kontakt oder Impressum. Semantik verbessert Zugänglichkeit und hilft Suchmaschinen, die Seite zu verstehen; ein direkter Rankingvorteil ist nicht garantiert.`),
+Q("Welche Aussage trifft zu?",["HTML dient primär zur optischen Gestaltung.","HTML strukturiert den Inhalt einer Webseite.","HTML ersetzt CSS und JavaScript.","HTML ist bei modernen Webseiten überflüssig."],1,
+`HTML beschreibt Struktur und Bedeutung. CSS gestaltet, JavaScript macht interaktiv. Alle drei arbeiten zusammen.`,
+`Erinnere dich an die Aufgabenverteilung: HTML, CSS, JavaScript.`,
+`Es geht um die Rolle von HTML, nicht um Aussehen oder Verhalten.`),
+C("Erstelle deine erste Hello-World-Seite in HTML und integriere mindestens einen semantischen Tag. Teste die Seite im Browser und dokumentiere, was dir auffällt.",
+`Ersetze im Editor die div-Container durch passende semantische Tags und beobachte, ob sich das Aussehen ändert.`,
+`Aus &lt;div class="kopf"&gt; wird &lt;header&gt;, aus dem Hauptinhalt &lt;main&gt;.`,
+`Visuell ändert sich kaum etwas, weil semantische Tags nur Bedeutung tragen. Der Gewinn liegt in Zugänglichkeit und Wartbarkeit. Notiere genau das als dokumentierte Beobachtung.`,
+{p:1,ed:`<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Hello World</title>
+</head>
+<body>
+  <div class="kopf"><h1>Hello World</h1></div>
+  <div class="inhalt"><p>Meine erste Seite.</p></div>
+  <div class="fuss"><small>Erstellt im Kurs</small></div>
+</body>
+</html>`,sc:`<header><h1>Hello World</h1></header>
+<main><p>Meine erste Seite.</p></main>
+<footer><small>Erstellt im Kurs</small></footer>`}),
+Z("Baue ein HTML-Formular, das Name, E-Mail und eine kurze Nachricht aufnimmt. Beschreibe, wie jedes Eingabefeld die Nutzerin oder den Nutzer unterstützt und warum diese Felder wichtig sind.",
+`Jedes Feld braucht ein verknüpftes label (for/id). Nutze passende type-Werte und required.`,
+`Achte auf type="email" (Tastaturlayout, Validierung), autocomplete und aussagekräftige Platzhalter, die das label nicht ersetzen.`,
+`Pflicht: label für jedes Feld, type="email" für Adresse, textarea für Nachricht, button type="submit". Ein reines HTML-Formular sendet ohne Server nichts: Für ein Portfolio brauchst du später einen Formular-Dienst oder verlinkst stattdessen eine E-Mail-Adresse.`,
+{ed:`<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 28rem; margin: 2rem auto; padding: 0 1rem; }
+    label { display: block; margin-top: 1rem; font-weight: 600; }
+    input, textarea { width: 100%; padding: .5rem; font: inherit; box-sizing: border-box; }
+    button { margin-top: 1rem; padding: .6rem 1.2rem; font: inherit; }
+  </style>
+</head>
+<body>
+  <h1>Kontakt</h1>
+  <form>
+    <\!-- TODO: Felder Name, E-Mail und Nachricht mit label ergänzen -->
+    <button type="submit">Absenden</button>
+  </form>
+</body>
+</html>`,sc:`<label for="name">Name</label>
+<input id="name" name="name" type="text" autocomplete="name" required>
+<label for="mail">E-Mail</label>
+<input id="mail" name="mail" type="email" autocomplete="email" required>
+<label for="msg">Nachricht</label>
+<textarea id="msg" name="msg" rows="4" required></textarea>`}),
+K("Schreibe einen Prompt für eine KI, der dir hilft, ein kreatives HTML-Layout für eine Portfolioseite zu generieren. Begründe, warum dein Prompt gestalterische Ideen anregt.",
+`Gib der KI Rahmen vor: Zielgruppe, gewünschte Bereiche (Über mich, Projekte, Kontakt), Ton, Einschränkungen (reines HTML und CSS, ohne Frameworks).`,
+`Verlange mehrere Varianten und eine kurze Begründung je Variante, damit du vergleichen kannst.`,
+`Beispiel: "Entwirf drei unterschiedliche Layout-Ideen für eine Portfolioseite einer Einsteigerin in Webentwicklung. Jede Idee: Beschreibung in 3 Sätzen und ein semantisches HTML-Grundgerüst ohne Frameworks. Seite muss mobil funktionieren." Gute Prompts regen Kreativität an, weil sie Spielraum (mehrere Varianten) mit klaren Grenzen (Technik, Zielgruppe) kombinieren.`,
+{p:1}),
+F("Warum sind HTML-Kommentare wichtig und wie können sie beim Debuggen helfen?",
+`Erstelle ein HTML-Dokument mit mehreren Kommentarzeilen und erläutere, wie sie dir beim Finden von Fehlern geholfen haben.`,
+`Kommentare erklären Absichten und lassen sich nutzen, um Bereiche vorübergehend auszublenden.`,
+`Kommentiere einen Abschnitt aus: Verschwindet der Fehler, liegt die Ursache dort. So grenzt du Fehler ein.`,
+`Kommentare dokumentieren Struktur und Entscheidungen (z. B. "Ende Navigation"). Beim Debuggen blendest du Blöcke aus und prüfst, ob das Problem verschwindet. Wichtig: Kommentare sind im Quelltext für alle sichtbar, schreibe keine Zugangsdaten oder interne Hinweise hinein.`,
+{ed:`<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Kommentare</title>
+</head>
+<body>
+  <\!-- Anfang Kopfbereich -->
+  <header><h1>Kommentare testen</h1></header>
+  <\!-- Ende Kopfbereich -->
+
+  <\!-- Fehlersuche: Blende Abschnitt durch Umschließen mit Kommentarzeichen aus -->
+  <main>
+    <p>Dieser Absatz ist sichtbar.</p>
+    <p>Dieser Absatz soll zum Testen ausgeblendet werden.</p>
+  </main>
+</body>
+</html>`}),
+Q("Welches Element ist kein semantisches HTML-Tag?",["<article>","<section>","<div>","<footer>"],2,
+`&lt;div&gt; ist ein neutraler Container ohne Bedeutung. article, section und footer beschreiben Inhaltsrollen.`,
+`Welches Tag sagt nichts über die Rolle seines Inhalts aus?`,`Es ist der Standardcontainer, wenn kein passendes Element existiert.`),
+C("Erstelle eine Mini-Webseite, die ausschließlich aus semantischen HTML-Tags besteht. Füge CSS hinzu, um die Bereiche farblich zu unterscheiden, und erläutere deine Struktur.",
+`Im Editor sind die Tags schon vorbereitet. Färbe jeden Bereich in einer eigenen Farbe über Tag-Selektoren.`,
+`Selektoren wie header { background: ... } reichen aus; Klassen sind nicht nötig.`,
+`Eine sinnvolle Struktur: header, nav, main mit article und section, aside und footer. Erläutere für jedes Element in einem Satz, warum es dort steht.`,
+{p:1,ed:`<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Semantik</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; }
+    body > * { padding: 1rem; }
+    /* TODO: Hintergrundfarben für header, nav, main, aside, footer */
+  </style>
+</head>
+<body>
+  <header><h1>Meine Seite</h1></header>
+  <nav><a href="#a">Artikel</a> | <a href="#b">Abschnitt</a></nav>
+  <main>
+    <article id="a"><h2>Artikel</h2><p>Eigenständiger Inhalt.</p></article>
+    <section id="b"><h2>Abschnitt</h2><p>Thematischer Bereich.</p></section>
+  </main>
+  <aside>Randnotiz</aside>
+  <footer>Fußbereich</footer>
+</body>
+</html>`,sc:`header { background: #cffafe; }
+nav { background: #fce7f3; }
+main { background: #fef9c3; }
+aside { background: #dcfce7; }
+footer { background: #e2e8f0; }`}),
+Z("Führe ein Peer-Review durch: Teile deine HTML-Seite mit einer Person und tauscht gegenseitig Verbesserungsvorschläge zur semantischen Struktur aus.",
+`Gib der Person eine Checkliste mit: Gibt es genau ein h1? Sind Überschriftenebenen nicht übersprungen? Ist die Navigation ein nav?`,
+`Feedback am besten in drei Teilen: Was ist gut, was ist unklar, was würdest du ändern?`,
+`Sinnvolle Prüfpunkte: ein h1 pro Seite, logische Überschriftenfolge, main nur einmal, Bilder mit alt-Text, Formularfelder mit label. Dokumentiere, welche Vorschläge du übernimmst und warum.`)
+]);
+
+ch("k3","Kapitel 3: CSS einfach erklärt (und Tailwind als Beschleuniger)","Layout, Themes und Dunkelmodus, klassisches CSS im Vergleich zu Utility-Klassen.",[
+F("Wie unterscheidet sich klassisches CSS von einem Utility-First-Framework wie Tailwind?",
+`Erstelle einen Vergleich (mindestens 4 Sätze) und nenne jeweils 2 Vor- und Nachteile.`,
+`Klassisches CSS trennt Stile in Stylesheets, Tailwind setzt viele kleine Klassen direkt ins HTML.`,
+`Vergleiche: Lesbarkeit des HTML, Wiederverwendung, Lernaufwand, Dateigröße im Produktivbetrieb.`,
+`Klassisches CSS: Vorteile sind saubere Trennung und volle Kontrolle; Nachteile sind wachsende Stylesheets und Benennungsaufwand. Tailwind: Vorteile sind schnelles Prototyping und einheitliche Abstände; Nachteile sind lange class-Attribute und Einarbeitung in die Klassennamen. Beides ist verbreitet, die Wahl hängt vom Projekt ab.`),
+Q("Welche Tailwind-Klasse sorgt für ein Padding von 1rem?",["m-4","p-4","pt-4","p-2"],1,
+`In Tailwind steht eine Einheit für 0,25rem, also ergibt p-4 ein Padding von 1rem auf allen Seiten. m-4 ist Margin, pt-4 nur oben, p-2 sind 0,5rem.`,
+`p steht für Padding, m für Margin.`,`Stufe 4 entspricht 4 × 0,25rem.`),
+C("Entwickle ein responsives Kartenlayout, das bei kleineren Bildschirmen in eine Spalte wechselt. Erstelle zwei Varianten (mit flex und grid) und diskutiere Vor- und Nachteile.",
+`Mit Tailwind sähe das so aus: flex flex-wrap gap-4 bzw. grid grid-cols-1 md:grid-cols-3. Der Editor arbeitet ohne externe Dateien, daher ist es hier in reinem CSS umgesetzt. Ergänze die Grid-Variante.`,
+`Grid: display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1rem;`,
+`Flex eignet sich für eindimensionale Anordnungen (eine Reihe, die umbricht), Grid für zweidimensionale Raster mit festen Spalten. Beide wechseln auf schmalen Bildschirmen zu einer Spalte, Grid mit auto-fit sogar ohne Media Query. Verkleinere die Vorschau in einem eigenen Fenster, um das zu testen.`,
+{p:1,ed:`<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 1rem; }
+    .karte { border: 1px solid #94a3b8; border-radius: 10px; padding: 1rem; }
+    /* Variante 1: Flex */
+    .flex { display: flex; flex-wrap: wrap; gap: 1rem; }
+    .flex .karte { flex: 1 1 14rem; }
+    /* Variante 2: Grid (TODO) */
+    .grid { }
+  </style>
+</head>
+<body>
+  <h2>Flex</h2>
+  <div class="flex"><div class="karte">Eins</div><div class="karte">Zwei</div><div class="karte">Drei</div></div>
+  <h2>Grid</h2>
+  <div class="grid"><div class="karte">Eins</div><div class="karte">Zwei</div><div class="karte">Drei</div></div>
+</body>
+</html>`,sc:`.grid { display: grid; gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); }`}),
+Z("Erstelle eine externe CSS-Datei, in der du einen Dunkelmodus definierst. Implementiere einen Toggle-Button, der zwischen Hell und Dunkel wechselt. Beschreibe, wie du den Zustand speicherst (z. B. im Local Storage).",
+`Definiere Farben als CSS-Variablen und überschreibe sie in einem Selektor wie [data-theme="dark"]. Der Button setzt das Attribut am html-Element.`,
+`Speichere die Wahl mit localStorage.setItem und lies sie beim Laden. Umschließe den Zugriff mit try/catch, weil Speicher blockiert sein kann (im Editor hier ist er blockiert, die Seite muss trotzdem laufen).`,
+`Im Projekt liegt das CSS in einer Datei styles.css, die per link eingebunden wird; hier ist es der Übersicht halber inline. Zusätzlich lässt sich mit prefers-color-scheme die Systemeinstellung als Startwert nutzen.`,
+{p:1,ed:`<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    :root { --bg: #ffffff; --text: #0f172a; }
+    /* TODO: Dunkle Variante */
+    body { background: var(--bg); color: var(--text); font-family: system-ui, sans-serif; padding: 1rem; }
+    button { padding: .6rem 1rem; font: inherit; }
+  </style>
+</head>
+<body>
+  <h1>Dunkelmodus</h1>
+  <button id="toggle">Design wechseln</button>
+  <\script>
+    var root = document.documentElement;
+    try { var s = localStorage.getItem("theme"); if (s) root.setAttribute("data-theme", s); } catch (e) {}
+    document.getElementById("toggle").addEventListener("click", function () {
+      // TODO: zwischen "dark" und "light" wechseln und speichern
+    });
+  <\/script>
+</body>
+</html>`,sc:`:root[data-theme="dark"] { --bg: #0a0a0f; --text: #f1f5f9; }
+
+// im Klick-Handler:
+var next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+root.setAttribute("data-theme", next);
+try { localStorage.setItem("theme", next); } catch (e) {}`}),
+K("Formuliere einen Prompt für eine KI, der dir ein eigenständiges CSS-Design mit Animationen und Hover-Effekten für eine Startup-Webseite erstellt.",
+`Nenne Farben, Stimmung, Schriftcharakter und technische Grenzen (reines CSS, keine Bibliotheken, Systemschriften).`,
+`Fordere Rücksicht auf prefers-reduced-motion und ausreichende Kontraste.`,
+`Beispiel: "Erstelle CSS für die Startseite eines fiktiven Startups für nachhaltige Verpackung. Stil: ruhig, hell, grüne Akzente. Enthalten: sanfter Hover-Effekt auf Karten, eine Einblend-Animation für den Titel. Nur CSS, Systemschriften, Animationen mit prefers-reduced-motion abschaltbar, Kontrast mindestens 4,5:1." Prüfe das Ergebnis immer selbst im Browser.`),
+F("Wie beeinflusst die CSS-Spezifität die Anwendung von Styles?",
+`Erstelle ein kurzes Dokument (mindestens 300 Wörter), in dem du anhand von Beispielen erklärst, wie CSS-Spezifität funktioniert.`,
+`Spezifität entscheidet, welche Regel gewinnt, wenn mehrere auf dasselbe Element zutreffen. Reihenfolge: Inline-Style, ID, Klasse/Attribut/Pseudoklasse, Element.`,
+`Rechne mit einem Zahlentripel (ID, Klasse, Element): #a hat (1,0,0), .b hat (0,1,0), p hat (0,0,1). Das höhere Tripel gewinnt, bei Gleichstand die spätere Regel.`,
+`Beispiel: p { color: blue } und .rot { color: red } auf einem p mit class="rot": Die Klasse gewinnt (0,1,0 gegen 0,0,1). Mit #haupt p (1,0,1) gewänne die ID-Regel noch. !important überstimmt alles und gehört nur in Ausnahmefällen eingesetzt. Gute Praxis: niedrige, flache Selektoren, damit Konflikte selten entstehen.`),
+Q("Welche Aussage zur Auflösung von CSS-Konflikten stimmt?",["!important sollte man als erstes Mittel gegen jeden Konflikt einsetzen.","Bei gleicher Spezifität gewinnt die später stehende Regel.","Inline-Styles haben die niedrigste Spezifität.","Die Reihenfolge der Regeln spielt nie eine Rolle."],1,
+`Spezifität und Reihenfolge entscheiden. Bei gleicher Spezifität gilt die letzte Regel. Inline-Styles sind sehr spezifisch, !important ist Notlösung und erschwert Wartung.`,
+`Zwei Regeln mit gleicher Spezifität: Welche zählt?`,`!important und Inline-Styles sind keine saubere Konfliktlösung, sondern Ursachen für Konflikte.`),
+C("Entwirf ein komplettes CSS-Theme für eine fiktive Webseite (inkl. responsiver Elemente, Animationen, Hover-Effekten) und präsentiere es in einer Live-Demo.",
+`Nutze CSS-Variablen für Farben und Abstände, damit du das Theme mit wenigen Änderungen anpassen kannst.`,
+`Ergänze einen Hover-Effekt auf der Karte, eine Animation (@keyframes) und eine Media Query. Mit prefers-reduced-motion schaltest du Bewegung ab.`,
+`Das Theme besteht aus: Variablen (Farben, Radius), Basistypografie, Komponenten (Karte, Button), Hover und Fokus, mindestens einer Animation und einem Breakpoint. Präsentiere in der Demo, welche Variable welchen Effekt hat.`,
+{p:1,ed:`<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root { --bg:#0a0a0f; --card:#151522; --text:#f1f5f9; --akzent:#06b6d4; --radius:14px; }
+    body { background:var(--bg); color:var(--text); font-family:system-ui,sans-serif; margin:0; padding:1rem; }
+    .karte { background:var(--card); border-radius:var(--radius); padding:1.2rem; max-width:24rem; }
+    .btn { background:var(--akzent); color:#001; border:0; padding:.7rem 1.2rem; border-radius:999px; font:inherit; cursor:pointer; }
+    /* TODO: Hover für .karte, @keyframes-Einblendung, @media (max-width:600px), prefers-reduced-motion */
+  </style>
+</head>
+<body>
+  <div class="karte"><h2>Mein Theme</h2><p>Karte mit Button.</p><button class="btn">Mehr</button></div>
+</body>
+</html>`,sc:`.karte { transition: transform .2s; animation: ein .5s ease-out; }
+.karte:hover { transform: translateY(-4px); }
+@keyframes ein { from { opacity: 0; transform: translateY(10px); } }
+@media (max-width: 600px) { body { padding: .5rem; } }
+@media (prefers-reduced-motion: reduce) { .karte { animation: none; transition: none; } }`}),
+Z("Erstelle ein kurzes Video (maximal 5 Minuten), in dem du den Unterschied zwischen klassischem CSS und einem Utility-First-Framework wie Tailwind erklärst. Nutze Beispiele und Animationen.",
+`Zeige dasselbe Element in beiden Varianten nebeneinander.`,
+`Plane vorab ein kurzes Skript mit drei Beispielen: Abstand, Farbe, responsives Verhalten.`,
+`Beispiel für den Kernvergleich: klassisch .karte { padding: 1rem; } gegenüber class="p-4" im HTML. Zeige danach, was passiert, wenn sich der Abstand an zehn Stellen ändern soll.`)
+]);
+
+ch("k4","Kapitel 4: KI als Code-Generator, Schritt für Schritt","Prompts schreiben, Ergebnisse prüfen und in eigene Projekte integrieren.",[
+F("Welche Vorteile bietet der Einsatz von KI-Tools im Programmierprozess?",
+`Liste mindestens drei Vorteile auf und nenne jeweils ein Beispiel aus dem Kurs.`,
+`Denke an Tempo, Erklärungen, Ideenfindung und Fehlersuche.`,
+`Nenne auch eine Grenze: KI liefert Vorschläge, die du prüfen musst.`,
+`Mögliche Vorteile: schnelle Grundgerüste (z. B. Navigation), Erklärung unbekannten Codes, Vorschläge zur Fehlersuche, Varianten für Layouts. Wichtig: Ergebnisse können fehlerhaft oder veraltet sein, du testest und verstehst den Code, bevor du ihn übernimmst.`),
+Q("Was versteht man im Kurs unter einem Prompt?",["Eine Fehlermeldung","Eine Anweisung an die KI","Ein Code-Snippet","Ein Debugging-Tool"],1,
+`Ein Prompt ist die Eingabe, mit der du der KI sagst, was sie tun soll.`,
+`Es ist etwas, das du schreibst, nicht etwas, das dir angezeigt wird.`,`Es geht um die Eingabe an die KI.`),
+C("Nutze ein KI-Tool (z. B. ChatGPT) und lasse dir HTML-Code für ein Navigationsmenü mit Tailwind CSS erzeugen. Vergleiche das Ergebnis mit dem Kursbeispiel und diskutiere mögliche Verbesserungen.",
+`Der Editor enthält ein einfaches Menü in reinem CSS als Vergleichsbasis. Prüfe darin: nav-Element, Liste, Fokus-Stil, Kontrast.`,
+`Prüfliste für KI-Code: semantisches nav? Links erreichbar per Tastatur? Fokus sichtbar? mobil nutzbar? Keine überflüssigen Klassen?`,
+`Typische Verbesserungen: aria-label am nav, sichtbarer Fokus (:focus-visible), aktuelle Seite mit aria-current kennzeichnen, Menü auf schmalen Bildschirmen umbrechen lassen.`,
+{p:1,ed:`<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; }
+    nav ul { display: flex; flex-wrap: wrap; gap: .5rem; list-style: none; margin: 0; padding: 1rem; background: #0f172a; }
+    nav a { color: #f1f5f9; text-decoration: none; padding: .6rem 1rem; display: block; border-radius: 8px; }
+    nav a:hover { background: #334155; }
+    /* TODO: sichtbarer Fokus-Stil ergänzen */
+  </style>
+</head>
+<body>
+  <nav>
+    <ul>
+      <li><a href="#start">Start</a></li>
+      <li><a href="#projekte">Projekte</a></li>
+      <li><a href="#kontakt">Kontakt</a></li>
     </ul>
   </nav>
-
-  <!-- Kapitel 1: Was brauchst du als kompletter Neuling? -->
-  <section id="chapter1" class="mb-12">
-    <h2 class="text-3xl font-bold border-b pb-2 mb-4">Kapitel 1: Was brauchst du als kompletter Neuling?</h2>
-    <ol class="list-decimal pl-6 space-y-4">
-      <li>
-        <strong>Frage:</strong> Welche Hardware- und Softwarevoraussetzungen sind für den Einstieg in die Webentwicklung essentiell?<br>
-        <em>Aufgabe:</em> Erstelle eine Liste (mindestens 3 Punkte pro Kategorie) und begründe kurz, warum diese Voraussetzung wichtig ist.
-      </li>
-
-      <li>
-        <strong>Quiz (1):</strong> Welcher Editor wird im Kurs besonders empfohlen?<br>
-        <em>Optionen:</em>
-        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch1-q1" data-correct="B">
-          <label class="block"><input type="radio" name="quiz-ch1-q1" value="A"> A) Notepad</label>
-          <label class="block"><input type="radio" name="quiz-ch1-q1" value="B"> B) Visual Studio Code</label>
-          <label class="block"><input type="radio" name="quiz-ch1-q1" value="C"> C) Sublime Text</label>
-          <label class="block"><input type="radio" name="quiz-ch1-q1" value="D"> D) Atom</label>
-          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch1-q1')">Antwort prüfen</button>
-          <span class="feedback inline-block ml-2"></span>
-        </div>
-      </li>
-
-      <li>
-        <strong>Challenge:</strong> Starte deinen Editor, erstelle eine Datei namens <code>index.html</code> und nutze Emmet (<code>html:5</code>) für ein HTML5-Grundgerüst.  
-        <br><em>Bonus:</em> Füge ein Kommentar-Tag hinzu, in dem du dein persönliches Startup-Motto notierst.
-      </li>
-
-      <li>
-        <strong>Extra-Aufgabe:</strong> Recherchiere und vergleiche zwei moderne Browser (z. B. Brave vs. Vivaldi). Erstelle eine Tabelle mit mindestens fünf Vor- und Nachteilen.
-      </li>
-
-      <li>
-        <strong>Kreativitäts-Boost:</strong> Schreibe einen kurzen Prompt für eine KI (z. B. ChatGPT), der dir hilft, den besten Code-Editor für Webentwickler zu finden. Erkläre, warum du diesen Prompt gewählt hast.
-      </li>
-
-      <li>
-        <strong>Frage 2:</strong> Welche Rolle spielt die Betriebssystemversion für die Webentwicklung?<br>
-        <em>Aufgabe:</em> Recherchiere, welche Vorteile ein aktuelles Betriebssystem bietet und erstelle eine kurze Übersicht.
-      </li>
-
-      <li>
-        <strong>Quiz (2):</strong> Welcher Browser bietet standardmäßig den besten Datenschutz?<br>
-        <em>Optionen:</em>
-        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch1-q2" data-correct="C">
-          <label class="block"><input type="radio" name="quiz-ch1-q2" value="A"> A) Chrome</label>
-          <label class="block"><input type="radio" name="quiz-ch1-q2" value="B"> B) Firefox</label>
-          <label class="block"><input type="radio" name="quiz-ch1-q2" value="C"> C) Brave</label>
-          <label class="block"><input type="radio" name="quiz-ch1-q2" value="D"> D) Safari</label>
-          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch1-q2')">Antwort prüfen</button>
-          <span class="feedback inline-block ml-2"></span>
-        </div>
-      </li>
-
-      <li>
-        <strong>Challenge 2:</strong> Erstelle ein kurzes Video oder eine Präsentation (max. 5 Minuten), in der du erklärst, warum aktuelle Tools und Betriebssysteme den Entwicklungsprozess beschleunigen.
-      </li>
-
-      <li>
-        <strong>Extra-Aufgabe 2:</strong> Entwickle eine Mindmap, die die gesamte benötigte Infrastruktur (Hardware, Software, Browser, Tools) visualisiert und erkläre, wie diese miteinander interagieren.
-      </li>
-    </ol>
-  </section>
-
-  <!-- Kapitel 2: HTML-Grundlagen – Dein erster Meilenstein -->
-  <section id="chapter2" class="mb-12">
-    <h2 class="text-3xl font-bold border-b pb-2 mb-4">Kapitel 2: HTML-Grundlagen – Dein erster Meilenstein</h2>
-    <ol class="list-decimal pl-6 space-y-4">
-
-      <li>
-        <strong>Frage:</strong> Was sind semantische Tags in HTML und welchen Nutzen haben sie für SEO und Accessibility?<br>
-        <em>Aufgabe:</em> Erkläre in eigenen Worten (mindestens 3 Sätze) die Rolle von <code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code> und <code>&lt;footer&gt;</code>.
-      </li>
-
-      <li>
-        <strong>Quiz (1):</strong> Welche Aussage trifft zu?<br>
-        <em>Optionen:</em>
-        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch2-q1" data-correct="B">
-          <label class="block"><input type="radio" name="quiz-ch2-q1" value="A"> A) HTML dient primär zur optischen Gestaltung.</label>
-          <label class="block"><input type="radio" name="quiz-ch2-q1" value="B"> B) HTML strukturiert den Inhalt einer Webseite.</label>
-          <label class="block"><input type="radio" name="quiz-ch2-q1" value="C"> C) HTML ersetzt CSS und JavaScript.</label>
-          <label class="block"><input type="radio" name="quiz-ch2-q1" value="D"> D) HTML ist überflüssig bei modernen Webseiten.</label>
-          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch2-q1')">Antwort prüfen</button>
-          <span class="feedback inline-block ml-2"></span>
-        </div>
-      </li>
-
-      <li>
-        <strong>Challenge:</strong> Erstelle deine erste "Hello World"-Seite in HTML und integriere mindestens einen semantischen Tag. Teste die Seite in deinem Browser und dokumentiere, welche Effekte du bemerkst.
-      </li>
-
-      <li>
-        <strong>Extra-Aufgabe:</strong> Baue ein Formular in HTML, das Name, E-Mail und eine kurze Nachricht aufnimmt. Beschreibe, wie jedes Eingabefeld den Benutzer unterstützt und warum diese Felder wichtig sind.
-      </li>
-
-      <li>
-        <strong>Kreativitäts-Boost:</strong> Schreibe einen innovativen Prompt für eine KI, der dir hilft, ein kreatives HTML-Layout für eine Portfolioseite zu generieren. Begründe, warum dein Prompt besonders kreative Designelemente anregt.
-      </li>
-
-      <li>
-        <strong>Frage 2:</strong> Warum sind HTML-Kommentare wichtig und wie können sie beim Debuggen helfen?<br>
-        <em>Aufgabe:</em> Erstelle ein HTML-Dokument mit mehreren Kommentarzeilen und erläutere, wie diese dir beim Auffinden von Fehlern geholfen haben.
-      </li>
-
-      <li>
-        <strong>Quiz (2):</strong> Welches Element ist kein semantisches HTML-Tag?<br>
-        <em>Optionen:</em>
-        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch2-q2" data-correct="C">
-          <label class="block"><input type="radio" name="quiz-ch2-q2" value="A"> A) &lt;article&gt;</label>
-          <label class="block"><input type="radio" name="quiz-ch2-q2" value="B"> B) &lt;section&gt;</label>
-          <label class="block"><input type="radio" name="quiz-ch2-q2" value="C"> C) &lt;div&gt;</label>
-          <label class="block"><input type="radio" name="quiz-ch2-q2" value="D"> D) &lt;footer&gt;</label>
-          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch2-q2')">Antwort prüfen</button>
-          <span class="feedback inline-block ml-2"></span>
-        </div>
-      </li>
-
-      <li>
-        <strong>Challenge 2:</strong> Erstelle eine Mini-Webseite, die ausschließlich aus semantischen HTML-Tags besteht. Füge CSS hinzu, um die Bereiche farblich zu unterscheiden, und erläutere deine Struktur.
-      </li>
-
-      <li>
-        <strong>Extra-Aufgabe 2:</strong> Führe ein Peer-Review durch, indem du deine HTML-Seite mit einem Freund teilst und gegenseitig Verbesserungsvorschläge für die semantische Struktur austauschst.
-      </li>
-    </ol>
-  </section>
-
-  <!-- Kapitel 3: CSS simpel erklärt (und Tailwind als Turbo) -->
-  <section id="chapter3" class="mb-12">
-    <h2 class="text-3xl font-bold border-b pb-2 mb-4">Kapitel 3: CSS simpel erklärt (und Tailwind als Turbo)</h2>
-    <ol class="list-decimal pl-6 space-y-4">
-
-      <li>
-        <strong>Frage:</strong> Wie unterscheidet sich klassisches CSS von einem Utility-First Framework wie Tailwind?<br>
-        <em>Aufgabe:</em> Erstelle einen Vergleich (mindestens 4 Sätze) und nenne jeweils 2 Vor- und Nachteile.
-      </li>
-
-      <li>
-        <strong>Quiz (1):</strong> Welche Tailwind-Klasse sorgt für ein Padding von 1rem?<br>
-        <em>Optionen:</em>
-        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch3-q1" data-correct="B">
-          <label class="block"><input type="radio" name="quiz-ch3-q1" value="A"> A) m-4</label>
-          <label class="block"><input type="radio" name="quiz-ch3-q1" value="B"> B) p-4</label>
-          <label class="block"><input type="radio" name="quiz-ch3-q1" value="C"> C) pt-4</label>
-          <label class="block"><input type="radio" name="quiz-ch3-q1" value="D"> D) p-2</label>
-          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch3-q1')">Antwort prüfen</button>
-          <span class="feedback inline-block ml-2"></span>
-        </div>
-      </li>
-
-      <li>
-        <strong>Challenge:</strong> Entwickle ein responsives Kartenlayout mit Tailwind CSS, das bei kleineren Bildschirmen in eine Spalte wechselt. Erstelle zwei Varianten (mit <code>flex</code> und <code>grid</code>) und diskutiere Vor- und Nachteile.
-      </li>
-
-      <li>
-        <strong>Extra-Aufgabe:</strong> Erstelle eine externe CSS-Datei, in der du einen Dunkelmodus definierst. Implementiere einen Toggle-Button, der zwischen Hell- und Dunkelmodus wechselt. Beschreibe, wie du den Zustand speicherst (z. B. Local Storage).
-      </li>
-
-      <li>
-        <strong>Kreativitäts-Boost:</strong> Formuliere einen komplexen Prompt für eine KI, der dir ein einzigartiges CSS-Design mit Animationen und Hover-Effekten für eine Startup-Webseite erstellt.
-      </li>
-
-      <li>
-        <strong>Frage 2:</strong> Wie beeinflusst die CSS-Spezifität die Anwendung von Styles?<br>
-        <em>Aufgabe:</em> Erstelle ein kurzes Dokument (mind. 300 Wörter), in dem du anhand von Beispielen erklärst, wie CSS-Spezifität funktioniert.
-      </li>
-
-      <li>
-        <strong>Quiz (2):</strong> Welche Methode hilft beim Auflösen von CSS-Konflikten?<br>
-        <em>Optionen:</em>
-        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch3-q2" data-correct="D">
-          <label class="block"><input type="radio" name="quiz-ch3-q2" value="A"> A) Inline-Styles</label>
-          <label class="block"><input type="radio" name="quiz-ch3-q2" value="B"> B) Externe Stylesheets</label>
-          <label class="block"><input type="radio" name="quiz-ch3-q2" value="C"> C) !important</label>
-          <label class="block"><input type="radio" name="quiz-ch3-q2" value="D"> D) Alle genannten</label>
-          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch3-q2')">Antwort prüfen</button>
-          <span class="feedback inline-block ml-2"></span>
-        </div>
-      </li>
-
-      <li>
-        <strong>Challenge 2:</strong> Entwerfe ein komplettes CSS-Theme für eine fiktive Webseite (inkl. responsiver Elemente, Animationen, Hover-Effekte) und präsentiere es in einer Live-Demo.
-      </li>
-
-      <li>
-        <strong>Extra-Aufgabe 2:</strong> Erstelle ein kurzes Video (max. 5 Min.), in dem du den Unterschied zwischen traditionellem CSS und einem Utility-First Framework wie Tailwind erklärst. Nutze Beispiele und Animationen.
-      </li>
-    </ol>
-  </section>
-
-  <!-- Kapitel 4: KI als Code-Generator – Schritt für Schritt -->
-  <section id="chapter4" class="mb-12">
-    <h2 class="text-3xl font-bold border-b pb-2 mb-4">Kapitel 4: KI als Code-Generator – Schritt für Schritt</h2>
-    <ol class="list-decimal pl-6 space-y-4">
-
-      <li>
-        <strong>Frage:</strong> Welche Vorteile bietet der Einsatz von KI-Tools im Programmierprozess?<br>
-        <em>Aufgabe:</em> Liste mindestens drei Vorteile auf und nenne jeweils ein Beispiel aus dem Kurs.
-      </li>
-
-      <li>
-        <strong>Quiz (1):</strong> Was versteht man im Kurs unter einem "Prompt"?<br>
-        <em>Optionen:</em>
-        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch4-q1" data-correct="B">
-          <label class="block"><input type="radio" name="quiz-ch4-q1" value="A"> A) Eine Fehlermeldung</label>
-          <label class="block"><input type="radio" name="quiz-ch4-q1" value="B"> B) Eine Anweisung an die KI</label>
-          <label class="block"><input type="radio" name="quiz-ch4-q1" value="C"> C) Ein Code-Snippet</label>
-          <label class="block"><input type="radio" name="quiz-ch4-q1" value="D"> D) Ein Debugging-Tool</label>
-          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch4-q1')">Antwort prüfen</button>
-          <span class="feedback inline-block ml-2"></span>
-        </div>
-      </li>
-
-      <li>
-        <strong>Challenge:</strong> Nutze ein KI-Tool (z. B. ChatGPT) und fordere es auf, einen HTML-Code für ein Navigationsmenü mit Tailwind CSS zu generieren. Vergleiche das Ergebnis mit dem Kursbeispiel und diskutiere mögliche Verbesserungen.
-      </li>
-
-      <li>
-        <strong>Extra-Aufgabe:</strong> Erstelle ein kleines Projekt, in dem du die KI-generierte Lösung in deinen eigenen Code integrierst. Optimiere den Code und dokumentiere deine Änderungen in einem Blogpost.
-      </li>
-
-      <li>
-        <strong>Kreativitäts-Boost:</strong> Schreibe einen Prompt, der eine KI dazu anregt, ein interaktives Tutorial zu erstellen – mit Code-Beispielen, kurzen Videos und Quizfragen.
-      </li>
-
-      <li>
-        <strong>Frage 2:</strong> Wie kann eine KI dir helfen, wiederkehrende Code-Muster zu erkennen und zu optimieren?<br>
-        <em>Aufgabe:</em> Erstelle eine Liste von 5 Anwendungsfällen, in denen KI die Code-Optimierung unterstützen kann.
-      </li>
-
-      <li>
-        <strong>Quiz (2):</strong> Welcher der folgenden Begriffe beschreibt am besten den Prozess der Code-Generierung durch KI?<br>
-        <em>Optionen:</em>
-        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch4-q2" data-correct="B">
-          <label class="block"><input type="radio" name="quiz-ch4-q2" value="A"> A) Automatisierung</label>
-          <label class="block"><input type="radio" name="quiz-ch4-q2" value="B"> B) Prompt Engineering</label>
-          <label class="block"><input type="radio" name="quiz-ch4-q2" value="C"> C) Refactoring</label>
-          <label class="block"><input type="radio" name="quiz-ch4-q2" value="D"> D) Debugging</label>
-          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch4-q2')">Antwort prüfen</button>
-          <span class="feedback inline-block ml-2"></span>
-        </div>
-      </li>
-
-      <li>
-        <strong>Challenge 2:</strong> Entwickle ein interaktives "Prompt-Baukasten"-Tool, mit dem du unterschiedliche Code-Generierungs-Prompts kombinieren und testen kannst. Dokumentiere deine Idee in einem Konzeptpapier.
-      </li>
-
-      <li>
-        <strong>Extra-Aufgabe 2:</strong> Führe eine Umfrage in deinem Netzwerk durch, welche KI-Tools für die Code-Generierung am nützlichsten sind, und präsentiere die Ergebnisse in einer Infografik.
-      </li>
-    </ol>
-  </section>
-
-  <!-- Kapitel 5: Debugging & Fehlersuche – ohne Frust -->
-  <section id="chapter5" class="mb-12">
-    <h2 class="text-3xl font-bold border-b pb-2 mb-4">Kapitel 5: Debugging & Fehlersuche – ohne Frust</h2>
-    <ol class="list-decimal pl-6 space-y-4">
-
-      <li>
-        <strong>Frage:</strong> Nenne zwei typische Fehlerquellen in HTML/CSS, die zu Darstellungsfehlern führen können.<br>
-        <em>Aufgabe:</em> Erstelle ein Codebeispiel mit absichtlichem Fehler (z. B. fehlendes schließendes Tag) und beschreibe, wie du den Fehler findest.
-      </li>
-
-      <li>
-        <strong>Quiz (1):</strong> Welches Tool hilft dir beim Debugging in modernen Browsern?<br>
-        <em>Optionen:</em>
-        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch5-q1" data-correct="A">
-          <label class="block"><input type="radio" name="quiz-ch5-q1" value="A"> A) Chrome DevTools</label>
-          <label class="block"><input type="radio" name="quiz-ch5-q1" value="B"> B) Windows Task Manager</label>
-          <label class="block"><input type="radio" name="quiz-ch5-q1" value="C"> C) File Explorer</label>
-          <label class="block"><input type="radio" name="quiz-ch5-q1" value="D"> D) Photoshop</label>
-          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch5-q1')">Antwort prüfen</button>
-          <span class="feedback inline-block ml-2"></span>
-        </div>
-      </li>
-
-      <li>
-        <strong>Challenge:</strong> Setze einen Breakpoint in deinem JavaScript-Code mit Chrome DevTools und dokumentiere die Codeausführung (Screenshots, kurze Notizen).
-      </li>
-
-      <li>
-        <strong>Extra-Aufgabe:</strong> Simuliere absichtlich einen kleinen Codefehler in HTML oder CSS und bitte einen Freund, den Fehler zu finden. Sammle das Feedback und präsentiere deine Erkenntnisse.
-      </li>
-
-      <li>
-        <strong>Kreativitäts-Boost:</strong> Formuliere einen Prompt für eine KI, die dir bei der automatisierten Fehlersuche im Code hilft. Beschreibe, welche Arten von Fehlern besonders tricky sind.
-      </li>
-
-      <li>
-        <strong>Frage 2:</strong> Wie kann systematisches Debugging die Effizienz beim Programmieren steigern?<br>
-        <em>Aufgabe:</em> Schreibe eine Schritt-für-Schritt-Anleitung (mind. 5 Schritte) zur effektiven Fehlersuche in einem komplexen JavaScript-Projekt.
-      </li>
-
-      <li>
-        <strong>Quiz (2):</strong> Welche Methode ist am effektivsten, um Fehler in JavaScript zu finden?<br>
-        <em>Optionen:</em>
-        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch5-q2" data-correct="D">
-          <label class="block"><input type="radio" name="quiz-ch5-q2" value="A"> A) Console Logging</label>
-          <label class="block"><input type="radio" name="quiz-ch5-q2" value="B"> B) Breakpoints setzen</label>
-          <label class="block"><input type="radio" name="quiz-ch5-q2" value="C"> C) Code-Reviews</label>
-          <label class="block"><input type="radio" name="quiz-ch5-q2" value="D"> D) Alle genannten</label>
-          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch5-q2')">Antwort prüfen</button>
-          <span class="feedback inline-block ml-2"></span>
-        </div>
-      </li>
-
-      <li>
-        <strong>Challenge 2:</strong> Entwickle ein Debugging-Toolkit als Web-App, das häufige Fehler automatisch erkennt. Skizziere das Konzept und implementiere einen Prototyp.
-      </li>
-
-      <li>
-        <strong>Extra-Aufgabe 2:</strong> Führe ein Mini-Workshop zum Thema Debugging durch und dokumentiere die wichtigsten Erkenntnisse in einer Präsentation.
-      </li>
-    </ol>
-  </section>
-
-  <!-- Kapitel 6: Mobile-Optimierung & Responsives Design -->
-  <section id="chapter6" class="mb-12">
-    <h2 class="text-3xl font-bold border-b pb-2 mb-4">Kapitel 6: Mobile-Optimierung & Responsives Design</h2>
-    <ol class="list-decimal pl-6 space-y-4">
-
-      <li>
-        <strong>Frage:</strong> Warum ist responsives Design für moderne Webseiten unverzichtbar?<br>
-        <em>Aufgabe:</em> Vergleiche in einem kurzen Text (mind. 3 Sätze) statisches Design mit responsivem Design.
-      </li>
-
-      <li>
-        <strong>Quiz (1):</strong> Welches Meta-Tag ist ausschlaggebend für die mobile Darstellung?<br>
-        <em>Optionen:</em>
-        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch6-q1" data-correct="B">
-          <label class="block"><input type="radio" name="quiz-ch6-q1" value="A"> A) &lt;meta charset="UTF-8"&gt;</label>
-          <label class="block"><input type="radio" name="quiz-ch6-q1" value="B"> B) &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</label>
-          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch6-q1')">Antwort prüfen</button>
-          <span class="feedback inline-block ml-2"></span>
-        </div>
-      </li>
-
-      <li>
-        <strong>Challenge:</strong> Erstelle ein responsives Hamburger-Menü, das bei kleinen Bildschirmgrößen erscheint. Teste deine Lösung auf echten Mobilgeräten und dokumentiere deine Erfahrungen.
-      </li>
-
-      <li>
-        <strong>Extra-Aufgabe:</strong> Erstelle ein kurzes Video (max. 3 Min.), in dem du anhand eines Beispiels den Unterschied zwischen statischem und responsivem Design erklärst.
-      </li>
-
-      <li>
-        <strong>Kreativitäts-Boost:</strong> Entwickle einen Prompt für eine KI, der dir hilft, ein innovatives responsives Layout zu entwerfen – z. B. mit ungewöhnlichen Breakpoints und interaktiven Animationen.
-      </li>
-
-      <li>
-        <strong>Frage 2:</strong> Welche Vorteile bietet das mobile-first Design gegenüber dem Desktop-first Ansatz?<br>
-        <em>Aufgabe:</em> Erstelle eine Liste von mindestens 5 Vorteilen eines Mobile-first Ansatzes.
-      </li>
-
-      <li>
-        <strong>Quiz (2):</strong> Welcher der folgenden Begriffe beschreibt eine Methode, um responsives Design zu realisieren?<br>
-        <em>Optionen:</em>
-        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch6-q2" data-correct="D">
-          <label class="block"><input type="radio" name="quiz-ch6-q2" value="A"> A) Media Queries</label>
-          <label class="block"><input type="radio" name="quiz-ch6-q2" value="B"> B) Flexbox</label>
-          <label class="block"><input type="radio" name="quiz-ch6-q2" value="C"> C) CSS Grid</label>
-          <label class="block"><input type="radio" name="quiz-ch6-q2" value="D"> D) Alle genannten</label>
-          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch6-q2')">Antwort prüfen</button>
-          <span class="feedback inline-block ml-2"></span>
-        </div>
-      </li>
-
-      <li>
-        <strong>Challenge 2:</strong> Erstelle eine vollständige Responsive-Webseite (Desktop, Tablet, Mobile) und dokumentiere in einem Bericht, wie sich Layout und UX anpassen.
-      </li>
-
-      <li>
-        <strong>Extra-Aufgabe 2:</strong> Führe A/B-Tests zur Benutzerfreundlichkeit deiner mobilen Webseite durch und präsentiere die Ergebnisse in einem Diagramm.
-      </li>
-    </ol>
-  </section>
-
-  <!-- Kapitel 7: GitHub Pages – Deine Webseite geht online -->
-  <section id="chapter7" class="mb-12">
-    <h2 class="text-3xl font-bold border-b pb-2 mb-4">Kapitel 7: GitHub Pages – Deine Webseite geht online</h2>
-    <ol class="list-decimal pl-6 space-y-4">
-
-      <li>
-        <strong>Frage:</strong> Welche Vorteile bietet das Hosting über GitHub Pages?<br>
-        <em>Aufgabe:</em> Schreibe eine kurze Anleitung (mind. 5 Schritte), wie du deine statische Webseite veröffentlichst.
-      </li>
-
-      <li>
-        <strong>Quiz (1):</strong> Welche Git-Befehle sind zentral für das Versionieren deiner Projekte?<br>
-        <em>Optionen:</em>
-        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch7-q1" data-correct="D">
-          <label class="block"><input type="radio" name="quiz-ch7-q1" value="A"> A) git add</label>
-          <label class="block"><input type="radio" name="quiz-ch7-q1" value="B"> B) git commit</label>
-          <label class="block"><input type="radio" name="quiz-ch7-q1" value="C"> C) git push</label>
-          <label class="block"><input type="radio" name="quiz-ch7-q1" value="D"> D) Alle genannten</label>
-          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch7-q1')">Antwort prüfen</button>
-          <span class="feedback inline-block ml-2"></span>
-        </div>
-      </li>
-
-      <li>
-        <strong>Challenge:</strong> Erstelle ein neues Repository auf GitHub, lade deinen Code hoch und aktiviere GitHub Pages. Mache einen Screenshot von deinem aktiven Repo als Beleg.
-      </li>
-
-      <li>
-        <strong>Extra-Aufgabe:</strong> Richte ein automatisiertes Deployment (z. B. via GitHub Actions) ein und verfasse ein kurzes Tutorial dazu.
-      </li>
-
-      <li>
-        <strong>Kreativitäts-Boost:</strong> Entwickle einen Prompt, der einer KI hilft, eine ausgeklügelte Deployment-Strategie zu erstellen – inkl. automatischer Tests und Optimierungen.
-      </li>
-
-      <li>
-        <strong>Frage 2:</strong> Wie trägt die Versionskontrolle zu einem sicheren Entwicklungsprozess bei?<br>
-        <em>Aufgabe:</em> Erstelle eine Liste (mind. 6 Punkte), in der du beschreibst, wie Git bei der Fehlervermeidung und -behebung hilft.
-      </li>
-
-      <li>
-        <strong>Quiz (2):</strong> Welcher Git-Befehl zeigt den Verlauf aller Commits an?<br>
-        <em>Optionen:</em>
-        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch7-q2" data-correct="A">
-          <label class="block"><input type="radio" name="quiz-ch7-q2" value="A"> A) git log</label>
-          <label class="block"><input type="radio" name="quiz-ch7-q2" value="B"> B) git status</label>
-          <label class="block"><input type="radio" name="quiz-ch7-q2" value="C"> C) git diff</label>
-          <label class="block"><input type="radio" name="quiz-ch7-q2" value="D"> D) git branch</label>
-          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch7-q2')">Antwort prüfen</button>
-          <span class="feedback inline-block ml-2"></span>
-        </div>
-      </li>
-
-      <li>
-        <strong>Challenge 2:</strong> Führe eine Analyse durch, wie sich häufige Fehler in Git-Repositories (z. B. Merge-Konflikte) lösen lassen. Erstelle ein interaktives Tutorial (z. B. Slideshow).
-      </li>
-
-      <li>
-        <strong>Extra-Aufgabe 2:</strong> Organisiere einen Mini-Hackathon, bei dem die Teilnehmer in Teams ein Git-Repository erstellen und gemeinsam an einem kleinen Projekt arbeiten. Dokumentiere Best Practices.
-      </li>
-    </ol>
-  </section>
-
-  <!-- Kapitel 8: Erste Interaktionen mit JavaScript -->
-  <section id="chapter8" class="mb-12">
-    <h2 class="text-3xl font-bold border-b pb-2 mb-4">Kapitel 8: Erste Interaktionen mit JavaScript</h2>
-    <ol class="list-decimal pl-6 space-y-4">
-
-      <li>
-        <strong>Frage:</strong> Was ermöglicht JavaScript, was HTML und CSS nicht leisten können?<br>
-        <em>Aufgabe:</em> Erstelle ein JS-Snippet, das auf Button-Klick eine Meldung (z. B. per <code>alert()</code>) anzeigt.
-      </li>
-
-      <li>
-        <strong>Quiz (1):</strong> Wo sollte der <code>&lt;script&gt;</code>-Tag idealerweise platziert werden?<br>
-        <em>Optionen:</em>
-        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch8-q1" data-correct="A">
-          <label class="block"><input type="radio" name="quiz-ch8-q1" value="A"> A) Am Ende des &lt;body&gt;</label>
-          <label class="block"><input type="radio" name="quiz-ch8-q1" value="B"> B) Ganz oben im &lt;head&gt; ohne defer</label>
-          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch8-q1')">Antwort prüfen</button>
-          <span class="feedback inline-block ml-2"></span>
-        </div>
-      </li>
-
-      <li>
-        <strong>Challenge:</strong> Programmiere eine Funktion, die beim Klicken auf einen Button den Hintergrund zufällig ändert. Dokumentiere den Prozess (Screenshots, Code-Kommentare).
-      </li>
-
-      <li>
-        <strong>Extra-Aufgabe:</strong> Entwickle ein kleines interaktives Spiel (z. B. ein Quiz oder Memory) in JavaScript, inkl. verschiedener Schwierigkeitsgrade. Beschreibe den Entwicklungsprozess.
-      </li>
-
-      <li>
-        <strong>Kreativitäts-Boost:</strong> Schreibe einen Prompt, der einer KI hilft, ein Lernspiel mit Drag-and-Drop-Elementen zu entwerfen – inklusive sofortigem Feedback.
-      </li>
-
-      <li>
-        <strong>Frage 2:</strong> Wie kann man asynchrone JavaScript-Funktionen effektiv testen und debuggen?<br>
-        <em>Aufgabe:</em> Erstelle ein Beispiel, das asynchrone Operationen (z. B. <code>async/await</code>) demonstriert und erläutere den Ablauf.
-      </li>
-
-      <li>
-        <strong>Quiz (2):</strong> Welche Methode wird häufig zum Abrufen von Daten aus APIs verwendet?<br>
-        <em>Optionen:</em>
-        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch8-q2" data-correct="A">
-          <label class="block"><input type="radio" name="quiz-ch8-q2" value="A"> A) fetch()</label>
-          <label class="block"><input type="radio" name="quiz-ch8-q2" value="B"> B) alert()</label>
-          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch8-q2')">Antwort prüfen</button>
-          <span class="feedback inline-block ml-2"></span>
-        </div>
-      </li>
-
-      <li>
-        <strong>Challenge 2:</strong> Erstelle ein interaktives JavaScript-Projekt, das den aktuellen Wetterbericht einer Stadt anzeigt – inkl. Fehlerbehandlung für ungültige Eingaben. Dokumentiere deinen Prozess.
-      </li>
-
-      <li>
-        <strong>Extra-Aufgabe 2:</strong> Organisiere eine kleine Challenge im Team, bei der jeder eine eigene interaktive Web-App entwickelt. Vergleicht eure Ansätze und diskutiert Verbesserungsvorschläge.
-      </li>
-    </ol>
-  </section>
-
-  <!-- Kapitel 9: Dynamische Inhalte & APIs – Ein Vorgeschmack -->
-  <section id="chapter9" class="mb-12">
-    <h2 class="text-3xl font-bold border-b pb-2 mb-4">Kapitel 9: Dynamische Inhalte & APIs – Ein Vorgeschmack</h2>
-    <ol class="list-decimal pl-6 space-y-4">
-
-      <li>
-        <strong>Frage:</strong> Was versteht man unter einer API und wie können diese in Webprojekten eingesetzt werden?<br>
-        <em>Aufgabe:</em> Erkläre in eigenen Worten (mind. 3 Sätze), was eine RESTful API ist.
-      </li>
-
-      <li>
-        <strong>Quiz (1):</strong> Welche JavaScript-Methode wird oft genutzt, um Daten von einer API abzurufen?<br>
-        <em>Optionen:</em>
-        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch9-q1" data-correct="A">
-          <label class="block"><input type="radio" name="quiz-ch9-q1" value="A"> A) fetch()</label>
-          <label class="block"><input type="radio" name="quiz-ch9-q1" value="B"> B) innerHTML</label>
-          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch9-q1')">Antwort prüfen</button>
-          <span class="feedback inline-block ml-2"></span>
-        </div>
-      </li>
-
-      <li>
-        <strong>Challenge:</strong> Entwickle ein kleines Dashboard, das Daten (z. B. Titel) von einer öffentlichen API (z. B. JSONPlaceholder) abruft und in einer Liste anzeigt. Füge Filter-/Sortierfunktionen hinzu.
-      </li>
-
-      <li>
-        <strong>Extra-Aufgabe:</strong> Erstelle ein interaktives Dashboard mit Diagrammen (z. B. Chart.js), das Live-Daten (z. B. Wetter-API) anzeigt. Dokumentiere deine Schritte.
-      </li>
-
-      <li>
-        <strong>Kreativitäts-Boost:</strong> Formuliere einen Prompt für eine KI, die ein interaktives Dashboard entwirft, das mehrere Datenquellen (Wetter, Börse, Nachrichten) kombiniert. Erkläre, wie du die Daten visuell verbindest.
-      </li>
-
-      <li>
-        <strong>Frage 2:</strong> Wie kann man APIs sicher in Webprojekten integrieren?<br>
-        <em>Aufgabe:</em> Erstelle eine Liste von Best Practices für den sicheren Umgang mit API-Schlüsseln und authentifizierten Endpunkten.
-      </li>
-
-      <li>
-        <strong>Quiz (2):</strong> Welcher Begriff beschreibt eine API, die HTTP-Methoden wie GET und POST nutzt?<br>
-        <em>Optionen:</em>
-        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch9-q2" data-correct="A">
-          <label class="block"><input type="radio" name="quiz-ch9-q2" value="A"> A) REST</label>
-          <label class="block"><input type="radio" name="quiz-ch9-q2" value="B"> B) SOAP</label>
-          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch9-q2')">Antwort prüfen</button>
-          <span class="feedback inline-block ml-2"></span>
-        </div>
-      </li>
-
-      <li>
-        <strong>Challenge 2:</strong> Erstelle ein Projekt, das verschiedene API-Daten kombiniert – z. B. Wetter, Börsenkurse, Schlagzeilen – und dokumentiere die Integration.
-      </li>
-
-      <li>
-        <strong>Extra-Aufgabe 2:</strong> Führe einen Vergleichstest durch, bei dem du zwei verschiedene öffentliche APIs (z. B. zwei Wetter-APIs) integrierst und ihre Ergebnisse hinsichtlich Genauigkeit und Geschwindigkeit evaluierst.
-      </li>
-    </ol>
-  </section>
-
-  <!-- Kapitel 10: SEO für Einsteiger – Gefunden werden -->
-  <section id="chapter10" class="mb-12">
-    <h2 class="text-3xl font-bold border-b pb-2 mb-4">Kapitel 10: SEO für Einsteiger – Gefunden werden</h2>
-    <ol class="list-decimal pl-6 space-y-4">
-
-      <li>
-        <strong>Frage:</strong> Welche HTML-Elemente sind zentral für eine gute SEO-Optimierung?<br>
-        <em>Aufgabe:</em> Erstelle ein HTML-Dokument mit optimierten <code>&lt;title&gt;</code>- und <code>&lt;meta description&gt;</code>-Tags und erkläre, warum diese wichtig sind.
-      </li>
-
-      <li>
-        <strong>Quiz (1):</strong> Was verbessert vor allem die lokale SEO?<br>
-        <em>Optionen:</em>
-        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch10-q1" data-correct="B">
-          <label class="block"><input type="radio" name="quiz-ch10-q1" value="A"> A) Globale Keywords</label>
-          <label class="block"><input type="radio" name="quiz-ch10-q1" value="B"> B) Lokale Keywords</label>
-          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch10-q1')">Antwort prüfen</button>
-          <span class="feedback inline-block ml-2"></span>
-        </div>
-      </li>
-
-      <li>
-        <strong>Challenge:</strong> Nutze ein SEO-Analyse-Tool (z. B. Google Lighthouse) zur Bewertung deiner Seite. Identifiziere Optimierungspotenziale bei Ladezeit, mobiler Performance und Content-Struktur. Erstelle einen detaillierten Bericht.
-      </li>
-
-      <li>
-        <strong>Extra-Aufgabe:</strong> Erstelle einen Vergleichsbericht zwischen lokaler und globaler SEO, inkl. praktischer Tipps, Tools und Beispielen. Präsentiere deine Ergebnisse als Infografik.
-      </li>
-
-      <li>
-        <strong>Kreativitäts-Boost:</strong> Schreibe einen innovativen Prompt für eine KI, die dir hilft, kreative und einzigartige SEO-Texte zu generieren – integriere dabei auch lokale Besonderheiten und Storytelling-Elemente.
-      </li>
-
-      <li>
-        <strong>Frage 2:</strong> Wie wirken sich Meta-Tags und strukturierte Daten auf das Ranking in Suchmaschinen aus?<br>
-        <em>Aufgabe:</em> Erstelle ein Dokument (mind. 400 Wörter), in dem du die Wirkung von Meta-Tags und strukturierten Daten erklärst und Beispiele aus erfolgreichen Webseiten analysierst.
-      </li>
-
-      <li>
-        <strong>Quiz (2):</strong> Welches dieser Elemente gehört nicht zu den grundlegenden SEO-Maßnahmen?<br>
-        <em>Optionen:</em>
-        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-ch10-q2" data-correct="D">
-          <label class="block"><input type="radio" name="quiz-ch10-q2" value="A"> A) &lt;title&gt;-Tag</label>
-          <label class="block"><input type="radio" name="quiz-ch10-q2" value="B"> B) &lt;meta description&gt;</label>
-          <label class="block"><input type="radio" name="quiz-ch10-q2" value="C"> C) Interne Verlinkungen</label>
-          <label class="block"><input type="radio" name="quiz-ch10-q2" value="D"> D) Animationen mit CSS</label>
-          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-ch10-q2')">Antwort prüfen</button>
-          <span class="feedback inline-block ml-2"></span>
-        </div>
-      </li>
-
-      <li>
-        <strong>Challenge 2:</strong> Entwickle eine SEO-Strategie für eine fiktive lokale Dienstleistungsseite. Berücksichtige dabei Keyword-Recherche, Content-Optimierung und technische Aspekte. Präsentiere deine Strategie in einem umfassenden Plan.
-      </li>
-
-      <li>
-        <strong>Extra-Aufgabe 2:</strong> Erstelle ein SEO-Audit für deine eigene Webseite (oder eine Beispielseite) und dokumentiere alle gefundenen Optimierungsmöglichkeiten. Präsentiere deine Ergebnisse in einem Bericht und einem Diagramm.
-      </li>
-    </ol>
-  </section>
-
-  <!-- Abschluss: Dein Weg in die KI-Webentwicklungs-Zukunft -->
-  <section id="abschluss" class="mb-12">
-    <h2 class="text-3xl font-bold border-b pb-2 mb-4">Abschluss: Dein Weg in die KI-Webentwicklungs-Zukunft</h2>
-    <ol class="list-decimal pl-6 space-y-4">
-
-      <li>
-        <strong>Reflexionsfrage:</strong> Was waren die größten Herausforderungen in diesem Kurs und welche Fortschritte hast du gemacht?<br>
-        <em>Aufgabe:</em> Schreibe eine ausführliche Reflexion (mind. 200 Wörter) und nenne konkrete nächste Schritte für deine Weiterbildung.
-      </li>
-
-      <li>
-        <strong>Quiz (1):</strong> Welche Lernstrategie fördert kontinuierliches Wachstum?<br>
-        <em>Optionen:</em>
-        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-abschluss-q1" data-correct="D">
-          <label class="block"><input type="radio" name="quiz-abschluss-q1" value="A"> A) Allein lernen</label>
-          <label class="block"><input type="radio" name="quiz-abschluss-q1" value="B"> B) Praxisprojekte umsetzen</label>
-          <label class="block"><input type="radio" name="quiz-abschluss-q1" value="C"> C) Regelmäßig Feedback einholen</label>
-          <label class="block"><input type="radio" name="quiz-abschluss-q1" value="D"> D) B und C</label>
-          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-abschluss-q1')">Antwort prüfen</button>
-          <span class="feedback inline-block ml-2"></span>
-        </div>
-      </li>
-
-      <li>
-        <strong>Challenge:</strong> Erstelle einen 3‑Monats-Lernplan mit konkreten Projekten, Zielen und Ressourcen, um ein fortgeschrittener Webentwickler zu werden. Präsentiere deinen Plan als Dokument oder Mindmap und teile ihn mit einem Mentor.
-      </li>
-
-      <li>
-        <strong>Extra-Aufgabe:</strong> Verfasse einen Blogbeitrag oder erstelle ein Video, in dem du deinen gesamten Lernweg zusammenfasst und deine wichtigsten Erkenntnisse präsentierst.
-      </li>
-
-      <li>
-        <strong>Kreativitäts-Boost:</strong> Schreibe einen Prompt, der eine KI auffordert, einen interaktiven, multimodalen Lernpfad zu entwickeln – inkl. Video-Tutorials, Code-Beispielen und Quizzes.
-      </li>
-
-      <li>
-        <strong>Reflexionsfrage 2:</strong> Wie haben sich deine technischen Fähigkeiten und dein Problemlösungsansatz im Laufe des Kurses verändert?<br>
-        <em>Aufgabe:</em> Schreibe eine ausführliche Selbstreflexion (mind. 300 Wörter) und beschreibe konkrete Beispiele, in denen du Fortschritte gemacht hast.
-      </li>
-
-      <li>
-        <strong>Quiz (2):</strong> Welche Methode zur kontinuierlichen Verbesserung deiner Fähigkeiten ist am effektivsten?<br>
-        <em>Optionen:</em>
-        <div class="quiz mt-2 p-4 bg-gray-200 rounded" id="quiz-abschluss-q2" data-correct="D">
-          <label class="block"><input type="radio" name="quiz-abschluss-q2" value="A"> A) Tägliches Lesen von Fachartikeln</label>
-          <label class="block"><input type="radio" name="quiz-abschluss-q2" value="B"> B) Praxisprojekte</label>
-          <label class="block"><input type="radio" name="quiz-abschluss-q2" value="C"> C) Regelmäßiges Feedback einholen</label>
-          <label class="block"><input type="radio" name="quiz-abschluss-q2" value="D"> D) B und C</label>
-          <button class="mt-2 px-3 py-1 bg-blue-600 text-white rounded" onclick="checkAnswer('quiz-abschluss-q2')">Antwort prüfen</button>
-          <span class="feedback inline-block ml-2"></span>
-        </div>
-      </li>
-
-      <li>
-        <strong>Challenge 2:</strong> Erstelle einen umfassenden Lernpfad (als interaktive Web-App oder detailliertes Dokument), der alle Aspekte des Kurses integriert – von HTML/CSS über JavaScript und APIs bis zu SEO. Integriere praktische Projekte, Quizzes und regelmäßige Selbsttests.
-      </li>
-
-      <li>
-        <strong>Extra-Aufgabe 2:</strong> Organisiere eine Online-Runde, in der du deine Lernfortschritte mit anderen Kursteilnehmern teilst und gemeinsam an einem umfangreichen Projekt arbeitest. Dokumentiere den gesamten Prozess und präsentiere eure Ergebnisse.
-      </li>
-    </ol>
-  </section>
-
-  <!-- Footer -->
-  <footer class="mt-12 text-center">
-    <p class="mb-2">Viel Erfolg beim Umsetzen deiner Projekte und beim Weiterentwickeln deiner Fähigkeiten!</p>
-    <p>Dein KI-Webentwicklungs-Team</p>
-    <a href="#top" class="text-blue-600 hover:underline mt-4 block">Zurück nach oben</a>
-  </footer>
-
-  <!-- JavaScript für interaktives Quiz-Feedback -->
-  <script>
-    /**
-     * Funktion zur Überprüfung einer Quizfrage.
-     * @param {string} quizId - Die ID des Quiz-Containers.
-     */
-    function checkAnswer(quizId) {
-      const quizContainer = document.getElementById(quizId);
-      const correctAnswer = quizContainer.getAttribute('data-correct');
-      const feedbackEl = quizContainer.querySelector('.feedback');
-      const selectedOption = quizContainer.querySelector('input[name="' + quizId + '"]:checked');
-      
-      if (!selectedOption) {
-        feedbackEl.textContent = 'Bitte wähle eine Antwort aus!';
-        feedbackEl.style.color = 'orange';
-        return;
-      }
-      
-      if (selectedOption.value === correctAnswer) {
-        feedbackEl.textContent = 'Richtig!';
-        feedbackEl.style.color = 'green';
-      } else {
-        feedbackEl.textContent = 'Falsch! Richtige Antwort: ' + correctAnswer;
-        feedbackEl.style.color = 'red';
-      }
+  <p style="padding:1rem">Navigiere mit der Tab-Taste durch die Links.</p>
+</body>
+</html>`,sc:`nav a:focus-visible { outline: 3px solid #fbbf24; outline-offset: 2px; }
+/* im HTML: <nav aria-label="Hauptnavigation"> und aria-current="page" für die aktive Seite */`}),
+Z("Erstelle ein kleines Projekt, in dem du die KI-generierte Lösung in deinen eigenen Code integrierst. Optimiere den Code und dokumentiere deine Änderungen in einem Blogpost.",
+`Notiere vor dem Einfügen, was der KI-Code tut und was du ändern willst.`,
+`Mache Änderungen in kleinen Schritten und committe jeden Schritt mit einer aussagekräftigen Nachricht.`,
+`Der Blogpost kann so gegliedert sein: Ziel, Prompt, Ergebnis der KI, deine Änderungen mit Begründung, was du gelernt hast. Zeige Vorher/Nachher-Code kurz.`),
+K("Schreibe einen Prompt, der eine KI dazu anregt, ein interaktives Tutorial zu erstellen, mit Code-Beispielen, kurzen Videos und Quizfragen.",
+`Lege Thema, Niveau, Umfang und Aufbau fest (z. B. 5 Lektionen mit je Erklärung, Beispiel, Quizfrage).`,
+`KI kann keine echten Videos erzeugen, aber Videoskripte und Gliederungen. Formuliere den Prompt entsprechend.`,
+`Beispiel: "Erstelle ein Einsteiger-Tutorial zu CSS-Flexbox mit 5 Lektionen. Je Lektion: Erklärung in 100 Wörtern, ein Codebeispiel, eine Quizfrage mit Antwort und ein Stichwortskript für ein 1-Minuten-Video." Die Videos nimmst du selbst auf.`),
+F("Wie kann dir eine KI helfen, wiederkehrende Code-Muster zu erkennen und zu optimieren?",
+`Erstelle eine Liste von 5 Anwendungsfällen, in denen KI die Code-Optimierung unterstützen kann.`,
+`Denke an Refactoring, Duplikate, Benennung, Performance und Lesbarkeit.`,
+`Füge Code ein und bitte gezielt: "Welche Abschnitte wiederholen sich? Schlage eine Funktion vor."`,
+`Beispiele: doppelte CSS-Regeln zusammenfassen, wiederholte Funktionen in eine Hilfsfunktion überführen, unklare Variablennamen verbessern, lange Funktionen in kleine aufteilen, Barrierefreiheitsprobleme finden. Jede Änderung musst du testen.`),
+Q("Wie nennt man das gezielte Formulieren von Anweisungen, um brauchbare Ergebnisse von einer KI zu erhalten?",["Automatisierung","Prompt Engineering","Refactoring","Debugging"],1,
+`Prompt Engineering bezeichnet das Entwerfen und Verfeinern von Prompts. Refactoring ist Code-Umbau, Debugging Fehlersuche, Automatisierung ein weiter Oberbegriff.`,
+`Achte auf den Begriff, in dem Anweisungen eine Rolle spielen.`,`Zwei der Optionen beziehen sich auf bestehenden Code, nicht auf Eingaben an die KI.`),
+C("Entwickle ein interaktives Prompt-Baukasten-Tool, mit dem du verschiedene Code-Generierungs-Prompts kombinieren und testen kannst. Dokumentiere deine Idee in einem Konzeptpapier.",
+`Der Editor enthält ein Gerüst: Textbausteine werden per Klick zu einem Prompt zusammengesetzt. Ergänze eigene Bausteine.`,
+`Erweiterungen: Bausteine als Checkboxen, Prompt kopieren-Button, Gruppen (Rolle, Aufgabe, Format, Grenzen).`,
+`Das Konzeptpapier beantwortet: Wer nutzt das Tool? Welche Bausteine gibt es? Wie wird ein Prompt zusammengesetzt? Was ist in Version 1 enthalten, was später?`,
+{p:1,ed:`<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 1rem; max-width: 40rem; margin: auto; }
+    label { display: block; margin: .3rem 0; }
+    textarea { width: 100%; height: 8rem; box-sizing: border-box; font: inherit; }
+  </style>
+</head>
+<body>
+  <h1>Prompt-Baukasten</h1>
+  <div id="bausteine"></div>
+  <h2>Ergebnis</h2>
+  <textarea id="out" readonly></textarea>
+  <\script>
+    var teile = [
+      "Du bist Frontend-Entwicklerin.",
+      "Erstelle ein Navigationsmenü in HTML und CSS.",
+      "Nutze nur Systemschriften und keine Bibliotheken.",
+      "Erkläre den Code in drei Sätzen."
+      // TODO: eigene Bausteine ergänzen
+    ];
+    var box = document.getElementById("bausteine");
+    var out = document.getElementById("out");
+    function aktualisieren() {
+      var gewaehlt = [];
+      box.querySelectorAll("input").forEach(function (c) { if (c.checked) gewaehlt.push(c.value); });
+      out.value = gewaehlt.join(" ");
     }
-  </script>
+    teile.forEach(function (t) {
+      var l = document.createElement("label");
+      l.innerHTML = '<input type="checkbox"> ';
+      l.querySelector("input").value = t;
+      l.appendChild(document.createTextNode(t));
+      l.addEventListener("change", aktualisieren);
+      box.appendChild(l);
+    });
+  <\/script>
+</body>
+</html>`}),
+Z("Führe eine Umfrage in deinem Netzwerk durch, welche KI-Tools für die Code-Generierung am nützlichsten sind, und präsentiere die Ergebnisse in einer Infografik.",
+`Formuliere 3 bis 5 kurze Fragen und gib die Zahl der Antworten an, damit niemand das Ergebnis überinterpretiert.`,
+`Frage nach Nutzung (wofür), Zufriedenheit und Datenschutzbedenken. Erhebe keine personenbezogenen Daten.`,
+`Bei kleinen Stichproben (unter 20 Antworten) ist das Ergebnis eine Stimmung, keine repräsentative Aussage; schreibe das in die Infografik. Eine einfache Balkengrafik mit Anzahl je Tool genügt.`)
+]);
+
+ch("k5","Kapitel 5: Debugging und Fehlersuche ohne Frust","Fehler eingrenzen, DevTools nutzen und systematisch vorgehen.",[
+F("Nenne zwei typische Fehlerquellen in HTML/CSS, die zu Darstellungsfehlern führen können.",
+`Erstelle ein Codebeispiel mit absichtlichem Fehler (z. B. fehlendes schließendes Tag) und beschreibe, wie du den Fehler findest.`,
+`Typische Quellen: nicht geschlossene Tags, Tippfehler in Eigenschaften oder Selektoren, fehlendes Semikolon, falsche Verschachtelung.`,
+`Öffne die Entwicklertools (F12) und prüfe im Elements-Tab, wie der Browser den Code tatsächlich interpretiert hat.`,
+`Im Editor fehlt ein schließendes Tag und eine CSS-Eigenschaft ist falsch geschrieben. Du findest sie, indem du das Elemente-Panel mit deinem Quelltext vergleichst und in den Styles sehen kannst, welche Regel durchgestrichen oder ungültig ist. Ein HTML-Validator (validator.w3.org) zeigt Strukturfehler ebenfalls an.`,
+{ed:`<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    .box { backgroud-color: #fde68a; padding: 1rem }
+    .box p { color: #7c2d12 }
+  </style>
+</head>
+<body>
+  <\!-- Finde und behebe die zwei Fehler: -->
+  <div class="box">
+    <p>Dieser Text sollte auf gelbem Hintergrund stehen.
+  <p>Zweiter Absatz.</p>
+</body>
+</html>`,sc:`Fehler 1: "backgroud-color" statt "background-color".
+Fehler 2: Der erste p-Absatz wird nicht mit </p> geschlossen, und das div wird nicht mit </div> beendet.`}),
+Q("Welches Werkzeug hilft dir beim Debugging in modernen Browsern?",["Browser-Entwicklertools (z. B. Chrome DevTools)","Windows Task-Manager","Datei-Explorer","Photoshop"],0,
+`Die Entwicklertools zeigen DOM, Styles, Konsole und Netzwerk und erlauben Breakpoints. Alle gängigen Browser bringen eigene mit.`,
+`Es ist im Browser selbst eingebaut und mit F12 erreichbar.`,`Nur eine Option ist für Webseiten gedacht.`),
+C("Setze einen Breakpoint in deinem JavaScript-Code mit den Entwicklertools und dokumentiere die Codeausführung (Screenshots, kurze Notizen).",
+`Der Editor enthält eine Summenfunktion mit einem Logikfehler. Das Ergebnis erscheint in der Konsole unten. Finde den Fehler, ohne das Programm zu raten.`,
+`In den DevTools: Tab Sources, Datei öffnen, auf die Zeilennummer klicken, Seite neu laden. Mit F10 gehst du schrittweise weiter und siehst die Variablenwerte.`,
+`Die Schleife läuft bis i &lt;= zahlen.length. Der letzte Durchlauf liest ein nicht vorhandenes Element (undefined), die Summe wird NaN. Korrektur: i &lt; zahlen.length. Dokumentiere Breakpoint-Zeile, Variablenwerte pro Schritt und die Korrektur.`,
+{p:1,ed:`<!doctype html>
+<html lang="de">
+<head><meta charset="UTF-8"></head>
+<body>
+  <p>Ergebnis siehe Konsole unten.</p>
+  <\script>
+    function summe(zahlen) {
+      var s = 0;
+      for (var i = 0; i <= zahlen.length; i++) {
+        s += zahlen[i];
+      }
+      return s;
+    }
+    console.log("Summe:", summe([1, 2, 3]));
+  <\/script>
+</body>
+</html>`,sc:`for (var i = 0; i < zahlen.length; i++) {`}),
+Z("Baue absichtlich einen kleinen Fehler in HTML oder CSS ein und bitte eine Person, ihn zu finden. Sammle das Feedback und präsentiere deine Erkenntnisse.",
+`Gib der Person keine Hinweise und beobachte, wo sie zuerst sucht.`,
+`Notiere, welche Werkzeuge sie nutzt (Quelltext, DevTools, Validator) und wie lange es dauert.`,
+`Auswertung: Welche Strategie war erfolgreich? Was wäre bei einem größeren Projekt anders? Eine häufige Erkenntnis ist, dass Fehler im Elemente-Panel schneller sichtbar werden als im reinen Quelltext.`),
+K("Formuliere einen Prompt für eine KI, die dir bei der Fehlersuche im Code hilft. Beschreibe, welche Arten von Fehlern besonders tückisch sind.",
+`Ein guter Debugging-Prompt enthält: Fehlermeldung im Wortlaut, relevanten Code, erwartetes und tatsächliches Verhalten.`,
+`Bitte um Ursachenanalyse vor der Korrektur, damit du den Fehler verstehst.`,
+`Beispiel: "Dieser JavaScript-Code soll die Summe berechnen, gibt aber NaN. Hier ist der Code: [Code]. Erwartet: 6, tatsächlich: NaN. Erkläre zuerst die Ursache, dann zeige die Korrektur." Tückisch sind stille Fehler (falsches Ergebnis ohne Fehlermeldung), Timing-Probleme bei asynchronem Code und Fehler, die nur auf bestimmten Geräten auftreten.`),
+F("Wie kann systematisches Debugging die Effizienz beim Programmieren steigern?",
+`Schreibe eine Schritt-für-Schritt-Anleitung (mindestens 5 Schritte) zur Fehlersuche in einem größeren JavaScript-Projekt.`,
+`Ein Ablauf: reproduzieren, eingrenzen, Hypothese bilden, prüfen, beheben, nachtesten.`,
+`Ändere pro Versuch nur eine Sache, sonst weißt du nicht, was gewirkt hat.`,
+`1. Fehler zuverlässig reproduzieren. 2. Fehlermeldung und Konsole lesen. 3. Problem eingrenzen (Teile auskommentieren, console.log oder Breakpoints). 4. Hypothese aufstellen und prüfen. 5. Ursache beheben. 6. Mit denselben Eingaben nachtesten und Nebenwirkungen prüfen. 7. Ursache kurz dokumentieren.`),
+Q("Welche Methoden eignen sich, um Fehler in JavaScript zu finden?",["Console-Logging","Breakpoints setzen","Code-Reviews","Alle genannten"],3,
+`Alle drei ergänzen sich: Logging für schnelle Einblicke, Breakpoints für schrittweises Prüfen, Reviews für Fehler, die man selbst nicht sieht.`,
+`Prüfe, ob du eine der drei Methoden ausschließen kannst.`,`Keine Methode ist grundsätzlich falsch, sie lösen unterschiedliche Probleme.`),
+C("Entwickle ein Debugging-Toolkit als Web-App, das häufige Fehler automatisch erkennt. Skizziere das Konzept und implementiere einen Prototyp.",
+`Der Editor enthält einen kleinen HTML-Prüfer: Er sucht in eingegebenem HTML nach Bildern ohne alt-Attribut. Erweitere ihn um eine zweite Prüfung.`,
+`Nutze DOMParser: new DOMParser().parseFromString(text, "text/html") liefert ein Dokument, das du mit querySelectorAll prüfst.`,
+`Mögliche weitere Prüfungen: Links ohne href, fehlendes lang-Attribut am html-Element, mehrere h1. Das Konzept beschreibt Eingabe, Prüfregeln, Ausgabe und Grenzen (der Prototyp findet nicht alle Fehler).`,
+{p:1,ed:`<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <style>body{font-family:system-ui,sans-serif;padding:1rem}textarea{width:100%;height:6rem;font:inherit;box-sizing:border-box}</style>
+</head>
+<body>
+  <h1>Mini-Prüfer</h1>
+  <textarea id="eingabe">&lt;img src="a.png"&gt;&lt;a&gt;Link&lt;/a&gt;</textarea>
+  <button id="los">Prüfen</button>
+  <ul id="ergebnis"></ul>
+  <\script>
+    document.getElementById("los").addEventListener("click", function () {
+      var doc = new DOMParser().parseFromString(document.getElementById("eingabe").value, "text/html");
+      var liste = document.getElementById("ergebnis");
+      liste.innerHTML = "";
+      function melde(t) { var li = document.createElement("li"); li.textContent = t; liste.appendChild(li); }
+      doc.querySelectorAll("img:not([alt])").forEach(function () { melde("Bild ohne alt-Attribut"); });
+      // TODO: Links ohne href melden
+    });
+  <\/script>
+</body>
+</html>`,sc:`doc.querySelectorAll("a:not([href])").forEach(function () { melde("Link ohne href"); });`}),
+Z("Führe einen Mini-Workshop zum Thema Debugging durch und dokumentiere die wichtigsten Erkenntnisse in einer Präsentation.",
+`Plane 30 bis 45 Minuten mit einem vorbereiteten, fehlerhaften Beispiel.`,
+`Lass die Teilnehmenden mit den Entwicklertools arbeiten, nicht nur zuhören.`,
+`Aufbau: 10 Minuten Einführung in Konsole und Breakpoints, 20 Minuten gemeinsame Fehlersuche an einem Beispiel, 10 Minuten Auswertung. Halte die drei häufigsten Fehlerarten und die genutzten Werkzeuge in der Präsentation fest.`)
+]);
+
+ch("k6","Kapitel 6: Mobile-Optimierung und responsives Design","Viewport, Media Queries, Flexbox und Grid für alle Bildschirmgrößen.",[
+F("Warum ist responsives Design für moderne Webseiten unverzichtbar?",
+`Vergleiche in einem kurzen Text (mindestens 3 Sätze) statisches Design mit responsivem Design.`,
+`Denke an die Vielfalt der Geräte (Smartphone, Tablet, Desktop) und daran, wie Nutzer sie verwenden.`,
+`Statisch heißt feste Breite, responsiv heißt, das Layout passt sich der verfügbaren Breite an.`,
+`Ein statisches Layout mit fester Breite erzwingt auf kleinen Bildschirmen Zoomen und horizontales Scrollen. Ein responsives Layout nutzt relative Einheiten, flexible Raster und Media Queries und bleibt auf jedem Gerät lesbar und bedienbar. Es muss nur einmal gepflegt werden.`),
+Q("Welches Meta-Tag ist für die mobile Darstellung entscheidend?",[`<meta charset="UTF-8">`,`<meta name="viewport" content="width=device-width, initial-scale=1.0">`,`<meta name="robots" content="noindex">`,`<meta name="author" content="Name">`],1,
+`Das viewport-Tag sagt dem mobilen Browser, die Seite in Gerätebreite darzustellen. Ohne es wird eine virtuelle Desktop-Breite skaliert.`,
+`Es geht um die Breite des Darstellungsbereichs.`,`Der Name der Meta-Angabe enthält das gesuchte Wort.`),
+C("Erstelle ein responsives Hamburger-Menü, das bei kleinen Bildschirmbreiten erscheint. Teste deine Lösung auf echten Mobilgeräten und dokumentiere deine Erfahrungen.",
+`Im Editor ist das Menü vorbereitet. Ergänze das Umschalten per Klick und den Media-Query-Rahmen. Ein button öffnet und schließt die Liste.`,
+`Setze aria-expanded am Button und wechsle eine Klasse am nav. Die Liste ist ab 600px sichtbar, darunter nur bei geöffnetem Menü.`,
+`Wichtig: ein echter button (Tastatur), aria-expanded aktualisieren, sichtbarer Fokus, Touch-Fläche mindestens 44px hoch. Dokumentiere, auf welchen Geräten und Browsern du getestet hast und was auffiel.`,
+{p:1,ed:`<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; }
+    nav { background: #0f172a; color: #f1f5f9; }
+    nav button { background: none; border: 0; color: inherit; font: inherit; padding: 1rem; min-height: 44px; cursor: pointer; }
+    nav ul { list-style: none; margin: 0; padding: 0; display: none; }
+    nav.offen ul { display: block; }
+    nav a { color: inherit; display: block; padding: .8rem 1rem; text-decoration: none; }
+    @media (min-width: 600px) {
+      /* TODO: Liste immer anzeigen, Button verstecken, Einträge nebeneinander */
+    }
+  </style>
+</head>
+<body>
+  <nav id="nav" aria-label="Hauptnavigation">
+    <button id="burger" aria-expanded="false" aria-controls="menue">Menü</button>
+    <ul id="menue"><li><a href="#">Start</a></li><li><a href="#">Projekte</a></li><li><a href="#">Kontakt</a></li></ul>
+  </nav>
+  <\script>
+    var nav = document.getElementById("nav"), b = document.getElementById("burger");
+    b.addEventListener("click", function () {
+      // TODO: Klasse "offen" umschalten und aria-expanded setzen
+    });
+  <\/script>
+</body>
+</html>`,sc:`b.addEventListener("click", function () {
+  var offen = nav.classList.toggle("offen");
+  b.setAttribute("aria-expanded", offen);
+});
+/* @media: nav ul { display: flex; } nav button { display: none; } */`}),
+Z("Erstelle ein kurzes Video (maximal 3 Minuten), in dem du anhand eines Beispiels den Unterschied zwischen statischem und responsivem Design erklärst.",
+`Nutze die Geräteansicht der DevTools (Strg+Shift+M), um verschiedene Breiten zu zeigen.`,
+`Zeige dieselbe Seite einmal mit und einmal ohne viewport-Meta-Tag.`,
+`Gliederung in drei Szenen: statische Seite am Handy (Zoom nötig), responsive Version, die Media Query, die den Wechsel auslöst.`),
+K("Entwickle einen Prompt für eine KI, der dir hilft, ein ungewöhnliches responsives Layout zu entwerfen, z. B. mit eigenen Breakpoints und interaktiven Animationen.",
+`Nenne Inhalte (z. B. Bildergalerie), Zielgeräte und Einschränkungen (reines CSS, Barrierefreiheit).`,
+`Lass dir die Breakpoints begründen: Gute Breakpoints orientieren sich am Inhalt, nicht an Gerätenamen.`,
+`Beispiel: "Entwirf ein responsives Galerie-Layout mit CSS Grid. Auf Handys eine Spalte, ab Tablet asymmetrisches Raster mit einem großen Bild. Breakpoints an den Inhalt anpassen und begründen. Hover-Animation nur, wenn prefers-reduced-motion nicht aktiv ist."`),
+F("Welche Vorteile bietet das Mobile-first-Design gegenüber Desktop-first?",
+`Erstelle eine Liste von mindestens 5 Vorteilen eines Mobile-first-Ansatzes.`,
+`Mobile-first heißt: Basis-CSS gilt für kleine Bildschirme, größere Layouts kommen per min-width dazu.`,
+`Denke an Inhalt, Performance, Wartung und Nutzungsstatistik.`,
+`Vorteile: 1. Fokus auf das Wesentliche, 2. weniger CSS-Überschreibungen, weil min-width nur ergänzt, 3. bessere Ladezeiten auf schwachen Geräten, 4. Touchbedienung wird früh mitgedacht, 5. einfachere Wartung, 6. ein großer Teil der Zugriffe kommt von Mobilgeräten (prüfe die Zahlen für dein Projekt).`),
+Q("Welcher Begriff beschreibt eine Methode, um responsives Design umzusetzen?",["Media Queries","Flexbox","CSS Grid","Alle genannten"],3,
+`Media Queries passen Regeln an Bildschirmmerkmale an, Flexbox und Grid erzeugen flexible Layouts. Gemeinsam bilden sie das Fundament.`,
+`Alle drei werden in der Praxis kombiniert.`,`Keine der Optionen ist falsch.`),
+C("Erstelle eine vollständige responsive Webseite (Desktop, Tablet, Mobil) und dokumentiere in einem Bericht, wie sich Layout und Nutzung anpassen.",
+`Der Editor enthält eine Seite mit Grid. Ergänze die Breakpoints so, dass sie auf Mobil eine, auf Tablet zwei und auf Desktop drei Spalten zeigt.`,
+`Mobile-first: Basis = eine Spalte, @media (min-width: 600px) = zwei, @media (min-width: 960px) = drei.`,
+`Im Bericht: Screenshots der drei Breiten, Beschreibung der Änderungen (Spalten, Schriftgrößen, Navigation) und eine Begründung für die Breakpoints.`,
+{p:1,ed:`<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; padding: 1rem; }
+    .raster { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+    .raster div { background: #e0f2fe; padding: 1.5rem; border-radius: 12px; }
+    /* TODO: Breakpoints für 2 und 3 Spalten */
+  </style>
+</head>
+<body>
+  <h1>Responsive Seite</h1>
+  <div class="raster"><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div></div>
+</body>
+</html>`,sc:`@media (min-width: 600px) { .raster { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 960px) { .raster { grid-template-columns: repeat(3, 1fr); } }`}),
+Z("Führe A/B-Tests zur Benutzerfreundlichkeit deiner mobilen Webseite durch und präsentiere die Ergebnisse in einem Diagramm.",
+`Baue zwei Varianten, die sich in genau einem Punkt unterscheiden (z. B. Position des Buttons).`,
+`Mit wenigen Testpersonen erhältst du Hinweise, keine statistisch belastbaren Aussagen. Halte das fest.`,
+`Lege vorher eine Frage fest (z. B. "Findet die Person den Kontakt-Button in unter 10 Sekunden?"), notiere Ergebnisse je Variante und zeige sie als einfaches Balkendiagramm samt Stichprobengröße.`)
+]);
+
+ch("k7","Kapitel 7: GitHub Pages, deine Webseite geht online","Repository, Versionskontrolle und Veröffentlichung.",[
+F("Welche Vorteile bietet das Hosting über GitHub Pages?",
+`Schreibe eine kurze Anleitung (mindestens 5 Schritte), wie du deine statische Webseite veröffentlichst.`,
+`GitHub Pages liefert statische Dateien (HTML, CSS, JavaScript) direkt aus einem Repository aus.`,
+`Beschreibe: Repository anlegen, Dateien hochladen, Pages aktivieren, URL prüfen, Änderungen nachpflegen.`,
+`1. Repository auf GitHub anlegen (öffentlich). 2. index.html und weitere Dateien hinzufügen (pushen oder hochladen). 3. Im Repository: Settings, Pages. 4. Quelle "Deploy from a branch", Branch main, Ordner / (root) wählen und speichern. 5. Nach kurzer Wartezeit ist die Seite unter https://BENUTZERNAME.github.io/REPOSITORY/ erreichbar. 6. Spätere Änderungen per Push veröffentlichen. Vorteile: kostenlos für öffentliche Repositories, HTTPS inklusive, Versionsverlauf durch Git. Einschränkung: nur statische Seiten.`),
+Q("Welche Git-Befehle sind für das Versionieren deiner Projekte zentral?",["git add","git commit","git push","Alle genannten"],3,
+`git add stellt Änderungen bereit, git commit speichert einen Stand lokal, git push überträgt ihn zu GitHub.`,
+`Der Ablauf: bereitstellen, speichern, hochladen.`,`Alle drei gehören zum Grundablauf.`),
+C("Erstelle ein neues Repository auf GitHub, lade deinen Code hoch und aktiviere GitHub Pages. Mache einen Screenshot deines aktiven Repositorys als Beleg.",
+`Im Editor siehst du eine Seite mit relativen Pfaden. Genau diese Pfadform brauchst du auch auf GitHub Pages, wenn die Seite unter /REPOSITORY/ liegt. Ergänze die fehlenden Teile.`,
+`Absolute Pfade wie /projekte.html brechen unter /REPOSITORY/. Nutze projekte.html oder ./projekte.html (gilt genauso für Stylesheets, Bilder und Skripte).`,
+`Prüfe nach der Veröffentlichung: Seite lädt, Bilder und Stylesheet werden gefunden, Links funktionieren. Falls nicht: Groß-/Kleinschreibung der Dateinamen prüfen (GitHub Pages unterscheidet sie), Pfade relativ machen, Pages-Quelle kontrollieren.`,
+{p:1,ed:`<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mein Portfolio</title>
+  <style>body{font-family:system-ui,sans-serif;padding:1rem}</style>
+</head>
+<body>
+  <h1>Mein Portfolio</h1>
+  <\!-- TODO: Mache beide Links relativ -->
+  <p><a href="/projekte.html">Projekte</a> | <a href="/kontakt.html">Kontakt</a></p>
+  <p>Absolute Pfade wie /projekte.html zeigen auf der Domain-Wurzel und brechen im Unterordner.</p>
+</body>
+</html>`,sc:`<a href="projekte.html">Projekte</a> | <a href="kontakt.html">Kontakt</a>
+<\!-- ebenso: <link rel="stylesheet" href="style.css"> -->`}),
+Z("Richte ein automatisiertes Deployment (z. B. mit GitHub Actions) ein und schreibe ein kurzes Tutorial dazu.",
+`Für eine rein statische Seite reicht die Veröffentlichung aus dem Branch. Actions lohnen sich, wenn vor dem Deployment ein Build-Schritt nötig ist.`,
+`In Settings, Pages stellst du die Quelle auf "GitHub Actions" und legst eine Workflow-Datei unter .github/workflows/ an.`,
+`Ein Workflow löst bei Push auf main aus, lädt den Ordner als Artefakt hoch (actions/upload-pages-artifact) und veröffentlicht ihn (actions/deploy-pages). Die Berechtigungen pages: write und id-token: write sind nötig. Im Tutorial: Voraussetzungen, Datei anlegen, erster Lauf, Fehlersuche im Actions-Tab.`),
+K("Entwickle einen Prompt, der einer KI hilft, eine Deployment-Strategie zu entwerfen, inklusive automatischer Tests und Optimierungen.",
+`Nenne Projektart (statische Seite), Hosting (GitHub Pages) und gewünschte Prüfungen (HTML-Validierung, Linkprüfung, Lighthouse).`,
+`Bitte um eine Schritt-Liste und die Workflow-Datei, aber auch um Hinweise, was du selbst prüfen musst.`,
+`Beispiel: "Entwirf einen GitHub-Actions-Workflow für eine statische Seite: bei Push auf main HTML validieren, Links prüfen, dann nach GitHub Pages deployen. Erkläre jeden Schritt in einem Satz und nenne mögliche Fehlerquellen." Prüfe jede vorgeschlagene Action auf Herkunft und Version.`,
+{p:1}),
+F("Wie trägt die Versionskontrolle zu einem sicheren Entwicklungsprozess bei?",
+`Erstelle eine Liste (mindestens 6 Punkte), die beschreibt, wie Git bei der Fehlervermeidung und -behebung hilft.`,
+`Denke an Verlauf, Rückkehr zu alten Ständen, Branches, Zusammenarbeit und Nachvollziehbarkeit.`,
+`Jeder Commit ist ein wiederherstellbarer Zwischenstand.`,
+`1. Vollständiger Verlauf aller Änderungen. 2. Rückkehr zu funktionierenden Ständen (git revert, git restore). 3. Branches zum gefahrlosen Ausprobieren. 4. Vergleich mit git diff. 5. Nachvollziehbar, wer was warum geändert hat. 6. Sicherung auf GitHub gegen Datenverlust. 7. Code-Reviews über Pull Requests. Wichtig: Keine Passwörter oder Schlüssel committen, sie bleiben sonst im Verlauf.`),
+Q("Welcher Git-Befehl zeigt den Verlauf aller Commits an?",["git log","git status","git diff","git branch"],0,
+`git log listet Commits. git status zeigt den aktuellen Zustand, git diff Änderungen, git branch die Zweige.`,
+`Das englische Wort für Protokoll.`,`Nur einer der vier Befehle zeigt vergangene Commits.`),
+C("Analysiere, wie sich häufige Fehler in Git-Repositories (z. B. Merge-Konflikte) lösen lassen. Erstelle ein interaktives Tutorial (z. B. eine Slideshow).",
+`Sammle drei typische Fehler: Merge-Konflikt, falsche Dateien committet, Push abgelehnt.`,
+`Zeige für jeden Fehler: Meldung, Ursache, Lösung. Konfliktmarker erkennst du an &lt;&lt;&lt;&lt;&lt;&lt;&lt;, ======= und &gt;&gt;&gt;&gt;&gt;&gt;&gt;.`,
+`Merge-Konflikt: Datei öffnen, gewünschte Fassung herstellen, Marker löschen, git add und git commit. Push abgelehnt: erst git pull (oder fetch und rebase), dann erneut pushen. Falsche Datei committet: bei noch nicht gepushten Commits mit git reset oder git revert korrigieren; bei Geheimnissen zusätzlich den Schlüssel ändern.`),
+Z("Organisiere einen Mini-Hackathon, bei dem Teams ein Git-Repository erstellen und gemeinsam an einem kleinen Projekt arbeiten. Dokumentiere Best Practices.",
+`Lege Zeitrahmen, Teamgröße und Aufgabe vorher fest (z. B. 2 Stunden, eine Landingpage).`,
+`Vereinbart Regeln: kleine Commits, Branch pro Aufgabe, Pull Request vor dem Merge.`,
+`Best Practices zum Dokumentieren: aussagekräftige Commit-Nachrichten, README mit Zweck und Start, klare Aufgabenverteilung, Konflikte früh lösen, am Ende kurze Retrospektive.`)
+]);
+
+ch("k8","Kapitel 8: Erste Interaktionen mit JavaScript","Ereignisse, DOM, Funktionen und asynchroner Code.",[
+F("Was ermöglicht JavaScript, was HTML und CSS nicht leisten können?",
+`Erstelle ein JS-Snippet, das beim Klick auf einen Button eine Meldung anzeigt (z. B. mit alert()).`,
+`Du brauchst einen Button im HTML, einen Event-Listener und eine Funktion.`,
+`Der Editor blockiert alert() in der Vorschau, deshalb ergänzt du alternativ eine Textausgabe in einem Absatz.`,
+`JavaScript reagiert auf Eingaben, verändert Inhalte dynamisch, rechnet, speichert Daten im Browser und lädt Daten nach. HTML und CSS beschreiben nur Struktur und Darstellung. Im Beispiel: addEventListener("click", ...) und textContent setzen.`,
+{ed:`<!doctype html>
+<html lang="de">
+<head><meta charset="UTF-8"><style>body{font-family:system-ui,sans-serif;padding:1rem}button{padding:.6rem 1rem;font:inherit}</style></head>
+<body>
+  <button id="knopf">Klick mich</button>
+  <p id="meldung"></p>
+  <\script>
+    document.getElementById("knopf").addEventListener("click", function () {
+      // TODO: Meldung in #meldung anzeigen (alert() ist in der Vorschau gesperrt)
+    });
+  <\/script>
+</body>
+</html>`,sc:`document.getElementById("meldung").textContent = "Hallo, der Klick funktioniert!";`}),
+Q("Wo sollte das script-Tag idealerweise stehen?",["Am Ende des body oder im head mit defer","Ganz oben im head ohne defer","In jeder CSS-Datei","Direkt in der ersten Zeile vor dem doctype"],0,
+`Das Skript soll erst laufen, wenn das HTML geladen ist. Am Ende des body oder mit defer ist das gegeben. Ohne defer im head blockiert es das Laden und findet Elemente noch nicht.`,
+`Zwei Orte funktionieren, einer davon braucht ein Attribut.`,`Skripte, die Elemente suchen, brauchen geladenes HTML.`),
+C("Programmiere eine Funktion, die beim Klick auf einen Button den Hintergrund zufällig ändert. Dokumentiere den Prozess (Screenshots, Code-Kommentare).",
+`Der Editor hat den Button. Ergänze die Funktion, die eine zufällige Farbe erzeugt und als Hintergrund setzt.`,
+`Zufällige Zahl: Math.floor(Math.random() * 256). Eine Farbe: "rgb(" + r + "," + g + "," + b + ")".`,
+`Kommentiere jede Zeile, was sie tut. Zusatz: Lege eine Liste fester, gut lesbarer Farben an, statt völlig zufällig zu würfeln, damit der Text lesbar bleibt (Kontrast).`,
+{p:1,ed:`<!doctype html>
+<html lang="de">
+<head><meta charset="UTF-8"><style>body{font-family:system-ui,sans-serif;padding:1rem;transition:background .3s}button{padding:.6rem 1rem;font:inherit}</style></head>
+<body>
+  <button id="farbe">Neue Farbe</button>
+  <\script>
+    function zufall(max) { return Math.floor(Math.random() * max); }
+    document.getElementById("farbe").addEventListener("click", function () {
+      // TODO: zufällige Farbe erzeugen und auf document.body.style.background setzen
+    });
+  <\/script>
+</body>
+</html>`,sc:`var c = "rgb(" + zufall(256) + "," + zufall(256) + "," + zufall(256) + ")";
+document.body.style.background = c;`}),
+Z("Entwickle ein kleines interaktives Spiel (z. B. ein Quiz oder Memory) in JavaScript, inklusive verschiedener Schwierigkeitsgrade. Beschreibe den Entwicklungsprozess.",
+`Der Editor enthält ein Mini-Quiz mit Fragenliste. Erweitere es um eine Auswahl "leicht/schwer".`,
+`Speichere Fragen als Array von Objekten mit Eigenschaft level und filtere nach der Auswahl.`,
+`Entwicklungsprozess: Regeln festlegen, Datenstruktur (Fragenliste), Anzeige, Auswertung, Schwierigkeitsgrad, Tests mit Randfällen (leere Auswahl, letzte Frage).`,
+{ed:`<!doctype html>
+<html lang="de">
+<head><meta charset="UTF-8"><style>body{font-family:system-ui,sans-serif;padding:1rem}button{padding:.5rem 1rem;margin:.2rem;font:inherit}</style></head>
+<body>
+  <h1>Mini-Quiz</h1>
+  <p id="frage"></p>
+  <div id="antworten"></div>
+  <p id="stand">Punkte: 0</p>
+  <\script>
+    var fragen = [
+      { q: "Was ergibt 2 + 2?", a: ["3", "4"], r: 1, level: "leicht" },
+      { q: "Welcher Methodenname registriert Klicks?", a: ["addEventListener", "alert"], r: 0, level: "schwer" }
+      // TODO: weitere Fragen und Schwierigkeitsauswahl
+    ];
+    var i = 0, punkte = 0;
+    function zeige() {
+      var f = fragen[i];
+      if (!f) { document.getElementById("frage").textContent = "Fertig!"; document.getElementById("antworten").innerHTML = ""; return; }
+      document.getElementById("frage").textContent = f.q;
+      var box = document.getElementById("antworten"); box.innerHTML = "";
+      f.a.forEach(function (text, k) {
+        var b = document.createElement("button"); b.textContent = text;
+        b.onclick = function () { if (k === f.r) punkte++; document.getElementById("stand").textContent = "Punkte: " + punkte; i++; zeige(); };
+        box.appendChild(b);
+      });
+    }
+    zeige();
+  <\/script>
+</body>
+</html>`}),
+K("Schreibe einen Prompt, der einer KI hilft, ein Lernspiel mit Drag-and-Drop-Elementen zu entwerfen, inklusive sofortigem Feedback.",
+`Nenne Thema, Zielgruppe, Interaktion (Karten ziehen auf Zielfelder) und Feedbackform.`,
+`Fordere Tastaturbedienung als Alternative zu Drag-and-Drop, damit das Spiel zugänglich bleibt.`,
+`Beispiel: "Entwirf ein Lernspiel in einer HTML-Datei: HTML-Tags per Drag-and-Drop den richtigen Beschreibungen zuordnen. Sofortiges Feedback (richtig/falsch), Punktestand, Bedienung auch per Tastatur. Nur HTML, CSS, JavaScript ohne Bibliotheken."`),
+F("Wie kann man asynchrone JavaScript-Funktionen testen und debuggen?",
+`Erstelle ein Beispiel, das asynchrone Operationen (z. B. async/await) zeigt, und erläutere den Ablauf.`,
+`Eine async-Funktion gibt ein Promise zurück. await pausiert innerhalb der Funktion, nicht das ganze Programm.`,
+`Zum Debuggen: console.log vor und nach await, Breakpoints in den DevTools, try/catch für Fehler.`,
+`Im Editor simuliert eine Funktion eine Verzögerung mit setTimeout in einem Promise. Der Ablauf: Start wird sofort geloggt, die async-Funktion wartet 1 Sekunde, danach folgt das Ergebnis. Fehler fängst du mit try/catch.`,
+{ed:`<!doctype html>
+<html lang="de">
+<head><meta charset="UTF-8"></head>
+<body>
+  <p>Ausgabe siehe Konsole unten.</p>
+  <\script>
+    function warte(ms) { return new Promise(function (res) { setTimeout(res, ms); }); }
+    async function lade() {
+      console.log("2: lade() startet");
+      await warte(1000);
+      console.log("4: nach einer Sekunde");
+      return "fertig";
+    }
+    console.log("1: Start");
+    lade().then(function (r) { console.log("5: Ergebnis = " + r); });
+    console.log("3: läuft weiter, während gewartet wird");
+    // TODO: Fehlerfall ergänzen: warte() lehnt ab, try/catch fängt den Fehler
+  <\/script>
+</body>
+</html>`,sc:`async function mitFehler() {
+  try { await Promise.reject(new Error("Test")); }
+  catch (e) { console.log("Fehler gefangen: " + e.message); }
+}
+mitFehler();`}),
+Q("Welche Methode wird häufig zum Abrufen von Daten aus APIs verwendet?",["fetch()","alert()","innerHTML","console.log()"],0,
+`fetch() sendet HTTP-Anfragen und liefert ein Promise. alert() zeigt Dialoge, innerHTML setzt Inhalte, console.log() gibt aus.`,
+`Das englische Wort für "holen".`,`Es gibt ein Promise zurück.`),
+C("Erstelle ein interaktives JavaScript-Projekt, das den aktuellen Wetterbericht einer Stadt anzeigt, inklusive Fehlerbehandlung bei ungültigen Eingaben. Dokumentiere deinen Prozess.",
+`Wähle eine Wetter-API, die ohne Schlüssel im Browser nutzbar ist, oder simuliere die Daten wie im Editor. Der Editor zeigt die Struktur mit Eingabeprüfung und Fehlerausgabe.`,
+`Prüfe Eingabe (leer, nur Leerzeichen), fange Netzwerkfehler und unbekannte Städte ab. Lies die API-Dokumentation für Format und Nutzungsbedingungen.`,
+`Im Editor: Funktion sucheWetter(stadt) prüft die Eingabe, ruft (hier simulierte) Daten ab und zeigt Ergebnis oder Fehlermeldung. Für echte Daten ersetzt du die Simulation durch fetch(URL) und prüfst response.ok. API-Schlüssel gehören nicht in öffentlichen Frontend-Code.`,
+{p:1,ed:`<!doctype html>
+<html lang="de">
+<head><meta charset="UTF-8"><style>body{font-family:system-ui,sans-serif;padding:1rem}input,button{font:inherit;padding:.5rem}</style></head>
+<body>
+  <h1>Wetter</h1>
+  <input id="stadt" placeholder="Stadt"> <button id="los">Anzeigen</button>
+  <p id="aus" role="status"></p>
+  <\script>
+    var daten = { berlin: "14 Grad, bewölkt", hamburg: "12 Grad, Regen", muenchen: "16 Grad, sonnig" }; // simulierte Daten
+    function sucheWetter(stadt) {
+      return new Promise(function (ok, fehler) {
+        setTimeout(function () {
+          var w = daten[stadt.toLowerCase()];
+          w ? ok(w) : fehler(new Error("Keine Daten für " + stadt));
+        }, 300);
+      });
+    }
+    document.getElementById("los").addEventListener("click", async function () {
+      var s = document.getElementById("stadt").value.trim();
+      var aus = document.getElementById("aus");
+      if (!s) { aus.textContent = "Bitte eine Stadt eingeben."; return; }
+      // TODO: sucheWetter(s) aufrufen, Ergebnis oder Fehler in #aus ausgeben
+    });
+  <\/script>
+</body>
+</html>`,sc:`try { aus.textContent = s + ": " + await sucheWetter(s); }
+catch (e) { aus.textContent = e.message; }`}),
+Z("Organisiere eine kleine Team-Challenge, bei der jede Person eine eigene interaktive Web-App entwickelt. Vergleicht eure Ansätze und diskutiert Verbesserungsvorschläge.",
+`Legt ein gemeinsames Thema und eine Zeitgrenze fest, z. B. 90 Minuten.`,
+`Bewertet nicht nur das Ergebnis, sondern auch Lesbarkeit und Bedienbarkeit.`,
+`Ablauf: Thema, Bauphase, Vorstellung (je 3 Minuten), Feedbackrunde mit je einer Stärke und einem Verbesserungsvorschlag. Haltet die besten Ideen schriftlich fest.`)
+]);
+
+ch("k9","Kapitel 9: Dynamische Inhalte und APIs, ein Vorgeschmack","Daten von Schnittstellen laden, anzeigen und sicher damit umgehen.",[
+F("Was versteht man unter einer API und wie lässt sie sich in Webprojekten einsetzen?",
+`Erkläre in eigenen Worten (mindestens 3 Sätze), was eine RESTful API ist.`,
+`API steht für Programmierschnittstelle: Ein Programm bietet Funktionen oder Daten für andere Programme an.`,
+`REST: Ressourcen haben URLs, HTTP-Methoden (GET, POST, PUT, DELETE) beschreiben die Aktion, Antworten kommen meist als JSON.`,
+`Eine REST-API stellt Ressourcen (z. B. /posts/1) über URLs bereit. Mit GET liest du, mit POST legst du an, mit PUT oder PATCH änderst du, mit DELETE löschst du. Die Antwort ist meist JSON, und der Server speichert keinen Zustand zwischen Anfragen. In Webprojekten laden Seiten damit Daten nach, ohne neu zu laden.`),
+Q("Welche JavaScript-Methode wird oft genutzt, um Daten von einer API abzurufen?",["fetch()","innerHTML","console.log()","parseInt()"],0,
+`fetch() sendet die Anfrage. innerHTML zeigt Inhalte an, console.log() gibt aus und parseInt() wandelt Text in Zahlen.`,
+`Es liefert ein Promise.`,`Der Name bedeutet "holen".`),
+C("Entwickle ein kleines Dashboard, das Daten (z. B. Titel) von einer öffentlichen API (z. B. JSONPlaceholder) abruft und in einer Liste anzeigt. Füge Filter- und Sortierfunktionen hinzu.",
+`Der Editor nutzt Beispieldaten im Format von JSONPlaceholder, damit er offline läuft. Ergänze Filter und Sortierung. Für echte Daten ersetzt du die Array-Zeile durch einen fetch-Aufruf (Kommentar im Code).`,
+`Filter: array.filter(...) mit includes auf den Titel. Sortierung: array.slice().sort(...) mit localeCompare.`,
+`Ablauf: laden, filtern, sortieren, ausgeben. Echter Abruf: fetch("https://jsonplaceholder.typicode.com/posts").then(r => r.json()). Behandle Fehler und leere Treffer (Hinweis "Keine Ergebnisse").`,
+{p:1,ed:`<!doctype html>
+<html lang="de">
+<head><meta charset="UTF-8"><style>body{font-family:system-ui,sans-serif;padding:1rem}input,button{font:inherit;padding:.5rem}</style></head>
+<body>
+  <h1>Beiträge</h1>
+  <input id="filter" placeholder="Filter"> <button id="sort">A-Z sortieren</button>
+  <ul id="liste"></ul>
+  <\script>
+    // Beispieldaten (alternativ: fetch("https://jsonplaceholder.typicode.com/posts").then(r => r.json()))
+    var posts = [
+      { id: 1, title: "Sunt aut facere" }, { id: 2, title: "Qui est esse" },
+      { id: 3, title: "Ea molestias quasi" }, { id: 4, title: "Eum et est occaecati" }
+    ];
+    var sortiert = false;
+    function zeige() {
+      var f = document.getElementById("filter").value.toLowerCase();
+      var daten = posts.filter(function (p) { return p.title.toLowerCase().includes(f); });
+      // TODO: bei sortiert === true nach Titel sortieren
+      var ul = document.getElementById("liste");
+      ul.innerHTML = "";
+      if (!daten.length) { ul.innerHTML = "<li>Keine Ergebnisse</li>"; return; }
+      daten.forEach(function (p) { var li = document.createElement("li"); li.textContent = p.title; ul.appendChild(li); });
+    }
+    document.getElementById("filter").addEventListener("input", zeige);
+    document.getElementById("sort").addEventListener("click", function () { sortiert = !sortiert; zeige(); });
+    zeige();
+  <\/script>
+</body>
+</html>`,sc:`if (sortiert) daten = daten.slice().sort(function (a, b) { return a.title.localeCompare(b.title, "de"); });`}),
+Z("Erstelle ein interaktives Dashboard mit Diagrammen (z. B. mit Chart.js), das Live-Daten (z. B. aus einer Wetter-API) anzeigt. Dokumentiere deine Schritte.",
+`Im Editor ist ein Balkendiagramm ohne Bibliothek mit reinem HTML und CSS vorbereitet. Mit Chart.js sähe die Einbindung später im eigenen Projekt per script-Tag aus.`,
+`Passe die Werte im Array an und berechne die Balkenhöhe prozentual zum Maximum.`,
+`Schritte: Datenquelle wählen, Daten laden, in ein passendes Format bringen, Diagramm zeichnen, Ladezustand und Fehler behandeln. Beachte die Nutzungsbedingungen und Abruflimits der API. Eine Bibliothek bindest du in deinem Projekt mit festem Versionsstand ein.`,
+{ed:`<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 1rem; }
+    .diagramm { display: flex; align-items: flex-end; gap: .5rem; height: 12rem; border-bottom: 2px solid #64748b; }
+    .balken { flex: 1; background: #06b6d4; text-align: center; color: #001; font-size: .8rem; border-radius: 6px 6px 0 0; }
+  </style>
+</head>
+<body>
+  <h1>Temperatur (Beispieldaten)</h1>
+  <div class="diagramm" id="d"></div>
+  <\script>
+    var werte = [12, 15, 9, 18, 14];
+    var tage = ["Mo", "Di", "Mi", "Do", "Fr"];
+    var max = Math.max.apply(null, werte);
+    // TODO: Höhe in Prozent: wert / max * 100
+    werte.forEach(function (w, i) {
+      var b = document.createElement("div");
+      b.className = "balken"; b.textContent = tage[i] + " " + w;
+      document.getElementById("d").appendChild(b);
+    });
+  <\/script>
+</body>
+</html>`,sc:`b.style.height = (w / max * 100) + "%";`}),
+K("Formuliere einen Prompt für eine KI, die ein interaktives Dashboard entwirft, das mehrere Datenquellen (Wetter, Börse, Nachrichten) kombiniert. Erkläre, wie du die Daten visuell verbindest.",
+`Nenne Quellen, Aktualisierungsintervall, Layout und Einschränkungen (keine Schlüssel im Frontend, Fehlerzustände).`,
+`Frage nach einer Lösung, die ausfällt, ohne das ganze Dashboard zu zerstören: jede Kachel lädt unabhängig.`,
+`Beispiel: "Entwirf ein Dashboard als Kachelraster: Wetter, Aktienkurs, Schlagzeilen. Jede Kachel lädt ihre Daten einzeln und zeigt bei Fehlern eine Meldung. Beschreibe, wie Zeitstempel und Farben die Kacheln verbinden. Keine API-Schlüssel im Frontend-Code."`),
+F("Wie kann man APIs sicher in Webprojekte integrieren?",
+`Erstelle eine Liste von Best Practices für den sicheren Umgang mit API-Schlüsseln und authentifizierten Endpunkten.`,
+`Alles, was im Browser läuft, kann jeder einsehen, auch API-Schlüssel im JavaScript.`,
+`Geheime Schlüssel gehören auf einen Server oder eine Serverless-Funktion, nicht in statische Seiten auf GitHub Pages.`,
+`1. Geheime Schlüssel nie in Frontend-Code oder Repositories. 2. Schlüssel serverseitig halten und über einen eigenen Endpunkt (Proxy) nutzen. 3. Schlüssel mit minimalen Rechten und Limits anlegen. 4. Schlüssel regelmäßig erneuern, bei Verdacht sofort widerrufen. 5. Nur HTTPS verwenden. 6. Antworten validieren und Ausgaben nicht ungeprüft per innerHTML einsetzen. 7. Nutzungsbedingungen und Abruflimits beachten. Öffentliche, schlüssellose APIs sind für statische Portfolios die einfachste Wahl.`),
+Q("Welcher Architekturstil beschreibt Web-APIs, die Ressourcen über URLs ansprechen und HTTP-Methoden wie GET und POST nutzen?",["REST","SOAP","DOM","CSS"],0,
+`REST ist der verbreitete Stil mit Ressourcen-URLs und HTTP-Methoden. SOAP ist ein XML-basiertes Protokoll mit eigenem Nachrichtenformat. DOM und CSS sind keine API-Stile.`,
+`Zwei Optionen sind keine Schnittstellen zwischen Servern.`,`Der Stil, der mit JSON-Antworten und URLs wie /posts/1 verbunden ist.`),
+C("Erstelle ein Projekt, das verschiedene API-Daten kombiniert, z. B. Wetter, Börsenkurse und Schlagzeilen, und dokumentiere die Integration.",
+`Plane drei unabhängige Kacheln. Jede lädt ihre Daten selbst und zeigt Lade- und Fehlerzustand.`,
+`Nutze Promise.allSettled, damit eine ausgefallene Quelle die anderen nicht blockiert.`,
+`Dokumentation: Quellen mit Link und Lizenz, Datenformat, Abruflimits, Fehlerbehandlung, Aktualisierungsintervall. Börsen- und Nachrichten-APIs verlangen oft Schlüssel, die nicht ins Frontend gehören (siehe vorige Aufgabe).`),
+Z("Führe einen Vergleichstest durch, bei dem du zwei öffentliche APIs (z. B. zwei Wetter-APIs) integrierst und ihre Ergebnisse hinsichtlich Genauigkeit und Geschwindigkeit bewertest.",
+`Messe die Antwortzeit mit performance.now() vor und nach dem fetch, mehrfach, und bilde den Mittelwert.`,
+`Für Genauigkeit brauchst du eine Referenz, z. B. offizielle Messwerte. Ohne Referenz kannst du nur Abweichungen zwischen den APIs zeigen.`,
+`Dokumentiere Testbedingungen (Uhrzeit, Ort, Netzwerk), Anzahl der Messungen, Ergebnisse als Tabelle und halte fest, dass die Messung eine Momentaufnahme ist.`)
+]);
+
+ch("k10","Kapitel 10: SEO für Einsteiger, gefunden werden","Titel, Beschreibung, Struktur und Messung mit Lighthouse.",[
+F("Welche HTML-Elemente sind für eine gute Suchmaschinenoptimierung zentral?",
+`Erstelle ein HTML-Dokument mit passenden title- und meta-description-Tags und erkläre, warum diese wichtig sind.`,
+`title wird als Überschrift in Suchergebnissen und im Browser-Tab genutzt. meta description kann als Textauszug erscheinen.`,
+`Der Titel soll eindeutig sein und den Inhalt beschreiben, die Beschreibung fasst ihn in ein bis zwei Sätzen zusammen.`,
+`Der title ist ein starkes Signal für das Thema der Seite. Die meta description beeinflusst das Ranking nach Googles Angaben nicht direkt, kann aber die Klickrate verbessern, weil sie als Auszug angezeigt werden kann. Zusätzlich wichtig: Überschriften-Struktur (h1 bis h3), lesbare Linktexte, alt-Texte, lang-Attribut.`,
+{p:1,ed:`<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <\!-- TODO: aussagekräftigen title und meta description ergänzen -->
+  <title>Seite</title>
+</head>
+<body>
+  <h1>Portfolio von Beispiel Person</h1>
+  <p>Webprojekte mit HTML, CSS und JavaScript.</p>
+</body>
+</html>`,sc:`<title>Beispiel Person | Webentwicklung Portfolio</title>
+<meta name="description" content="Portfolio von Beispiel Person: kleine Webprojekte mit HTML, CSS und JavaScript, veröffentlicht mit GitHub Pages.">`}),
+Q("Was verbessert vor allem die lokale Auffindbarkeit einer Seite?",["Ortsbezogene Angaben wie Stadt, Region und Adresse im Inhalt und in Einträgen","Möglichst viele Animationen","Sehr lange Seitentitel ohne Ortsbezug","Ein größeres Logo"],0,
+`Lokale Suchanfragen enthalten oft einen Ort. Ortsangaben im Inhalt, konsistente Firmendaten und Einträge in Verzeichnissen helfen, gefunden zu werden.`,
+`Es geht um den Ort.`,`Animationen und Logogröße haben darauf keinen Einfluss.`),
+C("Nutze ein Analyse-Werkzeug wie Google Lighthouse, um deine Seite zu bewerten. Finde Verbesserungspotenzial bei Ladezeit, mobiler Leistung und Inhaltsstruktur und erstelle einen Bericht.",
+`In Chrome: DevTools, Tab Lighthouse, Kategorien Performance, Barrierefreiheit, Best Practices, SEO, Gerät Mobil, Analyse starten.`,
+`Gehe die Hinweise nach Wirkung durch, behebe zuerst die einfachen (alt-Texte, Kontrast, Titel) und miss erneut.`,
+`Bericht: Werte vorher/nachher, drei konkrete Maßnahmen, was sich verbessert hat. Die Werte schwanken je nach Gerät und Netzwerk, ein einzelner Lauf ist keine exakte Messung. Teste die Live-URL, nicht nur die lokale Datei.`,
+{p:1}),
+Z("Erstelle einen Vergleichsbericht zwischen lokaler und überregionaler SEO, inklusive praktischer Tipps, Werkzeugen und Beispielen. Präsentiere die Ergebnisse als Infografik.",
+`Gliedere in Ziel, Suchanfragen, Maßnahmen und Messung.`,
+`Lokale SEO nutzt z. B. Einträge in Kartendiensten und Ortsangaben, überregionale SEO setzt stärker auf Themenautorität und Verlinkung.`,
+`Vergleichstabelle mit Zielgruppe, typischen Suchanfragen (z. B. "Webdesign Hamburg" gegenüber "Webdesign Tipps"), Maßnahmen und Werkzeugen (Search Console, Lighthouse). Quellen nennen und keine Rankinggarantien versprechen.`),
+K("Schreibe einen Prompt für eine KI, die dir hilft, einzigartige SEO-Texte zu generieren, und beziehe dabei lokale Besonderheiten und Storytelling ein.",
+`Gib der KI echte Fakten über dich oder dein Projekt vor, damit nichts erfunden wird.`,
+`Verlange Titel, Beschreibung und Einleitung als getrennte Teile mit Zeichenlimits.`,
+`Beispiel: "Schreibe für mein Portfolio (Webentwicklerin in Leipzig, Schwerpunkt barrierefreie Seiten) einen Seitentitel (max. 60 Zeichen), eine Meta-Beschreibung (max. 155 Zeichen) und einen Einleitungsabsatz mit kurzer persönlicher Geschichte. Verwende nur diese Fakten und erfinde nichts." Prüfe den Text auf Richtigkeit.`),
+F("Wie wirken sich Meta-Tags und strukturierte Daten auf das Ranking in Suchmaschinen aus?",
+`Erstelle ein Dokument (mindestens 400 Wörter), das die Wirkung von Meta-Tags und strukturierten Daten erklärt und Beispiele aus real existierenden Webseiten analysiert.`,
+`Unterscheide: title ist Rankingfaktor, description meist nicht direkt, strukturierte Daten ermöglichen Rich Results (hervorgehobene Darstellung).`,
+`Strukturierte Daten stehen als JSON-LD (schema.org) im head oder body. Prüfe sie mit dem Test für Rich Results von Google.`,
+`Meta-Tags liefern Suchmaschinen Informationen über die Seite. Titel und Beschreibung beeinflussen Darstellung und Klickrate. Strukturierte Daten verbessern das Verständnis und können erweiterte Ergebnisse auslösen, garantieren aber kein besseres Ranking. Analysiere echte Seiten über den Quelltext (Strg+U) und dokumentiere, welche Tags du findest.`),
+Q("Welches dieser Elemente gehört nicht zu den grundlegenden SEO-Maßnahmen?",["title-Tag","meta description","Interne Verlinkung","Animationen mit CSS"],3,
+`Titel, Beschreibung und interne Links helfen Suchmaschinen und Nutzern. Animationen sind keine SEO-Maßnahme, schwere Animationen können sogar die Ladeleistung verschlechtern.`,
+`Welche Option betrifft nur das Aussehen?`,`Drei der Optionen liefern Informationen für Suchmaschinen.`),
+C("Entwickle eine SEO-Strategie für eine fiktive lokale Dienstleistungsseite. Berücksichtige Keyword-Recherche, Inhaltsoptimierung und technische Aspekte und präsentiere sie in einem Plan.",
+`Wähle ein fiktives Beispiel (z. B. Fahrradwerkstatt in einer Stadt) und beschreibe drei Schritte.`,
+`Struktur: Suchbegriffe sammeln, jedem Begriff eine Seite zuordnen, technische Basis prüfen (Mobil, Ladezeit, HTTPS), Wirkung messen.`,
+`Plan mit Zielgruppe, 10 bis 15 Suchbegriffen mit Ortsbezug, Seitenstruktur, Titeln und Beschreibungen, Technik-Checkliste und Messung (z. B. Search Console). Formuliere keine Platzierungsversprechen.`),
+Z("Erstelle ein SEO-Audit für deine eigene Webseite (oder eine Beispielseite) und dokumentiere alle gefundenen Optimierungsmöglichkeiten. Präsentiere die Ergebnisse in einem Bericht und einem Diagramm.",
+`Nutze eine feste Checkliste: Titel, Beschreibung, Überschriften, alt-Texte, Links, Ladezeit, Mobil.`,
+`Gewichte Befunde nach Aufwand und Wirkung und zeige das Ergebnis z. B. als einfaches Balken- oder Matrixdiagramm.`,
+`Das Audit besteht aus Befund, Beleg (Screenshot oder Zeile im Quelltext), Empfehlung und Priorität. Wiederhole die Messung nach den Änderungen.`)
+]);
+
+ch("abschluss","Abschluss: Dein Weg in die KI-Webentwicklung","Reflexion, Lernplan und nächste Schritte.",[
+F("Was waren die größten Herausforderungen in diesem Kurs und welche Fortschritte hast du gemacht?",
+`Schreibe eine ausführliche Reflexion (mindestens 200 Wörter) und nenne konkrete nächste Schritte für deine Weiterbildung.`,
+`Beginne mit drei Stichpunkten: Was fiel mir schwer? Was klappt jetzt? Was möchte ich als Nächstes lernen?`,
+`Belege Fortschritt mit Beispielen: ein Projekt, das du vorher nicht hättest bauen können.`,
+`Gute Reflexionen sind konkret: nenne Aufgaben, Fehler und Lösungen, statt allgemein zu bleiben. Nächste Schritte sollten messbar sein, z. B. "bis Ende des Monats ein zweites Projekt veröffentlichen".`),
+Q("Welche Kombination von Lernstrategien fördert kontinuierliches Lernen?",["Ausschließlich allein lernen","Praxisprojekte umsetzen","Regelmäßig Feedback einholen","Praxisprojekte umsetzen und regelmäßig Feedback einholen"],3,
+`Praxis festigt das Wissen, Feedback zeigt blinde Flecken. Beides zusammen wirkt besser als jedes allein.`,
+`Eine Option kombiniert zwei andere.`,`Allein lernen schließt Feedback aus.`),
+C("Erstelle einen 3-Monats-Lernplan mit konkreten Projekten, Zielen und Ressourcen, um deine Webentwicklungs-Kenntnisse zu vertiefen. Präsentiere deinen Plan als Dokument oder Mindmap und teile ihn mit einer Mentorin oder einem Mentor.",
+`Plane in Monaten mit je einem Projekt und einem Lernziel.`,
+`Plane realistisch: wenige Stunden pro Woche, feste Termine, überprüfbare Ergebnisse.`,
+`Beispielstruktur: Monat 1 Portfolio überarbeiten (Barrierefreiheit, Lighthouse), Monat 2 JavaScript-Projekt mit API, Monat 3 Zusammenarbeit über GitHub. Je Monat: Ziel, Projekt, Ressourcen (Dokumentation, Kurs), Woche-4-Review.`),
+Z("Verfasse einen Blogbeitrag oder erstelle ein Video, in dem du deinen Lernweg zusammenfasst und deine wichtigsten Erkenntnisse präsentierst.",
+`Erzähle chronologisch: Start, Hürden, Wendepunkte, Ergebnis.`,
+`Verlinke dein veröffentlichtes Portfolio als Beleg.`,
+`Ein Beitrag mit 500 bis 800 Wörtern oder ein Video von 5 Minuten reicht. Teile konkrete Tipps, die anderen Einsteigern helfen.`,
+{p:1}),
+K("Schreibe einen Prompt, der eine KI auffordert, einen interaktiven, vielfältigen Lernpfad zu entwickeln, inklusive Video-Tutorials, Code-Beispielen und Quizzen.",
+`Nenne Ziel, Vorwissen, Zeitbudget pro Woche und gewünschte Formate.`,
+`Bitte die KI um Quellenangaben und Hinweise, was du selbst prüfen solltest, weil sie Inhalte erfinden kann.`,
+`Beispiel: "Erstelle einen 8-Wochen-Lernpfad für JavaScript für Einsteiger mit 5 Stunden pro Woche. Je Woche: Lernziel, ein Mini-Projekt, drei Quizfragen mit Lösung und Stichworte für Tutorials. Nenne offizielle Dokumentation als Quelle."`),
+F("Wie haben sich deine technischen Fähigkeiten und dein Problemlösungsansatz im Laufe des Kurses verändert?",
+`Schreibe eine ausführliche Selbstreflexion (mindestens 300 Wörter) mit konkreten Beispielen für Fortschritte.`,
+`Vergleiche, wie du am Anfang bei einem Fehler vorgegangen bist und wie heute.`,
+`Nenne Werkzeuge, die du erst im Kurs kennengelernt hast (DevTools, Git, Prompts).`,
+`Stark ist eine Reflexion, wenn sie ein Vorher-Nachher beschreibt: etwa früher raten, heute reproduzieren, eingrenzen, prüfen. Benenne auch, was noch unsicher ist, und plane dafür den nächsten Schritt.`),
+Q("Welche Kombination hilft dir, deine Fähigkeiten kontinuierlich zu verbessern?",["Täglich Fachartikel lesen, ohne zu üben","Praxisprojekte umsetzen","Regelmäßig Feedback einholen","Praxisprojekte umsetzen und regelmäßig Feedback einholen"],3,
+`Nur Lesen führt selten zu Können. Praxis plus Feedback verbindet Anwenden und Korrigieren.`,
+`Wieder zählt die Kombination aus Tun und Rückmeldung.`,`Reines Lesen ersetzt keine Praxis.`),
+C("Erstelle einen umfassenden Lernpfad (als interaktive Web-App oder detailliertes Dokument), der alle Kursthemen verbindet, von HTML/CSS über JavaScript und APIs bis SEO. Integriere Projekte, Quizzes und regelmäßige Selbsttests.",
+`Beginne mit einer Liste: Thema, Ziel, Projekt, Selbsttest. Eine Checkliste mit Fortschritt ist ein guter erster Prototyp.`,
+`Nutze das Muster dieser Seite: Daten in einem Array, Darstellung per JavaScript, Fortschritt im localStorage (mit try/catch).`,
+`Der Lernpfad hat pro Kapitel: Lernziele, 1 Projekt, 1 Selbsttest und Quellen. Er kann als Seite in dein Portfolio.`,
+{p:1}),
+Z("Organisiere eine Online-Runde, in der du deine Lernfortschritte mit anderen Teilnehmenden teilst und gemeinsam an einem größeren Projekt arbeitest. Dokumentiere den Prozess und präsentiere die Ergebnisse.",
+`Legt Termine und Rollen fest (Moderation, Protokoll) und arbeitet in einem gemeinsamen Repository.`,
+`Teilt keine privaten Daten und Zugangsdaten in der Gruppe.`,
+`Dokumentation: Ziel, Rollenverteilung, Entscheidungen, Ergebnis mit Link. Eine kurze Abschlussrunde mit Lernerkenntnissen schließt das Projekt ab.`)
+]);
+
+</script>
+<script>
+(function () {
+  "use strict";
+  var LABEL = { aufgabe: "Aufgabe", quiz: "Quiz", challenge: "Challenge", zusatz: "Zusatz", kreativ: "Kreativ" };
+  var P = "uebungen_";
+  var mem = {};
+  function sget(k) { try { var v = window.localStorage.getItem(P + k); return v === null ? (mem[k] === undefined ? null : mem[k]) : v; } catch (e) { return mem[k] === undefined ? null : mem[k]; } }
+  function sset(k, v) { mem[k] = v; try { window.localStorage.setItem(P + k, v); } catch (e) {} }
+  function sdel(k) { delete mem[k]; try { window.localStorage.removeItem(P + k); } catch (e) {} }
+  var done = {};
+  try { done = JSON.parse(sget("done") || "{}") || {}; } catch (e) { done = {}; }
+  function saveDone() { sset("done", JSON.stringify(done)); }
+
+  var cur = 0;
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
+  function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+
+  function counts(c) { var n = 0; c.items.forEach(function (it) { if (done[it.id]) n++; }); return n; }
+  function totals() { var d = 0, t = 0; CH.forEach(function (c) { d += counts(c); t += c.items.length; }); return [d, t]; }
+
+  function updateProgress() {
+    var tt = totals(), pct = tt[1] ? Math.round(tt[0] / tt[1] * 100) : 0;
+    $("#ringtxt").textContent = pct + "%";
+    $("#ringfg").setAttribute("stroke-dashoffset", String(213.6 * (1 - pct / 100)));
+    $("#gesamttxt").textContent = tt[0] + " von " + tt[1] + " erledigt";
+    CH.forEach(function (c, i) {
+      var z = $('[data-z="' + i + '"]'), n = counts(c);
+      if (z) { z.textContent = n + "/" + c.items.length; z.className = "zaehl" + (n === c.items.length ? " fertig" : ""); }
+      var o = $('#kapsel option[value="' + i + '"]'); if (o) o.textContent = c.title + " (" + n + "/" + c.items.length + ")";
+    });
+    var c = CH[cur], bar = $("#kapbar"), kt = $("#kaptxt");
+    if (bar) { bar.style.width = (counts(c) / c.items.length * 100) + "%"; }
+    if (kt) kt.textContent = counts(c) + " von " + c.items.length + " in diesem Kapitel erledigt";
+  }
+
+  function setDone(it, card, v) {
+    if (v) done[it.id] = 1; else delete done[it.id];
+    card.classList.toggle("erledigt", !!v);
+    var cb = $("input.cb", card); if (cb) cb.checked = !!v;
+    saveDone(); updateProgress(); applyFilter();
+  }
+
+  function srcdoc(code) {
+    var shim = "<script>(function(){function p(t,a){try{parent.postMessage({ue:1,t:t,m:Array.prototype.map.call(a,function(x){try{return typeof x==='object'?JSON.stringify(x):String(x)}catch(e){return String(x)}}).join(' ')},'*')}catch(e){}}" +
+      "['log','info','warn','error'].forEach(function(k){var o=console[k];console[k]=function(){p(k,arguments);try{o.apply(console,arguments)}catch(e){}}});" +
+      "window.addEventListener('error',function(e){p('error',[e.message])});window.addEventListener('unhandledrejection',function(e){p('error',[String(e.reason)])});})();<\/script>";
+    if (/<head[^>]*>/i.test(code)) return code.replace(/<head[^>]*>/i, function (m) { return m + shim; });
+    return shim + code;
+  }
+
+  function buildEditor(it) {
+    var wrap = el("div", "ed");
+    var l = el("div"), r = el("div");
+    l.innerHTML = '<label class="l">Code (bearbeitbar)</label>';
+    var ta = el("textarea"); ta.value = it.ed; ta.spellcheck = false; ta.setAttribute("aria-label", "Code-Editor"); ta.setAttribute("autocapitalize", "off");
+    l.appendChild(ta);
+    r.innerHTML = '<label class="l">Live-Vorschau</label>';
+    var fr = el("iframe"); fr.setAttribute("sandbox", "allow-scripts"); fr.title = "Vorschau"; fr.setAttribute("loading", "lazy");
+    var con = el("div", "konsole"); con.setAttribute("aria-label", "Konsole"); con.setAttribute("role", "log");
+    r.appendChild(fr); r.appendChild(con);
+    var bar = el("div", "edbar");
+    var rs = el("button", "", "Zurücksetzen"); rs.type = "button";
+    var h = el("span", "hint", "Die Vorschau aktualisiert sich beim Tippen. Die Konsole zeigt console.log-Ausgaben.");
+    bar.appendChild(rs); bar.appendChild(h);
+    wrap.appendChild(l); wrap.appendChild(r); wrap.appendChild(bar);
+    var timer = null;
+    function render() { con.innerHTML = ""; con.classList.remove("an"); fr.srcdoc = srcdoc(ta.value); }
+    ta.addEventListener("input", function () { clearTimeout(timer); timer = setTimeout(render, 250); });
+    rs.addEventListener("click", function () { ta.value = it.ed; render(); });
+    wrap._fr = fr; wrap._con = con;
+    wrap._init = render;
+    return wrap;
+  }
+  var editors = [];
+  window.addEventListener("message", function (e) {
+    var d = e.data; if (!d || d.ue !== 1) return;
+    editors.forEach(function (w) {
+      if (w._fr.contentWindow === e.source) {
+        w._con.classList.add("an");
+        var row = el("div", d.t === "error" ? "err" : ""); row.textContent = (d.t === "error" ? "Fehler: " : "> ") + d.m;
+        w._con.appendChild(row); w._con.scrollTop = w._con.scrollHeight;
+      }
+    });
+  });
+
+  function buildCard(it) {
+    var card = el("article", "karte" + (done[it.id] ? " erledigt" : ""));
+    card.id = "a-" + it.id; card.setAttribute("data-p", it.p ? "1" : "0");
+    var kopf = el("div", "kopf");
+    kopf.appendChild(el("span", "badge b-" + it.type, LABEL[it.type]));
+    if (it.p) kopf.appendChild(el("span", "badge b-portfolio", "Portfolio"));
+    kopf.appendChild(el("span", "nr", "Nr. " + it.n));
+    var lab = el("label", "haken"); var cb = el("input", "cb"); cb.type = "checkbox"; cb.checked = !!done[it.id];
+    lab.appendChild(cb); lab.appendChild(document.createTextNode("Erledigt"));
+    cb.addEventListener("change", function () { setDone(it, card, cb.checked); });
+    kopf.appendChild(lab); card.appendChild(kopf);
+
+    if (it.title) card.appendChild(el("p", "titel", it.type === "aufgabe" ? "<strong>Frage:</strong> " + it.title : esc(it.title)));
+    if (it.task) card.appendChild(el("p", "task", it.type === "aufgabe" ? "<strong>Aufgabe:</strong> " + it.task : it.task));
+
+    if (it.q) {
+      var qd = el("div", "quiz"), fb = el("p", "fb"); fb.setAttribute("role", "status"); fb.setAttribute("aria-live", "polite");
+      var grp = "q-" + it.id; var labels = [];
+      it.q.opts.forEach(function (o, i) {
+        var l = el("label"); var r = el("input"); r.type = "radio"; r.name = grp; r.value = i;
+        l.appendChild(r); l.appendChild(document.createElement("span")).textContent = String.fromCharCode(65 + i) + ") " + o;
+        labels.push(l);
+        r.addEventListener("change", function () {
+          labels.forEach(function (x) { x.classList.remove("richtig", "falsch"); });
+          if (i === it.q.c) {
+            l.classList.add("richtig"); fb.className = "fb ok"; fb.textContent = "Richtig. " + it.q.why;
+            if (!done[it.id]) setDone(it, card, true);
+          } else {
+            l.classList.add("falsch"); fb.className = "fb bad"; fb.textContent = "Nicht ganz. Versuche es noch einmal oder nutze einen Hinweis.";
+          }
+        });
+        qd.appendChild(l);
+      });
+      qd.appendChild(fb); card.appendChild(qd);
+    }
+
+    if (it.ed) { var w = buildEditor(it); editors.push(w); card.appendChild(w); }
+
+    var akt = el("div", "aktionen"), hw = el("div", "hinweise"); hw.setAttribute("aria-live", "polite");
+    var shown = 0, hb = el("button", "", "Hinweis anzeigen"); hb.type = "button";
+    hb.addEventListener("click", function () {
+      if (shown >= it.h.length) return;
+      var d = el("div", "hinweis"); d.innerHTML = "<strong>Hinweis " + (shown + 1) + ":</strong> " + it.h[shown]; hw.appendChild(d); shown++;
+      if (shown < it.h.length) hb.textContent = "Weiteren Hinweis anzeigen"; else { hb.textContent = "Alle Hinweise angezeigt"; hb.disabled = true; }
+    });
+    akt.appendChild(hb); card.appendChild(akt); card.appendChild(hw);
+
+    if (it.sol || it.sc) {
+      var dt = el("details", "sol"); dt.appendChild(el("summary", "", "Lösungsskizze anzeigen"));
+      var inh = el("div", "inh"); if (it.sol) inh.appendChild(el("p", "", it.sol));
+      if (it.sc) { var pre = el("pre"); pre.textContent = it.sc; inh.appendChild(pre); }
+      if (it.q) { /* Quiz zeigt die Begründung im Feedback */ }
+      dt.appendChild(inh); card.appendChild(dt);
+    } else if (it.q) {
+      var d2 = el("details", "sol"); d2.appendChild(el("summary", "", "Erklärung anzeigen"));
+      var i2 = el("div", "inh"); i2.appendChild(el("p", "", "Richtig ist: <strong>" + String.fromCharCode(65 + it.q.c) + ") " + esc(it.q.opts[it.q.c]) + "</strong>. " + it.q.why)); d2.appendChild(i2); card.appendChild(d2);
+    }
+    return card;
+  }
+
+  function applyFilter() {
+    var onlyP = $("#fp") && $("#fp").checked, onlyO = $("#fo") && $("#fo").checked, n = 0;
+    document.querySelectorAll("#kapitel .karte").forEach(function (c) {
+      var hide = (onlyP && c.getAttribute("data-p") !== "1") || (onlyO && c.classList.contains("erledigt"));
+      c.classList.toggle("hide", hide); if (!hide) n++;
+    });
+    var e = $("#leer"); if (e) e.classList.toggle("hide", n !== 0);
+  }
+
+  function showChapter(i, scroll) {
+    if (i < 0 || i >= CH.length) i = 0;
+    cur = i; editors = [];
+    var c = CH[i], box = $("#kapitel"); box.innerHTML = "";
+    var head = el("div", "kaphead");
+    head.appendChild(el("h2", "", esc(c.title)));
+    head.appendChild(el("p", "muted", esc(c.intro)));
+    var b = el("div", "balken"); b.innerHTML = '<i id="kapbar"></i>'; head.appendChild(b);
+    head.appendChild(el("p", "muted", '<span id="kaptxt"></span>'));
+    box.appendChild(head);
+    var tools = el("div", "tools");
+    tools.innerHTML = '<label><input type="checkbox" id="fp"> Nur Portfolio-Aufgaben</label><label><input type="checkbox" id="fo"> Nur offene</label>';
+    box.appendChild(tools);
+    tools.querySelectorAll("input").forEach(function (x) { x.addEventListener("change", applyFilter); });
+    c.items.forEach(function (it) { box.appendChild(buildCard(it)); });
+    box.appendChild(el("div", "leer hide", "Keine Aufgaben für diesen Filter.")).id = "leer";
+    var nav = el("div", "navi");
+    var pv = el("button", "", "&larr; Vorheriges Kapitel"), nx = el("button", "btn-p", "Nächstes Kapitel &rarr;");
+    pv.type = nx.type = "button"; pv.disabled = i === 0; nx.disabled = i === CH.length - 1;
+    pv.addEventListener("click", function () { showChapter(cur - 1, true); }); nx.addEventListener("click", function () { showChapter(cur + 1, true); });
+    nav.appendChild(pv); nav.appendChild(nx); box.appendChild(nav);
+    document.querySelectorAll("#side button.kap").forEach(function (x, k) { x.setAttribute("aria-current", k === i ? "true" : "false"); });
+    $("#kapsel").value = String(i);
+    sset("kapitel", String(i));
+    try { history.replaceState(null, "", "#" + c.id); } catch (e) {}
+    editors.forEach(function (w) { w._init(); });
+    updateProgress();
+    if (scroll) { var m = $("#main"); try { m.scrollIntoView({ block: "start" }); } catch (e) { window.scrollTo(0, 0); } }
+  }
+
+  function init() {
+    var side = $("#side"), sel = $("#kapsel");
+    CH.forEach(function (c, i) {
+      var b = el("button", "kap"); b.type = "button";
+      b.innerHTML = '<span>' + esc(c.title.replace(/^Kapitel /, "").replace(/^Abschluss: /, "Abschluss: ")) + '</span><span class="zaehl" data-z="' + i + '"></span>';
+      b.addEventListener("click", function () { showChapter(i, true); });
+      side.appendChild(b);
+      var o = el("option"); o.value = String(i); o.textContent = c.title; sel.appendChild(o);
+    });
+    sel.addEventListener("change", function () { showChapter(parseInt(sel.value, 10), true); });
+    var rb = $("#reset"), t = null;
+    rb.addEventListener("click", function () {
+      if (rb.getAttribute("data-arm") === "1") {
+        done = {}; sdel("done"); clearTimeout(t); rb.removeAttribute("data-arm"); rb.textContent = "Fortschritt zurücksetzen"; showChapter(cur, false);
+      } else {
+        rb.setAttribute("data-arm", "1"); rb.textContent = "Wirklich zurücksetzen? (erneut klicken)";
+        t = setTimeout(function () { rb.removeAttribute("data-arm"); rb.textContent = "Fortschritt zurücksetzen"; }, 4000);
+      }
+    });
+    var start = 0, h = (location.hash || "").slice(1);
+    CH.forEach(function (c, i) { if (c.id === h) start = i; });
+    if (!h) { var s = parseInt(sget("kapitel"), 10); if (s >= 0 && s < CH.length) start = s; }
+    showChapter(start, false);
+  }
+  init();
+})();
+</script>
 </body>
 </html>
