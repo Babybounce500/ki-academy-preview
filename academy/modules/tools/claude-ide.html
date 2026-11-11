@@ -404,6 +404,23 @@
   function refreshTab(p, content) { try { const tab = openTabs.get(p); if (tab && tab.cm) tab.cm.setValue(content); if (tab) { const fr = tab.pane.querySelector('.preview-frame'); if (fr && fr.style.display !== 'none') fr.srcdoc = content; } persistFs(); } catch (e) {} }
   function textFile(path) { const f = fsFiles.get(normalizePath(path)); if (!f) return { err: 'Datei nicht gefunden: ' + path }; if (f.isImage) return { err: 'Binaerdatei (Bild), kann nicht als Text gelesen werden.' }; if (/\.pdf$/i.test(path) || /^%PDF-/.test(String(f.content).slice(0, 8))) return { err: 'Das ist eine rohe PDF-Datei (Binaerdaten), kein Text. Bitte das PDF neu hochladen: es wird dann automatisch als .pdf.txt mit dem extrahierten Text angelegt (suche mit list_files nach einer vorhandenen .pdf.txt).' }; return { f, p: normalizePath(path) }; }
 
+  function fuzzyReplace(content, oldS, newS) {
+  const norm = (t) => t.replace(/\r\n/g, '\n');
+  const cl = norm(content).split('\n'), ol = norm(oldS).replace(/^\n+|\n+$/g, '').split('\n');
+  const tr = (x) => x.replace(/\s+$/, '').replace(/^\s+/, '').replace(/\s+/g, ' ');
+  const key = ol.map(tr);
+  if (!key.some((x) => x)) return { err: 'leer' };
+  const hits = [];
+  for (let i = 0; i + key.length <= cl.length; i++) {
+    let ok = true;
+    for (let j = 0; j < key.length; j++) if (tr(cl[i + j]) !== key[j]) { ok = false; break; }
+    if (ok) hits.push(i);
+  }
+  if (hits.length !== 1) return { err: hits.length ? 'mehrdeutig' : 'nicht gefunden' };
+  const at = hits[0], indent = (cl[at].match(/^\s*/) || [''])[0], oldIndent = (ol[0].match(/^\s*/) || [''])[0];
+  const nl = norm(newS).replace(/^\n+|\n+$/g, '').split('\n').map((l) => (indent !== oldIndent && l.startsWith(oldIndent)) ? indent + l.slice(oldIndent.length) : l);
+  return { text: cl.slice(0, at).concat(nl, cl.slice(at + key.length)).join('\n'), line: at + 1 };
+}
   async function executeFsTool(name, input) {
     try {
       switch (name) {
@@ -434,11 +451,15 @@
         }
         case 'edit_file': {
           const t = textFile(input.path); if (t.err) return { ok: false, error: t.err };
-          if (Array.isArray(input.edits) && input.edits.length) { let cur = t.f.content; const rep = []; for (let k = 0; k < input.edits.length; k++) { const o = String(input.edits[k].old_string ?? ''), nw = String(input.edits[k].new_string ?? ''); const c = o ? cur.split(o).length - 1 : 0; if (c !== 1) return { ok: false, error: 'Aenderung ' + (k + 1) + ': old_string ' + (c === 0 ? 'nicht gefunden' : 'kommt ' + c + 'x vor (nicht eindeutig)') + '. Es wurde nichts geaendert.' }; cur = cur.replace(o, () => nw); rep.push(k + 1); } writeFile(t.p, cur); refreshTab(t.p, cur); return { ok: true, result: 'geaendert: ' + t.p + ' (' + rep.length + ' Aenderungen). Datei hat jetzt ' + cur.split('\n').length + ' Zeilen.' }; }
+          if (Array.isArray(input.edits) && input.edits.length) { let cur = t.f.content; const rep = []; for (let k = 0; k < input.edits.length; k++) { const o = String(input.edits[k].old_string ?? ''), nw = String(input.edits[k].new_string ?? ''); const c = o ? cur.split(o).length - 1 : 0; if (c === 0) { const fr = fuzzyReplace(cur, o, nw); if (fr.text !== undefined) { cur = fr.text; rep.push(k + 1); continue; } } if (c !== 1) return { ok: false, error: 'Aenderung ' + (k + 1) + ': old_string ' + (c === 0 ? 'nicht gefunden' : 'kommt ' + c + 'x vor (nicht eindeutig)') + '. Es wurde nichts geaendert.' }; cur = cur.replace(o, () => nw); rep.push(k + 1); } writeFile(t.p, cur); refreshTab(t.p, cur); return { ok: true, result: 'geaendert: ' + t.p + ' (' + rep.length + ' Aenderungen). Datei hat jetzt ' + cur.split('\n').length + ' Zeilen.' }; }
           const oldS = String(input.old_string ?? ''), newS = String(input.new_string ?? '');
           if (!oldS) return { ok: false, error: 'old_string darf nicht leer sein.' };
           const n = t.f.content.split(oldS).length - 1;
-          if (n === 0) return { ok: false, error: 'old_string nicht gefunden. Tipp: mit search_in_file die Stelle suchen; Zeilennummern gehoeren nicht zum Text; Leerzeichen und Einrueckung muessen exakt stimmen.' };
+          if (n === 0) {
+            const fr = fuzzyReplace(t.f.content, oldS, newS);
+            if (fr.text !== undefined) { writeFile(t.p, fr.text); refreshTab(t.p, fr.text); return { ok: true, result: 'geaendert: ' + t.p + ' (Zeile ' + fr.line + ', Einrueckung automatisch angepasst). Datei hat jetzt ' + fr.text.split('\n').length + ' Zeilen.' }; }
+            return { ok: false, error: 'old_string nicht gefunden (' + fr.err + '). Tipp: mit search_in_file die Stelle suchen und mit read_file den exakten Text lesen; Zeilennummern gehoeren nicht zum Text.' };
+          }
           if (n > 1 && !input.replace_all) return { ok: false, error: 'old_string kommt ' + n + 'x vor. Nimm mehr Kontext dazu, damit er eindeutig ist, oder setze replace_all=true.' };
           const next = input.replace_all ? t.f.content.split(oldS).join(newS) : t.f.content.replace(oldS, () => newS);
           writeFile(t.p, next); refreshTab(t.p, next);
