@@ -362,7 +362,7 @@
   function sizeInfo(p) { const f = fsFiles.get(p); if (!f || f.isImage || typeof f.content !== 'string') return ''; const n = f.content.split('\n').length; return ' (' + (f.content.length > 1024 ? Math.round(f.content.length / 1024) + ' KB' : f.content.length + ' Zeichen') + ', ' + n + ' Zeilen)'; }
   function numberLine(n, t) { const cut = t.length > READ_MAX_LINE ? t.slice(0, READ_MAX_LINE) + ' [Zeile gekuerzt]' : t; return String(n).padStart(5) + '| ' + cut; }
   function refreshTab(p, content) { try { const tab = openTabs.get(p); if (tab && tab.cm) tab.cm.setValue(content); if (tab) { const fr = tab.pane.querySelector('.preview-frame'); if (fr && fr.style.display !== 'none') fr.srcdoc = content; } persistFs(); } catch (e) {} }
-  function textFile(path) { const f = fsFiles.get(normalizePath(path)); if (!f) return { err: 'Datei nicht gefunden: ' + path }; if (f.isImage) return { err: 'Binaerdatei (Bild), kann nicht als Text gelesen werden.' }; return { f, p: normalizePath(path) }; }
+  function textFile(path) { const f = fsFiles.get(normalizePath(path)); if (!f) return { err: 'Datei nicht gefunden: ' + path }; if (f.isImage) return { err: 'Binaerdatei (Bild), kann nicht als Text gelesen werden.' }; if (/\.pdf$/i.test(path) || /^%PDF-/.test(String(f.content).slice(0, 8))) return { err: 'Das ist eine rohe PDF-Datei (Binaerdaten), kein Text. Bitte das PDF neu hochladen: es wird dann automatisch als .pdf.txt mit dem extrahierten Text angelegt (suche mit list_files nach einer vorhandenen .pdf.txt).' }; return { f, p: normalizePath(path) }; }
 
   async function executeFsTool(name, input) {
     try {
@@ -519,10 +519,59 @@
   function readFileAsText(file) { return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsText(file); }); }
   function readFileAsDataUrl(file) { return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(file); }); }
 
+  /* ---- PDF -> Text (pdf.js, nur bei Bedarf geladen) ---- */
+  let pdfjsPromise = null;
+  function loadPdfJs() {
+    if (pdfjsPromise) return pdfjsPromise;
+    const V = '2.16.105', B = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/' + V + '/';
+    pdfjsPromise = new Promise((res, rej) => {
+      if (window.pdfjsLib) return res(window.pdfjsLib);
+      const sc = document.createElement('script'); sc.src = B + 'pdf.min.js';
+      sc.onload = () => res(window.pdfjsLib); sc.onerror = () => rej(new Error('pdf.js konnte nicht geladen werden (offline?)'));
+      document.head.appendChild(sc);
+    }).then(async (lib) => {
+      try { const w = await (await fetch(B + 'pdf.worker.min.js')).text(); lib.GlobalWorkerOptions.workerSrc = URL.createObjectURL(new Blob([w], { type: 'text/javascript' })); }
+      catch (e) { lib.GlobalWorkerOptions.workerSrc = B + 'pdf.worker.min.js'; }
+      return lib;
+    });
+    pdfjsPromise.catch(() => { pdfjsPromise = null; });
+    return pdfjsPromise;
+  }
+  async function extractPdfText(file) {
+    const lib = await loadPdfJs();
+    const pdf = await lib.getDocument({ data: await file.arrayBuffer() }).promise;
+    let out = '', chars = 0;
+    for (let p = 1; p <= pdf.numPages; p++) {
+      const tc = await (await pdf.getPage(p)).getTextContent();
+      let line = '', lastY = null, text = '';
+      for (const it of tc.items) {
+        const y = it.transform ? Math.round(it.transform[5]) : null;
+        if (lastY !== null && y !== null && Math.abs(y - lastY) > 2) { text += line.replace(/\s+$/, '') + '\n'; line = ''; }
+        line += it.str + (it.hasEOL ? '\n' : ' '); if (y !== null) lastY = y;
+      }
+      text += line;
+      text = text.replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+      chars += text.length;
+      out += '=== Seite ' + p + ' von ' + pdf.numPages + ' ===\n' + text + '\n\n';
+    }
+    return { text: out.trim(), pages: pdf.numPages, chars };
+  }
+  function pdfNote(msg) { try { if (window.AHS) AHS.toast(msg); else console.log(msg); } catch (e) {} }
+
   async function ingestFiles(fileList) {
     for (const file of Array.from(fileList)) {
       const relPath = normalizePath(file.webkitRelativePath || file.name);
       const ext = extOf(relPath);
+      if (ext === 'pdf') {
+        pdfNote('PDF wird gelesen: ' + file.name + ' ...');
+        try {
+          const r = await extractPdfText(file);
+          const target = relPath + '.txt';
+          if (!r.chars) { fsFiles.set(target, { content: '[Kein Text im PDF gefunden. Vermutlich ein Scan oder reines Bild-PDF: Text muss per OCR erkannt werden.]', isImage: false }); pdfNote(file.name + ': kein Text enthalten (Scan?)'); }
+          else { fsFiles.set(target, { content: r.text, isImage: false }); pdfNote(file.name + ': ' + r.pages + ' Seiten, ' + r.chars.toLocaleString('de-DE') + ' Zeichen als ' + target.split('/').pop() + ' abgelegt'); }
+        } catch (err) { pdfNote('PDF-Fehler bei ' + file.name + ': ' + (err.message || err)); }
+        continue;
+      }
       if (isImageExt(ext)) {
         fsFiles.set(relPath, { content: await readFileAsDataUrl(file), isImage: true });
       } else {
@@ -724,7 +773,7 @@
     { name: 'delete_path', description: 'Löscht eine Datei oder (rekursiv) einen Ordner im Workspace.', input_schema: { type: 'object', properties: { path: { type: 'string' } }, required: ['path'] } },
     { name: 'create_folder', description: 'Legt einen leeren Ordner im Workspace an.', input_schema: { type: 'object', properties: { path: { type: 'string' } }, required: ['path'] } }
   ];
-  const FS_SYSTEM_PROMPT = "Du bist Claude mit Zugriff auf einen virtuellen Browser-Workspace (kein echtes Dateisystem, kein Bash, kein Server-Zugriff -- rein clientseitig in dieser Browser-Session). Werkzeuge: list_files, read_file, search_in_file, edit_file, append_file, write_file, delete_path, create_folder. Pfade sind relativ (z.B. \"src/app.js\").\nWICHTIG: Der KI-Zugang hat ein knappes Eingabelimit. Arbeite deshalb in kleinen Schritten:\n1. Rufe zuerst list_files auf (zeigt Groesse und Zeilenzahl).\n2. Lies Dateien mit mehr als ca. 200 Zeilen NICHT komplett. Finde die Stelle mit search_in_file und lies dann gezielt mit read_file (start_line/end_line, hoechstens ca. 150 Zeilen pro Aufruf). Das Ergebnis nennt, ab welcher Zeile es weitergeht.\n3. Aendere bestehende Dateien mit edit_file (kleiner, eindeutiger old_string mit etwas Kontext) statt sie komplett neu zu schreiben.\n4. Lege neue grosse Dateien in Etappen an: write_file mit dem ersten Teil (hoechstens ca. 150 Zeilen), danach append_file mit den weiteren Teilen.\nFuer Design-Umbauten (Farben, Look, Theme): Lies nur den <head>/Style-Bereich (search_in_file nach \"<style\" oder \"</style>\") und fuege mit EINEM edit_file einen neuen <style>-Block direkt vor </head> ein, der die bestehenden Regeln ueberschreibt, oder nutze edits mit mehreren Aenderungen in einem Aufruf. Vermeide viele einzelne Such- und Edit-Schritte. Pruefe am Ende nicht erneut, sondern melde kurz, was geaendert wurde.\nZeilennummern am Anfang gelesener Zeilen (z.B. \"  12|\") gehoeren nicht zum Dateiinhalt: nimm sie nie in old_string oder new_string auf. Antworte knapp -- die eigentliche Arbeit passiert ueber die Tools, nicht ueber lange Erklaerungen.";
+  const FS_SYSTEM_PROMPT = "Du bist Claude mit Zugriff auf einen virtuellen Browser-Workspace (kein echtes Dateisystem, kein Bash, kein Server-Zugriff -- rein clientseitig in dieser Browser-Session). Werkzeuge: list_files, read_file, search_in_file, edit_file, append_file, write_file, delete_path, create_folder. Pfade sind relativ (z.B. \"src/app.js\").\nWICHTIG: Der KI-Zugang hat ein knappes Eingabelimit. Arbeite deshalb in kleinen Schritten:\n1. Rufe zuerst list_files auf (zeigt Groesse und Zeilenzahl).\n2. Lies Dateien mit mehr als ca. 200 Zeilen NICHT komplett. Finde die Stelle mit search_in_file und lies dann gezielt mit read_file (start_line/end_line, hoechstens ca. 150 Zeilen pro Aufruf). Das Ergebnis nennt, ab welcher Zeile es weitergeht.\n3. Aendere bestehende Dateien mit edit_file (kleiner, eindeutiger old_string mit etwas Kontext) statt sie komplett neu zu schreiben.\n4. Lege neue grosse Dateien in Etappen an: write_file mit dem ersten Teil (hoechstens ca. 150 Zeilen), danach append_file mit den weiteren Teilen.\nFuer Design-Umbauten (Farben, Look, Theme): Lies nur den <head>/Style-Bereich (search_in_file nach \"<style\" oder \"</style>\") und fuege mit EINEM edit_file einen neuen <style>-Block direkt vor </head> ein, der die bestehenden Regeln ueberschreibt, oder nutze edits mit mehreren Aenderungen in einem Aufruf. Vermeide viele einzelne Such- und Edit-Schritte. Pruefe am Ende nicht erneut, sondern melde kurz, was geaendert wurde.\nPDF-Dateien werden beim Hochladen automatisch in Text umgewandelt und als name.pdf.txt abgelegt: lies immer diese .txt-Datei, nie die .pdf selbst. Die Textdatei ist die Rohtext-Extraktion (Seitenmarken: === Seite N ===); bei Scans steht dort ein Hinweis ohne Inhalt.\nZeilennummern am Anfang gelesener Zeilen (z.B. \"  12|\") gehoeren nicht zum Dateiinhalt: nimm sie nie in old_string oder new_string auf. Antworte knapp -- die eigentliche Arbeit passiert ueber die Tools, nicht ueber lange Erklaerungen.";
 
   // Streaming statt Non-Stream fuer den Tool-Loop: bei Non-Stream wartet fetch()
   // serverseitig (server/lib/http.js: fetchWithTimeout) auf die KOMPLETTE Antwort, bevor
