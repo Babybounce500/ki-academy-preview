@@ -365,6 +365,167 @@
         let autoContinueEnabled = false;
         let continuationTimeout = null;
         let updateScheduled = false;
+        /* ===== Stabilitaets-Schicht ===== */
+
+  var LC_MAX_CONT = 8;
+  var LC_CONT_PROMPT = 'Deine letzte Antwort wurde abgeschnitten. Setze sie nahtlos genau an der abgebrochenen Stelle fort. Wiederhole nichts und beginne nicht neu.';
+  var lcStop = null, lcAbort = null, lcContCount = 0, lcContMode = false, lcLastPrompt = '';
+  var LC_BUDGET = 46000;
+
+  function lcSleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+  function lcToast(msg) { try { if (window.AHS && AHS.toast) { AHS.toast(msg); return; } } catch (e) {} console.log(msg); }
+
+  async function lcFetch(url, opts) {
+    lcAbort = new AbortController();
+    var o = Object.assign({}, opts, { signal: lcAbort.signal });
+    var last;
+    for (var i = 0; i < 3; i++) {
+      try {
+        var r = await fetch(url, o);
+        if ((r.status === 429 || r.status >= 502) && i < 2) { lcToast('Server ausgelastet, neuer Versuch ...'); await lcSleep(1500 * (i + 1)); continue; }
+        return r;
+      } catch (e) {
+        if (e && e.name === 'AbortError') throw e;
+        last = e;
+        if (i < 2) { lcToast('Verbindung unterbrochen, neuer Versuch ...'); await lcSleep(1500 * (i + 1)); }
+      }
+    }
+    var err = new Error('Keine Verbindung zum KI-Server. Bitte Internet pruefen und erneut senden.');
+    err.code = 'NETWORK'; err.cause = last; throw err;
+  }
+
+  function lcHttpError(status, data) {
+    var raw = data && (data.error && (data.error.message || data.error.code || data.error) || data.message) || '';
+    if (typeof raw !== 'string') { try { raw = JSON.stringify(raw); } catch (e) { raw = ''; } }
+    var code = String((data && (data.error && data.error.code || data.error)) || '');
+    var msg;
+    if (/INPUT_TOKEN_LIMIT/.test(code + raw)) { msg = 'Die Anfrage war fuer den KI-Zugang zu gross (zu viel Verlauf oder zu grosse Datei/Bild). Starte einen neuen Chat oder sende weniger Text.'; code = 'INPUT_TOKEN_LIMIT'; }
+    else if (/SESSION_TOKEN_BUDGET|BUDGET/.test(code + raw)) { msg = 'Das Kontingent des KI-Zugangs ist gerade aufgebraucht. Bitte spaeter erneut versuchen.'; code = 'BUDGET'; }
+    else if (status === 429) { msg = 'Zu viele Anfragen in kurzer Zeit. Bitte einen Moment warten und erneut senden.'; code = 'RATE'; }
+    else if (status >= 500) { msg = 'Der KI-Server hat gerade ein Problem (HTTP ' + status + '). Bitte gleich erneut versuchen.'; code = 'SERVER'; }
+    else msg = raw || ('HTTP ' + status);
+    var e = new Error(msg); e.code = code || ('HTTP' + status); e.status = status; return e;
+  }
+
+  // Liest einen SSE-Stream (Mistral/OpenAI- und Claude-Format) robust: Zeilen werden gepuffert, UTF-8 korrekt dekodiert.
+  async function lcReadStream(response, onChunk) {
+    var reader = response.body.getReader(), decoder = new TextDecoder('utf-8'), buf = '', full = '', sawEnd = false;
+    lcStop = null;
+    function handle(line) {
+      line = line.replace(/\r$/, '');
+      if (line.indexOf('data:') !== 0) return;
+      var data = line.slice(5).trim();
+      if (!data) return;
+      if (data === '[DONE]') { sawEnd = true; return; }
+      var p; try { p = JSON.parse(data); } catch (e) { return; }
+      if (p.type === 'error' || (p.error && !p.choices)) { var em = (p.error && (p.error.message || p.error)) || 'Stream-Fehler'; var er = new Error(typeof em === 'string' ? em : JSON.stringify(em)); er.code = 'STREAM'; throw er; }
+      var text = null;
+      if (p.type === 'content_block_delta' && p.delta && typeof p.delta.text === 'string') text = p.delta.text;
+      else if (p.choices && p.choices[0]) {
+        var ch = p.choices[0];
+        if (ch.delta && typeof ch.delta.content === 'string') text = ch.delta.content;
+        else if (ch.delta && typeof ch.delta.text === 'string') text = ch.delta.text;
+        if (ch.finish_reason) { lcStop = ch.finish_reason; sawEnd = true; }
+      } else if (p.delta && typeof p.delta.text === 'string') text = p.delta.text;
+      if (p.type === 'message_delta' && p.delta && p.delta.stop_reason) { lcStop = p.delta.stop_reason; sawEnd = true; }
+      if (p.type === 'message_stop') sawEnd = true;
+      if (text) { onChunk(text); full += text; }
+    }
+    try {
+      while (true) {
+        var res = await reader.read();
+        if (res.done) break;
+        buf += decoder.decode(res.value, { stream: true });
+        var lines = buf.split('\n'); buf = lines.pop();
+        for (var i = 0; i < lines.length; i++) handle(lines[i]);
+      }
+      buf += decoder.decode();
+      if (buf) handle(buf);
+    } catch (e) {
+      if (e && e.name === 'AbortError') { lcStop = 'aborted'; return full; }
+      if (full) { lcStop = 'cut'; return full; }
+      throw e;
+    } finally { try { reader.cancel(); } catch (e2) {} }
+    if (!lcStop && !sawEnd && full) lcStop = 'cut';
+    return full;
+  }
+
+  function lcFencesOdd(t) { return ((t.match(/```/g) || []).length % 2) === 1; }
+  function lcIsIncomplete(resp) {
+    if (lcStop === 'max_tokens' || lcStop === 'length' || lcStop === 'aborted' || lcStop === 'cut') return true;
+    var lastMsg = chatHistory[chatHistory.length - 1];
+    return lcFencesOdd((lastMsg && lastMsg.role === 'assistant' && lastMsg.content) ? lastMsg.content : (resp || ''));
+  }
+
+  // Anfrage vorbereiten: Fortsetzungs-Aufforderung anhaengen, Verlauf kuerzen, alte Bilder weglassen
+  function lcPrep(messages) {
+    var msgs = messages.map(function (m) { return m; });
+    var lastUser = -1; for (var i = msgs.length - 1; i >= 0; i--) if (msgs[i].role === 'user') { lastUser = i; break; }
+    msgs = msgs.map(function (m, idx) {
+      if (m.role === 'user' && Array.isArray(m.content) && idx !== lastUser) {
+        var hadImg = m.content.some(function (b) { return b.type === 'image'; });
+        if (!hadImg) return m;
+        var txt = m.content.filter(function (b) { return b.type === 'text'; });
+        txt.push({ type: 'text', text: '[Bild aus frueherer Nachricht nicht erneut gesendet]' });
+        return { role: 'user', content: txt };
+      }
+      return m;
+    });
+    if (lcContMode) msgs.push({ role: 'user', content: LC_CONT_PROMPT });
+    var size = function (a) { var n = 0; a.forEach(function (m) { n += typeof m.content === 'string' ? m.content.length : JSON.stringify(m.content).length; }); return n; };
+    var dropped = 0;
+    while (msgs.length > 1 && size(msgs) > LC_BUDGET) {
+      msgs.shift(); dropped++;
+      while (msgs.length > 1 && msgs[0].role !== 'user') { msgs.shift(); dropped++; }
+    }
+    if (dropped) lcToast('Aelteren Chatverlauf fuer diese Anfrage gekuerzt (' + dropped + ' Nachrichten).');
+    return msgs;
+  }
+
+  function lcShowError(error, phase) {
+    var aborted = error && error.name === 'AbortError';
+    var last = chatHistory[chatHistory.length - 1];
+    if (aborted) {
+      lcToast('Abgebrochen');
+      if (last && last.role === 'assistant' && last.content && last.content.trim()) isIncomplete = true;
+      else if (last && last.role === 'assistant') { chatHistory.pop(); }
+      try { updateChatDisplay(); updateButtonStates(); } catch (e) {}
+      return;
+    }
+    console.error('LeCODE Fehler:', error);
+    var msg = (error && error.message) || String(error);
+    var hasPartial = !!(last && last.role === 'assistant' && last.content && last.content.trim());
+    var restored = false;
+    if (last && last.role === 'assistant' && !hasPartial) chatHistory.pop();
+    if (hasPartial) isIncomplete = true;
+    else if (phase === 'senden') {
+      var u = chatHistory[chatHistory.length - 1];
+      if (u && u.role === 'user' && u.content === lcLastPrompt) {
+        chatHistory.pop(); restored = true;
+        setTimeout(function () { if (userPromptElement && !userPromptElement.value) userPromptElement.value = lcLastPrompt; }, 0);
+      }
+    }
+    try { updateChatDisplay(); updateButtonStates(); } catch (e) {}
+    try {
+      var note = document.createElement('div'); note.className = 'assistant-message lc-error';
+      note.style.cssText = 'border-color:#b45309;color:#fde68a;white-space:pre-wrap';
+      note.textContent = '⚠️ ' + msg + (restored ? '\n\nDeine Nachricht steht wieder im Eingabefeld. Mit Senden erneut versuchen.' : (hasPartial ? '\n\nMit "Fortsetzen" weitermachen.' : ''));
+      chatHistoryElement.appendChild(note); chatHistoryElement.scrollTop = chatHistoryElement.scrollHeight;
+    } catch (e) {}
+  }
+
+  function lcAutosave() {
+    try {
+      var slim = chatHistory.filter(function (m) { return !(m.role === 'assistant' && /^⚠️ /.test(m.content || '')); }).map(function (m) {
+        if (!m.files || !m.files.length) return m;
+        var c = Object.assign({}, m); c.files = m.files.map(function (f) { return { name: f.name, type: f.type }; }); c.files = null; c.content = m.content + '\n[Anhang: ' + m.files.map(function (f) { return f.name; }).join(', ') + ']'; return c;
+      });
+      localStorage.setItem('chatHistory', JSON.stringify(slim));
+    } catch (e) { /* Speicher voll: Autosave ueberspringen */ }
+  }
+  window.lcStopNow = function () { if (lcAbort) { try { lcAbort.abort(); } catch (e) {} } };
+
+        /* ===== Ende Stabilitaets-Schicht ===== */
 
         let userPromptElement = document.getElementById("userPrompt");
         let chatHistoryElement = document.getElementById("chatHistory");
@@ -501,11 +662,10 @@
 
         // ══════════════════════ MAIN API CALL WITH STREAMING ══════════════════════
         async function fetchChatCompletion() {
+            if (isLoading) { lcToast("Bitte warten, die Antwort laeuft noch."); return; }
             const prompt = userPromptElement.value.trim();
-            if (!prompt) {
-                alert("Please enter a message");
-                return;
-            }
+            if (!prompt) { lcToast("Bitte eine Nachricht eingeben"); return; }
+            lcLastPrompt = prompt; lcContCount = 0; lcContMode = false;
 
             isLoading = true;
             document.getElementById('loading').style.display = 'block';
@@ -548,13 +708,11 @@
                 
                 updateChatDisplay();
 
-                isIncomplete = response.endsWith('...') || 
-                              response.toLowerCase().includes('continued') ||
-                              response.length > 7500;
+                isIncomplete = lcIsIncomplete(response);
                 
                 updateButtonStates();
 
-                if (autoContinueEnabled && isIncomplete) {
+                if (autoContinueEnabled && isIncomplete && lcContCount < LC_MAX_CONT) {
                     if (continuationTimeout) clearTimeout(continuationTimeout);
                     continuationTimeout = setTimeout(() => {
                         continueMessage();
@@ -562,11 +720,12 @@
                 }
             } catch (error) {
                 console.error("Error:", error);
-                alert(`Error with ${currentModel}: ${error.message}`);
+                lcShowError(error, 'senden');
             } finally {
+                lcAutosave();
                 isLoading = false;
                 document.getElementById('loading').style.display = 'none';
-                userPromptElement.value = "";
+                if (!window.__lcKeepPrompt) userPromptElement.value = "";
                 uploadedFiles = [];
                 updateFilePreview();
                 updateButtonStates();
@@ -582,7 +741,7 @@
             updateButtonStates();
 
             try {
-                const continuePrompt = "Please continue your previous response where it left off.";
+                const continuePrompt = LC_CONT_PROMPT; lcContMode = true; lcContCount++;
                 let response = '';
                 const lastMessageIndex = chatHistory.length - 1;
                 
@@ -605,13 +764,11 @@
                 updateChatDisplay();
                 
                 if (chatHistory.length > 0 && chatHistory[lastMessageIndex].role === 'assistant') {
-                    isIncomplete = response.endsWith('...') || 
-                                response.toLowerCase().includes('continued') ||
-                                response.length > 7500;
+                    isIncomplete = lcIsIncomplete(response);
                     
                     updateButtonStates();
 
-                    if (autoContinueEnabled && isIncomplete) {
+                    if (autoContinueEnabled && isIncomplete && lcContCount < LC_MAX_CONT) {
                         if (continuationTimeout) clearTimeout(continuationTimeout);
                         continuationTimeout = setTimeout(() => {
                             continueMessage();
@@ -620,8 +777,9 @@
                 }
             } catch (error) {
                 console.error("Continue error:", error);
-                alert(`Error continuing: ${error.message}`);
+                lcShowError(error, 'fortsetzen');
             } finally {
+                lcContMode = false; lcAutosave();
                 isLoading = false;
                 document.getElementById('loading').style.display = 'none';
                 updateButtonStates();
@@ -629,6 +787,7 @@
         }
 
         function updateButtonStates() {
+            var stopB = document.getElementById('lcStop'); if (stopB) stopB.style.display = isLoading ? '' : 'none';
             const sendBtn = document.querySelector('button[onclick="fetchChatCompletion()"]');
             const continueBtn = document.querySelector('button[onclick="continueMessage()"]');
             
@@ -661,13 +820,13 @@
                         role: "system", 
                         content: "You are a high-end senior web developer with expertise in HTML5, CSS3, Media Queries, and JavaScript." 
                     },
-                    ...messages
+                    ...lcPrep(messages)
                 ],
                 response_format: { type: 'text' },
                 safe_prompt: false
             };
 
-            const response = await fetch(MISTRAL_ENDPOINT, {
+            const response = await lcFetch(MISTRAL_ENDPOINT, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(requestBody)
@@ -675,42 +834,10 @@
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-                throw new Error(errorData.message || errorData.error || `HTTP ${response.status}`);
+                throw lcHttpError(response.status, errorData);
             }
 
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder();
-            let fullResponse = '';
-
-            try {
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-
-                    const chunk = decoder.decode(value);
-                    const lines = chunk.split('\n').filter(line => line.trim().startsWith('data: '));
-                    
-                    for (const line of lines) {
-                        const data = line.replace('data: ', '');
-                        if (data === '[DONE]') return fullResponse;
-                        
-                        try {
-                            const parsed = JSON.parse(data);
-                            const content = parsed.choices[0]?.delta?.content;
-                            if (content) {
-                                onChunk(content);
-                                fullResponse += content;
-                            }
-                        } catch (e) {
-                            // JSON parse error - skip
-                        }
-                    }
-                }
-            } finally {
-                reader.cancel();
-            }
-
-            return fullResponse;
+            return await lcReadStream(response, onChunk);
         }
 
         // ══════════════════════ CLAUDE API - STREAMING ══════════════════════
@@ -757,10 +884,10 @@
                 max_tokens: 8192,
                 temperature: 0.7,
                 stream: true,
-                messages: messages
+                messages: lcPrep(messages)
             };
 
-            const response = await fetch(CLAUDE_ENDPOINT, {
+            const response = await lcFetch(CLAUDE_ENDPOINT, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(requestBody)
@@ -768,42 +895,10 @@
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-                throw new Error(errorData.message || errorData.error || `HTTP ${response.status}`);
+                throw lcHttpError(response.status, errorData);
             }
 
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder();
-            let fullResponse = '';
-
-            try {
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-
-                    const chunk = decoder.decode(value);
-                    const lines = chunk.split('\n').filter(line => line.trim().startsWith('data: '));
-                    
-                    for (const line of lines) {
-                        const data = line.replace('data: ', '');
-                        if (data === '[DONE]') return fullResponse;
-                        
-                        try {
-                            const parsed = JSON.parse(data);
-                            const content = parsed.delta?.text || parsed.choices?.[0]?.delta?.text;
-                            if (content) {
-                                onChunk(content);
-                                fullResponse += content;
-                            }
-                        } catch (e) {
-                            // JSON parse error - skip
-                        }
-                    }
-                }
-            } finally {
-                reader.cancel();
-            }
-
-            return fullResponse;
+            return await lcReadStream(response, onChunk);
         }
 
         // ══════════════════════ CHAT DISPLAY WITH CODE HIGHLIGHTING ══════════════════════
@@ -963,8 +1058,8 @@
 
         // ══════════════════════ STORAGE & PREFERENCES ══════════════════════
         function saveConversation() {
-            localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
-            alert("Conversation saved!");
+            lcAutosave();
+            lcToast('Unterhaltung gespeichert');
         }
 
         function loadConversation() {
@@ -1004,11 +1099,7 @@
             document.getElementById('modelSelect').value = currentModel;
 
             const savedAutoContinue = localStorage.getItem('autoContinueEnabled');
-            if (savedAutoContinue === 'true') {
-                autoContinueEnabled = true;
-            } else {
-                autoContinueEnabled = false;
-            }
+            autoContinueEnabled = (savedAutoContinue !== 'false');
             const checkbox = document.getElementById('autoContinueCheckbox');
             if (checkbox) checkbox.checked = autoContinueEnabled;
 
@@ -1355,6 +1446,7 @@ var AHS = (function () {
   var bar = AHS.el('div', 'lc-actions');
   function act(label, cls, fn) { var b = AHS.el('button', cls); b.type = 'button'; b.innerHTML = label; b.addEventListener('click', fn); bar.appendChild(b); return b; }
   act('▶ Testen', 'go', function () { window.runGeneratedHtml(); });
+  var stopBtn = act('■ Stopp', '', function () { if (window.lcStopNow) window.lcStopNow(); }); stopBtn.id = 'lcStop'; stopBtn.style.display = 'none';
   act('📋 Letzte Antwort', '', function () { var btn = Array.prototype.filter.call(document.querySelectorAll('.form-buttons button'), function (b) { return /highlightLastAssistantResponse/.test(b.getAttribute('onclick') || ''); })[0]; if (btn) btn.click(); else AHS.toast('Keine Antwort vorhanden'); });
   act('⋯ Mehr', '', function () { openMenu(); });
   if (chat && ig) chat.insertBefore(bar, ig);
