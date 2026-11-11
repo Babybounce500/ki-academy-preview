@@ -251,27 +251,44 @@
   const IMAGE_EXTS = new Set(['png','jpg','jpeg','gif','webp','svg','bmp','ico']);
   function isImageExt(ext) { return IMAGE_EXTS.has(ext); }
 
-  /* ---- Projekte ---- */
+  /* ---- Projekte und Chats ---- */
   const CIP = (function () {
     const IDX = 'claudeide-projects';
-    function read() { try { const j = JSON.parse(localStorage.getItem(IDX) || 'null'); if (j && Array.isArray(j.list) && j.list.length) return j; } catch (e) {} return null; }
-    function write(st) { try { localStorage.setItem(IDX, JSON.stringify(st)); } catch (e) {} }
-    let st = read();
-    if (!st) { st = { active: 'p1', list: [{ id: 'p1', name: 'Projekt 1', created: Date.now(), updated: Date.now() }] }; write(st); }
-    if (!st.list.some((p) => p.id === st.active)) { st.active = st.list[0].id; write(st); }
-    const wsKey = (id) => id === 'p1' ? 'claudeide-workspace' : 'claudeide-ws-' + id;
-    const chKey = (id) => id === 'p1' ? 'claudeide-chat-history' : 'claudeide-chat-' + id;
-    return {
-      ws: () => wsKey(st.active), chat: () => chKey(st.active),
+    function rd(k) { try { const j = JSON.parse(localStorage.getItem(k) || 'null'); if (j && Array.isArray(j.list) && j.list.length) return j; } catch (e) {} return null; }
+    function wr(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+    let st = rd(IDX);
+    if (!st) { st = { active: 'p1', list: [{ id: 'p1', name: 'Projekt 1', created: Date.now(), updated: Date.now() }] }; wr(IDX, st); }
+    if (!st.list.some((p) => p.id === st.active)) { st.active = st.list[0].id; wr(IDX, st); }
+    const wsKey = (p) => p === 'p1' ? 'claudeide-workspace' : 'claudeide-ws-' + p;
+    const chKey = (p, c) => c === 'c1' ? (p === 'p1' ? 'claudeide-chat-history' : 'claudeide-chat-' + p) : 'claudeide-chat-' + p + '-' + c;
+    const cIdx = (p) => 'claudeide-chats-' + p;
+    function chats(p) { let c = rd(cIdx(p)); if (!c) { c = { active: 'c1', list: [{ id: 'c1', title: 'Chat 1', updated: Date.now() }] }; wr(cIdx(p), c); } if (!c.list.some((x) => x.id === c.active)) { c.active = c.list[0].id; wr(cIdx(p), c); } return c; }
+    const api = {
+      ws: () => wsKey(st.active), chat: () => chKey(st.active, chats(st.active).active),
       list: () => st.list.slice(), active: () => st.active,
       name: () => (st.list.find((p) => p.id === st.active) || {}).name || 'Projekt',
-      touch() { const p = st.list.find((x) => x.id === st.active); if (p) { p.updated = Date.now(); write(st); } },
-      setActive(id) { st.active = id; write(st); },
-      add(name, id) { id = id || 'p' + Date.now().toString(36); st.list.push({ id, name: name || ('Projekt ' + (st.list.length + 1)), created: Date.now(), updated: Date.now() }); write(st); return id; },
-      rename(id, name) { const p = st.list.find((x) => x.id === id); if (p && name) { p.name = name; write(st); } },
-      drop(id) { st.list = st.list.filter((p) => p.id !== id); write(st); },
-      wsKeyOf: wsKey, chKeyOf: chKey
+      touch() { const p = st.list.find((x) => x.id === st.active); if (p) { p.updated = Date.now(); wr(IDX, st); } },
+      setActive(id) { st.active = id; wr(IDX, st); },
+      add(name, id) { id = id || 'p' + Date.now().toString(36) + Math.floor(Math.random() * 99); st.list.push({ id, name: name || ('Projekt ' + (st.list.length + 1)), created: Date.now(), updated: Date.now() }); wr(IDX, st); return id; },
+      rename(id, name) { const p = st.list.find((x) => x.id === id); if (p && name) { p.name = name; wr(IDX, st); } },
+      drop(id) { st.list = st.list.filter((p) => p.id !== id); wr(IDX, st); try { localStorage.removeItem(cIdx(id)); } catch (e) {} },
+      wsKeyOf: wsKey, chKeyOf: chKey,
+      chats: (p) => chats(p || st.active),
+      chatActive: () => chats(st.active).active,
+      chatAdd(p, title) { const c = chats(p); const id = 'c' + Date.now().toString(36) + Math.floor(Math.random() * 99); c.list.push({ id, title: title || ('Chat ' + (c.list.length + 1)), updated: Date.now() }); wr(cIdx(p), c); return id; },
+      chatSetActive(id) { const c = chats(st.active); c.active = id; wr(cIdx(st.active), c); },
+      chatRename(id, t) { const c = chats(st.active); const x = c.list.find((y) => y.id === id); if (x && t) { x.title = t; x.manual = true; wr(cIdx(st.active), c); } },
+      chatDrop(p, id) { const c = chats(p); c.list = c.list.filter((x) => x.id !== id); if (!c.list.length) c.list.push({ id: 'c1', title: 'Chat 1', updated: Date.now() }); if (!c.list.some((x) => x.id === c.active)) c.active = c.list[0].id; wr(cIdx(p), c); },
+      titleFrom(hist) {
+        try {
+          const c = chats(st.active), x = c.list.find((y) => y.id === c.active); if (!x) return;
+          x.updated = Date.now();
+          if (!x.manual) { const u = hist.find((m) => m.role === 'user' && typeof m.content === 'string'); if (u) x.title = u.content.replace(/\s+/g, ' ').trim().slice(0, 40) || x.title; }
+          wr(cIdx(st.active), c);
+        } catch (e) {}
+      }
     };
+    return api;
   })();
   async function persistFs() {
     try { CIP.touch(); } catch (e) {}
@@ -934,7 +951,7 @@
   // Chat-Verlauf wie der Workspace in IndexedDB persistieren -- vorher ging die
   // Unterhaltung bei jedem Reload verloren, obwohl die Dateien erhalten blieben.
   async function persistHistory() {
-    try { await idbKeyval.set(CIP.chat(), history); }
+    try { await idbKeyval.set(CIP.chat(), history); CIP.titleFrom(history); }
     catch (e) { console.warn('Chat-Persistenz fehlgeschlagen (IndexedDB):', e); }
   }
   async function loadHistory() {
@@ -979,27 +996,37 @@
     }
   }
 
-  /* ---- Projekt-Aktionen (von der Oberflaeche genutzt) ---- */
+  /* ---- Aktionen (von der Oberflaeche genutzt) ---- */
+  async function wipeProject(id) { try { await idbKeyval.del(CIP.wsKeyOf(id)); for (const c of CIP.chats(id).list) await idbKeyval.del(CIP.chKeyOf(id, c.id)); } catch (e) {} }
   window.CI_PROJ = {
     list: () => CIP.list(), active: () => CIP.active(), name: () => CIP.name(),
+    chats: () => CIP.chats().list.slice(), chatActive: () => CIP.chatActive(),
     async switchTo(id) { await persistFs(); await persistHistory(); CIP.setActive(id); location.reload(); },
     async create(name) { await persistFs(); await persistHistory(); const id = CIP.add(name); CIP.setActive(id); location.reload(); },
     rename(id, name) { CIP.rename(id, name); },
     async duplicate(id) {
       await persistFs(); await persistHistory();
       const src = CIP.list().find((p) => p.id === id); const nid = CIP.add((src ? src.name : 'Projekt') + ' (Kopie)');
-      try { const w = await idbKeyval.get(CIP.wsKeyOf(id)); if (w) await idbKeyval.set(CIP.wsKeyOf(nid), w); const c = await idbKeyval.get(CIP.chKeyOf(id)); if (c) await idbKeyval.set(CIP.chKeyOf(nid), c); } catch (e) {}
+      try {
+        const w = await idbKeyval.get(CIP.wsKeyOf(id)); if (w) await idbKeyval.set(CIP.wsKeyOf(nid), w);
+        const sc = CIP.chats(id); CIP.chats(nid);
+        for (const c of sc.list) { const x = CIP.chatAdd(nid, c.title); const d = await idbKeyval.get(CIP.chKeyOf(id, c.id)); if (d) await idbKeyval.set(CIP.chKeyOf(nid, x), d); }
+        CIP.chatDrop(nid, 'c1');
+      } catch (e) {}
       CIP.setActive(nid); location.reload();
     },
     async remove(id) {
-      try { await idbKeyval.del(CIP.wsKeyOf(id)); await idbKeyval.del(CIP.chKeyOf(id)); } catch (e) {}
-      CIP.drop(id);
+      await wipeProject(id); CIP.drop(id);
       if (!CIP.list().length) { const n = CIP.add('Projekt 1', 'p1'); CIP.setActive(n); }
       else if (CIP.active() === id) CIP.setActive(CIP.list()[0].id);
       location.reload();
     },
+    async newChat() { await persistHistory(); const id = CIP.chatAdd(CIP.active()); CIP.chatSetActive(id); location.reload(); },
+    async switchChat(id) { await persistHistory(); CIP.chatSetActive(id); location.reload(); },
+    renameChat(id, t) { CIP.chatRename(id, t); },
+    async deleteChat(id) { try { await idbKeyval.del(CIP.chKeyOf(CIP.active(), id)); } catch (e) {} CIP.chatDrop(CIP.active(), id); location.reload(); },
     async resetChat() { history.length = 0; try { await idbKeyval.del(CIP.chat()); } catch (e) {} location.reload(); },
-    async resetWorkspace() { try { await idbKeyval.del(CIP.ws()); await idbKeyval.del(CIP.chat()); } catch (e) {} location.reload(); }
+    async resetWorkspace() { await wipeProject(CIP.active()); try { localStorage.removeItem('claudeide-chats-' + CIP.active()); } catch (e) {} location.reload(); }
   };
   const msgList = document.getElementById('msgList');
   const chatInput = document.getElementById('chatInput');
@@ -1610,6 +1637,12 @@ var AHS = (function () {
       item('＋  Neues Projekt', function () { var n = prompt('Name des neuen Projekts:', 'Projekt ' + (P.list().length + 1)); if (n && n.trim()) P.create(n.trim()); });
       item('✎  Projekt umbenennen', function () { var n = prompt('Neuer Name:', P.name()); if (n && n.trim()) { P.rename(cur, n.trim()); label(); AHS.toast('Umbenannt'); } });
       item('⧉  Projekt duplizieren', function () { P.duplicate(cur); });
+      sep('Chats in diesem Projekt');
+      var ac = P.chatActive();
+      P.chats().forEach(function (c) { var b = item((c.id === ac ? '✓  ' : '     ') + (c.title || 'Chat'), function () { if (c.id !== ac) P.switchChat(c.id); }); if (c.id === ac) b.className = 'ci-cur'; });
+      item('＋  Neuer Chat', function () { P.newChat(); });
+      item('✎  Chat umbenennen', function () { var cc = P.chats().filter(function (x) { return x.id === ac; })[0]; var n = prompt('Name des Chats:', cc ? cc.title : ''); if (n && n.trim()) { P.renameChat(ac, n.trim()); AHS.toast('Umbenannt'); } });
+      if (P.chats().length > 1) item('🗑  Diesen Chat löschen', function () { if (confirm('Diesen Chat endgültig löschen? Die Dateien bleiben erhalten.')) P.deleteChat(ac); }, 'red');
       sep('Chat');
       item('🧹  Chat zurücksetzen (Dateien bleiben)', function () { if (confirm('Den Chat dieses Projekts leeren? Die Dateien bleiben erhalten.')) P.resetChat(); });
       sep('Gefahrenzone');
