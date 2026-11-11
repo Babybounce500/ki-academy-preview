@@ -569,7 +569,7 @@
           const target = relPath + '.txt';
           if (!r.chars) { fsFiles.set(target, { content: '[Kein Text im PDF gefunden. Vermutlich ein Scan oder reines Bild-PDF: Text muss per OCR erkannt werden.]', isImage: false }); pdfNote(file.name + ': kein Text enthalten (Scan?)'); }
           else { fsFiles.set(target, { content: r.text, isImage: false }); pdfNote(file.name + ': ' + r.pages + ' Seiten, ' + r.chars.toLocaleString('de-DE') + ' Zeichen als ' + target.split('/').pop() + ' abgelegt'); }
-        } catch (err) { pdfNote('PDF-Fehler bei ' + file.name + ': ' + (err.message || err)); }
+        } catch (err) { const em = 'PDF konnte nicht gelesen werden: ' + file.name + '\n' + (err.message || err) + '\n\nTipp: Seite mit Strg+F5 neu laden (alte Version im Cache?). Passwortgeschuetzte PDFs oder fehlendes Internet (pdf.js kommt vom CDN) verhindern das Lesen.'; fsFiles.set(relPath + '.FEHLER.txt', { content: em, isImage: false }); pdfNote('PDF-Fehler bei ' + file.name); setTimeout(() => alert(em), 50); }
         continue;
       }
       if (isImageExt(ext)) {
