@@ -421,6 +421,41 @@
   const nl = norm(newS).replace(/^\n+|\n+$/g, '').split('\n').map((l) => (indent !== oldIndent && l.startsWith(oldIndent)) ? indent + l.slice(oldIndent.length) : l);
   return { text: cl.slice(0, at).concat(nl, cl.slice(at + key.length)).join('\n'), line: at + 1 };
 }
+  function salvageCut(block, cut) {
+  const generic = { ok: false, error: 'Dein Aufruf war unvollstaendig (Ausgabe-Limit erreicht). Es wurde NICHTS geschrieben. Mache es in kleineren Schritten: write_file mit hoechstens ca. 120 Zeilen, danach append_file fuer jeden weiteren Teil. Keine langen Erklaerungen davor.' };
+  try {
+    const raw = (window.__ciPartial || {})[block.id] || '';
+    if (!cut || !/^(write_file|append_file)$/.test(block.name) || !raw) return generic;
+    const pm = raw.match(/"path"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+    const ci = raw.search(/"content"\s*:\s*"/);
+    if (!pm || ci < 0) return generic;
+    const path = JSON.parse('"' + pm[1] + '"');
+    const body = raw.slice(raw.indexOf('"', raw.indexOf(':', ci)) + 1);
+    const map = { n: '\n', t: '\t', r: '\r', '"': '"', '\\': '\\', '/': '/', b: '\b', f: '\f' };
+    let out = '', i = 0;
+    while (i < body.length) {
+      const ch = body[i];
+      if (ch === '"') break;
+      if (ch === '\\') {
+        const n = body[i + 1];
+        if (n === undefined) break;
+        if (n === 'u') { const h = body.slice(i + 2, i + 6); if (h.length < 4) break; out += String.fromCharCode(parseInt(h, 16)); i += 6; continue; }
+        out += (map[n] !== undefined ? map[n] : n); i += 2; continue;
+      }
+      out += ch; i++;
+    }
+    const lastNl = out.lastIndexOf('\n');
+    const keep = lastNl >= 0 ? out.slice(0, lastNl + 1) : '';
+    if (!keep) return generic;
+    const p = normalizePath(path), ex = fsFiles.get(p);
+    const base = (block.name === 'append_file' && ex && !ex.isImage) ? ex.content : '';
+    const next = base + keep;
+    writeFile(p, next); refreshTab(p, next);
+    try { renderFsTree(); persistFs(); } catch (e) {}
+    const n = next.split('\n').length - 1, lastLine = keep.replace(/\s+$/, '').split('\n').pop().slice(0, 100);
+    return { ok: false, error: 'Deine Ausgabe wurde vom Limit abgeschnitten. Ich habe bis hierhin gespeichert: ' + p + ' (' + n + ' Zeilen). Letzte gespeicherte Zeile: "' + lastLine + '". Fahre jetzt mit append_file fort und schreibe direkt die naechste Zeile danach, ohne etwas zu wiederholen. Teile den Rest in Abschnitte von hoechstens ca. 100 Zeilen.' };
+  } catch (e) { return generic; }
+}
   async function executeFsTool(name, input) {
     try {
       switch (name) {
@@ -933,7 +968,7 @@
         } else if (evt.type === 'content_block_stop') {
           const b = blocks[evt.index];
           if (b && b.type === 'tool_use') {
-            try { b.input = JSON.parse(b.partialJson || '{}'); } catch (_) { b.input = {}; }
+            try { b.input = JSON.parse(b.partialJson || '{}'); } catch (_) { b.input = {}; (window.__ciPartial = window.__ciPartial || {})[b.id] = b.partialJson; }
             if (onToolStep) onToolStep(evt.index, b, 'ready');
           } else if (b && b.type === 'thinking' && onThinkingStep) {
             onThinkingStep(evt.index, 'stop');
@@ -990,7 +1025,7 @@
   function renderHistoryToUI(hist) {
     for (const entry of hist) {
       if (entry.role === 'user') {
-        if (typeof entry.content === 'string') addMessage('user', entry.content);
+        if (typeof entry.content === 'string' && !entry.content.startsWith('[Automatisch]')) addMessage('user', entry.content);
         continue;
       }
       const bubble = addMessage('assistant', '');
@@ -1187,14 +1222,14 @@
     currentBubble = addMessage('assistant', '');
     currentBubble.innerHTML = '<span class="n-spinner"></span>';
     let firstChunk = true;
-    let iterations = 0;
+    let iterations = 0; let autoCont = 0;
     let treeChanged = false;
     try {
       while (iterations++ < 30) {
         const blockEls = {}; // index -> DOM-Element, fuer Live-Updates waehrend des Streams
         const lastPreviewTs = {}; // index -> Timestamp der letzten Live-Vorschau-Aktualisierung (Throttle, siehe onToolInputDelta)
         const data = await streamClaudeTools(
-          { messages: compactForSend(history), model: 'claude-haiku-4-5-20251001', max_tokens: 4096, system: FS_SYSTEM_PROMPT, tools: FS_TOOLS },
+          { messages: compactForSend(history), model: 'claude-haiku-4-5-20251001', max_tokens: 12000, system: FS_SYSTEM_PROMPT, tools: FS_TOOLS },
           {
             onTextDelta(index, fullText) {
               if (firstChunk) { currentBubble.innerHTML = ''; firstChunk = false; }
@@ -1278,6 +1313,14 @@
         });
 
         history.push({ role: 'assistant', content: data.historyContent });
+        if (data.stop_reason === 'max_tokens' && !data.historyContent.some((b) => b.type === 'tool_use') && data.historyContent.length) {
+          if (autoCont++ < 6) {
+            history.push({ role: 'user', content: '[Automatisch] Dein Text wurde vom Ausgabelimit abgeschnitten. Mache genau an der abgebrochenen Stelle weiter, ohne etwas zu wiederholen.' });
+            const nd = document.createElement('div'); nd.className = 'tool-step'; nd.textContent = '⏩ Antwort wird automatisch fortgesetzt (' + autoCont + '/6) ...'; currentBubble.appendChild(nd);
+            continue;
+          }
+          const wd = document.createElement('div'); wd.className = 'tool-step'; wd.textContent = '⏸ Die Antwort ist sehr lang. Schreibe weiter, dann geht es an der Stelle weiter.'; currentBubble.appendChild(wd);
+        }
         if (data.stop_reason !== 'tool_use' && !data.historyContent.some((b) => b.type === 'tool_use')) break;
 
         const toolResults = [];
@@ -1287,7 +1330,7 @@
           const cut = data.stop_reason === 'max_tokens' && block === lastTool;
           const noPath = ['read_file', 'write_file', 'edit_file', 'append_file', 'search_in_file'].includes(block.name) && !(block.input && block.input.path);
           const outcome = (cut || noPath)
-            ? { ok: false, error: 'Dein Aufruf war unvollstaendig (Ausgabe-Limit erreicht). Es wurde NICHTS geschrieben. Mache es in kleineren Schritten: write_file mit hoechstens ca. 120 Zeilen, danach append_file fuer jeden weiteren Teil. Keine langen Erklaerungen davor.' }
+            ? salvageCut(block, cut)
             : await executeFsTool(block.name, block.input);
           if (outcome.ok && block.name !== 'read_file' && block.name !== 'list_files') treeChanged = true;
           // Neu geschriebene Datei sofort als Editor-Tab bereitstellen -- im Split-Modus
