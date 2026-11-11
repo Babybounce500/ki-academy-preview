@@ -1277,6 +1277,15 @@
   #tabBar { overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; touch-action: pan-x; scrollbar-width: none; }
   #tabBar::-webkit-scrollbar { display: none; }
   #tabBar .tab-btn { flex: 0 0 auto; }
+  /* Desktop: Chat nutzt die volle Breite (weniger scrollen). Mobil bleibt unveraendert. */
+  @media (min-width: 901px) {
+    #pane-chat .n-chat-messages { max-width: none !important; margin: 0 !important; padding: 16px clamp(12px, 2vw, 32px) !important; }
+    #pane-chat .n-msg-row { max-width: none !important; margin: 0 !important; }
+    #pane-chat .n-msg-assistant .n-bubble { max-width: calc(100% - 3rem) !important; flex: 1 1 auto; }
+    #pane-chat .n-msg-user .n-bubble { max-width: min(78%, 1100px) !important; }
+    #pane-chat .n-bubble pre { max-width: 100%; overflow-x: auto; }
+    #pane-chat .n-chat-inputbar { padding-left: clamp(12px, 2vw, 32px); padding-right: clamp(12px, 2vw, 32px); }
+  }
   .ci-nav, .ci-fab { display: none; }
   @media (max-width: 900px) {
     html, body { height: var(--ahs-vh, 100dvh) !important; }
