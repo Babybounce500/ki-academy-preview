@@ -1081,5 +1081,298 @@
   });
 })();
 </script>
+<!-- ===== CLAUDE IDE POLISH LAYER ===== -->
+<style id="ci-style">
+:root { --ahs-bg:#0f1419; --ahs-panel:#161b22; --ahs-line:#30363d; --ahs-text:#e6edf3; --ahs-muted:#8b949e; --ahs-accent:#00d9ff; --ahs-accent2:#ec4899; --ahs-bad:#f85149; --ahs-warn:#d29922; --ahs-ok:#3fb950; --ahs-vh:100dvh; }
+#ahsToast { position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 9500; background: #111827; color: #fff; border: 1px solid #374151; padding: 9px 14px; border-radius: 12px; font: 600 13px system-ui, sans-serif; max-width: 90vw; box-shadow: 0 10px 30px rgba(0,0,0,.4); }
+#ahsToast[hidden] { display: none; }
+.ahs-grow { flex: 1; }
+
+/* Werkzeuge an Code-Bloecken */
+.ahs-cb { display: flex; align-items: center; gap: 6px; padding: 5px 8px; margin-top: 8px; background: #161b22; border: 1px solid #30363d; border-bottom: 0; border-radius: 10px 10px 0 0; font: 12px system-ui, sans-serif; }
+.ahs-cb + pre { margin-top: 0 !important; border-radius: 0 0 10px 10px !important; }
+.ahs-cb-lang { margin-right: auto; color: #8b949e; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; }
+.ahs-cb-btn { background: transparent; color: #e6edf3; border: 1px solid #30363d; border-radius: 8px; padding: 4px 10px; font: 600 12px system-ui, sans-serif; cursor: pointer; min-height: 32px; }
+.ahs-cb-btn.go { background: linear-gradient(90deg, #00d9ff, #ec4899); color: #04121a; border: 0; }
+.ahs-cb-btn:focus-visible, .ahs-chip:focus-visible, .ahs-btn:focus-visible, .ahs-menu button:focus-visible { outline: 3px solid #fbbf24; outline-offset: 2px; }
+
+/* Vorschau-Sheet */
+.ahs-prev { position: fixed; inset: 0; z-index: 9000; display: flex; flex-direction: column; background: var(--ahs-bg); color: var(--ahs-text); font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+.ahs-prev[hidden] { display: none; }
+.ahs-prev-head { display: flex; align-items: center; gap: 10px; padding: calc(10px + env(safe-area-inset-top)) 12px 10px; border-bottom: 1px solid var(--ahs-line); background: var(--ahs-panel); }
+.ahs-prev-bar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 6px 10px; background: var(--ahs-panel); border-bottom: 1px solid var(--ahs-line); }
+.ahs-prev-bar::-webkit-scrollbar { display: none; }
+.ahs-chips { display: flex; flex: 0 0 auto; gap: 6px; }
+.ahs-chip { flex: 0 0 auto; background: transparent; color: var(--ahs-muted); border: 1px solid var(--ahs-line); border-radius: 999px; padding: 4px 11px; font: 600 12px system-ui, sans-serif; cursor: pointer; min-height: 32px; display: inline-flex; align-items: center; gap: 4px; }
+.ahs-chip[aria-pressed="true"] { color: #04121a; background: var(--ahs-accent); border-color: transparent; }
+.ahs-chk input { margin: 0 4px 0 0; }
+.ahs-btn { background: var(--ahs-panel); color: var(--ahs-text); border: 1px solid var(--ahs-line); border-radius: 10px; padding: 8px 12px; font: 600 13px system-ui, sans-serif; cursor: pointer; min-height: 40px; }
+.ahs-btn:hover { border-color: var(--ahs-accent); }
+.ahs-stage { flex: 1; min-height: 0; overflow: auto; background: repeating-conic-gradient(#8881 0% 25%, transparent 0% 50%) 50% / 16px 16px; }
+.ahs-frame { display: block; border: 0; background: #fff; width: 100%; height: 100%; }
+.ahs-con { flex: 0 0 auto; max-height: 34%; display: flex; flex-direction: column; border-top: 1px solid var(--ahs-line); font: 12px/1.45 Consolas, "Courier New", monospace; }
+.ahs-con-head { display: flex; align-items: center; gap: 8px; padding: 4px 10px; background: var(--ahs-panel); font: 600 12px system-ui, sans-serif; }
+.ahs-prev.has-err .ahs-con-head { color: var(--ahs-bad); }
+.ahs-con-body { overflow: auto; padding: 4px 10px calc(4px + env(safe-area-inset-bottom)); min-height: 44px; }
+.ahs-line { padding: 2px 0; border-bottom: 1px solid color-mix(in srgb, var(--ahs-line) 50%, transparent); white-space: pre-wrap; word-break: break-word; }
+.ahs-line.warn { color: var(--ahs-warn); } .ahs-line.error { color: var(--ahs-bad); }
+
+/* Menue-Sheet */
+.ahs-back { position: fixed; inset: 0; z-index: 8900; background: rgba(0,0,0,.5); }
+.ahs-back[hidden], .ahs-sheet[hidden] { display: none; }
+.ahs-sheet { position: fixed; z-index: 8950; left: 0; right: 0; bottom: 0; max-height: 80dvh; overflow: auto; background: var(--ahs-bg); color: var(--ahs-text); border: 1px solid var(--ahs-line); border-radius: 18px 18px 0 0; padding: 6px 0 calc(10px + env(safe-area-inset-bottom)); font: 16px system-ui, sans-serif; }
+.ahs-menu { display: grid; gap: 2px; padding: 8px 10px; }
+.ahs-menu button { text-align: left; display: flex; gap: 12px; align-items: center; background: transparent; color: var(--ahs-text); border: 0; border-radius: 10px; padding: 12px; font: 16px system-ui, sans-serif; min-height: 48px; cursor: pointer; }
+.ahs-menu button:hover, .ahs-menu button:active { background: var(--ahs-panel); }
+.ahs-menu .sep { height: 1px; background: var(--ahs-line); margin: 6px 0; }
+.ahs-menu .red { color: var(--ahs-bad); }
+
+/* Startvorschlaege */
+.ahs-starters { display: flex; flex-wrap: wrap; gap: 8px; padding: 6px 12px 0; }
+.ahs-starters[hidden] { display: none; }
+.ahs-starter { background: transparent; color: var(--ahs-text); border: 1px solid var(--ahs-line); border-radius: 999px; padding: 7px 13px; font: 600 13px system-ui, sans-serif; cursor: pointer; min-height: 36px; }
+.ahs-starter:hover { border-color: var(--ahs-accent); }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; } }
+
+  html { -webkit-tap-highlight-color: transparent; overscroll-behavior: none; }
+  .ci-starters { padding: 6px 12px 0; }
+  .ci-starters .ahs-starter { color: var(--text, #111827); border-color: var(--border, #cbd5e1); background: var(--surface, transparent); }
+  .ci-starters .ahs-starter:hover { border-color: var(--accent, #0e7490); }
+  .n-chat-inputbar { align-items: flex-end; padding-bottom: calc(8px + env(safe-area-inset-bottom)); }
+  .n-textarea { font-size: 16px !important; min-height: 52px; max-height: 30vh; line-height: 1.4; }
+  #tabBar { overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; touch-action: pan-x; scrollbar-width: none; }
+  #tabBar::-webkit-scrollbar { display: none; }
+  #tabBar .tab-btn { flex: 0 0 auto; }
+  .ci-nav, .ci-fab { display: none; }
+  @media (max-width: 900px) {
+    html, body { height: var(--ahs-vh, 100dvh) !important; }
+    body { box-sizing: border-box; padding-bottom: calc(58px + env(safe-area-inset-bottom)); }
+    body.ahs-kb { padding-bottom: 0; }
+    .neural-shell { height: 100% !important; min-height: 0 !important; }
+    #layoutToggle { display: none !important; }
+    .ci-nav { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; height: calc(58px + env(safe-area-inset-bottom)); padding-bottom: env(safe-area-inset-bottom); background: var(--ahs-panel); border-top: 1px solid var(--ahs-line); }
+    body.ahs-kb .ci-nav { display: none; }
+    .ci-nav button { position: relative; flex: 1; background: transparent; border: 0; color: var(--ahs-muted); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font: 600 11px system-ui, sans-serif; cursor: pointer; min-width: 0; }
+    .ci-nav button .ic { font-size: 18px; line-height: 1; }
+    .ci-nav button[aria-pressed="true"] { color: var(--ahs-accent); }
+    .ci-dot { position: absolute; top: 8px; left: calc(50% + 8px); width: 9px; height: 9px; border-radius: 50%; background: var(--ahs-accent2); }
+    .ci-dot[hidden] { display: none; }
+    .ci-fab { display: flex; align-items: center; gap: 8px; position: fixed; right: 14px; bottom: calc(72px + env(safe-area-inset-bottom)); z-index: 41; border: 0; border-radius: 999px; padding: 0 18px; height: 48px; background: linear-gradient(90deg, #00d9ff, #ec4899); color: #04121a; font: 800 14px system-ui, sans-serif; box-shadow: 0 8px 24px rgba(0,0,0,.4); }
+    .ci-fab[hidden] { display: none; }
+    body.ahs-kb .ci-fab { display: none; }
+    #ahsToast { bottom: calc(130px + env(safe-area-inset-bottom)); }
+  }
+</style>
+
+<script id="ci-script">
+/* Gemeinsame Bausteine fuer Chat-IDEs: Toast, Kopieren, Snippets (gleicher Speicher wie das AI HTML Studio),
+   Vorschau mit Konsole, Werkzeuge an Code-Bloecken, Tastatur-Hoehe. */
+var AHS = (function () {
+  'use strict';
+  var mem = {};
+  function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
+  function txt(tag, cls, t) { var e = el(tag, cls); e.textContent = t; return e; }
+  function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return mem[k] || null; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) { mem[k] = v; } }
+  function isMobile() { return window.matchMedia('(max-width: 900px)').matches; }
+
+  var toastEl = el('div', ''); toastEl.id = 'ahsToast'; toastEl.setAttribute('role', 'status'); toastEl.hidden = true; document.body.appendChild(toastEl);
+  var toastT;
+  function toast(m) { toastEl.textContent = m; toastEl.hidden = false; clearTimeout(toastT); toastT = setTimeout(function () { toastEl.hidden = true; }, 2400); }
+  function copy(t) {
+    function fb() { var ta = el('textarea'); ta.value = t; ta.style.cssText = 'position:fixed;opacity:0'; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); toast('Kopiert'); } catch (e) { toast('Kopieren nicht möglich'); } ta.remove(); }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(function () { toast('Kopiert'); }, fb); else fb();
+  }
+
+  /* ---- Snippets: gleicher Speicher wie im AI HTML Studio ---- */
+  var KEY = 'ahs_snippets_v1';
+  function snipsLoad() { try { var a = JSON.parse(lsGet(KEY) || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
+  function titleFor(code, lang) {
+    var m = code.match(/<title>([^<]{1,50})<\/title>/i); if (m) return m[1].trim();
+    var l = (code.split('\n').filter(function (x) { return x.trim(); })[0] || '').replace(/^\s*(\/\/|\/\*|#)\s*/, '').replace(new RegExp('^\\s*<' + '!--\\s*'), '').slice(0, 40);
+    return l || ('Snippet ' + lang);
+  }
+  function snipAdd(code, lang) {
+    var a = snipsLoad(), t = titleFor(code, lang), now = Date.now();
+    a.unshift({ id: 's' + now.toString(36) + Math.random().toString(36).slice(2, 6), title: t, lang: lang === 'javascript' ? 'js' : lang, code: code, tags: ['aus-chat'], fav: false, created: now, updated: now, uses: 0 });
+    lsSet(KEY, JSON.stringify(a)); toast('Snippet gespeichert: ' + t + ' (im AI HTML Studio unter Snippets)');
+  }
+
+  /* ---- Vorschau-Dokument mit Konsolen-Anbindung ---- */
+  var SC = '<' + '/script>';
+  var HOOK = '<' + 'script>(function(){var P=parent;function s(t,a){try{P.postMessage({__ahs:1,t:t,m:Array.prototype.map.call(a,function(x){try{return typeof x==="object"?JSON.stringify(x):String(x)}catch(e){return String(x)}}).join(" ")},"*")}catch(e){}}["log","info","warn","error"].forEach(function(k){var o=console[k];console[k]=function(){s(k,arguments);o.apply(console,arguments)}});window.addEventListener("error",function(e){s("error",[e.message+(e.lineno?" (Zeile "+e.lineno+")":"")])});window.addEventListener("unhandledrejection",function(e){s("error",["Promise: "+(e.reason&&e.reason.message||e.reason)])})})();' + SC;
+  function hook(h) {
+    if (/<head[^>]*>/i.test(h)) return h.replace(/<head[^>]*>/i, function (m) { return m + HOOK; });
+    if (/<html[^>]*>/i.test(h)) return h.replace(/<html[^>]*>/i, function (m) { return m + '<head>' + HOOK + '</head>'; });
+    if (/<!doctype[^>]*>/i.test(h)) return h.replace(/<!doctype[^>]*>/i, function (m) { return m + HOOK; });
+    return HOOK + h;
+  }
+  function wrap(lang, code) {
+    if (lang === 'css') return '<style>' + code + '</style><body><h1>Überschrift</h1><p>Beispieltext zur Vorschau.</p><button>Knopf</button><a href="#">Link</a></body>';
+    if (lang === 'js' || lang === 'javascript') return '<body><pre id="o" style="font:14px/1.5 monospace">Konsole siehe unten</pre><' + 'script>' + code.replace(/<\/script/gi, '<\\/script') + SC + '</body>';
+    return code;
+  }
+
+  /* ---- Vorschau-Sheet ---- */
+  var pv = null, logs = [], errs = 0, curW = 0, lastCode = '', lastLang = 'html';
+  function build() {
+    pv = el('section', 'ahs-prev'); pv.hidden = true; pv.setAttribute('role', 'dialog'); pv.setAttribute('aria-modal', 'true'); pv.setAttribute('aria-label', 'Vorschau');
+    var head = el('div', 'ahs-prev-head'); head.appendChild(txt('strong', '', 'Vorschau'));
+    var presets = el('div', 'ahs-chips');
+    [['Voll', 0], ['360', 360], ['390', 390], ['768', 768]].forEach(function (p) {
+      var b = el('button', 'ahs-chip'); b.type = 'button'; b.textContent = p[0] === 'Voll' ? 'Voll' : p[0] + ' px'; b.setAttribute('aria-pressed', p[1] === 0 ? 'true' : 'false'); b.setAttribute('data-w', p[1]);
+      b.addEventListener('click', function () { curW = p[1]; presets.querySelectorAll('[data-w]').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); }); fit(); });
+      presets.appendChild(b);
+    });
+    var bRe = el('button', 'ahs-chip'); bRe.type = 'button'; bRe.textContent = '↻ Neu'; bRe.addEventListener('click', function () { render(); });
+    var bTab = el('button', 'ahs-chip'); bTab.type = 'button'; bTab.textContent = '↗ Tab'; bTab.addEventListener('click', function () { var u = URL.createObjectURL(new Blob([hook(wrap(lastLang, lastCode))], { type: 'text/html' })); window.open(u, '_blank'); setTimeout(function () { URL.revokeObjectURL(u); }, 60000); });
+    var lab = el('label', 'ahs-chip ahs-chk'); var cb = el('input'); cb.type = 'checkbox'; cb.id = 'ahsSameOrigin'; lab.appendChild(cb); lab.appendChild(document.createTextNode(' Speicher erlauben')); lab.title = 'Erlaubt localStorage im Test. Weniger sicher: nur für selbst geschriebenen Code aktivieren.';
+    cb.addEventListener('change', render);
+    var bX = el('button', 'ahs-btn'); bX.type = 'button'; bX.textContent = 'Schließen'; bX.addEventListener('click', close);
+    head.appendChild(el('span', 'ahs-grow')); head.appendChild(bX);
+    var bar = el('div', 'ahs-prev-bar'); bar.appendChild(presets); bar.appendChild(bRe); bar.appendChild(bTab); bar.appendChild(lab);
+    var stage = el('div', 'ahs-stage'); var fr = el('iframe', 'ahs-frame'); fr.title = 'Live-Vorschau'; stage.appendChild(fr);
+    var con = el('div', 'ahs-con'); var ch = el('div', 'ahs-con-head'); ch.appendChild(txt('span', 'ahs-grow', 'Konsole')); var cc = el('button', 'ahs-chip'); cc.type = 'button'; cc.textContent = 'Leeren'; cc.addEventListener('click', clear); ch.appendChild(cc);
+    var cbody = el('div', 'ahs-con-body'); cbody.setAttribute('role', 'log'); con.appendChild(ch); con.appendChild(cbody);
+    pv.appendChild(head); pv.appendChild(bar); pv.appendChild(stage); pv.appendChild(con); document.body.appendChild(pv);
+    pv._fr = fr; pv._con = cbody; pv._stage = stage; pv._cb = cb;
+    window.addEventListener('message', function (e) { if (!pv || e.source !== fr.contentWindow || !e.data || !e.data.__ahs) return; line(e.data.t, String(e.data.m).slice(0, 2000)); });
+    window.addEventListener('resize', function () { if (!pv.hidden) fit(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && pv && !pv.hidden) close(); });
+  }
+  function line(t, m) {
+    logs.push(t); var l = el('div', 'ahs-line ' + t); l.textContent = (t === 'error' ? '✖ ' : t === 'warn' ? '⚠ ' : '› ') + m; pv._con.appendChild(l); pv._con.scrollTop = pv._con.scrollHeight;
+    if (t === 'error') { errs++; pv.classList.add('has-err'); }
+  }
+  function clear() { logs = []; errs = 0; if (pv) { pv._con.innerHTML = ''; pv.classList.remove('has-err'); } }
+  function fit() {
+    var fr = pv._fr, cw = pv._stage.clientWidth; if (!cw) return;
+    if (!curW) { fr.style.cssText = 'width:100%;height:100%;zoom:1;margin:0'; return; }
+    var s = Math.min(1, (cw - 4) / curW);
+    fr.style.cssText = 'width:' + curW + 'px;height:' + Math.round(curW * 1.78) + 'px;zoom:' + s + ';margin:0 auto;box-shadow:0 0 0 1px #8884';
+  }
+  function render() {
+    clear();
+    var sb = 'allow-scripts allow-forms allow-modals allow-popups' + (pv._cb.checked ? ' allow-same-origin' : '');
+    pv._fr.setAttribute('sandbox', sb);
+    pv._fr.srcdoc = hook(wrap(lastLang, lastCode));
+    setTimeout(fit, 30);
+  }
+  var lastFocus = null;
+  function openPreview(code, lang) {
+    if (!pv) build();
+    lastCode = code; lastLang = (lang || 'html').toLowerCase(); lastFocus = document.activeElement;
+    pv.hidden = false; render();
+  }
+  function close() { if (pv) { pv.hidden = true; pv._fr.srcdoc = ''; } if (lastFocus && lastFocus.focus) try { lastFocus.focus(); } catch (e) {} }
+
+  /* ---- Werkzeuge an Code-Bloecken ---- */
+  var WEB = { html: 1, htm: 1, css: 1, js: 1, javascript: 1 };
+  function langOf(pre) {
+    var c = pre.querySelector('code'), cls = ((c && c.className) || '') + ' ' + (pre.className || ''), m = cls.match(/language-([a-z0-9+#-]+)/i), l = m ? m[1].toLowerCase() : '';
+    if (!l || l === 'plaintext' || l === 'markup') { var t = (c || pre).textContent; if (/<!doctype|<html|<body|<div|<style|<section|<h1|<button/i.test(t)) l = 'html'; else if (l === 'markup') l = 'html'; }
+    return l || 'text';
+  }
+  function decorate(root) {
+    Array.prototype.forEach.call(root.querySelectorAll('pre'), function (pre) {
+      if (pre.getAttribute('data-ahs') || pre.closest('.ahs-prev')) return;
+      pre.setAttribute('data-ahs', '1');
+      var lang = langOf(pre), code = (pre.querySelector('code') || pre).textContent;
+      if (code.trim().length < 12) return;
+      var bar = el('div', 'ahs-cb'); bar.appendChild(txt('span', 'ahs-cb-lang', lang));
+      function b(label, fn, cls) { var x = el('button', 'ahs-cb-btn' + (cls ? ' ' + cls : '')); x.type = 'button'; x.textContent = label; x.addEventListener('click', fn); bar.appendChild(x); }
+      b('Kopieren', function () { copy(code); });
+      if (WEB[lang]) b('▶ Testen', function () { openPreview(code, lang); }, 'go');
+      b('Snippet', function () { snipAdd(code, lang); });
+      pre.parentNode.insertBefore(bar, pre);
+    });
+  }
+  function observe(root, fn) { var t; new MutationObserver(function () { clearTimeout(t); t = setTimeout(fn, 70); }).observe(root, { childList: true, subtree: true }); fn(); }
+
+  /* ---- Tastatur-/Sichtbereich ---- */
+  function viewport() {
+    var vv = window.visualViewport; if (!vv) return;
+    function upd() { document.documentElement.style.setProperty('--ahs-vh', vv.height + 'px'); document.body.classList.toggle('ahs-kb', isMobile() && (window.innerHeight - vv.height) > 120); }
+    vv.addEventListener('resize', upd); vv.addEventListener('scroll', upd); upd();
+  }
+
+  return { el: el, txt: txt, toast: toast, copy: copy, snipAdd: snipAdd, openPreview: openPreview, decorate: decorate, observe: observe, viewport: viewport, isMobile: isMobile, langOf: langOf };
+})();
+
+(function () {
+  'use strict';
+  if (typeof AHS === 'undefined') return;
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  AHS.viewport();
+
+  var tabBar = $('#tabBar'), msgList = $('#msgList'), input = $('#chatInput');
+
+  // Code-Bloecke im Chat: Kopieren, Testen, Snippet
+  if (msgList) AHS.observe(msgList, function () { AHS.decorate(msgList); starters(); });
+
+  // Eingabe waechst mit
+  if (input) {
+    if (AHS.isMobile()) input.placeholder = 'Nachricht an Claude ...';
+    var grow = function () { input.style.height = 'auto'; input.style.height = Math.min(input.scrollHeight, Math.round(window.innerHeight * 0.3)) + 'px'; };
+    input.addEventListener('input', grow);
+    setInterval(function () { if (!input.value && parseInt(input.style.height || '0', 10) > 56) grow(); }, 800);
+  }
+
+  // Startvorschlaege, solange nur die Begruessung da ist
+  var st = AHS.el('div', 'ahs-starters ci-starters'); st.hidden = true;
+  [['index.html anlegen', 'Erstelle eine index.html mit einer sauberen Startseite (Header, Hauptbereich, Footer) und verlinke style.css und script.js. Lege alle drei Dateien an.'], ['Portfolio-Grundgerüst', 'Baue ein Portfolio mit index.html, style.css und script.js: Projektkarten mit Filter nach Kategorie und Dunkelmodus.'], ['Code prüfen', 'Lies die Dateien im Workspace und nenne die fünf wichtigsten Verbesserungen für Lesbarkeit und Barrierefreiheit. Ändere noch nichts.'], ['Bug finden', 'Lies index.html und script.js, suche Fehler und behebe nur das Nötige.']].forEach(function (s) {
+    var b = AHS.el('button', 'ahs-starter'); b.type = 'button'; b.textContent = s[0];
+    b.addEventListener('click', function () { if (!input) return; input.value = s[1]; input.dispatchEvent(new Event('input')); input.focus(); });
+    st.appendChild(b);
+  });
+  var bar = $('.n-chat-inputbar'); if (bar && bar.parentNode) bar.parentNode.insertBefore(st, bar);
+  function starters() { if (!st) return; st.hidden = !!(msgList && msgList.querySelector('.n-msg-row:not(.n-msg-assistant)')); }
+
+  // ===== Mobile Navigation =====
+  var nav = AHS.el('nav', 'ci-nav'); nav.setAttribute('aria-label', 'Bereiche');
+  function nb(key, icon, label) { var b = AHS.el('button', ''); b.type = 'button'; b.setAttribute('data-k', key); b.setAttribute('aria-pressed', 'false'); b.innerHTML = '<span class="ic" aria-hidden="true">' + icon + '</span><span>' + label + '</span>'; nav.appendChild(b); return b; }
+  var bChat = nb('chat', '💬', 'Chat'), bFiles = nb('files', '📁', 'Dateien'), bEd = nb('editor', '📝', 'Editor');
+  var dot = AHS.el('i', 'ci-dot'); dot.hidden = true; bEd.appendChild(dot);
+  document.body.appendChild(nav);
+  var fab = AHS.el('button', 'ci-fab'); fab.type = 'button'; fab.hidden = true; document.body.appendChild(fab);
+
+  function fileTabs() { return Array.prototype.filter.call(tabBar.querySelectorAll('.tab-btn'), function (b) { return b.getAttribute('data-tab') !== 'chat'; }); }
+  function activePane() { return $('.tab-pane.active'); }
+  function isChatActive() { var p = activePane(); return !!p && p.id === 'pane-chat'; }
+  function sync() {
+    var chat = isChatActive();
+    bChat.setAttribute('aria-pressed', chat ? 'true' : 'false'); bEd.setAttribute('aria-pressed', chat ? 'false' : 'true');
+    if (!chat) dot.hidden = true;
+    var p = activePane(), prev = p && p.querySelector('[data-act="preview"]'), code = p && p.querySelector('[data-act="code"]');
+    if (!chat && (prev || code)) {
+      var iframe = p.querySelector('.preview-frame'), showing = iframe && iframe.style.display !== 'none';
+      fab.hidden = false; fab.innerHTML = showing ? '<span aria-hidden="true">✎</span><span>Code</span>' : '<span aria-hidden="true">▶</span><span>Testen</span>';
+    } else fab.hidden = true;
+  }
+  bChat.addEventListener('click', function () { var b = $('[data-tab="chat"]', tabBar); if (b) b.click(); });
+  bFiles.addEventListener('click', function () { var b = $('#fsBurger'); if (b) b.click(); });
+  bEd.addEventListener('click', function () {
+    var t = fileTabs(); if (!t.length) { AHS.toast('Noch keine Datei geöffnet. Öffne eine über „Dateien“.'); var f = $('#fsBurger'); if (f) f.click(); return; }
+    t[t.length - 1].click();
+  });
+  fab.addEventListener('click', function () {
+    var p = activePane(); if (!p) return;
+    var iframe = p.querySelector('.preview-frame'), showing = iframe && iframe.style.display !== 'none';
+    var b = p.querySelector(showing ? '[data-act="code"]' : '[data-act="preview"]'); if (b) b.click();
+    setTimeout(sync, 60);
+  });
+  // Beobachten: Tab-Wechsel, neue Dateien (z. B. vom Agenten angelegt)
+  var prevCount = fileTabs().length;
+  new MutationObserver(function () {
+    var n = fileTabs().length;
+    if (n > prevCount && isChatActive()) { dot.hidden = false; AHS.toast('Neue Datei geöffnet: im Editor ansehen'); }
+    prevCount = n; sync();
+  }).observe(tabBar, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
+  var tc = $('#tabContent'); if (tc) new MutationObserver(sync).observe(tc, { attributes: true, subtree: true, attributeFilter: ['class', 'style'] });
+  sync(); starters();
+})();
+</script>
+<!-- ===== Ende CLAUDE IDE POLISH LAYER ===== -->
+
 </body>
 </html>
