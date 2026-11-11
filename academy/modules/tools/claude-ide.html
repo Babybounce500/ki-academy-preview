@@ -357,18 +357,58 @@
      CRUD-Macht ohne jede Bestaetigung, anders als der manuelle Loeschen-
      Button im Baum (der schon immer confirm() nutzte).
      ===================================================================== */
+  /* ---- Hilfen fuer grosse Dateien ---- */
+  const READ_MAX_CHARS = 12000, READ_MAX_LINE = 600;
+  function sizeInfo(p) { const f = fsFiles.get(p); if (!f || f.isImage || typeof f.content !== 'string') return ''; const n = f.content.split('\n').length; return ' (' + (f.content.length > 1024 ? Math.round(f.content.length / 1024) + ' KB' : f.content.length + ' Zeichen') + ', ' + n + ' Zeilen)'; }
+  function numberLine(n, t) { const cut = t.length > READ_MAX_LINE ? t.slice(0, READ_MAX_LINE) + ' [Zeile gekuerzt]' : t; return String(n).padStart(5) + '| ' + cut; }
+  function refreshTab(p, content) { try { const tab = openTabs.get(p); if (tab && tab.cm) tab.cm.setValue(content); } catch (e) {} }
+  function textFile(path) { const f = fsFiles.get(normalizePath(path)); if (!f) return { err: 'Datei nicht gefunden: ' + path }; if (f.isImage) return { err: 'Binaerdatei (Bild), kann nicht als Text gelesen werden.' }; return { f, p: normalizePath(path) }; }
+
   async function executeFsTool(name, input) {
     try {
       switch (name) {
         case 'list_files': {
           const entries = listFiles(input.path || '');
-          return { ok: true, result: entries.length ? entries.map((e) => (e.type === 'folder' ? '📁 ' : '📄 ') + e.path).join('\n') : '(leer)' };
+          return { ok: true, result: entries.length ? entries.map((e) => (e.type === 'folder' ? '📁 ' : '📄 ') + e.path + (e.type === 'folder' ? '' : sizeInfo(e.path))).join('\n') : '(leer)' };
         }
         case 'read_file': {
-          const f = fsFiles.get(normalizePath(input.path));
-          if (!f) return { ok: false, error: 'Datei nicht gefunden: ' + input.path };
-          if (f.isImage) return { ok: false, error: 'Binärdatei (Bild), kann nicht als Text gelesen werden.' };
-          return { ok: true, result: f.content };
+          const t = textFile(input.path); if (t.err) return { ok: false, error: t.err };
+          const lines = t.f.content.split('\n'), total = lines.length;
+          const a = Math.max(1, parseInt(input.start_line, 10) || 1);
+          if (a > total) return { ok: false, error: 'start_line ' + a + ' liegt hinter dem Dateiende (' + total + ' Zeilen).' };
+          const b = Math.min(total, parseInt(input.end_line, 10) || total);
+          const out = []; let size = 0, last = a - 1;
+          for (let i = a - 1; i < b; i++) { const l = numberLine(i + 1, lines[i]); if (size + l.length + 1 > READ_MAX_CHARS && out.length) break; out.push(l); size += l.length + 1; last = i + 1; }
+          let head = 'Datei: ' + t.p + ' | ' + total + ' Zeilen | ' + t.f.content.length + ' Zeichen | gezeigt: Zeilen ' + a + '-' + last;
+          if (last < total) head += '\n[Gekuerzt. Weiterlesen mit start_line=' + (last + 1) + '. Oder gezielt suchen mit search_in_file.]';
+          return { ok: true, result: head + '\n' + out.join('\n') };
+        }
+        case 'search_in_file': {
+          const t = textFile(input.path); if (t.err) return { ok: false, error: t.err };
+          const q = String(input.query || '').toLowerCase(); if (!q) return { ok: false, error: 'query fehlt.' };
+          const ctx = Math.max(0, Math.min(5, parseInt(input.context, 10) || 1)), maxM = Math.max(1, Math.min(50, parseInt(input.max_matches, 10) || 20));
+          const lines = t.f.content.split('\n'); const hits = []; let shown = new Set(); const outLines = []; let size = 0;
+          for (let i = 0; i < lines.length && hits.length < maxM; i++) if (lines[i].toLowerCase().includes(q)) hits.push(i);
+          for (const h of hits) { for (let i = Math.max(0, h - ctx); i <= Math.min(lines.length - 1, h + ctx); i++) { if (shown.has(i)) continue; shown.add(i); const l = numberLine(i + 1, lines[i]); size += l.length + 1; if (size > 8000) break; outLines.push((i === h ? '>' : ' ') + l); } outLines.push('  ---'); if (size > 8000) break; }
+          return { ok: true, result: hits.length ? hits.length + ' Treffer in ' + t.p + ' (' + lines.length + ' Zeilen):\n' + outLines.join('\n') : 'Keine Treffer fuer "' + input.query + '" in ' + t.p + '.' };
+        }
+        case 'edit_file': {
+          const t = textFile(input.path); if (t.err) return { ok: false, error: t.err };
+          const oldS = String(input.old_string ?? ''), newS = String(input.new_string ?? '');
+          if (!oldS) return { ok: false, error: 'old_string darf nicht leer sein.' };
+          const n = t.f.content.split(oldS).length - 1;
+          if (n === 0) return { ok: false, error: 'old_string nicht gefunden. Tipp: mit search_in_file die Stelle suchen; Zeilennummern gehoeren nicht zum Text; Leerzeichen und Einrueckung muessen exakt stimmen.' };
+          if (n > 1 && !input.replace_all) return { ok: false, error: 'old_string kommt ' + n + 'x vor. Nimm mehr Kontext dazu, damit er eindeutig ist, oder setze replace_all=true.' };
+          const next = input.replace_all ? t.f.content.split(oldS).join(newS) : t.f.content.replace(oldS, () => newS);
+          writeFile(t.p, next); refreshTab(t.p, next);
+          return { ok: true, result: 'geaendert: ' + t.p + ' (' + (input.replace_all ? n + ' Stellen' : '1 Stelle') + ', ' + (newS.length - oldS.length >= 0 ? '+' : '') + (newS.length - oldS.length) + ' Zeichen). Datei hat jetzt ' + next.split('\n').length + ' Zeilen.' };
+        }
+        case 'append_file': {
+          const p = normalizePath(input.path); const ex = fsFiles.get(p);
+          if (ex && ex.isImage) return { ok: false, error: 'Binaerdatei (Bild), kein Anhaengen moeglich.' };
+          const next = (ex ? ex.content : '') + String(input.content ?? '');
+          writeFile(input.path, next); refreshTab(p, next);
+          return { ok: true, result: 'angehaengt: ' + String(input.content ?? '').length + ' Zeichen an ' + p + '. Datei hat jetzt ' + next.split('\n').length + ' Zeilen.' };
         }
         case 'write_file': {
           const p = normalizePath(input.path);
@@ -378,7 +418,8 @@
             if (!ok) return { ok: false, error: 'Vom Nutzer abgelehnt: Überschreiben von ' + p };
           }
           writeFile(input.path, input.content ?? '');
-          return { ok: true, result: 'geschrieben: ' + p };
+          refreshTab(p, String(input.content ?? ''));
+          return { ok: true, result: 'geschrieben: ' + p + sizeInfo(p) };
         }
         case 'delete_path': {
           const ok = await confirmAction('Claude möchte "' + input.path + '" löschen. Fortfahren?');
@@ -674,12 +715,15 @@
      ===================================================================== */
   const FS_TOOLS = [
     { name: 'list_files', description: 'Listet Dateien und Ordner im virtuellen Workspace auf, optional unter einem Pfad-Präfix.', input_schema: { type: 'object', properties: { path: { type: 'string', description: 'Ordnerpfad, leer = Wurzel' } } } },
-    { name: 'read_file', description: 'Liest den Textinhalt einer Datei im Workspace.', input_schema: { type: 'object', properties: { path: { type: 'string' } }, required: ['path'] } },
+    { name: 'read_file', description: 'Liest eine Datei zeilenweise. Grosse Dateien werden in Abschnitten geliefert (max. ca. 12.000 Zeichen pro Aufruf); das Ergebnis nennt die Gesamtzahl der Zeilen und ab welcher Zeile es weitergeht. Mit start_line und end_line steuerst du den Abschnitt (Zeilennummern ab 1).', input_schema: { type: 'object', properties: { path: { type: 'string' }, start_line: { type: 'integer', description: 'erste Zeile, Standard 1' }, end_line: { type: 'integer', description: 'letzte Zeile, Standard Dateiende (wird bei grossen Dateien automatisch begrenzt)' } }, required: ['path'] } },
+    { name: 'search_in_file', description: 'Sucht einen Text (ohne Beachtung der Gross-/Kleinschreibung) in einer Datei und liefert Trefferzeilen mit Zeilennummer und etwas Kontext. Ideal, um in grossen Dateien die richtige Stelle zu finden.', input_schema: { type: 'object', properties: { path: { type: 'string' }, query: { type: 'string' }, context: { type: 'integer', description: 'Kontextzeilen vor/nach dem Treffer, Standard 1' }, max_matches: { type: 'integer', description: 'Standard 20' } }, required: ['path', 'query'] } },
+    { name: 'edit_file', description: 'Ersetzt in einer bestehenden Datei einen exakten Textabschnitt (old_string) durch new_string. old_string muss genau einmal vorkommen (oder replace_all=true setzen). Bevorzuge dieses Werkzeug gegenueber write_file, um bestehende Dateien zu aendern.', input_schema: { type: 'object', properties: { path: { type: 'string' }, old_string: { type: 'string' }, new_string: { type: 'string' }, replace_all: { type: 'boolean' } }, required: ['path', 'old_string', 'new_string'] } },
+    { name: 'append_file', description: 'Haengt Text ans Ende einer Datei an (legt sie an, falls es sie nicht gibt). Zum Aufbau grosser Dateien in Etappen: erst write_file mit dem ersten Teil, dann append_file mit den weiteren Teilen.', input_schema: { type: 'object', properties: { path: { type: 'string' }, content: { type: 'string' } }, required: ['path', 'content'] } },
     { name: 'write_file', description: 'Erstellt oder überschreibt eine Textdatei im Workspace. Fehlende Ordner werden implizit angelegt.', input_schema: { type: 'object', properties: { path: { type: 'string' }, content: { type: 'string' } }, required: ['path', 'content'] } },
     { name: 'delete_path', description: 'Löscht eine Datei oder (rekursiv) einen Ordner im Workspace.', input_schema: { type: 'object', properties: { path: { type: 'string' } }, required: ['path'] } },
     { name: 'create_folder', description: 'Legt einen leeren Ordner im Workspace an.', input_schema: { type: 'object', properties: { path: { type: 'string' } }, required: ['path'] } }
   ];
-  const FS_SYSTEM_PROMPT = 'Du bist Claude mit Zugriff auf einen virtuellen Browser-Workspace (kein echtes Dateisystem, kein Bash, kein Server-Zugriff -- rein clientseitig in dieser Browser-Session). Nutze list_files/read_file/write_file/delete_path/create_folder, um Dateien zu lesen, anzulegen, zu ändern oder zu löschen. Pfade sind relativ (z.B. "src/app.js"). Antworte knapp -- die eigentliche Arbeit passiert über die Tools, nicht über lange Erklärungen.';
+  const FS_SYSTEM_PROMPT = "Du bist Claude mit Zugriff auf einen virtuellen Browser-Workspace (kein echtes Dateisystem, kein Bash, kein Server-Zugriff -- rein clientseitig in dieser Browser-Session). Werkzeuge: list_files, read_file, search_in_file, edit_file, append_file, write_file, delete_path, create_folder. Pfade sind relativ (z.B. \"src/app.js\").\nWICHTIG: Der KI-Zugang hat ein knappes Eingabelimit. Arbeite deshalb in kleinen Schritten:\n1. Rufe zuerst list_files auf (zeigt Groesse und Zeilenzahl).\n2. Lies Dateien mit mehr als ca. 200 Zeilen NICHT komplett. Finde die Stelle mit search_in_file und lies dann gezielt mit read_file (start_line/end_line, hoechstens ca. 150 Zeilen pro Aufruf). Das Ergebnis nennt, ab welcher Zeile es weitergeht.\n3. Aendere bestehende Dateien mit edit_file (kleiner, eindeutiger old_string mit etwas Kontext) statt sie komplett neu zu schreiben.\n4. Lege neue grosse Dateien in Etappen an: write_file mit dem ersten Teil (hoechstens ca. 150 Zeilen), danach append_file mit den weiteren Teilen.\nZeilennummern am Anfang gelesener Zeilen (z.B. \"  12|\") gehoeren nicht zum Dateiinhalt: nimm sie nie in old_string oder new_string auf. Antworte knapp -- die eigentliche Arbeit passiert ueber die Tools, nicht ueber lange Erklaerungen.";
 
   // Streaming statt Non-Stream fuer den Tool-Loop: bei Non-Stream wartet fetch()
   // serverseitig (server/lib/http.js: fetchWithTimeout) auf die KOMPLETTE Antwort, bevor
@@ -930,10 +974,50 @@
 
   function toolStepText(name, input) {
     if (name === 'write_file') return 'write_file(' + input.path + ', ' + (input.content || '').length + ' Zeichen)';
+    if (name === 'append_file') return 'append_file(' + input.path + ', +' + (input.content || '').length + ' Zeichen)';
+    if (name === 'edit_file') return 'edit_file(' + input.path + ': ' + String(input.old_string || '').slice(0, 40).replace(/\n/g, ' ') + ' ... -> ' + String(input.new_string || '').slice(0, 40).replace(/\n/g, ' ') + ')';
+    if (name === 'search_in_file') return 'search_in_file(' + input.path + ', "' + input.query + '")';
+    if (name === 'read_file' && (input.start_line || input.end_line)) return 'read_file(' + input.path + ', Zeilen ' + (input.start_line || 1) + '-' + (input.end_line || 'Ende') + ')';
     return name + '(' + JSON.stringify(input) + ')';
   }
 
   const EXT_TO_LANG = { html: 'html', htm: 'html', py: 'python', js: 'javascript', mjs: 'javascript', cjs: 'javascript', jsx: 'javascript', ts: 'typescript', tsx: 'typescript', css: 'css', json: 'json', sh: 'bash', bash: 'bash', java: 'java', c: 'c', h: 'c', cpp: 'cpp', cc: 'cpp', cs: 'csharp', md: 'markdown', markdown: 'markdown', yml: 'yaml', yaml: 'yaml', sql: 'sql' };
+
+  /* ---- Anfragegroesse im Griff halten (KI-Zugang: ca. 16.000 Token = ca. 60.000 Zeichen inkl. System und Tools) ---- */
+  const SEND_BUDGET = 44000;
+  function isPlainUser(m) { return m.role === 'user' && (typeof m.content === 'string' || !m.content.some((b) => b.type === 'tool_result')); }
+  function trimBlock(b, recent) {
+    if (b.type === 'tool_result') { const t = typeof b.content === 'string' ? b.content : JSON.stringify(b.content); const cap = recent ? 14000 : 600; return t.length > cap ? { ...b, content: t.slice(0, cap) + '\n[... gekuerzt, ' + (t.length - cap) + ' Zeichen weggelassen]' } : b; }
+    if (b.type === 'tool_use' && b.input) {
+      const cap = recent ? 24000 : 300, inp = { ...b.input }; let changed = false;
+      for (const k of ['content', 'old_string', 'new_string']) if (typeof inp[k] === 'string' && inp[k].length > cap) { inp[k] = inp[k].slice(0, cap) + '\n[... gekuerzt]'; changed = true; }
+      return changed ? { ...b, input: inp } : b;
+    }
+    return b;
+  }
+  function compactForSend(hist) {
+    const out = hist.map((m, i) => (typeof m.content === 'string') ? m : { ...m, content: m.content.map((b) => trimBlock(b, i >= hist.length - 2)) });
+    const fixed = FS_SYSTEM_PROMPT.length + JSON.stringify(FS_TOOLS).length;
+    let start = 0;
+    while (start < out.length - 1 && JSON.stringify(out.slice(start)).length + fixed > SEND_BUDGET) { start++; while (start < out.length - 1 && !isPlainUser(out[start])) start++; }
+    return out.slice(start);
+  }
+  function shrinkHistoryHard() { history.splice(0, history.length); }
+  function showAgentError(err, userText, bubble) {
+    const code = String((err.data && (err.data.error && err.data.error.code || err.data.error)) || '');
+    const d = document.createElement('div');
+    if (/INPUT_TOKEN_LIMIT/.test(code + String((err.data && err.data.message) || ''))) {
+      const est = err.data && err.data.estimatedInputTokens;
+      d.textContent = 'Die Anfrage war für den KI-Zugang zu groß' + (est ? ' (geschätzt ' + est + ' Token, Limit ' + ((err.data && err.data.inputTokenLimit) || 16000) + ')' : '') + '. Große Dateien liest Claude jetzt in Abschnitten. Bitte um einen Abschnitt, zum Beispiel „Zeige mir die Zeilen 1 bis 120“, oder nenne die Stelle, die geändert werden soll.';
+      bubble.appendChild(d);
+      const b = document.createElement('button'); b.className = 'n-btn n-btn-sm n-btn-secondary'; b.style.marginTop = '8px'; b.textContent = 'Verlauf kürzen und erneut versuchen';
+      b.addEventListener('click', () => { b.disabled = true; shrinkHistoryHard(); runAgentTurn(userText); });
+      bubble.appendChild(b); return;
+    }
+    if (/SESSION_TOKEN_BUDGET/.test(code)) { d.textContent = 'Das Kontingent des KI-Zugangs ist gerade aufgebraucht. Bitte später erneut versuchen.'; bubble.appendChild(d); return; }
+    d.textContent = 'Fehler: ' + ((err.data && err.data.error && err.data.error.message) || (err.data && err.data.error) || err.message || err);
+    bubble.appendChild(d);
+  }
 
   async function runAgentTurn(userText) {
     history.push({ role: 'user', content: userText });
@@ -947,7 +1031,7 @@
         const blockEls = {}; // index -> DOM-Element, fuer Live-Updates waehrend des Streams
         const lastPreviewTs = {}; // index -> Timestamp der letzten Live-Vorschau-Aktualisierung (Throttle, siehe onToolInputDelta)
         const data = await streamClaudeTools(
-          { messages: history, model: 'claude-haiku-4-5-20251001', max_tokens: 4096, system: FS_SYSTEM_PROMPT, tools: FS_TOOLS },
+          { messages: compactForSend(history), model: 'claude-haiku-4-5-20251001', max_tokens: 4096, system: FS_SYSTEM_PROMPT, tools: FS_TOOLS },
           {
             onTextDelta(index, fullText) {
               if (firstChunk) { currentBubble.innerHTML = ''; firstChunk = false; }
@@ -1041,7 +1125,7 @@
           // Neu geschriebene Datei sofort als Editor-Tab bereitstellen -- im Split-Modus
           // gleich aktiv anzeigen (man sieht sie live neben dem Chat entstehen), im
           // Tab-Modus nur oeffnen ohne wegzuschalten (man ist ja gerade mitten im Chat).
-          if (outcome.ok && block.name === 'write_file') openFileTab(normalizePath(block.input.path), { activate: splitMode });
+          if (outcome.ok && (block.name === 'write_file' || block.name === 'edit_file' || block.name === 'append_file')) openFileTab(normalizePath(block.input.path), { activate: splitMode });
           toolResults.push({ type: 'tool_result', tool_use_id: block.id, content: outcome.ok ? String(outcome.result) : ('FEHLER: ' + outcome.error), is_error: !outcome.ok });
         }
         history.push({ role: 'user', content: toolResults });
@@ -1053,8 +1137,7 @@
       }
     } catch (err) {
       if (firstChunk) currentBubble.innerHTML = '';
-      const d = document.createElement('div'); d.textContent = 'Fehler: ' + (err.data?.error?.message || err.data?.error || err.message || err);
-      currentBubble.appendChild(d);
+      showAgentError(err, userText, currentBubble);
     } finally {
       persistHistory(); // auch bei Fehlern mitten in der Tool-Schleife -- bis dahin gelaufene Runden bleiben erhalten
     }
