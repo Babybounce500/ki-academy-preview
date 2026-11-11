@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vollbild HTML Editor mit Toolbar und Ausgabefenster</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #007BFF;
+            --secondary-color: #f2f2f2;
+            --dark-background: #2c2c2c;
+            --dark-foreground: #1e1e1e;
+            --light-text: #ffffff;
+            --dark-text: #333333;
+            --button-hover: #e0e0e0;
+            --transition-speed: 0.3s;
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden; /* Verhindert Scrollbars */
+            display: flex;
+            flex-direction: column;
+            font-family: var(--font-family);
+            background-color: var(--secondary-color);
+            color: var(--dark-text);
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        body.dark-mode {
+            background-color: var(--dark-foreground);
+            color: var(--light-text);
+        }
+
+        header {
+            background: var(--primary-color);
+            color: #ffffff;
+            padding: 5px 20px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            flex: 0 0 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        header .theme-toggle {
+            cursor: pointer;
+            font-size: 16px;
+            background: none;
+            border: none;
+            color: #ffffff;
+            transition: transform var(--transition-speed);
+        }
+
+        header .theme-toggle:hover {
+            transform: rotate(20deg);
+        }
+
+        #toolbar {
+            height: 40px;
+            background: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 0 10px;
+            flex: 0 0 40px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: background-color var(--transition-speed);
+        }
+
+        body.dark-mode #toolbar {
+            background: #3a3a3a;
+        }
+
+        #main {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+            height: calc(100% - 80px); /* Abzug von Header und Toolbar */
+            transition: flex-direction var(--transition-speed);
+        }
+
+        #editor {
+            width: 50%;
+            height: 100%;
+            border-right: 1px solid #ccc;
+            transition: width var(--transition-speed);
+        }
+
+        #output {
+            width: 50%;
+            height: 100%;
+            border: none;
+            background: #ffffff;
+            transition: background-color var(--transition-speed);
+        }
+
+        body.dark-mode #output {
+            background: #1e1e1e;
+        }
+
+        button {
+            padding: 8px 12px;
+            font-size: 14px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: var(--dark-text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background var(--transition-speed), color var(--transition-speed);
+        }
+
+        body.dark-mode button {
+            color: var(--light-text);
+        }
+
+        button:hover {
+            background: var(--button-hover);
+            border-radius: 4px;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        @media (max-width: 1200px) {
+            #editor, #output {
+                width: 50%;
+            }
+        }
+
+        @media (max-width: 800px) {
+            #main {
+                flex-direction: column;
+            }
+            #editor, #output {
+                width: 100%;
+                height: 50%;
+                border-right: none;
+                border-bottom: 1px solid #ccc;
+            }
+            body.dark-mode #editor, body.dark-mode #output {
+                border-bottom: 1px solid #555;
+            }
+        }
+
+        @media (max-width: 600px) {
+            button {
+                font-size: 12px;
+                padding: 6px 8px;
+            }
+            header {
+                font-size: 16px;
+                padding: 4px 10px;
+            }
+            #toolbar {
+                flex-wrap: wrap;
+                height: auto;
+                padding: 8px;
+            }
+            #main {
+                flex-direction: column;
+            }
+            #editor, #output {
+                height: 50%;
+            }
+        }
+
+        /* Smooth transitions for Dark Mode */
+        .dark-mode header,
+        .dark-mode #toolbar {
+            background: var(--primary-color);
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--secondary-color);
+        }
+        body.dark-mode ::-webkit-scrollbar-track {
+            background: #3a3a3a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 4px;
+        }
+        body.dark-mode ::-webkit-scrollbar-thumb {
+            background: #555;
+        }
+
+        /* Button Icon Sizing */
+        button i {
+            font-size: 16px;
+        }
+
+        /* Tooltip Styling */
+        button[title] {
+            position: relative;
+        }
+        button[title]::after {
+            content: attr(title);
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition-speed);
+        }
+        button:hover::after {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        AI HTML Studio
+        <button class="theme-toggle" onclick="toggleTheme()" title="Wechseln Sie den Theme-Modus">
+            <i class="fas fa-adjust"></i>
+        </button>
+    </header>
+    <div id="toolbar">
+        <button onclick="downloadAsText()" title="Als Textdatei herunterladen"><i class="fa fa-download"></i></button>
+        <button onclick="document.getElementById('fileInput').click()" title="Datei hochladen"><i class="fa fa-upload"></i></button>
+        <button onclick="runCode()" title="Code ausfè´‰hren"><i class="fa fa-play"></i></button>
+        <button onclick="selectAll()" title="Alles markieren"><i class="fa fa-grip-lines"></i></button>
+        <button onclick="copyText()" title="Kopieren"><i class="fa fa-copy"></i></button>
+        <button onclick="pasteText()" title="Einfè´‰gen"><i class="fa fa-paste"></i></button>
+        <input type="file" id="fileInput" onchange="uploadFile(this)">
+    </div>
+    <div id="main">
+        <div id="editor">Ihr HTML-Code hier...Live HTML Run auf der anderen Seite</div>
+        <iframe id="output"></iframe>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ext-language_tools.js"></script>
+    <script>
+        var editor = ace.edit("editor");
+        editor.setTheme("ace/theme/github");
+        editor.session.setMode("ace/mode/html");
+        editor.setOptions({
+            enableBasicAutocompletion: true,
+            enableSnippets: true,
+            enableLiveAutocompletion: true, // Aktiviert Live-Autovervollstè´£ndigung
+            showPrintMargin: false,
+            fontSize: "14px",
+            vScrollBarAlwaysVisible: true,
+            useSoftTabs: true
+        });
+
+        function downloadAsText() {
+            var text = editor.getValue();
+            var blob = new Blob([text], { type: 'text/plain' });
+            var url = window.URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'editor_content.html'; // Besser passend zum Inhalt
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        function uploadFile(input) {
+            var file = input.files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    editor.session.setValue(e.target.result);
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        function runCode() {
+            var output = document.getElementById('output');
+            output.srcdoc = editor.getValue();
+        }
+
+        function selectAll() {
+            editor.selectAll();
+            editor.focus();
+        }
+
+        function copyText() {
+            editor.focus();
+            editor.selectAll();
+            document.execCommand('copy');
+            editor.clearSelection();
+            alert('Text erfolgreich kopiert');
+        }
+
+        function pasteText() {
+            navigator.clipboard.readText().then(text => {
+                editor.session.insert(editor.getCursorPosition(), text);
+            }).catch(err => {
+                console.error('Fehler beim Einfè´‰gen des Texts: ', err);
+            });
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            editor.setTheme(document.body.classList.contains('dark-mode') ? "ace/theme/monokai" : "ace/theme/github");
+        }
+
+        window.onresize = function() {
+            editor.resize();
+        };
+    </script>
+</body>
+</html>

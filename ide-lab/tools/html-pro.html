@@ -1,0 +1,1970 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI HTML Studio - Professioneller HTML Editor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #00d9ff;
+            --secondary-color: #f2f2f2;
+            --dark-background: #0a0e27;
+            --dark-foreground: #0f1419;
+            --light-text: #ffffff;
+            --dark-text: #333333;
+            --button-hover: #e0e0e0;
+            --transition-speed: 0.3s;
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --header-font: 'Orbitron', sans-serif;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            font-family: var(--font-family);
+            background-color: var(--secondary-color);
+            color: var(--dark-text);
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        body.dark-mode {
+            background-color: var(--dark-foreground);
+            color: var(--light-text);
+        }
+
+        header {
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0a0e27 100%);
+            color: #00d9ff;
+            padding: 5px 20px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: 900;
+            font-family: var(--header-font);
+            flex: 0 0 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid #00d9ff;
+            text-shadow: 0 0 10px #00d9ff, 0 0 20px rgba(0, 217, 255, 0.5);
+            letter-spacing: 2px;
+        }
+
+        header .theme-toggle {
+            cursor: pointer;
+            font-size: 16px;
+            background: none;
+            border: none;
+            color: #ffffff;
+            transition: transform var(--transition-speed);
+        }
+
+        header .theme-toggle:hover {
+            transform: rotate(20deg);
+        }
+
+        #toolbar {
+            height: auto;
+            background: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            padding: 8px 10px;
+            gap: 5px;
+            flex: 0 0 auto;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: background-color var(--transition-speed);
+        }
+
+        body.dark-mode #toolbar {
+            background: #3a3a3a;
+        }
+
+        #main {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+            transition: flex-direction var(--transition-speed);
+            min-height: 0;
+            min-width: 0;
+        }
+
+        #editor {
+            flex: 1;
+            height: 100%;
+            border-right: 1px solid #ccc;
+            transition: flex var(--transition-speed);
+            overflow: auto;
+            min-height: 0;
+            min-width: 0;
+        }
+
+        body.dark-mode #editor {
+            border-right: 1px solid #555;
+        }
+
+        #previewContainer {
+            flex: 1;
+            height: 100%;
+            background: #ffffff;
+            transition: background-color var(--transition-speed);
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            min-height: 0;
+        }
+
+        body.dark-mode #previewContainer {
+            background: #1e1e1e;
+        }
+
+        #output {
+            flex: 1;
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #ffffff;
+            min-height: 0;
+            overflow: auto;
+        }
+
+        body.dark-mode #output {
+            background: #1e1e1e;
+        }
+        
+        #main.fullscreen-preview #previewContainer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            border-radius: 0;
+            z-index: 10000;
+            overflow: auto !important;
+        }
+        
+        #main.fullscreen-preview #editorContainer,
+        #main.fullscreen-preview #fileTreePanel {
+            display: none;
+        }
+        
+        #main.fullscreen-preview {
+            flex-direction: row;
+        }
+        
+        /* Mobile Responsivität */
+        @media (max-width: 1024px) {
+            #fileTreePanel {
+                width: 200px;
+            }
+            #toolbar {
+                gap: 3px;
+            }
+            button {
+                padding: 6px 8px;
+                font-size: 12px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            #main {
+                flex-direction: column;
+            }
+            
+            #editorContainer {
+                flex: 0 0 50%;
+                min-height: 50vh;
+            }
+            
+            #output {
+                flex: 0 0 50%;
+                min-height: 50vh;
+            }
+            
+            #fileTreePanel {
+                position: absolute;
+                right: 0;
+                top: 40px;
+                width: 250px;
+                height: calc(100vh - 40px);
+                z-index: 100;
+                border-left: 1px solid #ccc;
+            }
+            
+            #fileTreePanel.hidden {
+                display: none;
+            }
+            
+            #main {
+                position: relative;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            #toolbar {
+                padding: 4px 5px;
+                gap: 2px;
+            }
+            
+            button {
+                padding: 4px 6px;
+                font-size: 11px;
+            }
+            
+            button i {
+                font-size: 14px;
+            }
+            
+            #editorContainer {
+                flex: 0 0 60%;
+            }
+            
+            #output {
+                flex: 0 0 40%;
+            }
+        }
+
+        button {
+            padding: 8px 12px;
+            font-size: 14px;
+            cursor: pointer;
+            background: none;
+            border: 1px solid transparent;
+            color: var(--dark-text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            transition: all var(--transition-speed);
+            border-radius: 4px;
+        }
+
+        body.dark-mode button {
+            color: var(--light-text);
+        }
+
+        button:hover {
+            background: var(--button-hover);
+            border: 1px solid #ccc;
+        }
+
+        button.active {
+            background: var(--primary-color);
+            color: white;
+            border: 1px solid var(--primary-color);
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        /* Modal Styling */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: var(--secondary-color);
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            max-width: 500px;
+            width: 90%;
+        }
+
+        body.dark-mode .modal-content {
+            background-color: #3a3a3a;
+            color: var(--light-text);
+        }
+
+        .modal-content h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        body.dark-mode .modal-content input {
+            background: #555;
+            color: white;
+            border: 1px solid #777;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .modal-buttons button {
+            margin: 0;
+        }
+
+        /* Find & Replace Panel */
+        #findReplacePanel {
+            display: none;
+            background: var(--secondary-color);
+            padding: 10px;
+            border-top: 1px solid #ccc;
+            margin-top: 5px;
+        }
+
+        body.dark-mode #findReplacePanel {
+            background: #3a3a3a;
+            border-top: 1px solid #555;
+        }
+
+        .find-replace-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
+        .find-replace-row input {
+            flex: 1;
+            min-width: 150px;
+            padding: 6px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        body.dark-mode .find-replace-row input {
+            background: #555;
+            color: white;
+            border: 1px solid #777;
+        }
+
+        .status-bar {
+            background: var(--secondary-color);
+            padding: 4px 10px;
+            font-size: 12px;
+            border-top: 1px solid #ccc;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        body.dark-mode .status-bar {
+            background: #3a3a3a;
+            border-top: 1px solid #555;
+        }
+
+        @media (max-width: 800px) {
+            #main {
+                flex-direction: column;
+            }
+            #editor {
+                flex: 1;
+                border-right: none;
+                border-bottom: 1px solid #ccc;
+            }
+            body.dark-mode #editor {
+                border-right: none;
+                border-bottom: 1px solid #555;
+            }
+        }
+
+        @media (max-width: 600px) {
+            button {
+                font-size: 12px;
+                padding: 6px 8px;
+            }
+            header {
+                font-size: 16px;
+                padding: 4px 10px;
+            }
+            #toolbar {
+                padding: 5px;
+                gap: 2px;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--secondary-color);
+        }
+        body.dark-mode ::-webkit-scrollbar-track {
+            background: #3a3a3a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 4px;
+        }
+        body.dark-mode ::-webkit-scrollbar-thumb {
+            background: #555;
+        }
+
+        button i {
+            font-size: 16px;
+        }
+
+        button#fileTreeToggleBtn {
+            margin-left: auto;
+        }
+
+        button#fileTreeToggleBtn i {
+            color: #333;
+        }
+
+        body.dark-mode button#fileTreeToggleBtn i {
+            color: #fff;
+        }
+
+        button#newFileBtn i {
+            color: #007BFF;
+            font-weight: bold;
+        }
+
+        body.dark-mode button#newFileBtn i {
+            color: #4BB0FF;
+            font-weight: bold;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        button[title] {
+            position: relative;
+        }
+        button[title]::after {
+            content: attr(title);
+            position: absolute;
+            bottom: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition-speed);
+            z-index: 100;
+        }
+        button:hover::after {
+            opacity: 1;
+        }
+
+        /* File Tree Panel */
+        #fileTreePanel {
+            width: 250px;
+            height: 100%;
+            background: var(--secondary-color);
+            border-left: 1px solid #ccc;
+            display: flex;
+            flex-direction: column;
+            transition: width 0.3s, opacity 0.3s;
+            overflow: hidden;
+            min-width: 0;
+            min-height: 0;
+        }
+
+        #fileTreePanel.hidden {
+            width: 0;
+            opacity: 0;
+            border-left: none;
+        }
+
+        body.dark-mode #fileTreePanel {
+            background: #3a3a3a;
+            border-left: 1px solid #555;
+        }
+
+        #fileTreeHeader {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            background: #f9f9f9;
+            flex: 0 0 auto;
+        }
+
+        body.dark-mode #fileTreeHeader {
+            background: #2a2a2a;
+            border-bottom: 1px solid #555;
+        }
+
+        #fileTreeContent {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 10px 0;
+            min-height: 0;
+        }
+
+        .file-tree-item {
+            padding: 8px 15px;
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+            font-size: 13px;
+        }
+
+        .file-tree-item:hover {
+            background: #e8e8e8;
+        }
+
+        body.dark-mode .file-tree-item:hover {
+            background: #444;
+        }
+
+        .file-tree-item.folder {
+            font-weight: 500;
+        }
+
+        .file-tree-item.active {
+            background: #007BFF;
+            color: white;
+        }
+
+        .file-tree-item i {
+            font-size: 12px;
+            width: 14px;
+            text-align: center;
+        }
+
+        #fileTreeActions {
+            padding: 8px;
+            border-top: 1px solid #ccc;
+            display: flex;
+            gap: 5px;
+            flex: 0 0 auto;
+        }
+
+        body.dark-mode #fileTreeActions {
+            border-top: 1px solid #555;
+        }
+
+        #fileTreeActions button {
+            flex: 1;
+            padding: 6px 8px;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        /* Tab System */
+        #editorTabs {
+            display: flex;
+            background: #f5f5f5;
+            border-bottom: 1px solid #ccc;
+            gap: 2px;
+            padding: 5px;
+            overflow-x: auto;
+            flex: 0 0 auto;
+        }
+
+        body.dark-mode #editorTabs {
+            background: #2a2a2a;
+            border-bottom: 1px solid #555;
+        }
+
+        .tab {
+            padding: 6px 12px;
+            background: #e0e0e0;
+            border: 1px solid #ccc;
+            border-radius: 4px 4px 0 0;
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        body.dark-mode .tab {
+            background: #3a3a3a;
+            border: 1px solid #555;
+        }
+
+        .tab:hover {
+            background: #d0d0d0;
+        }
+
+        body.dark-mode .tab:hover {
+            background: #444;
+        }
+
+        .tab.active {
+            background: white;
+            border-bottom-color: white;
+        }
+
+        body.dark-mode .tab.active {
+            background: #1e1e1e;
+            border-bottom-color: #1e1e1e;
+        }
+
+        .tab-close {
+            cursor: pointer;
+            font-size: 14px;
+            padding: 0 2px;
+            line-height: 1;
+        }
+
+        .tab-close:hover {
+            color: red;
+        }
+
+        #editorContainer {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        #editor {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Context Menu */
+        #contextMenu {
+            display: none;
+            position: fixed;
+            background: var(--secondary-color);
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            z-index: 2000;
+            min-width: 180px;
+        }
+
+        body.dark-mode #contextMenu {
+            background: #3a3a3a;
+            border: 1px solid #555;
+        }
+
+        #contextMenu.show {
+            display: block;
+        }
+
+        .context-menu-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            border-bottom: 1px solid #eee;
+            transition: background 0.15s;
+        }
+
+        body.dark-mode .context-menu-item {
+            border-bottom: 1px solid #555;
+        }
+
+        .context-menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .context-menu-item:hover {
+            background: #f0f0f0;
+        }
+
+        body.dark-mode .context-menu-item:hover {
+            background: #444;
+        }
+
+        .context-menu-item i {
+            width: 16px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        Genitus Inc - HTML Studio 
+        <button class="theme-toggle" onclick="toggleTheme()" title="Theme umschalten">
+            <i class="fas fa-adjust"></i>
+        </button>
+    </header>
+    <div id="toolbar">
+        <button onclick="openSaveDialog('html')" title="Als HTML speichern (Ctrl+Shift+S)"><i class="fa fa-save"></i></button>
+        <button onclick="openSaveDialog('txt')" title="Als Text speichern"><i class="fa fa-file-text"></i></button>
+        <button onclick="document.getElementById('fileInput').click()" title="Datei öffnen (Ctrl+O)"><i class="fa fa-folder-open"></i></button>
+        <button onclick="document.getElementById('folderInput').click()" title="Ordner öffnen"><i class="fa fa-folder"></i></button>
+        <button id="newFileBtn" onclick="newFile()" title="Neue Datei"><i class="fa fa-pen"></i></button>
+        <button onclick="toggleLivePreview()" id="livePreviewBtn" title="Live-Vorschau (Ctrl+L)"><i class="fa fa-tv"></i></button>
+        <button onclick="toggleFullscreenPreview()" id="fullscreenBtn" title="Vollbild Vorschau (F11)"><i class="fa fa-expand"></i></button>
+        <button onclick="formatCode()" title="Code formatieren (Ctrl+Shift+F)"><i class="fa fa-indent"></i></button>
+        <button onclick="toggleFindReplace()" title="Suchen & Ersetzen (Ctrl+H)"><i class="fa fa-search"></i></button>
+        <button onclick="selectAll()" title="Alles markieren (Ctrl+A)"><i class="fa fa-grip-lines"></i></button>
+        <button onclick="copyText()" title="Kopieren (Ctrl+C)"><i class="fa fa-copy"></i></button>
+        <button onclick="pasteText()" title="Einfügen (Ctrl+V)"><i class="fa fa-paste"></i></button>
+        <button onclick="resetAll()" title="Alles zurücksetzen (Local Storage & Auto-Save)"><i class="fa fa-redo"></i></button>
+        <button id="fileTreeToggleBtn" onclick="toggleFileTree()" title="Dateibrowser anzeigen/verbergen"><i class="fa fa-bars"></i></button>
+        <input type="file" id="fileInput" onchange="uploadFile(this)">
+        <input type="file" id="folderInput" webkitdirectory directory onchange="uploadFolder(this)">
+    </div>
+    <div id="findReplacePanel">
+        <div class="find-replace-row">
+            <input type="text" id="findInput" placeholder="Suchen...">
+            <button onclick="findNext()" title="Nächster"><i class="fa fa-arrow-down"></i></button>
+            <button onclick="findPrev()" title="Vorheriger"><i class="fa fa-arrow-up"></i></button>
+        </div>
+        <div class="find-replace-row">
+            <input type="text" id="replaceInput" placeholder="Ersetzen...">
+            <button onclick="replaceNext()" title="Ersetzen"><i class="fa fa-exchange"></i></button>
+            <button onclick="replaceAll()" title="Alle ersetzen"><i class="fa fa-exchange-alt"></i></button>
+        </div>
+    </div>
+    <div id="main">
+        <div id="editorContainer">
+            <div id="editorTabs">
+                <!-- Tabs werden hier dynamisch eingefügt -->
+            </div>
+            <div id="editor">Ihr HTML-Code hier...</div>
+        </div>
+        <div id="previewContainer">
+            <iframe id="output"></iframe>
+        </div>
+        <div id="fileTreePanel">
+            <div id="fileTreeHeader">
+                <span>Dateien</span>
+                <button onclick="toggleFileTree()" style="margin: 0; padding: 0 5px; font-size: 12px;">×</button>
+            </div>
+            <div id="fileTreeContent">
+                <!-- Dateien werden hier eingefügt -->
+            </div>
+            <div id="fileTreeActions">
+                <button onclick="newFolder()" title="Neuer Ordner"><i class="fa fa-folder-plus"></i></button>
+                <button onclick="newFile()" title="Neue Datei"><i class="fa fa-file-plus"></i></button>
+                <button onclick="document.getElementById('folderInputTree').click()" title="Ordner hochladen"><i class="fa fa-folder"></i></button>
+            </div>
+            <input type="file" id="folderInputTree" webkitdirectory directory onchange="uploadFolder(this)" style="display: none;">
+        </div>
+    </div>
+    <div class="status-bar">
+        <span id="status">Bereit</span>
+        <span id="autoSaveStatus">Auto-Save: aktiv</span>
+    </div>
+
+    <!-- Context Menu -->
+    <div id="contextMenu">
+        <div class="context-menu-item" onclick="contextMenuNewFile()" id="cmNewFile">
+            <i class="fa fa-file-plus"></i>
+            <span>Neue Datei</span>
+        </div>
+        <div class="context-menu-item" onclick="contextMenuNewFolder()" id="cmNewFolder">
+            <i class="fa fa-folder-plus"></i>
+            <span>Neuer Ordner</span>
+        </div>
+        <div class="context-menu-item" onclick="contextMenuPreview()" id="cmPreview">
+            <i class="fa fa-eye"></i>
+            <span>Vorschau</span>
+        </div>
+        <div class="context-menu-item" onclick="contextMenuDownload()" id="cmDownload">
+            <i class="fa fa-download"></i>
+            <span>Herunterladen</span>
+        </div>
+        <div class="context-menu-item" onclick="contextMenuDelete()" id="cmDelete">
+            <i class="fa fa-trash"></i>
+            <span>Löschen</span>
+        </div>
+        <div class="context-menu-item" onclick="contextMenuRename()" id="cmRename">
+            <i class="fa fa-edit"></i>
+            <span>Umbenennen</span>
+        </div>
+    </div>
+
+    <!-- Save As Dialog -->
+    <div id="saveModal" class="modal">
+        <div class="modal-content">
+            <h2 id="saveModalTitle">Datei speichern</h2>
+            <input type="text" id="filenameInput" placeholder="Dateiname">
+            <div class="modal-buttons">
+                <button onclick="closeSaveDialog()">Abbrechen</button>
+                <button onclick="executeFileSave()" style="background: var(--primary-color); color: white;">Speichern</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ext-language_tools.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.6/beautify.min.js"></script>
+    <script>
+        // Editor Setup
+        var editor = ace.edit("editor");
+        editor.setTheme("ace/theme/github");
+        editor.session.setMode("ace/mode/html");
+        editor.setOptions({
+            enableBasicAutocompletion: true,
+            enableSnippets: true,
+            enableLiveAutocompletion: true,
+            showPrintMargin: false,
+            fontSize: "14px",
+            vScrollBarAlwaysVisible: true,
+            useSoftTabs: true,
+            tabSize: 2
+        });
+
+        // Global Variables
+        let autoSaveInterval;
+        let previewUpdateTimeout;
+        const AUTO_SAVE_KEY = 'htmlEditorContent';
+        const AUTO_SAVE_INTERVAL = 30000; // 30 Sekunden
+        const PREVIEW_UPDATE_DELAY = 50; // 50ms debounce für schnelle Preview
+
+        // Initialize
+        window.onload = function() {
+            restoreContent();
+            setupKeyboardShortcuts();
+            setupAutoSave();
+            setupLivePreview();
+            updateStatus('Bereit');
+            runCode(); // Initial preview
+        };
+
+        // Keyboard Shortcuts
+        function setupKeyboardShortcuts() {
+            editor.commands.addCommand({
+                name: "saveAs",
+                bindKey: {win: "Ctrl-Shift-S", mac: "Cmd-Shift-S"},
+                exec: () => openSaveDialog('html')
+            });
+            editor.commands.addCommand({
+                name: "openFile",
+                bindKey: {win: "Ctrl-O", mac: "Cmd-O"},
+                exec: () => document.getElementById('fileInput').click()
+            });
+            editor.commands.addCommand({
+                name: "livePreview",
+                bindKey: {win: "Ctrl-L", mac: "Cmd-L"},
+                exec: toggleLivePreview
+            });
+            editor.commands.addCommand({
+                name: "format",
+                bindKey: {win: "Ctrl-Shift-F", mac: "Cmd-Shift-F"},
+                exec: formatCode
+            });
+            editor.commands.addCommand({
+                name: "findReplace",
+                bindKey: {win: "Ctrl-H", mac: "Cmd-H"},
+                exec: toggleFindReplace
+            });
+        }
+
+        // Setup Live Preview - wird bei JEDEM Change aufgerufen
+        function setupLivePreview() {
+            editor.session.on('change', function() {
+                // Schneller Debounce für Preview (50ms)
+                clearTimeout(previewUpdateTimeout);
+                previewUpdateTimeout = setTimeout(runCode, PREVIEW_UPDATE_DELAY);
+            });
+        }
+        
+        // Fullscreen Preview Mode - öffnet in NEUEM TAB
+        function toggleFullscreenPreview() {
+            const html = editor.getValue();
+            const blob = new Blob([html], { type: 'text/html; charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const newWindow = window.open(url, '_blank');
+            
+            // Keep updating the preview in new window when editor changes
+            if (newWindow) {
+                window.fullscreenPreviewWindow = newWindow;
+                console.log('Preview geöffnet in neuem Tab');
+            }
+        }
+        
+        // Update fullscreen preview when editor changes
+        function updateFullscreenPreview() {
+            if (window.fullscreenPreviewWindow && !window.fullscreenPreviewWindow.closed) {
+                const html = editor.getValue();
+                const blob = new Blob([html], { type: 'text/html; charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                window.fullscreenPreviewWindow.location.href = url;
+            }
+        }
+        
+        // Hook für Editor Changes - Update Fullscreen Preview
+        editor.session.on('change', function() {
+            updateFullscreenPreview();
+        });
+        
+        // Keyboard: F11 öffnet Fullscreen Preview in neuem Tab
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'F11') {
+                e.preventDefault();
+                toggleFullscreenPreview();
+            }
+        });
+
+        // Auto-Save Functionality
+        function setupAutoSave() {
+            editor.session.on('change', function() {
+                updateStatus('Änderungen nicht gespeichert...');
+                clearTimeout(autoSaveInterval);
+                autoSaveInterval = setTimeout(autoSave, 2000);
+            });
+        }
+
+        function autoSave() {
+            const content = editor.getValue();
+            localStorage.setItem(AUTO_SAVE_KEY, content);
+            updateStatus('Auto-Save erfolgreich');
+            setTimeout(() => updateStatus('Bereit'), 2000);
+        }
+
+        function restoreContent() {
+            // DEPRECATED - wird von Tab-System übernommen
+            // const saved = localStorage.getItem(AUTO_SAVE_KEY);
+            // if (saved) {
+            //     editor.setValue(saved);
+            //     editor.clearSelection();
+            // }
+        }
+
+        // Save As HTML/TXT
+        let currentSaveType = 'html';
+
+        function openSaveDialog(type = 'html') {
+            currentSaveType = type;
+            const modal = document.getElementById('saveModal');
+            const title = document.getElementById('saveModalTitle');
+            const input = document.getElementById('filenameInput');
+            
+            if (type === 'html') {
+                title.textContent = 'Datei als HTML speichern';
+                input.placeholder = 'Dateiname (z.B. index.html)';
+                input.value = 'index.html';
+            } else {
+                title.textContent = 'Datei als Text speichern';
+                input.placeholder = 'Dateiname (z.B. notes.txt)';
+                input.value = 'notes.txt';
+            }
+            
+            modal.classList.add('show');
+            input.focus();
+            input.select();
+        }
+
+        function closeSaveDialog() {
+            document.getElementById('saveModal').classList.remove('show');
+        }
+
+        function executeFileSave() {
+            if (currentSaveType === 'html') {
+                saveAsHTML();
+            } else {
+                saveAsText();
+            }
+        }
+
+        function saveAsHTML() {
+            const filename = document.getElementById('filenameInput').value.trim();
+            if (!filename) {
+                alert('Bitte geben Sie einen Dateinamen ein');
+                return;
+            }
+            
+            const validName = filename.endsWith('.html') ? filename : filename + '.html';
+            const text = editor.getValue();
+            const blob = new Blob([text], { type: 'text/html' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = validName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            closeSaveDialog();
+            updateStatus(`Datei "${validName}" heruntergeladen`);
+        }
+
+        function saveAsText() {
+            const filename = document.getElementById('filenameInput').value.trim();
+            if (!filename) {
+                alert('Bitte geben Sie einen Dateinamen ein');
+                return;
+            }
+            
+            const validName = filename.endsWith('.txt') ? filename : filename + '.txt';
+            const text = editor.getValue();
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = validName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            closeSaveDialog();
+            updateStatus(`Datei "${validName}" heruntergeladen`);
+        }
+
+        // File Upload
+        function uploadFile(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Neue Datei im Tree erstellen und öffnen
+                    const filename = file.name;
+                    if (!fileTree[filename]) {
+                        fileTree[filename] = { type: 'file', content: '', modified: new Date() };
+                    }
+                    fileTree[filename].content = e.target.result;
+                    openFileInTab(filename);
+                    renderFileTree();
+                    saveFilesToStorage();
+                    updateStatus(`Datei "${filename}" geladen`);
+                };
+                reader.readAsText(file);
+            }
+            input.value = '';
+        }
+
+        // Folder Upload - SIMPLE UND FUNKTIONIEREND
+        function uploadFolder(input) {
+            const files = input.files;
+            console.log('=== UPLOAD START ===', files.length, 'files');
+            
+            if (files.length === 0) {
+                console.log('No files');
+                updateStatus('Keine Dateien hochgeladen');
+                return;
+            }
+
+            const filesToProcess = Array.from(files);
+            let processedCount = 0;
+
+            filesToProcess.forEach(file => {
+                const fullPath = file.webkitRelativePath || file.name;
+                console.log('Processing:', fullPath);
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        console.log('Loaded:', fullPath);
+                        
+                        // Pfad in Segmente aufteilen
+                        const parts = fullPath.split('/').filter(p => p);
+                        const fileName = parts[parts.length - 1];
+                        
+                        // Navigiere/Erstelle Ordnerstruktur
+                        let currentNode = fileTree;
+                        
+                        for (let i = 0; i < parts.length - 1; i++) {
+                            const folderName = parts[i];
+                            const folderPath = parts.slice(0, i + 1).join('/');
+                            
+                            console.log(`  Ensuring folder exists: ${folderPath}`);
+                            
+                            // Suche oder erstelle Ordner
+                            let folderNode = currentNode.children.find(
+                                child => child.kind === 'directory' && child.name === folderName
+                            );
+                            
+                            if (!folderNode) {
+                                folderNode = {
+                                    name: folderName,
+                                    kind: 'directory',
+                                    path: folderPath,
+                                    children: []
+                                };
+                                currentNode.children.push(folderNode);
+                                console.log(`    ✓ Created folder: ${folderName}`);
+                            } else {
+                                console.log(`    ✓ Found folder: ${folderName}`);
+                            }
+                            currentNode = folderNode;
+                        }
+                        
+                        // Füge Datei zum aktuellen Ordner hinzu
+                        currentNode.children.push({
+                            name: fileName,
+                            kind: 'file',
+                            path: fullPath,
+                            content: e.target.result
+                        });
+                        console.log(`  ✓ Added file: ${fileName}`);
+                        
+                        processedCount++;
+                        console.log(`Progress: ${processedCount}/${filesToProcess.length}`);
+                        
+                        // Wenn alle Dateien verarbeitet, aktualisiere UI
+                        if (processedCount === filesToProcess.length) {
+                            console.log('=== ALL COMPLETE ===');
+                            saveFilesToStorage();
+                            renderFileTree();
+                            updateStatus(`${processedCount} Dateien hochgeladen`);
+                        }
+                    } catch (error) {
+                        console.error('Process error:', error, error.stack);
+                    }
+                };
+                
+                reader.onerror = (error) => {
+                    console.error('Read error:', error);
+                };
+                
+                reader.readAsText(file);
+            });
+            
+            input.value = '';
+        }
+
+        // Live Preview - ist immer aktiv, dieser Button ist nur für UI-Feedback
+        function toggleLivePreview() {
+            const btn = document.getElementById('livePreviewBtn');
+            btn.classList.toggle('active');
+            const isActive = btn.classList.contains('active');
+            updateStatus(isActive ? 'Live-Vorschau angezeigt' : 'Live-Vorschau versteckt');
+        }
+
+        // Run Code / Update Preview - wird ständig aufgerufen, kein Cache
+        function runCode() {
+            const output = document.getElementById('output');
+            const htmlContent = editor.getValue();
+            
+            // Neue srcdoc für garantiert live Content (kein Cache)
+            // Füge einen Cache-Buster hinzu
+            output.srcdoc = htmlContent;
+            
+            // Zusätzlich: Force refresh durch Neuladen
+            output.style.display = 'none';
+            setTimeout(() => {
+                output.style.display = 'block';
+            }, 0);
+        }
+
+        // Format Code
+        function formatCode() {
+            const html = editor.getValue();
+            try {
+                const formatted = html_beautify(html, {indent_size: 2, indent_char: ' '});
+                editor.setValue(formatted);
+                editor.clearSelection();
+                updateStatus('Code formatiert');
+                autoSave();
+            } catch (e) {
+                updateStatus('Formatierungsfehler');
+            }
+        }
+
+        // Find & Replace
+        let findSession = null;
+
+        function toggleFindReplace() {
+            const panel = document.getElementById('findReplacePanel');
+            if (panel.style.display === 'none' || !panel.style.display) {
+                panel.style.display = 'block';
+                document.getElementById('findInput').focus();
+            } else {
+                panel.style.display = 'none';
+            }
+        }
+
+        function findNext() {
+            const searchStr = document.getElementById('findInput').value;
+            if (!searchStr) return;
+            
+            try {
+                // Nutze Ace's interne Find-Funktion
+                editor.find(searchStr, {
+                    wrap: true,
+                    caseSensitive: false,
+                    wholeWord: false,
+                    regExp: false
+                });
+                updateStatus(`Gefunden: "${searchStr}"`);
+            } catch(e) {
+                updateStatus(`Fehler bei Suche: ${e.message}`);
+            }
+        }
+
+        function findPrev() {
+            const searchStr = document.getElementById('findInput').value;
+            if (!searchStr) return;
+            
+            try {
+                editor.find(searchStr, {
+                    backwards: true,
+                    wrap: true,
+                    caseSensitive: false,
+                    wholeWord: false,
+                    regExp: false
+                });
+                updateStatus(`Gefunden (rückwärts): "${searchStr}"`);
+            } catch(e) {
+                updateStatus(`Fehler bei Suche: ${e.message}`);
+            }
+        }
+
+        function replaceNext() {
+            const searchStr = document.getElementById('findInput').value;
+            const replaceStr = document.getElementById('replaceInput').value;
+            
+            if (!searchStr) {
+                updateStatus('Geben Sie einen Suchtext ein');
+                return;
+            }
+            
+            try {
+                // Finde nächstes Vorkommen
+                editor.find(searchStr, {wrap: true, caseSensitive: false});
+                
+                // Ersetze Selection
+                if (editor.session.selection.isEmpty() === false) {
+                    editor.session.replace(editor.getSelectionRange(), replaceStr);
+                    updateStatus(`Ersetzt: "${searchStr}" → "${replaceStr}"`);
+                    autoSave();
+                    // Weitersuchen für nächste Instanz
+                    findNext();
+                } else {
+                    updateStatus(`"${searchStr}" nicht gefunden`);
+                }
+            } catch(e) {
+                updateStatus(`Fehler beim Ersetzen: ${e.message}`);
+            }
+        }
+
+        function replaceAll() {
+            const searchStr = document.getElementById('findInput').value;
+            const replaceStr = document.getElementById('replaceInput').value;
+            if (searchStr) {
+                // Einfache und zuverlässige Replace All Implementation
+                let content = editor.getValue();
+                let count = 0;
+                
+                // Escape special regex characters in search string
+                const escapedSearch = searchStr.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                const regex = new RegExp(escapedSearch, 'g');
+                
+                // Zähle Occurrences und ersetze
+                const newContent = content.replace(regex, () => {
+                    count++;
+                    return replaceStr;
+                });
+                
+                if (count > 0) {
+                    editor.setValue(newContent);
+                    editor.clearSelection();
+                    updateStatus(`${count}x ersetzt: "${searchStr}" → "${replaceStr}"`);
+                    autoSave();
+                } else {
+                    updateStatus(`Nicht gefunden: "${searchStr}"`);
+                }
+            }
+        }
+
+        // Other Functions
+        function selectAll() {
+            editor.selectAll();
+            editor.focus();
+        }
+
+        function copyText() {
+            editor.focus();
+            editor.selectAll();
+            document.execCommand('copy');
+            editor.clearSelection();
+            updateStatus('Text kopiert');
+        }
+
+        function pasteText() {
+            navigator.clipboard.readText().then(text => {
+                editor.session.insert(editor.getCursorPosition(), text);
+                autoSave();
+                updateStatus('Text eingefügt');
+            }).catch(err => {
+                updateStatus('Fehler beim Einfügen');
+            });
+        }
+
+        function resetAll() {
+            const confirmed = confirm('Alle lokalen Daten löschen?\n\n- Alle Dateien\n- Auto-Save\n- Local Storage\n\nDiese Aktion kann nicht rückgängig gemacht werden!');
+            
+            if (confirmed) {
+                try {
+                    // Alle localStorage Keys löschen
+                    localStorage.removeItem(AUTO_SAVE_KEY);
+                    localStorage.removeItem(FILES_STORAGE_KEY);
+                    localStorage.removeItem('theme');
+                    
+                    // FileTree zurücksetzen
+                    fileTree = {
+                        name: 'root',
+                        kind: 'directory',
+                        path: '',
+                        children: [
+                            { name: 'index.html', kind: 'file', path: 'index.html', content: '' },
+                            { name: 'script.js', kind: 'file', path: 'script.js', content: '' },
+                            { name: 'style.css', kind: 'file', path: 'style.css', content: '' }
+                        ]
+                    };
+                    
+                    // Editor leeren
+                    editor.setValue('');
+                    
+                    // Tabs und aktive Datei zurücksetzen
+                    openTabs = [];
+                    currentActiveFile = null;
+                    
+                    // UI aktualisieren
+                    renderFileTree();
+                    document.getElementById('editorTabs').innerHTML = '';
+                    
+                    updateStatus('✓ Alles zurückgesetzt - Seite wird neu geladen...');
+                    
+                    // Seite neu laden nach kurzer Verzögerung
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                    
+                } catch (error) {
+                    updateStatus('Fehler beim Zurücksetzen: ' + error.message);
+                }
+            }
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            editor.setTheme(document.body.classList.contains('dark-mode') ? "ace/theme/monokai" : "ace/theme/github");
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        }
+
+        // Restore Theme
+        window.addEventListener('load', () => {
+            const theme = localStorage.getItem('theme');
+            if (theme === 'dark') {
+                document.body.classList.add('dark-mode');
+                editor.setTheme("ace/theme/monokai");
+            }
+        });
+
+        function updateStatus(message) {
+            document.getElementById('status').textContent = message;
+        }
+
+        window.onresize = function() {
+            editor.resize();
+        };
+
+        // Close modal on escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeSaveDialog();
+                document.getElementById('findReplacePanel').style.display = 'none';
+            }
+        });
+
+        // File Tree & Multi-Tab Management (optimierte Struktur)
+        let fileTree = {
+            name: 'root',
+            kind: 'directory',
+            path: '',
+            children: [
+                { name: 'index.html', kind: 'file', path: 'index.html', content: '' },
+                { name: 'script.js', kind: 'file', path: 'script.js', content: '' },
+                { name: 'style.css', kind: 'file', path: 'style.css', content: '' }
+            ]
+        };
+
+        let openTabs = [];
+        let currentActiveFile = null;
+        const FILES_STORAGE_KEY = 'htmlEditorFiles';
+        
+        // Context Menu State
+        let selectedTreeNode = null;
+        let selectedTreePath = [];
+
+        // Save file content before switching
+        function saveCurrentFile() {
+            if (currentActiveFile) {
+                const content = editor.getValue();
+                saveFileContent(currentActiveFile, content);
+                saveFilesToStorage();
+            }
+        }
+
+        // Save all files to localStorage
+        function saveFilesToStorage() {
+            const filesData = {};
+            
+            function collectFiles(node) {
+                if (node.kind === 'file') {
+                    filesData[node.path] = node.content;
+                } else if (node.kind === 'directory' && node.children) {
+                    node.children.forEach(child => collectFiles(child));
+                }
+            }
+            
+            if (fileTree.children) {
+                fileTree.children.forEach(child => collectFiles(child));
+            }
+            localStorage.setItem(FILES_STORAGE_KEY, JSON.stringify(filesData));
+        }
+
+        // Restore files from localStorage
+        function restoreFilesFromStorage() {
+            const saved = localStorage.getItem(FILES_STORAGE_KEY);
+            if (saved) {
+                try {
+                    const filesData = JSON.parse(saved);
+                    for (let [fullPath, content] of Object.entries(filesData)) {
+                        const pathSegments = fullPath.split('/');
+                        const filename = pathSegments[pathSegments.length - 1];
+                        
+                        // Erstelle Folder-Struktur falls nötig
+                        if (pathSegments.length > 1) {
+                            let currentDepth = fileTree.children;
+                            
+                            for (let i = 0; i < pathSegments.length - 1; i++) {
+                                const folderName = pathSegments[i];
+                                const folderPath = pathSegments.slice(0, i + 1).join('/');
+                                
+                                let folder = currentDepth.find(item => item.name === folderName && item.kind === 'directory');
+                                if (!folder) {
+                                    folder = {
+                                        name: folderName,
+                                        kind: 'directory',
+                                        path: folderPath,
+                                        children: []
+                                    };
+                                    currentDepth.push(folder);
+                                }
+                                currentDepth = folder.children;
+                            }
+                        }
+                        
+                        // Füge Datei hinzu wenn nicht vorhanden
+                        let targetArray = fileTree.children;
+                        if (pathSegments.length > 1) {
+                            let folder = fileTree.children;
+                            for (let i = 0; i < pathSegments.length - 1; i++) {
+                                folder = folder.find(item => item.name === pathSegments[i])?.children || [];
+                            }
+                            targetArray = folder;
+                        }
+                        
+                        if (!targetArray.find(item => item.path === fullPath)) {
+                            targetArray.push({
+                                name: filename,
+                                kind: 'file',
+                                path: fullPath,
+                                content: content
+                            });
+                        }
+                    }
+                } catch (e) {
+                    console.error('Fehler beim Laden der Dateien');
+                }
+            }
+        }
+
+        function toggleFileTree() {
+            const panel = document.getElementById('fileTreePanel');
+            panel.classList.toggle('hidden');
+            renderFileTree();
+        }
+
+        function renderFileTree() {
+            const content = document.getElementById('fileTreeContent');
+            content.innerHTML = '';
+            
+            // Rechtsklick auf Root-Container für Root-Operationen
+            content.oncontextmenu = (e) => {
+                if (e.target === content) {
+                    e.preventDefault();
+                    selectedTreeNode = fileTree;
+                    selectedTreePath = [];
+                    showContextMenu(e, true);
+                }
+            };
+            
+            if (fileTree.children) {
+                renderFileTreeItems(fileTree.children, content, 0);
+            }
+        }
+        
+        // Recursive Helper für File Tree Rendering (optimiert) + Context Menu
+        function renderFileTreeItems(items, container, depth, parentPath = []) {
+            console.log(`renderFileTree - depth ${depth}, items:`, items.length);
+            items.forEach(node => {
+                const div = document.createElement('div');
+                div.className = 'file-tree-item ' + node.kind;
+                div.style.marginLeft = (depth * 16) + 'px';
+                const nodePath = [...parentPath, node.name];
+                
+                if (node.kind === 'directory') {
+                    const icon = 'fa-folder';
+                    div.innerHTML = `<i class="fa ${icon}"></i><span>${node.name}</span>`;
+                    console.log(`  Rendering folder: ${node.name} (children: ${node.children?.length || 0})`);
+                    
+                    // Rechtsklick für Ordner
+                    div.oncontextmenu = (e) => {
+                        e.preventDefault();
+                        selectedTreeNode = node;
+                        selectedTreePath = nodePath;
+                        showContextMenu(e, true);
+                    };
+                    
+                    // Linksklick zeigt/versteckt Ordner
+                    div.onclick = (e) => {
+                        e.stopPropagation();
+                        selectedTreeNode = node;
+                        selectedTreePath = nodePath;
+                    };
+                    
+                    if (node.children && node.children.length > 0) {
+                        const subContainer = document.createElement('div');
+                        container.appendChild(div);
+                        renderFileTreeItems(node.children, subContainer, depth + 1, nodePath);
+                        container.appendChild(subContainer);
+                    } else {
+                        container.appendChild(div);
+                    }
+                } else {
+                    const icon = 'fa-file';
+                    div.innerHTML = `<i class="fa ${icon}"></i><span>${node.name}</span>`;
+                    console.log(`  Rendering file: ${node.name} (path: ${node.path})`);
+                    
+                    div.onclick = (e) => {
+                        e.stopPropagation();
+                        console.log('File clicked:', node.path);
+                        selectedTreeNode = node;
+                        selectedTreePath = nodePath;
+                        openFileInTab(node.path);
+                    };
+                    
+                    // Rechtsklick für Datei
+                    div.oncontextmenu = (e) => {
+                        e.preventDefault();
+                        selectedTreeNode = node;
+                        selectedTreePath = nodePath;
+                        showContextMenu(e, false);
+                    };
+                    
+                    container.appendChild(div);
+                }
+            });
+        }
+
+        // Context Menu Functions
+        function showContextMenu(e, isFolder) {
+            const menu = document.getElementById('contextMenu');
+            
+            // Nur relevante Menü-Items anzeigen
+            document.getElementById('cmNewFile').style.display = isFolder ? 'flex' : 'none';
+            document.getElementById('cmNewFolder').style.display = isFolder ? 'flex' : 'none';
+            document.getElementById('cmPreview').style.display = isFolder ? 'none' : 'flex';
+            document.getElementById('cmDownload').style.display = isFolder ? 'none' : 'flex';
+            document.getElementById('cmDelete').style.display = 'flex';
+            document.getElementById('cmRename').style.display = 'flex';
+            
+            // Position
+            menu.style.left = (e.clientX) + 'px';
+            menu.style.top = (e.clientY) + 'px';
+            menu.classList.add('show');
+        }
+
+        function hideContextMenu() {
+            document.getElementById('contextMenu').classList.remove('show');
+            selectedTreeNode = null;
+            selectedTreePath = [];
+        }
+
+        function contextMenuNewFile() {
+            if (!selectedTreeNode || selectedTreeNode.kind !== 'directory') {
+                updateStatus('Bitte wählen Sie einen Ordner');
+                return;
+            }
+            
+            const name = prompt('Dateiname:');
+            if (name) {
+                // Verhindere Duplikate im gleichen Ordner
+                if (selectedTreeNode.children?.some(c => c.name === name)) {
+                    updateStatus(`Datei "${name}" existiert bereits`);
+                    hideContextMenu();
+                    return;
+                }
+                
+                const newFile = {
+                    name: name,
+                    kind: 'file',
+                    path: selectedTreePath.concat([name]).join('/'),
+                    content: ''
+                };
+                
+                if (!selectedTreeNode.children) selectedTreeNode.children = [];
+                selectedTreeNode.children.push(newFile);
+                
+                saveFilesToStorage();
+                renderFileTree();
+                updateStatus(`Datei "${name}" erstellt`);
+            }
+            hideContextMenu();
+        }
+
+        function contextMenuNewFolder() {
+            if (!selectedTreeNode || selectedTreeNode.kind !== 'directory') {
+                updateStatus('Bitte wählen Sie einen Ordner');
+                return;
+            }
+            
+            const name = prompt('Ordnername:');
+            if (name) {
+                // Verhindere Duplikate
+                if (selectedTreeNode.children?.some(c => c.name === name)) {
+                    updateStatus(`Ordner "${name}" existiert bereits`);
+                    hideContextMenu();
+                    return;
+                }
+                
+                const newFolder = {
+                    name: name,
+                    kind: 'directory',
+                    path: selectedTreePath.concat([name]).join('/'),
+                    children: []
+                };
+                
+                if (!selectedTreeNode.children) selectedTreeNode.children = [];
+                selectedTreeNode.children.push(newFolder);
+                
+                saveFilesToStorage();
+                renderFileTree();
+                updateStatus(`Ordner "${name}" erstellt`);
+            }
+            hideContextMenu();
+        }
+
+        function contextMenuDelete() {
+            if (!selectedTreeNode) return;
+            
+            const confirmed = confirm(`"${selectedTreeNode.name}" wirklich löschen?`);
+            if (confirmed) {
+                // Finde Parent und lösche Node
+                function deleteNode(items, target) {
+                    const index = items.findIndex(item => item === target);
+                    if (index > -1) {
+                        items.splice(index, 1);
+                        return true;
+                    }
+                    
+                    for (let item of items) {
+                        if (item.children && deleteNode(item.children, target)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+                
+                if (selectedTreeNode.kind === 'file' && openTabs.includes(selectedTreeNode.path)) {
+                    closeTab(selectedTreeNode.path);
+                }
+                
+                deleteNode(fileTree.children || [], selectedTreeNode);
+                saveFilesToStorage();
+                renderFileTree();
+                updateStatus(`"${selectedTreeNode.name}" gelöscht`);
+            }
+            hideContextMenu();
+        }
+
+        function contextMenuRename() {
+            if (!selectedTreeNode) return;
+            
+            const newName = prompt(`Neuer Name für "${selectedTreeNode.name}":`, selectedTreeNode.name);
+            if (newName && newName !== selectedTreeNode.name) {
+                selectedTreeNode.name = newName;
+                
+                // Update path für Dateien
+                if (selectedTreeNode.kind === 'file') {
+                    const newPath = selectedTreePath.slice(0, -1).concat([newName]).join('/');
+                    
+                    // Update openTabs wenn offen
+                    const tabIndex = openTabs.indexOf(selectedTreeNode.path);
+                    if (tabIndex > -1) {
+                        openTabs[tabIndex] = newPath;
+                        if (currentActiveFile === selectedTreeNode.path) {
+                            currentActiveFile = newPath;
+                        }
+                    }
+                    
+                    selectedTreeNode.path = newPath;
+                }
+                
+                saveFilesToStorage();
+                renderFileTree();
+                renderTabs();
+                updateStatus(`Umbenannt zu "${newName}"`);
+            }
+            hideContextMenu();
+        }
+
+        function contextMenuPreview() {
+            if (!selectedTreeNode || selectedTreeNode.kind !== 'file') {
+                updateStatus('Nur Dateien können vorgeschaut werden');
+                hideContextMenu();
+                return;
+            }
+            
+            // Öffne die Datei im Tab
+            openFileInTab(selectedTreeNode.path);
+            updateStatus(`"${selectedTreeNode.name}" in Preview geöffnet`);
+            hideContextMenu();
+        }
+
+        function contextMenuDownload() {
+            if (!selectedTreeNode || selectedTreeNode.kind !== 'file') {
+                updateStatus('Nur Dateien können heruntergeladen werden');
+                hideContextMenu();
+                return;
+            }
+            
+            const content = selectedTreeNode.content || '';
+            const filename = selectedTreeNode.name;
+            
+            // Bestimme MIME-Type basierend auf Erweiterung
+            let mimeType = 'text/plain';
+            if (filename.endsWith('.html')) mimeType = 'text/html';
+            else if (filename.endsWith('.css')) mimeType = 'text/css';
+            else if (filename.endsWith('.js')) mimeType = 'text/javascript';
+            else if (filename.endsWith('.json')) mimeType = 'application/json';
+            
+            const blob = new Blob([content], { type: mimeType });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            updateStatus(`"${filename}" heruntergeladen`);
+            hideContextMenu();
+        }
+
+        // Kontext-Menü schließen bei Klick außerhalb + ESC
+        document.addEventListener('click', (e) => {
+            const menu = document.getElementById('contextMenu');
+            if (!menu.contains(e.target) && !e.target.closest('.file-tree-item')) {
+                hideContextMenu();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                hideContextMenu();
+            }
+        });
+
+        function openFileInTab(filename) {
+            saveCurrentFile();
+
+            // Wenn Datei bereits offen, aktiviere Tab
+            if (openTabs.includes(filename)) {
+                switchToTab(filename);
+                return;
+            }
+
+            // Neue Datei öffnen
+            openTabs.push(filename);
+            switchToTab(filename);
+            renderTabs();
+            updateStatus(`Datei "${filename}" geöffnet`);
+        }
+
+        function switchToTab(filename) {
+            saveCurrentFile();
+            currentActiveFile = filename;
+            
+            // Hole Dateiinhalt aus verschachtelter Struktur
+            const content = getFileContent(filename);
+            editor.setValue(content || '');
+            editor.clearSelection();
+            editor.resize();
+            renderTabs();
+        }
+        
+        // Helper zum Abrufen von Dateien
+        function getFileContent(fullPath) {
+            function findFile(items) {
+                for (let item of items) {
+                    if (item.path === fullPath) return item.content;
+                    if (item.children) {
+                        const result = findFile(item.children);
+                        if (result !== undefined) return result;
+                    }
+                }
+                return '';
+            }
+            return findFile(fileTree.children || []);
+        }
+        
+        // Helper zum Speichern von Dateien
+        function saveFileContent(fullPath, content) {
+            function updateFile(items) {
+                for (let item of items) {
+                    if (item.path === fullPath) {
+                        item.content = content;
+                        return true;
+                    }
+                    if (item.children && updateFile(item.children)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            updateFile(fileTree.children || []);
+        }
+
+        function renderTabs() {
+            const tabsContainer = document.getElementById('editorTabs');
+            tabsContainer.innerHTML = '';
+
+            for (let filename of openTabs) {
+                const tab = document.createElement('div');
+                tab.className = 'tab' + (filename === currentActiveFile ? ' active' : '');
+                
+                const label = document.createElement('span');
+                label.textContent = filename;
+                label.style.cursor = 'pointer';
+                label.onclick = () => switchToTab(filename);
+                
+                const closeBtn = document.createElement('span');
+                closeBtn.className = 'tab-close';
+                closeBtn.innerHTML = '×';
+                closeBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    closeTab(filename);
+                };
+                
+                tab.appendChild(label);
+                tab.appendChild(closeBtn);
+                tabsContainer.appendChild(tab);
+            }
+        }
+
+        function closeTab(filename) {
+            saveCurrentFile();
+            openTabs = openTabs.filter(f => f !== filename);
+
+            if (currentActiveFile === filename) {
+                if (openTabs.length > 0) {
+                    currentActiveFile = openTabs[0];
+                    switchToTab(currentActiveFile);
+                } else {
+                    currentActiveFile = null;
+                    editor.setValue('Keine Datei geöffnet');
+                    editor.clearSelection();
+                }
+            }
+
+            renderTabs();
+            updateStatus(`Datei "${filename}" geschlossen`);
+        }
+
+        function newFile() {
+            const name = prompt('Dateiname:');
+            if (name) {
+                // Prüfe ob existiert im Root
+                if (fileTree.children?.some(c => c.name === name)) {
+                    updateStatus(`Datei "${name}" existiert bereits`);
+                    return;
+                }
+                
+                const newFile = {
+                    name: name,
+                    kind: 'file',
+                    path: name,
+                    content: ''
+                };
+                
+                fileTree.children.push(newFile);
+                saveFilesToStorage();
+                openFileInTab(name);
+                renderFileTree();
+                updateStatus(`Datei "${name}" erstellt`);
+            }
+        }
+
+        function newFolder() {
+            const name = prompt('Ordnername:');
+            if (name) {
+                // Prüfe ob existiert im Root
+                if (fileTree.children?.some(c => c.name === name)) {
+                    updateStatus(`Ordner "${name}" existiert bereits`);
+                    return;
+                }
+                
+                const newFolder = {
+                    name: name,
+                    kind: 'directory',
+                    path: name,
+                    children: []
+                };
+                
+                fileTree.children.push(newFolder);
+                saveFilesToStorage();
+                renderFileTree();
+                updateStatus(`Ordner "${name}" erstellt`);
+            }
+        }
+
+        // Initialize on load - NACH Tab-System (nicht Auto-Save!)
+        window.addEventListener('load', () => {
+            restoreFilesFromStorage();
+            renderFileTree();
+            // Öffne erste Datei automatisch
+            if (fileTree.children && fileTree.children.length > 0) {
+                const firstFile = fileTree.children.find(f => f.kind === 'file');
+                if (firstFile) {
+                    openFileInTab(firstFile.path);
+                }
+            }
+        }, { once: true });
+        
+        // Keine Auto-Save Loop mehr - wir speichern beim Tab-Wechsel!
+    </script>
+</body>
+</html>

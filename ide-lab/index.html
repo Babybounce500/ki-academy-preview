@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>IDE-Werkbank</title>
+<style>
+:root{--bg:#06141a;--panel:#0b1f27;--line:#16424f;--text:#e6f6fa;--muted:#8fb4bf;--accent:#06b6d4;--ok:#34d399;--warn:#fbbf24;--bad:#f87171}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--text);font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;display:flex;overflow:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+a{color:var(--accent)}
+.side{width:340px;flex:0 0 340px;display:flex;flex-direction:column;background:var(--panel);border-right:1px solid var(--line);min-height:0}
+.head{padding:14px 14px 10px;border-bottom:1px solid var(--line)}
+.head h1{margin:0 0 2px;font-size:18px;letter-spacing:.02em}
+.head p{margin:0;color:var(--muted);font-size:12.5px}
+.search{width:100%;margin-top:10px;padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:#071820;color:var(--text);font-size:16px}
+.search:focus{outline:2px solid var(--accent);outline-offset:1px}
+.filters{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{border:1px solid var(--line);background:transparent;border-radius:999px;padding:5px 11px;font-size:12.5px;color:var(--muted);min-height:32px}
+.chip[aria-pressed=true]{background:var(--accent);color:#04121a;border-color:transparent;font-weight:700}
+.list{flex:1;overflow:auto;padding:6px 8px 16px;overscroll-behavior:contain}
+.grp{margin:12px 6px 4px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.item{display:block;width:100%;text-align:left;background:transparent;border:1px solid transparent;border-radius:10px;padding:9px 10px;margin:2px 0;min-height:48px}
+.item:hover{background:#0f2a35}
+.item[aria-current=true]{background:#0f2f3b;border-color:var(--accent)}
+.item b{display:block;font-size:14.5px}
+.item small{display:block;color:var(--muted);font-size:12px;margin-top:1px}
+.tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+.tag{font-size:10.5px;padding:1px 7px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+.tag.ok{color:var(--ok);border-color:#1d5c46}.tag.warn{color:var(--warn);border-color:#6b5316}.tag.bad{color:var(--bad);border-color:#6b2a2a}
+.empty{padding:20px;color:var(--muted);text-align:center}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.bar{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--panel);border-bottom:1px solid var(--line)}
+.bar .t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:700}
+.btn{border:1px solid var(--line);background:#071820;border-radius:10px;padding:8px 12px;font-size:13.5px;min-height:40px;text-decoration:none;color:var(--text);display:inline-flex;align-items:center}
+.btn:hover{border-color:var(--accent)}
+.btn:focus-visible,.item:focus-visible,.chip:focus-visible{outline:3px solid var(--warn);outline-offset:2px}
+.menu{display:none}
+.stage{flex:1;min-height:0;position:relative;background:#fff}
+iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff}
+.welcome{position:absolute;inset:0;background:var(--bg);overflow:auto;padding:22px;color:var(--text)}
+.welcome h2{margin:0 0 6px}
+.welcome .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin-top:14px}
+.card{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--panel);text-align:left}
+.card:hover{border-color:var(--accent)}
+.card b{display:block}.card small{color:var(--muted)}
+.note{margin:12px 0 0;padding:10px 12px;border:1px solid #6b5316;border-radius:10px;color:var(--warn);background:#1b1707;font-size:13px}
+.back{display:none}
+@media(max-width:860px){
+ .side{position:fixed;z-index:20;inset:0 auto 0 0;width:min(360px,92vw);transform:translateX(-102%);transition:transform .18s}
+ body.open .side{transform:none}
+ body.open .back{display:block;position:fixed;inset:0;z-index:15;background:rgba(0,0,0,.55)}
+ .menu{display:inline-flex}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<aside class="side" id="side" aria-label="Werkzeuge">
+ <div class="head">
+  <h1>🧪 IDE-Werkbank</h1>
+  <p id="count"></p>
+  <input class="search" id="q" type="search" placeholder="Suchen (Name, Engine, Chat, RAG ...)" aria-label="Suchen" autocomplete="off">
+  <div class="filters" id="filters"></div>
+ </div>
+ <div class="list" id="list" role="list"></div>
+</aside>
+<div class="back" id="back"></div>
+<main class="main">
+ <div class="bar">
+  <button class="btn menu" id="menu" aria-label="Liste öffnen">☰ Liste</button>
+  <div class="t" id="title">Wähle ein Werkzeug</div>
+  <button class="btn" id="prev" title="Vorheriges (←)">←</button>
+  <button class="btn" id="next" title="Nächstes (→)">→</button>
+  <button class="btn" id="reload" title="Neu laden">↻</button>
+  <a class="btn" id="tab" target="_blank" rel="noopener" href="#">Neuer Tab ↗</a>
+ </div>
+ <div class="stage" id="stage">
+  <div class="welcome" id="welcome">
+   <h2>Alle Editoren und IDEs an einem Ort</h2>
+   <p style="color:var(--muted);max-width:60ch">Tippe ein Werkzeug an, es lädt direkt hier. Pfeiltasten (← →) blättern durch die Liste. Die Statusmarken zeigen, was beim automatischen Test aufgefallen ist.</p>
+   <div class="grid" id="picks"></div>
+   <p class="note" id="legend"></p>
+  </div>
+ </div>
+</main>
+<script>
+var DATA = [{"s":"ai-html-studio","f":"../academy/modules/tools/ai-html-studio.html","t":"AI HTML Studio","c":"HTML-Editor","d":"HTML-Editor mit Ace, Live-Vorschau (iframe) und KI-Chat.","k":293,"v":null,"e":true,"p":true,"h":true,"g":"ace","l":true,"j":0,"m":true,"x":false,"n":"","bad":[]},{"s":"ai-html-studio-free","f":"../academy/modules/tools/ai-html-studio-free.html","t":"AI HTML Studio (Free Tier)","c":"HTML-Editor","d":"Free-Tier-Variante des HTML-Editors mit Ace, Live-Vorschau und KI-Chat.","k":263,"v":"ai-html-studio","e":true,"p":true,"h":true,"g":"ace","l":true,"j":0,"m":true,"x":false,"n":"","bad":[]},{"s":"rag-vector-ide","f":"../academy/modules/tools/rag-vector-ide.html","t":"RAG-Vektor-IDE","c":"RAG und Vektor","d":"HTML-Editor mit Ace und Live-Vorschau plus Embedding-/Vektor-Funktionen und KI-Chat.","k":313,"v":null,"e":true,"p":true,"h":true,"g":"ace","l":true,"j":0,"m":true,"x":false,"n":"","bad":[]},{"s":"claude-ide","f":"../academy/modules/tools/claude-ide.html","t":"Claude IDE","c":"KI-Coding-Chat","d":"Textarea-basiertes Claude-Coding-Studio mit Chat.","k":82,"v":null,"e":false,"p":true,"h":true,"g":"textarea","l":true,"j":0,"m":true,"x":false,"n":"Kein Ace/Monaco, nur textarea.","bad":[]},{"s":"lecode-studio","f":"../academy/modules/tools/lecode-studio.html","t":"LeCode Studio","c":"KI-Coding-Chat","d":"KI-Coding-Assistent mit Ace-Editor und Chat.","k":69,"v":null,"e":true,"p":true,"h":true,"g":"ace","l":true,"j":0,"m":true,"x":false,"n":"","bad":[]},{"s":"python-ide","f":"../academy/modules/tools/python-ide.html","t":"Python-IDE","c":"Python","d":"Python-Entwicklungsumgebung mit KI-Chat und runCode-Funktion.","k":37,"v":null,"e":true,"p":false,"h":true,"g":"monaco","l":true,"j":1,"m":false,"x":true,"n":"Schluessel-Muster im Text ist ein Platzhalter (Fehlalarm). 1 JS-Fehler; mobil horizontales Scrollen.","bad":[]},{"s":"vision-bot","f":"../academy/modules/tools/vision-bot.html","t":"Vision-Bot","c":"Sonstiges","d":"Chatbot mit Bild-Eingabe (Vision), kein Code-Editor.","k":27,"v":null,"e":false,"p":false,"h":true,"g":"textarea","l":true,"j":0,"m":true,"x":false,"n":"Kein Editor, Chat-Tool.","bad":[]},{"s":"batch-prozessor","f":"../academy/modules/tools/batch-prozessor.html","t":"Batch-Prozessor","c":"Sonstiges","d":"Mistral-Streaming-Batch-Verarbeitung ueber SERVER5.","k":40,"v":null,"e":false,"p":true,"h":false,"g":"textarea","l":true,"j":0,"m":true,"x":false,"n":"Kein Editor.","bad":[]},{"s":"css-stripper","f":"../academy/modules/tools/css-stripper.html","t":"CSS-Stripper","c":"Sonstiges","d":"Wandelt HTML-Dateien stapelweise in nacktes HTML um.","k":16,"v":null,"e":true,"p":false,"h":false,"g":"textarea","l":true,"j":0,"m":false,"x":true,"n":"Mobil horizontales Scrollen (411px).","bad":[]},{"s":"ide-18","f":"tools/ide-18.html","t":"AI HTML Studio (IDE 18)","c":"HTML-Editor","d":"Aeltere IDE-Fassung mit Ace, Live-Vorschau und KI-Chat.","k":165,"v":"ai-html-studio","e":true,"p":true,"h":true,"g":"ace","l":true,"j":0,"m":true,"x":false,"n":"","bad":[]},{"s":"ide-free-tier","f":"tools/ide-free-tier.html","t":"AI HTML Studio (Free Tier, Original)","c":"HTML-Editor","d":"Free-Tier-Fassung mit Ace und Live-Vorschau.","k":213,"v":"ai-html-studio-free","e":true,"p":true,"h":false,"g":"ace","l":true,"j":1,"m":true,"x":false,"n":"Kein Chat-Eingabefeld erkannt; 1 JS-Fehler.","bad":["genitus-embeddings.replit.app"]},{"s":"ide-embeddings","f":"tools/ide-embeddings.html","t":"IDE mit Embeddings","c":"RAG und Vektor","d":"HTML-IDE mit Ace, Vorschau, KI-Chat und Embeddings.","k":194,"v":"rag-vector-ide","e":true,"p":true,"h":true,"g":"ace","l":true,"j":0,"m":true,"x":false,"n":"","bad":["genitus-embeddings.replit.app"]},{"s":"lecode-core","f":"tools/lecode-core.html","t":"LeCode Core","c":"KI-Coding-Chat","d":"LeCode-Kernfassung mit Ace-Editor und Chat.","k":44,"v":null,"e":true,"p":false,"h":true,"g":"ace","l":true,"j":0,"m":true,"x":false,"n":"","bad":[]},{"s":"genitus-vector-editor","f":"tools/genitus-vector-editor.html","t":"Genitus Vektor-Editor (Le-IDE)","c":"RAG und Vektor","d":"RAG-Vektor-Editor mit Ace, Live-Vorschau und KI-Chat.","k":261,"v":"rag-vector-ide","e":true,"p":true,"h":true,"g":"ace","l":true,"j":0,"m":true,"x":false,"n":"","bad":["genitus-embeddings.replit.app"]},{"s":"server-batch-lecode","f":"tools/server-batch-lecode.html","t":"Batch-Prozessor (LeCode)","c":"Sonstiges","d":"Mistral-Streaming-Batch-Verarbeitung (LeCode-Fassung).","k":40,"v":"batch-prozessor","e":false,"p":true,"h":false,"g":"textarea","l":true,"j":0,"m":true,"x":false,"n":"Kein Editor.","bad":[]},{"s":"html-editor-mobil","f":"tools/html-editor-mobil.html","t":"Mobiler HTML-Editor","c":"HTML-Editor","d":"Minimaler responsiver HTML-Editor mit textarea und Ausgabe-iframe.","k":3,"v":null,"e":true,"p":true,"h":false,"g":"textarea","l":true,"j":0,"m":true,"x":false,"n":"Sehr klein, ohne Syntax-Hervorhebung.","bad":[]},{"s":"ai-html-studio-deluxe","f":"tools/ai-html-studio-deluxe.html","t":"AI HTML Studio Deluxe","c":"HTML-Editor","d":"Umfangreichste Fassung des AI HTML Studio mit Ace, Live-Vorschau, KI-Chat und Pyodide.","k":258,"v":"ai-html-studio","e":true,"p":true,"h":true,"g":"ace","l":true,"j":1,"m":true,"x":false,"n":"1 JS-Fehler auf dem Desktop.","bad":["genitus-embeddings.replit.app"]},{"s":"langchain-ide","f":"tools/langchain-ide.html","t":"LangChain-IDE","c":"HTML-Editor","d":"Free-Tier-Studio mit Ace, Live-Vorschau, KI-Chat und Pyodide.","k":243,"v":"ai-html-studio-free","e":true,"p":true,"h":true,"g":"ace","l":true,"j":0,"m":true,"x":false,"n":"","bad":["genitus-embeddings.replit.app"]},{"s":"html-pro","f":"tools/html-pro.html","t":"HTML Pro (schlanke Fassung)","c":"HTML-Editor","d":"Schlankere Fassung des AI HTML Studio mit Ace und Live-Vorschau.","k":67,"v":"ai-html-studio","e":true,"p":true,"h":false,"g":"ace","l":true,"j":0,"m":true,"x":false,"n":"Kein KI-Chat erkannt.","bad":[]},{"s":"mistral-agents","f":"tools/mistral-agents.html","t":"Mistral Agents All-in-One","c":"KI-Coding-Chat","d":"Mistral-Agenten-Chat mit Textfeld.","k":19,"v":null,"e":false,"p":false,"h":true,"g":"textarea","l":true,"j":0,"m":true,"x":false,"n":"Kein Editor, Code-Bezug nur ueber Agenten.","bad":[]},{"s":"gpturbo-software-factory","f":"tools/gpturbo-software-factory.html","t":"GPTurbo Software Factory","c":"KI-Coding-Chat","d":"Streaming-KI-Chat zur Code-Erzeugung mit Syntax-Hervorhebung und srcdoc-Vorschau.","k":52,"v":null,"e":false,"p":true,"h":true,"g":"other","l":true,"j":0,"m":true,"x":false,"n":"Kein Editor-Widget, Ausgabe per Highlighting.","bad":["babybounce500.github.io"]},{"s":"lecode-ai-coding","f":"tools/lecode-ai-coding.html","t":"LeCode AI Coding","c":"KI-Coding-Chat","d":"Ace-Editor mit iframe-Vorschau und KI-Chat.","k":23,"v":null,"e":true,"p":true,"h":true,"g":"ace","l":true,"j":0,"m":true,"x":false,"n":"","bad":[]},{"s":"html-editor-vollbild","f":"tools/html-editor-vollbild.html","t":"Vollbild-HTML-Editor","c":"HTML-Editor","d":"Vollbild-Editor mit Ace, Toolbar und Ausgabe-iframe.","k":10,"v":null,"e":true,"p":true,"h":false,"g":"ace","l":true,"j":0,"m":true,"x":false,"n":"Kein KI-Chat.","bad":[]},{"s":"claude-dev-studio-lecode","f":"tools/claude-dev-studio-lecode.html","t":"Claude Development Studio (LeCode)","c":"KI-Coding-Chat","d":"Claude-Chat mit Ace-Editor zur Code-Erzeugung.","k":62,"v":"claude-ide","e":true,"p":false,"h":true,"g":"ace","l":true,"j":0,"m":true,"x":false,"n":"Titel \"Claude Chat Export\" im h1.","bad":["api.anthropic.com","babybounce500.github.io"]},{"s":"lecode-fusion","f":"tools/lecode-fusion.html","t":"LeCode Fusion","c":"KI-Coding-Chat","d":"Coding-Studio mit Textareas und KI-Chat.","k":41,"v":"lecode-core","e":false,"p":false,"h":true,"g":"textarea","l":true,"j":0,"m":true,"x":false,"n":"Kein Ace/Monaco.","bad":[]},{"s":"rag-crud-ultimate","f":"tools/rag-crud-ultimate.html","t":"RAG + CRUD System (Ultimate)","c":"RAG und Vektor","d":"RAG-und-CRUD-Oberflaeche mit Monaco-Editor und Codestral-Chat.","k":114,"v":null,"e":true,"p":false,"h":true,"g":"monaco","l":true,"j":0,"m":true,"x":false,"n":"","bad":[]},{"s":"sketch-to-code","f":"tools/sketch-to-code.html","t":"Sketch to Code","c":"KI-Coding-Chat","d":"Wandelt Skizzen per Mistral-Vision in HTML um, mit Vorschau-iframe.","k":48,"v":null,"e":true,"p":true,"h":true,"g":"textarea","l":true,"j":0,"m":false,"x":true,"n":"Mobil horizontales Scrollen (405px). Eigener Mistral-Key nötig (Schlüssel wurde aus der Veröffentlichung entfernt).","bad":["api.mistral.ai"]},{"s":"genitus-lecode-chat","f":"tools/genitus-lecode-chat.html","t":"Genitus LeCode (Chat)","c":"KI-Coding-Chat","d":"LeCode-Studio mit Textareas und KI-Chat.","k":47,"v":null,"e":true,"p":false,"h":true,"g":"textarea","l":true,"j":0,"m":true,"x":false,"n":"","bad":[]},{"s":"genitus-ide-free","f":"tools/genitus-ide-free.html","t":"Genitus IDE (Free)","c":"HTML-Editor","d":"Freier HTML-Editor mit Ace, Live-Vorschau und Pyodide.","k":209,"v":"ai-html-studio-free","e":true,"p":true,"h":false,"g":"ace","l":true,"j":1,"m":true,"x":false,"n":"1 JS-Fehler; kein Chat erkannt.","bad":["genitus-embeddings.replit.app"]},{"s":"mistral-live-code","f":"tools/mistral-live-code.html","t":"Mistral Live Code Engine","c":"KI-Coding-Chat","d":"Kleiner Mistral-Chat fuer Code-Fragen.","k":10,"v":null,"e":true,"p":false,"h":true,"g":"textarea","l":true,"j":0,"m":true,"x":false,"n":"Sehr schlicht, kein Editor.","bad":[]},{"s":"webgen-pro","f":"tools/webgen-pro.html","t":"WebGen Pro Website-Studio","c":"KI-Coding-Chat","d":"KI-Website-Generator mit Vorschau-iframe und Chat.","k":47,"v":null,"e":false,"p":true,"h":true,"g":"textarea","l":true,"j":0,"m":false,"x":true,"n":"Mobil horizontales Scrollen (429px).","bad":[]},{"s":"nextgen-lecode-mistral","f":"tools/nextgen-lecode-mistral.html","t":"NextGen LeCode (Mistral)","c":"KI-Coding-Chat","d":"Ace-Editor mit Mistral-KI-Chat.","k":20,"v":null,"e":true,"p":false,"h":true,"g":"ace","l":true,"j":0,"m":true,"x":false,"n":"Eigener Mistral-Key nötig (Schlüssel wurde aus der Veröffentlichung entfernt).","bad":["api.mistral.ai"]},{"s":"universal-editor","f":"tools/universal-editor.html","t":"Universal Editor","c":"Markdown und Text","d":"Editor mit contenteditable-Bereichen.","k":13,"v":null,"e":false,"p":false,"h":false,"g":"other","l":true,"j":1,"m":false,"x":true,"n":"Kein Viewport-Meta, mobil nicht angepasst; 1 JS-Fehler.","bad":[]}];
+(function () {
+  'use strict';
+  var $ = function (s) { return document.querySelector(s); };
+  var q = $('#q'), list = $('#list'), frame = null, cur = null, cat = '', shown = [];
+  var cats = []; DATA.forEach(function (d) { if (cats.indexOf(d.c) < 0) cats.push(d.c); });
+  var FLAGS = [['chat', 'Mit KI-Chat'], ['edit', 'Editor'], ['mob', 'Mobil getestet']];
+  var flag = '';
+  function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function tagsFor(d) {
+    var t = [];
+    t.push(d.l === false ? '<span class="tag bad">lädt nicht</span>' : '<span class="tag ok">lädt</span>');
+    if (d.j > 0) t.push('<span class="tag warn">' + d.j + ' JS-Fehler</span>');
+    t.push(d.x || !d.m ? '<span class="tag warn">Mobil eingeschränkt</span>' : '<span class="tag ok">Mobil ok</span>');
+    if (d.h) t.push('<span class="tag">Chat</span>');
+    if (d.g) t.push('<span class="tag">' + esc(d.g) + '</span>');
+    if (d.bad && d.bad.length) t.push('<span class="tag bad" title="' + esc(d.bad.join(', ')) + '">Dienst offline</span>');
+    return t.join('');
+  }
+  function match(d) {
+    if (cat && d.c !== cat) return false;
+    if (flag === 'chat' && !d.h) return false;
+    if (flag === 'edit' && !d.e) return false;
+    if (flag === 'mob' && !(d.m && !d.x)) return false;
+    var s = q.value.trim().toLowerCase(); if (!s) return true;
+    var hay = (d.t + ' ' + d.c + ' ' + d.d + ' ' + d.g + ' ' + d.s + (d.h ? ' chat ki' : '') + (/rag|vektor|vector/i.test(d.d + d.t + d.c) ? ' rag' : '')).toLowerCase();
+    return s.split(/\s+/).every(function (w) { return hay.indexOf(w) >= 0; });
+  }
+  function render() {
+    shown = DATA.filter(match); list.innerHTML = '';
+    $('#count').textContent = shown.length + ' von ' + DATA.length + ' Werkzeugen';
+    if (!shown.length) { list.innerHTML = '<div class="empty">Nichts gefunden. Filter oder Suche lockern.</div>'; return; }
+    var last = null;
+    shown.forEach(function (d) {
+      if (d.c !== last) { var g = document.createElement('div'); g.className = 'grp'; g.textContent = d.c; list.appendChild(g); last = d.c; }
+      var b = document.createElement('button'); b.className = 'item'; b.type = 'button'; b.setAttribute('role', 'listitem'); b.dataset.s = d.s;
+      if (cur && cur.s === d.s) b.setAttribute('aria-current', 'true');
+      b.innerHTML = '<b>' + esc(d.t) + '</b><small>' + esc(d.d) + '</small><div class="tags">' + tagsFor(d) + '</div>';
+      b.addEventListener('click', function () { open(d); document.body.classList.remove('open'); });
+      list.appendChild(b);
+    });
+  }
+  function filters() {
+    var f = $('#filters'); f.innerHTML = '';
+    function chip(label, on, fn) { var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = label; b.setAttribute('aria-pressed', on ? 'true' : 'false'); b.addEventListener('click', function () { fn(); filters(); render(); }); f.appendChild(b); }
+    chip('Alle', !cat && !flag, function () { cat = ''; flag = ''; });
+    cats.forEach(function (c) { chip(c, cat === c, function () { cat = cat === c ? '' : c; }); });
+    FLAGS.forEach(function (fl) { chip(fl[1], flag === fl[0], function () { flag = flag === fl[0] ? '' : fl[0]; }); });
+  }
+  function open(d) {
+    cur = d; location.hash = d.s;
+    $('#welcome').style.display = 'none';
+    if (frame) frame.remove();
+    frame = document.createElement('iframe'); frame.title = d.t;
+    frame.setAttribute('allow', 'clipboard-read; clipboard-write; microphone; camera; fullscreen');
+    frame.src = d.f; $('#stage').appendChild(frame);
+    $('#title').textContent = d.t + ' · ' + d.c; $('#tab').href = d.f;
+    document.title = d.t + ' – IDE-Werkbank';
+    Array.prototype.forEach.call(list.querySelectorAll('.item'), function (e) { if (e.dataset.s === d.s) e.setAttribute('aria-current', 'true'); else e.removeAttribute('aria-current'); });
+  }
+  function step(n) { if (!shown.length) return; var i = shown.indexOf(cur); i = i < 0 ? (n > 0 ? 0 : shown.length - 1) : (i + n + shown.length) % shown.length; open(shown[i]); var e = list.querySelector('[aria-current]'); if (e) e.scrollIntoView({ block: 'nearest' }); }
+  $('#prev').addEventListener('click', function () { step(-1); });
+  $('#next').addEventListener('click', function () { step(1); });
+  $('#reload').addEventListener('click', function () { if (frame) frame.src = frame.src; });
+  $('#menu').addEventListener('click', function () { document.body.classList.add('open'); });
+  $('#back').addEventListener('click', function () { document.body.classList.remove('open'); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') document.body.classList.remove('open');
+    if (/INPUT|TEXTAREA/.test((document.activeElement || {}).tagName || '')) return;
+    if (e.key === 'ArrowRight') step(1); if (e.key === 'ArrowLeft') step(-1);
+    if (e.key === '/') { e.preventDefault(); q.focus(); }
+  });
+  q.addEventListener('input', render);
+  var picks = ['ai-html-studio-free', 'claude-ide', 'lecode-studio', 'rag-vector-ide', 'python-ide', 'html-pro'];
+  picks.forEach(function (s) {
+    var d = DATA.filter(function (x) { return x.s === s; })[0]; if (!d) return;
+    var b = document.createElement('button'); b.className = 'card'; b.type = 'button'; b.innerHTML = '<b>' + esc(d.t) + '</b><small>' + esc(d.d) + '</small>';
+    b.addEventListener('click', function () { open(d); }); $('#picks').appendChild(b);
+  });
+  $('#legend').textContent = 'Hinweis: KI-Funktionen laufen über den Kurs-Zugang (Proxy). Wenn eine Marke „Dienst offline“ zeigt, ist ein Zusatzdienst dieses Werkzeugs nicht erreichbar. Der Rest funktioniert trotzdem. Daten bleiben im Browser (localStorage / IndexedDB).';
+  filters(); render();
+  var h = decodeURIComponent((location.hash || '').slice(1));
+  var start = DATA.filter(function (x) { return x.s === h; })[0]; if (start) open(start);
+})();
+</script>
+</body>
+</html>

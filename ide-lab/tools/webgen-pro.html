@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>WebGen Pro · KI Website Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{
+  --bg:#0a0b14; --bg-2:#11132a; --panel:rgba(20,22,45,.72);
+  --panel-2:rgba(255,255,255,.04); --border:rgba(255,255,255,.08);
+  --text:#e8ebff; --muted:#8b8fb3; --accent:#7c5cff; --accent-2:#22d3ee;
+  --pink:#ff5db1; --green:#22c55e; --red:#ef4444; --amber:#f59e0b;
+  --grad:linear-gradient(135deg,#7c5cff 0%,#22d3ee 50%,#ff5db1 100%);
+  --glass:saturate(140%) blur(18px);
+  --shadow:0 20px 60px -20px rgba(0,0,0,.6),0 8px 30px -10px rgba(124,92,255,.25);
+  --radius:16px;
+}
+[data-theme="light"]{
+  --bg:#f5f6ff; --bg-2:#eaecff; --panel:rgba(255,255,255,.85);
+  --panel-2:rgba(0,0,0,.03); --border:rgba(0,0,0,.08);
+  --text:#0f1230; --muted:#5b608a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased}
+body{
+  min-height:100vh;
+  background:
+    radial-gradient(1200px 600px at 10% -10%,rgba(124,92,255,.25),transparent 60%),
+    radial-gradient(900px 500px at 110% 10%,rgba(34,211,238,.18),transparent 60%),
+    radial-gradient(700px 600px at 50% 110%,rgba(255,93,177,.18),transparent 60%),
+    var(--bg);
+  background-attachment:fixed;
+}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(124,92,255,.35);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+
+/* Layout */
+.app{max-width:1400px;margin:0 auto;padding:24px}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.brand{display:flex;align-items:center;gap:14px}
+.logo{
+  width:46px;height:46px;border-radius:14px;background:var(--grad);
+  display:grid;place-items:center;color:#fff;font-weight:800;font-size:20px;
+  box-shadow:var(--shadow);position:relative;overflow:hidden;
+}
+.logo::after{content:"";position:absolute;inset:1px;border-radius:13px;background:linear-gradient(180deg,rgba(255,255,255,.2),transparent 50%);pointer-events:none}
+.brand h1{margin:0;font-size:20px;font-weight:800;letter-spacing:-.02em}
+.brand h1 span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand p{margin:0;font-size:12px;color:var(--muted)}
+
+.topbar-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:var(--panel-2);border:1px solid var(--border);font-size:12px;color:var(--muted)}
+.chip .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green)}
+.icon-btn{
+  width:38px;height:38px;border-radius:10px;border:1px solid var(--border);
+  background:var(--panel-2);color:var(--text);cursor:pointer;display:grid;place-items:center;
+  transition:all .2s ease;
+}
+.icon-btn:hover{transform:translateY(-1px);background:var(--accent);color:#fff;border-color:transparent}
+
+/* Grid */
+.grid{display:grid;grid-template-columns:420px 1fr;gap:20px}
+@media(max-width:1024px){.grid{grid-template-columns:1fr}}
+
+.panel{
+  background:var(--panel);backdrop-filter:var(--glass);-webkit-backdrop-filter:var(--glass);
+  border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);
+}
+.panel h3{margin:0 0 14px 0;font-size:14px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:8px}
+.panel h3 i{color:var(--accent)}
+
+/* Form */
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;font-weight:600;margin-bottom:6px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.input,.select,.textarea{
+  width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--border);
+  background:rgba(255,255,255,.03);color:var(--text);font-family:inherit;font-size:14px;
+  transition:all .2s ease;outline:none;
+}
+[data-theme="light"] .input,[data-theme="light"] .select,[data-theme="light"] .textarea{background:rgba(0,0,0,.02)}
+.input:focus,.select:focus,.textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,92,255,.2)}
+.textarea{resize:vertical;min-height:120px;font-family:inherit;line-height:1.55}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+
+/* Choice pills */
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pill{
+  padding:8px 12px;border-radius:999px;border:1px solid var(--border);
+  background:var(--panel-2);color:var(--muted);font-size:12px;cursor:pointer;
+  transition:all .15s ease;user-select:none;
+}
+.pill:hover{color:var(--text);border-color:var(--accent)}
+.pill.active{background:var(--grad);color:#fff;border-color:transparent;box-shadow:0 6px 16px -8px var(--accent)}
+
+/* Button */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  padding:14px 22px;border-radius:12px;border:none;cursor:pointer;font-weight:700;font-size:14px;
+  background:var(--grad);color:#fff;width:100%;transition:transform .15s ease,box-shadow .15s ease;
+  position:relative;overflow:hidden;
+}
+.btn:hover{transform:translateY(-1px);box-shadow:0 12px 30px -10px rgba(124,92,255,.6)}
+.btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.btn.secondary{background:var(--panel-2);color:var(--text);border:1px solid var(--border)}
+.btn.ghost{background:transparent;border:1px solid var(--border)}
+.btn.sm{padding:8px 14px;font-size:12px;width:auto}
+
+/* Right side preview */
+.workspace{display:flex;flex-direction:column;gap:16px}
+.tabs{display:flex;gap:4px;background:var(--panel-2);padding:4px;border-radius:12px;border:1px solid var(--border)}
+.tab{
+  flex:1;padding:10px 14px;border-radius:9px;cursor:pointer;font-size:13px;font-weight:600;
+  color:var(--muted);text-align:center;transition:all .15s ease;display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.tab.active{background:var(--grad);color:#fff;box-shadow:0 4px 14px -6px var(--accent)}
+.tab:hover:not(.active){color:var(--text)}
+
+.viewport-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.viewport-pills{display:flex;gap:4px;background:var(--panel-2);padding:3px;border-radius:9px;border:1px solid var(--border)}
+.vp{padding:6px 10px;border-radius:7px;font-size:12px;cursor:pointer;color:var(--muted)}
+.vp.active{background:var(--accent);color:#fff}
+
+.preview-shell{
+  background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;box-shadow:var(--shadow);min-height:600px;
+  display:flex;flex-direction:column;
+}
+.preview-head{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.15)}
+.dots{display:flex;gap:6px}
+.dots span{width:11px;height:11px;border-radius:50%;background:#ff5f57}
+.dots span:nth-child(2){background:#febc2e}
+.dots span:nth-child(3){background:#28c840}
+.url-bar{flex:1;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)}
+
+.preview-frame-wrap{flex:1;display:grid;place-items:center;padding:14px;background:repeating-conic-gradient(rgba(255,255,255,.02) 0% 25%,transparent 0% 50%) 0/20px 20px}
+.preview-frame{width:100%;height:680px;border:none;border-radius:10px;background:#fff;transition:width .25s ease;box-shadow:0 10px 40px -10px rgba(0,0,0,.5)}
+.preview-frame.tablet{width:768px;max-width:100%}
+.preview-frame.mobile{width:390px;max-width:100%}
+
+/* Code view */
+.code-shell{display:none;flex-direction:column;background:#0c0d20;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;min-height:600px}
+.code-shell.active{display:flex}
+.code-head{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,.4)}
+.code-head .file{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+.code-pre{margin:0;padding:18px;overflow:auto;flex:1;color:#cbd5ff;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.55;white-space:pre;tab-size:2}
+.token-tag{color:#ff7eb6}
+.token-attr{color:#82aaff}
+.token-str{color:#c3e88d}
+.token-com{color:#5b6190;font-style:italic}
+
+/* Outline / sections */
+.outline{display:none;flex-direction:column;gap:10px}
+.outline.active{display:flex}
+.section-card{
+  background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px;
+  display:flex;flex-direction:column;gap:8px;transition:all .2s ease;
+}
+.section-card:hover{border-color:var(--accent)}
+.section-card .head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.section-card h4{margin:0;font-size:14px;font-weight:700}
+.section-card .body{font-size:13px;color:var(--muted);line-height:1.6;white-space:pre-wrap}
+.section-card .actions{display:flex;gap:6px;flex-wrap:wrap}
+
+/* Stream output panel */
+.stream-out{
+  display:none;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);
+  padding:18px;box-shadow:var(--shadow);max-height:400px;overflow:auto;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.6;color:var(--muted);white-space:pre-wrap;
+}
+.stream-out.active{display:block}
+.stream-out .cursor{display:inline-block;width:8px;height:14px;background:var(--accent);animation:blink 1s infinite;vertical-align:middle;margin-left:2px}
+@keyframes blink{50%{opacity:0}}
+
+/* Progress */
+.progress{
+  display:none;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);
+}
+.progress.active{display:block}
+.progress .row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.progress .pct{font-weight:700;font-size:18px;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.bar{height:8px;background:var(--panel-2);border-radius:999px;overflow:hidden;margin-bottom:8px}
+.bar > div{height:100%;background:var(--grad);width:0%;transition:width .3s ease;border-radius:999px}
+.progress .step{font-size:12px;color:var(--muted)}
+
+/* Toast */
+.toast-wrap{position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:10px}
+.toast{
+  padding:12px 18px;border-radius:12px;background:var(--panel);backdrop-filter:var(--glass);
+  border:1px solid var(--border);box-shadow:var(--shadow);min-width:240px;display:flex;align-items:center;gap:10px;font-size:13px;
+  animation:slide .25s ease;
+}
+.toast.ok{border-left:3px solid var(--green)}
+.toast.err{border-left:3px solid var(--red)}
+.toast.info{border-left:3px solid var(--accent-2)}
+@keyframes slide{from{transform:translateX(50px);opacity:0}to{transform:translateX(0);opacity:1}}
+
+/* History */
+.history-list{display:flex;flex-direction:column;gap:8px;max-height:320px;overflow-y:auto}
+.history-item{
+  display:flex;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:10px;
+  background:var(--panel-2);border:1px solid var(--border);font-size:13px;align-items:center;cursor:pointer;
+  transition:all .15s;
+}
+.history-item:hover{border-color:var(--accent);transform:translateX(2px)}
+.history-item .meta{display:flex;flex-direction:column;gap:2px;min-width:0}
+.history-item .meta strong{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:230px}
+.history-item .meta small{font-size:11px;color:var(--muted)}
+.history-item .acts{display:flex;gap:4px}
+.history-item .acts button{
+  width:30px;height:30px;border-radius:8px;border:1px solid var(--border);
+  background:transparent;color:var(--muted);cursor:pointer;
+}
+.history-item .acts button:hover{color:#fff;background:var(--accent);border-color:transparent}
+
+/* Empty */
+.empty{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  padding:60px 20px;color:var(--muted);text-align:center;
+}
+.empty i{font-size:48px;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.empty h3{margin:0;color:var(--text);font-size:18px;font-weight:700;text-transform:none;letter-spacing:0}
+.empty p{margin:0;font-size:13px;max-width:320px}
+
+/* Tip card */
+.tip{
+  margin-top:14px;padding:12px;border-radius:12px;background:linear-gradient(135deg,rgba(124,92,255,.12),rgba(34,211,238,.08));
+  border:1px solid rgba(124,92,255,.2);font-size:12px;color:var(--text);display:flex;gap:10px;align-items:flex-start;
+}
+.tip i{color:var(--accent);margin-top:2px}
+
+/* Modal */
+.modal-bg{position:fixed;inset:0;background:rgba(5,6,15,.7);backdrop-filter:blur(8px);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-bg.active{display:flex}
+.modal{background:var(--panel);backdrop-filter:var(--glass);border:1px solid var(--border);border-radius:var(--radius);padding:24px;max-width:560px;width:100%;box-shadow:var(--shadow)}
+.modal h3{margin-top:0}
+
+/* misc */
+.section-divider{height:1px;background:var(--border);margin:14px 0}
+.kbd{font-family:'JetBrains Mono',monospace;font-size:11px;padding:2px 6px;border:1px solid var(--border);border-radius:4px;color:var(--muted);background:var(--panel-2)}
+
+/* Animation entry */
+.fade-in{animation:fadeIn .35s ease both}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">W</div>
+      <div>
+        <h1>WebGen <span>Pro</span></h1>
+        <p>KI Website Studio · powered by gpt-4o-mini · streaming</p>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <span class="chip" id="status-chip"><span class="dot"></span> Proxy verbunden</span>
+      <button class="icon-btn" id="theme-toggle" title="Theme wechseln"><i class="fa-solid fa-moon"></i></button>
+      <button class="icon-btn" id="help-btn" title="Hilfe"><i class="fa-solid fa-circle-question"></i></button>
+      <a class="icon-btn" href="/ideas.html" title="Ideen Generator"><i class="fa-solid fa-lightbulb"></i></a>
+    </div>
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="grid">
+
+    <!-- LEFT: Form -->
+    <div class="panel">
+      <h3><i class="fa-solid fa-wand-magic-sparkles"></i> Website Briefing</h3>
+
+      <div class="field">
+        <label>Titel / Marke</label>
+        <input class="input" id="f-title" placeholder="z.B. NovaFit, Lumen Studio, Zenith Capital" />
+      </div>
+
+      <div class="field">
+        <label>Kategorie</label>
+        <div class="pills" id="p-category">
+          <div class="pill active" data-v="landing"><i class="fa-solid fa-rocket"></i>&nbsp;Landing</div>
+          <div class="pill" data-v="webapp"><i class="fa-solid fa-window-restore"></i>&nbsp;Web App</div>
+          <div class="pill" data-v="portfolio"><i class="fa-solid fa-user-astronaut"></i>&nbsp;Portfolio</div>
+          <div class="pill" data-v="business"><i class="fa-solid fa-briefcase"></i>&nbsp;Business</div>
+          <div class="pill" data-v="ecommerce"><i class="fa-solid fa-bag-shopping"></i>&nbsp;Shop</div>
+          <div class="pill" data-v="blog"><i class="fa-solid fa-pen-nib"></i>&nbsp;Blog</div>
+          <div class="pill" data-v="saas"><i class="fa-solid fa-cloud"></i>&nbsp;SaaS</div>
+          <div class="pill" data-v="agency"><i class="fa-solid fa-people-group"></i>&nbsp;Agency</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Design Stil</label>
+        <div class="pills" id="p-style">
+          <div class="pill active" data-v="glass">Glassmorphism</div>
+          <div class="pill" data-v="neo">Neo-Brutalism</div>
+          <div class="pill" data-v="minimal">Minimal</div>
+          <div class="pill" data-v="luxury">Luxury Dark</div>
+          <div class="pill" data-v="playful">Playful</div>
+          <div class="pill" data-v="corporate">Corporate</div>
+          <div class="pill" data-v="editorial">Editorial</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>Tonalität</label>
+          <select class="select" id="f-tone">
+            <option value="professionell">Professionell</option>
+            <option value="freundlich">Freundlich</option>
+            <option value="mutig">Mutig &amp; provokativ</option>
+            <option value="luxus">Luxuriös</option>
+            <option value="verspielt">Verspielt</option>
+            <option value="technisch">Technisch &amp; präzise</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Sprache</label>
+          <select class="select" id="f-lang">
+            <option value="de">Deutsch</option>
+            <option value="en">English</option>
+            <option value="es">Español</option>
+            <option value="fr">Français</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>Primärfarbe</label>
+          <input class="input" type="color" id="f-color1" value="#7c5cff" style="height:46px;padding:4px" />
+        </div>
+        <div class="field">
+          <label>Akzentfarbe</label>
+          <input class="input" type="color" id="f-color2" value="#22d3ee" style="height:46px;padding:4px" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Zielgruppe</label>
+        <input class="input" id="f-audience" placeholder="z.B. Gründer:innen 25-45, technikaffin" />
+      </div>
+
+      <div class="field">
+        <label>Beschreibung &amp; Inhalt</label>
+        <textarea class="textarea" id="f-content" placeholder="Beschreibe Vision, USP, Features, Angebote, Storyline..."></textarea>
+        <div style="display:flex;justify-content:space-between;margin-top:6px">
+          <small style="color:var(--muted)" id="char-count">0 Zeichen</small>
+          <button class="btn ghost sm" id="enhance-prompt" type="button"><i class="fa-solid fa-wand-sparkles"></i> KI verbessert mein Briefing</button>
+        </div>
+      </div>
+
+      <div class="row-3">
+        <div class="field">
+          <label>Sektionen</label>
+          <select class="select" id="f-sections">
+            <option value="6">6 (Standard)</option>
+            <option value="4">4 (Schlank)</option>
+            <option value="8">8 (Reich)</option>
+            <option value="10">10 (Premium)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Kreativität</label>
+          <select class="select" id="f-temp">
+            <option value="0.4">Präzise</option>
+            <option value="0.7" selected>Ausgewogen</option>
+            <option value="1.0">Kreativ</option>
+            <option value="1.3">Wild</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Animation</label>
+          <select class="select" id="f-anim">
+            <option value="subtle" selected>Subtil</option>
+            <option value="rich">Reich</option>
+            <option value="none">Keine</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn" id="generate-btn"><i class="fa-solid fa-bolt"></i> Website generieren</button>
+
+      <div class="tip">
+        <i class="fa-solid fa-lightbulb"></i>
+        <div>Tipp: Je präziser dein Briefing, desto stärker das Ergebnis. Nutze <span class="kbd">KI verbessert</span> für ein optimiertes Briefing.</div>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <h3><i class="fa-solid fa-clock-rotate-left"></i> History</h3>
+      <input class="input" id="history-search" placeholder="History durchsuchen…" style="margin-bottom:10px" />
+      <div class="history-list" id="history-list"></div>
+    </div>
+
+    <!-- RIGHT: Workspace -->
+    <div class="workspace">
+
+      <div class="tabs">
+        <div class="tab active" data-tab="preview"><i class="fa-solid fa-eye"></i> Vorschau</div>
+        <div class="tab" data-tab="outline"><i class="fa-solid fa-list-ul"></i> Sektionen</div>
+        <div class="tab" data-tab="code"><i class="fa-solid fa-code"></i> Code</div>
+        <div class="tab" data-tab="seo"><i class="fa-solid fa-magnifying-glass-chart"></i> SEO</div>
+      </div>
+
+      <!-- PROGRESS -->
+      <div class="progress" id="progress">
+        <div class="row">
+          <div>
+            <div style="font-weight:700;font-size:14px" id="progress-title">KI arbeitet…</div>
+            <div class="step" id="progress-step">Initialisierung</div>
+          </div>
+          <div class="pct" id="progress-pct">0%</div>
+        </div>
+        <div class="bar"><div id="progress-bar"></div></div>
+      </div>
+
+      <!-- STREAM -->
+      <div class="stream-out" id="stream-out"></div>
+
+      <!-- PREVIEW TAB -->
+      <div id="tab-preview">
+        <div class="viewport-bar" style="margin-bottom:10px">
+          <div class="viewport-pills">
+            <div class="vp active" data-vp="desktop"><i class="fa-solid fa-desktop"></i> Desktop</div>
+            <div class="vp" data-vp="tablet"><i class="fa-solid fa-tablet-screen-button"></i> Tablet</div>
+            <div class="vp" data-vp="mobile"><i class="fa-solid fa-mobile-screen"></i> Mobile</div>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="btn secondary sm" id="open-new"><i class="fa-solid fa-up-right-from-square"></i> Neuer Tab</button>
+            <button class="btn secondary sm" id="copy-html"><i class="fa-solid fa-copy"></i> HTML kopieren</button>
+            <button class="btn secondary sm" id="dl-html"><i class="fa-solid fa-download"></i> HTML</button>
+            <button class="btn secondary sm" id="dl-text"><i class="fa-solid fa-file-lines"></i> Text</button>
+            <button class="btn secondary sm" id="dl-json"><i class="fa-solid fa-code"></i> JSON</button>
+          </div>
+        </div>
+        <div class="preview-shell">
+          <div class="preview-head">
+            <div class="dots"><span></span><span></span><span></span></div>
+            <div class="url-bar" id="url-bar">https://your-website.com</div>
+          </div>
+          <div class="preview-frame-wrap" id="preview-wrap">
+            <div class="empty" id="empty-preview">
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+              <h3>Bereit, etwas Großartiges zu erschaffen?</h3>
+              <p>Fülle dein Briefing links aus und drücke <span class="kbd">Generieren</span>. Dein Live-Preview erscheint hier.</p>
+            </div>
+            <iframe class="preview-frame" id="preview-frame" style="display:none" sandbox="allow-scripts allow-forms allow-popups allow-modals" referrerpolicy="no-referrer"></iframe>
+          </div>
+        </div>
+      </div>
+
+      <!-- OUTLINE TAB -->
+      <div class="outline" id="tab-outline">
+        <div id="outline-empty" class="empty">
+          <i class="fa-solid fa-list-ul"></i>
+          <h3>Noch keine Sektionen</h3>
+          <p>Nach der Generierung siehst du hier alle Sektionen einzeln und kannst jede neu generieren.</p>
+        </div>
+        <div id="outline-list"></div>
+      </div>
+
+      <!-- CODE TAB -->
+      <div class="code-shell" id="tab-code">
+        <div class="code-head">
+          <div class="file"><i class="fa-brands fa-html5" style="color:#e34c26"></i> &nbsp; index.html</div>
+          <div style="display:flex;gap:6px">
+            <button class="btn secondary sm" id="code-copy"><i class="fa-solid fa-copy"></i> Kopieren</button>
+          </div>
+        </div>
+        <pre class="code-pre" id="code-view">// Dein generierter HTML-Code erscheint hier…</pre>
+      </div>
+
+      <!-- SEO TAB -->
+      <div class="outline" id="tab-seo" style="display:none">
+        <div id="seo-empty" class="empty">
+          <i class="fa-solid fa-magnifying-glass-chart"></i>
+          <h3>SEO Insights</h3>
+          <p>Nach der Generierung berechnen wir hier SEO-Score, Meta-Tags, Open Graph, Keywords und Verbesserungen.</p>
+        </div>
+        <div id="seo-content" style="display:none"></div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- Help Modal -->
+<div class="modal-bg" id="help-modal">
+  <div class="modal">
+    <h3><i class="fa-solid fa-circle-question"></i> WebGen Pro · Quick Guide</h3>
+    <p style="color:var(--muted);font-size:13px;line-height:1.7">
+      <strong>1. Briefing</strong> – Wähle Kategorie + Stil, beschreibe deine Idee.<br>
+      <strong>2. KI verbessert</strong> – Lass dein Briefing automatisch optimieren.<br>
+      <strong>3. Generieren</strong> – Streaming Live-Preview erscheint im Workspace.<br>
+      <strong>4. Sektionen</strong> – Regeneriere einzelne Sektionen ohne alles neu zu bauen.<br>
+      <strong>5. Export</strong> – HTML, Text oder JSON exportieren.<br><br>
+      <strong>Shortcuts:</strong> <span class="kbd">Cmd/Ctrl + Enter</span> generieren · <span class="kbd">Cmd/Ctrl + D</span> Theme
+    </p>
+    <button class="btn" onclick="document.getElementById('help-modal').classList.remove('active')">Verstanden</button>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<script>
+/* ============================================================
+   WEBGEN PRO — KI Website Studio
+   Backend: external proxy → POST /api/chat → gpt-4o-mini
+   ============================================================ */
+const PROXY = 'https://theserver-open-ai.replit.app';
+const MODEL = 'gpt-4o-mini';
+
+const STATE = {
+  category:'landing', style:'glass',
+  generating:false, html:'', sections:[], current:null,
+  history: JSON.parse(localStorage.getItem('webgen_history')||'[]'),
+};
+
+/* -------- Helpers -------- */
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+const toast = (msg, type='info', ms=3500) => {
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  const icon = type==='ok'?'circle-check':type==='err'?'circle-exclamation':'circle-info';
+  el.innerHTML = `<i class="fa-solid fa-${icon}" style="color:var(--${type==='ok'?'green':type==='err'?'red':'accent-2'})"></i><span>${msg}</span>`;
+  $('#toast-wrap').appendChild(el);
+  setTimeout(()=>el.remove(), ms);
+};
+
+/* -------- Theme -------- */
+$('#theme-toggle').addEventListener('click', () => {
+  const cur = document.documentElement.getAttribute('data-theme');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  $('#theme-toggle i').className = next==='dark' ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+  localStorage.setItem('webgen_theme', next);
+});
+const savedTheme = localStorage.getItem('webgen_theme');
+if(savedTheme){ document.documentElement.setAttribute('data-theme', savedTheme);
+  $('#theme-toggle i').className = savedTheme==='dark' ? 'fa-solid fa-moon' : 'fa-solid fa-sun'; }
+
+$('#help-btn').addEventListener('click', ()=>$('#help-modal').classList.add('active'));
+$('#help-modal').addEventListener('click', e=>{ if(e.target.id==='help-modal') e.target.classList.remove('active'); });
+
+/* -------- Pills -------- */
+const wirePills = (rootSel, key) => {
+  $$(`${rootSel} .pill`).forEach(p => p.addEventListener('click', () => {
+    $$(`${rootSel} .pill`).forEach(x=>x.classList.remove('active'));
+    p.classList.add('active');
+    STATE[key] = p.dataset.v;
+  }));
+};
+wirePills('#p-category','category');
+wirePills('#p-style','style');
+
+/* -------- Tabs -------- */
+$$('.tab').forEach(t => t.addEventListener('click', () => {
+  $$('.tab').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  const tab = t.dataset.tab;
+  ['preview','outline','code','seo'].forEach(name => {
+    const el = $('#tab-'+name);
+    if(!el) return;
+    if(name===tab){
+      if(name==='code') el.classList.add('active');
+      else if(name==='outline') el.classList.add('active');
+      else el.style.display = '';
+    } else {
+      if(name==='code') el.classList.remove('active');
+      else if(name==='outline') el.classList.remove('active');
+      else el.style.display = 'none';
+    }
+  });
+  // outline & seo manual handle
+  if(tab==='seo'){ $('#tab-seo').style.display = 'flex'; $('#tab-seo').classList.add('active'); }
+}));
+
+/* -------- Viewport -------- */
+$$('.vp').forEach(v => v.addEventListener('click', () => {
+  $$('.vp').forEach(x=>x.classList.remove('active'));
+  v.classList.add('active');
+  const f = $('#preview-frame');
+  f.classList.remove('tablet','mobile');
+  if(v.dataset.vp!=='desktop') f.classList.add(v.dataset.vp);
+}));
+
+/* -------- Char counter -------- */
+$('#f-content').addEventListener('input', e => {
+  $('#char-count').textContent = `${e.target.value.length} Zeichen`;
+});
+
+/* -------- Backend call (streaming) -------- */
+async function callAI({ messages, temperature=0.7, max_tokens=4000, stream=false, onChunk }) {
+  const res = await fetch(`${PROXY}/api/chat`, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ model: MODEL, messages, temperature, max_tokens, stream })
+  });
+  if(!res.ok){
+    const err = await res.json().catch(()=>({}));
+    throw new Error(err.message || err.error || `HTTP ${res.status}`);
+  }
+  if(!stream){
+    const data = await res.json();
+    return data.choices[0].message.content;
+  }
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let full = '', buffer = '';
+  while(true){
+    const { done, value } = await reader.read();
+    if(done) break;
+    buffer += decoder.decode(value, { stream:true });
+    let nl;
+    while((nl = buffer.indexOf('\n')) !== -1){
+      const line = buffer.slice(0, nl).trim();
+      buffer = buffer.slice(nl + 1);
+      if(!line.startsWith('data:')) continue;
+      const data = line.slice(5).trim();
+      if(data === '[DONE]') return full;
+      try{
+        const j = JSON.parse(data);
+        const c = j.choices?.[0]?.delta?.content;
+        if(c){ full += c; onChunk && onChunk(c, full); }
+      }catch(_){}
+    }
+  }
+  return full;
+}
+
+/* -------- Prompt enhancer -------- */
+$('#enhance-prompt').addEventListener('click', async () => {
+  const v = $('#f-content').value.trim();
+  if(!v){ toast('Schreibe erst eine kurze Beschreibung.', 'err'); return; }
+  const btn = $('#enhance-prompt');
+  btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> KI denkt…';
+  try{
+    const enhanced = await callAI({
+      messages:[
+        { role:'system', content:'Du bist Senior Brand Strategist & Conversion Copywriter. Verbessere das User-Briefing für eine Website. Gib NUR das verbesserte Briefing zurück, in der gleichen Sprache, prägnant, konkret, mit USP, Zielgruppe, Tonalität, Hauptbotschaft und gewünschten Sektionen. Maximal 220 Wörter, kein Vorspann.' },
+        { role:'user', content: v }
+      ],
+      temperature: 0.6, max_tokens: 600
+    });
+    $('#f-content').value = enhanced.trim();
+    $('#char-count').textContent = `${enhanced.length} Zeichen`;
+    toast('Briefing optimiert ✨','ok');
+  }catch(e){ toast('Fehler: '+e.message, 'err'); }
+  btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-wand-sparkles"></i> KI verbessert mein Briefing';
+});
+
+/* -------- Progress -------- */
+function setProgress(pct, step, title){
+  $('#progress').classList.add('active');
+  $('#progress-pct').textContent = Math.round(pct)+'%';
+  $('#progress-bar').style.width = pct+'%';
+  if(step) $('#progress-step').textContent = step;
+  if(title) $('#progress-title').textContent = title;
+}
+function endProgress(){ setTimeout(()=>$('#progress').classList.remove('active'), 800); }
+
+/* -------- System prompt builder -------- */
+function buildSystemPrompt(){
+  const cat = STATE.category, style = STATE.style;
+  const tone = $('#f-tone').value, lang = $('#f-lang').value;
+  const c1 = $('#f-color1').value, c2 = $('#f-color2').value;
+  const sections = $('#f-sections').value, anim = $('#f-anim').value;
+
+  const styleHints = {
+    glass:'Glassmorphism: backdrop-filter blur, halbtransparente Karten, weiche Verläufe, Neon-Akzente.',
+    neo:'Neo-Brutalismus: harte Schatten (8px Solid), kräftige Borders, kontrastreiche Blockfarben, monospace Akzente.',
+    minimal:'Minimal: viel Weißraum, dünne Linien, monochrom + 1 Akzentfarbe, große Typografie.',
+    luxury:'Luxury Dark: tiefschwarz, Gold/Champagne Akzente, Serif-Headlines, edle Animationen.',
+    playful:'Playful: bunte Farbverläufe, runde Formen, große Emojis, lebendige Mikroanimationen.',
+    corporate:'Corporate: klar strukturiert, blaue/graue Töne, professionelle Typografie, Trust-Signale.',
+    editorial:'Editorial: magazinhaft, große Serif-Typo, Spalten-Layouts, Bildlastig.'
+  }[style];
+
+  return `Du bist ein Senior Frontend-Engineer & Award-Winning Web Designer (Awwwards Niveau).
+Du baust EINE EINZIGE, KOMPLETTE, PRODUKTIONSREIFE HTML-Datei.
+
+ANFORDERUNGEN:
+- Sprache des Inhalts: ${lang}
+- Kategorie: ${cat}
+- Designstil: ${style} → ${styleHints}
+- Tonalität: ${tone}
+- Primärfarbe: ${c1}, Akzentfarbe: ${c2}
+- Anzahl Hauptsektionen: ${sections}
+- Animationen: ${anim}
+
+REGELN (STRIKT):
+1. Antworte AUSSCHLIESSLICH mit dem reinen HTML, beginnend mit <!DOCTYPE html>. Kein Markdown, keine Code-Fences, keine Erklärung.
+2. Inline CSS in <style> im <head>. Keine externen JS-Frameworks außer optional Tailwind via CDN.
+3. Vollständig responsive (Mobile-First), semantisches HTML5.
+4. Modern: CSS Grid/Flex, custom properties, gradients, subtle micro-interactions.
+5. Mindestens diese Sektionen je nach Kategorie: Hero, Features/Services, Social Proof, FAQ, CTA, Footer. Bei ${sections} mehr Sektionen → ergänze passende (Pricing, Testimonials, Statistik, Team, Showcase, Newsletter, Roadmap).
+6. Verwende echte, hochwertige deutsche/englische Texte (keine Lorem Ipsum). Headlines sind kraftvoll, USP-getrieben.
+7. SEO: <title>, <meta name="description">, Open Graph Tags.
+8. Accessibility: alt-Texte, aria-labels, semantische Tags, Kontrast.
+9. Performance: keine schweren Bilder; nutze CSS Gradients/SVG/Emoji als Visuals.
+10. Buttons mit Hover-Animation, Cards mit weichen Schatten, Header sticky.
+11. Footer mit Copyright, Links, Social Icons (Font Awesome via CDN erlaubt).
+12. KEINE Platzhalter wie "Lorem" oder "[Hier Text]" – alles real ausformuliert.
+
+LIEFERE NUR DEN HTML-CODE.`;
+}
+
+/* -------- Main generate -------- */
+$('#generate-btn').addEventListener('click', generate);
+async function generate(){
+  if(STATE.generating) return;
+  const title = $('#f-title').value.trim();
+  const content = $('#f-content').value.trim();
+  if(!title || !content){ toast('Titel und Beschreibung sind erforderlich.', 'err'); return; }
+
+  STATE.generating = true;
+  $('#generate-btn').disabled = true;
+  $('#generate-btn').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generiert…';
+  $('#empty-preview').style.display = 'none';
+  $('#stream-out').classList.add('active');
+  $('#stream-out').textContent = '';
+  setProgress(5, 'Briefing analysieren…', 'KI startet…');
+
+  try{
+    const userMsg = `BRIEFING:\nTitel: ${title}\nZielgruppe: ${$('#f-audience').value || 'allgemein'}\nKategorie: ${STATE.category}\nStil: ${STATE.style}\n\nBeschreibung:\n${content}\n\nLiefere die komplette HTML-Website.`;
+
+    setProgress(15, 'Architektur entwerfen…');
+    let acc = '';
+    const html = await callAI({
+      messages:[
+        { role:'system', content: buildSystemPrompt() },
+        { role:'user', content: userMsg }
+      ],
+      temperature: parseFloat($('#f-temp').value),
+      max_tokens: 8000,
+      stream: true,
+      onChunk: (chunk, full) => {
+        acc = full;
+        const out = $('#stream-out');
+        out.innerHTML = escapeHtml(full.slice(-2000)) + '<span class="cursor"></span>';
+        out.scrollTop = out.scrollHeight;
+        const pct = Math.min(85, 15 + (full.length/8000)*70);
+        setProgress(pct, `Generiere… ${full.length} Zeichen`);
+      }
+    });
+
+    setProgress(90, 'Bereinige & rendere…');
+    const cleaned = cleanHtml(html);
+    STATE.html = cleaned;
+    STATE.current = { id: Date.now(), title, category: STATE.category, style: STATE.style, html: cleaned, createdAt: new Date().toISOString() };
+
+    renderPreview(cleaned);
+    renderCode(cleaned);
+
+    setProgress(95, 'Sektionen extrahieren…');
+    extractSections(cleaned);
+
+    setProgress(98, 'SEO analysieren…');
+    analyzeSeo(cleaned);
+
+    saveHistory(STATE.current);
+    setProgress(100, 'Fertig! ✨');
+    toast('Website erfolgreich generiert!', 'ok');
+  }catch(e){
+    console.error(e);
+    toast('Fehler: '+e.message, 'err', 6000);
+    setProgress(0, 'Fehlgeschlagen', 'Bitte erneut versuchen');
+  }finally{
+    STATE.generating = false;
+    $('#generate-btn').disabled = false;
+    $('#generate-btn').innerHTML = '<i class="fa-solid fa-bolt"></i> Website generieren';
+    setTimeout(()=>{
+      $('#stream-out').classList.remove('active');
+      endProgress();
+    }, 1200);
+  }
+}
+
+function cleanHtml(s){
+  let h = s.trim();
+  h = h.replace(/^```(?:html)?\s*/i,'').replace(/```\s*$/,'');
+  const idx = h.toLowerCase().indexOf('<!doctype');
+  if(idx > 0) h = h.slice(idx);
+  return h.trim();
+}
+
+function escapeHtml(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function renderPreview(html){
+  const f = $('#preview-frame');
+  f.style.display = 'block';
+  f.srcdoc = html;
+  $('#url-bar').textContent = `https://${(STATE.current?.title||'website').toLowerCase().replace(/[^a-z0-9]/g,'-')}.com`;
+}
+
+function renderCode(html){
+  const pre = $('#code-view');
+  pre.textContent = html;
+}
+
+/* -------- Sections extractor + regenerate -------- */
+function extractSections(html){
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  const found = [];
+  tmp.querySelectorAll('section, header, footer, [class*="section"]').forEach(node => {
+    const id = node.id || node.querySelector('h1,h2,h3')?.textContent?.trim().slice(0,40) || node.tagName.toLowerCase();
+    const txt = node.textContent.trim().slice(0,400);
+    if(txt.length > 30) found.push({ id, html: node.outerHTML, preview: txt });
+  });
+  STATE.sections = found.slice(0,12);
+  const list = $('#outline-list');
+  list.innerHTML = '';
+  if(found.length === 0){
+    $('#outline-empty').style.display = '';
+    return;
+  }
+  $('#outline-empty').style.display = 'none';
+  STATE.sections.forEach((s, i) => {
+    const card = document.createElement('div');
+    card.className = 'section-card fade-in';
+    card.innerHTML = `
+      <div class="head">
+        <h4><i class="fa-solid fa-puzzle-piece" style="color:var(--accent)"></i> ${escapeHtml(s.id)}</h4>
+        <div class="actions">
+          <button class="btn ghost sm" data-act="regen" data-i="${i}"><i class="fa-solid fa-rotate"></i> Regenerieren</button>
+          <button class="btn ghost sm" data-act="copy" data-i="${i}"><i class="fa-solid fa-copy"></i></button>
+        </div>
+      </div>
+      <div class="body">${escapeHtml(s.preview)}…</div>`;
+    list.appendChild(card);
+  });
+}
+
+async function sectionAction(e){
+  const btn = e.target.closest('button[data-act]');
+  if(!btn) return;
+  const i = +btn.dataset.i, act = btn.dataset.act;
+  const s = STATE.sections[i];
+  if(act === 'copy'){
+    await navigator.clipboard.writeText(s.html);
+    toast('Sektion kopiert','ok');
+  } else if(act === 'regen'){
+    btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+    try{
+      const newHtml = await callAI({
+        messages:[
+          { role:'system', content:'Du bist Senior Frontend Engineer. Generiere EINE einzelne Sektion neu (nur das <section>...</section> oder äquivalente HTML-Element). Behalte Stil, Farben, Sprache bei. Gib NUR HTML zurück, kein Markdown.' },
+          { role:'user', content:`Aktuelle Sektion:\n${s.html}\n\nBitte erstelle eine verbesserte, kreativere Version.` }
+        ],
+        temperature:0.9, max_tokens:2000
+      });
+      const cleaned = cleanHtml(newHtml);
+      STATE.html = STATE.html.replace(s.html, cleaned);
+      STATE.sections[i].html = cleaned;
+      renderPreview(STATE.html);
+      renderCode(STATE.html);
+      toast('Sektion neu generiert','ok');
+    }catch(err){ toast('Fehler: '+err.message,'err'); }
+    finally{ btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-rotate"></i> Regenerieren'; }
+  }
+}
+$('#outline-list').addEventListener('click', sectionAction);
+
+/* -------- SEO analyzer -------- */
+function analyzeSeo(html){
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  const title = tmp.querySelector('title')?.textContent || '';
+  const desc = tmp.querySelector('meta[name="description"]')?.getAttribute('content') || '';
+  const og = tmp.querySelectorAll('meta[property^="og:"]').length;
+  const h1 = tmp.querySelectorAll('h1').length;
+  const imgs = tmp.querySelectorAll('img').length;
+  const imgsAlt = Array.from(tmp.querySelectorAll('img')).filter(i=>i.alt).length;
+  const words = (tmp.textContent.match(/\S+/g) || []).length;
+
+  let score = 0;
+  if(title.length>=20 && title.length<=70) score+=20; else if(title) score+=10;
+  if(desc.length>=80 && desc.length<=160) score+=20; else if(desc) score+=10;
+  if(og>=3) score+=15;
+  if(h1===1) score+=15;
+  if(imgs===0 || imgsAlt===imgs) score+=10;
+  if(words>=300) score+=20;
+
+  const grade = score>=80?'A':score>=60?'B':score>=40?'C':'D';
+  const color = score>=80?'var(--green)':score>=60?'var(--accent-2)':score>=40?'var(--amber)':'var(--red)';
+
+  $('#seo-empty').style.display = 'none';
+  const c = $('#seo-content');
+  c.style.display = 'flex';
+  c.style.flexDirection = 'column';
+  c.style.gap = '12px';
+  c.innerHTML = `
+    <div class="section-card">
+      <div class="head"><h4>SEO Score</h4>
+        <div style="font-size:32px;font-weight:800;color:${color}">${score}/100 · ${grade}</div></div>
+      <div class="bar" style="margin-top:6px"><div style="width:${score}%;background:${color}"></div></div>
+    </div>
+    <div class="section-card"><div class="head"><h4>&lt;title&gt;</h4><span class="chip">${title.length} chars</span></div><div class="body">${escapeHtml(title)||'<i>fehlt</i>'}</div></div>
+    <div class="section-card"><div class="head"><h4>Meta Description</h4><span class="chip">${desc.length} chars</span></div><div class="body">${escapeHtml(desc)||'<i>fehlt</i>'}</div></div>
+    <div class="section-card"><div class="head"><h4>Struktur</h4></div>
+      <div class="body">H1 Tags: ${h1} ${h1===1?'✅':'⚠️ optimal: 1'} · Open Graph Meta: ${og} ${og>=3?'✅':'⚠️'} · Bilder mit alt: ${imgsAlt}/${imgs} · Wörter: ${words}</div></div>
+  `;
+}
+
+/* -------- Export buttons -------- */
+$('#dl-html').addEventListener('click', () => {
+  if(!STATE.html) return toast('Erst generieren','err');
+  download(STATE.html, `${slug(STATE.current.title)}.html`, 'text/html');
+});
+$('#dl-text').addEventListener('click', () => {
+  if(!STATE.html) return toast('Erst generieren','err');
+  const tmp = document.createElement('div'); tmp.innerHTML = STATE.html;
+  tmp.querySelectorAll('script,style').forEach(e=>e.remove());
+  const txt = (tmp.textContent||'').replace(/\s+/g,' ').replace(/\n\s*\n/g,'\n\n').trim();
+  download(`# ${STATE.current.title}\n\n${txt}`, `${slug(STATE.current.title)}.txt`, 'text/plain');
+});
+$('#dl-json').addEventListener('click', () => {
+  if(!STATE.html) return toast('Erst generieren','err');
+  download(JSON.stringify(STATE.current,null,2), `${slug(STATE.current.title)}.json`, 'application/json');
+});
+$('#copy-html').addEventListener('click', async () => {
+  if(!STATE.html) return toast('Erst generieren','err');
+  await navigator.clipboard.writeText(STATE.html);
+  toast('HTML kopiert','ok');
+});
+$('#code-copy').addEventListener('click', async () => {
+  if(!STATE.html) return toast('Erst generieren','err');
+  await navigator.clipboard.writeText(STATE.html);
+  toast('Code kopiert','ok');
+});
+$('#open-new').addEventListener('click', () => {
+  if(!STATE.html) return toast('Erst generieren','err');
+  const w = window.open();
+  w.document.open(); w.document.write(STATE.html); w.document.close();
+});
+function download(content, name, type){
+  const blob = new Blob([content],{type:type+';charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = name; a.click();
+  URL.revokeObjectURL(url);
+}
+function slug(s){ return (s||'website').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
+
+/* -------- History -------- */
+function saveHistory(item){
+  STATE.history.unshift({ id:item.id, title:item.title, category:item.category, style:item.style, createdAt:item.createdAt, html:item.html });
+  STATE.history = STATE.history.slice(0,30);
+  localStorage.setItem('webgen_history', JSON.stringify(STATE.history));
+  renderHistory();
+}
+function renderHistory(filter=''){
+  const list = $('#history-list');
+  list.innerHTML = '';
+  const items = STATE.history.filter(h => h.title.toLowerCase().includes(filter.toLowerCase()));
+  if(items.length===0){ list.innerHTML = '<div class="empty" style="padding:20px"><p style="font-size:12px">Noch keine Einträge</p></div>'; return; }
+  items.forEach(h => {
+    const el = document.createElement('div');
+    el.className = 'history-item';
+    el.innerHTML = `
+      <div class="meta">
+        <strong>${escapeHtml(h.title)}</strong>
+        <small>${h.category} · ${h.style} · ${new Date(h.createdAt).toLocaleString('de-DE')}</small>
+      </div>
+      <div class="acts">
+        <button data-id="${h.id}" data-act="load" title="Laden"><i class="fa-solid fa-eye"></i></button>
+        <button data-id="${h.id}" data-act="dl" title="Download"><i class="fa-solid fa-download"></i></button>
+        <button data-id="${h.id}" data-act="del" title="Löschen"><i class="fa-solid fa-trash"></i></button>
+      </div>`;
+    list.appendChild(el);
+  });
+}
+$('#history-list').addEventListener('click', e => {
+  const b = e.target.closest('button[data-id]'); if(!b) return;
+  const id = +b.dataset.id, act = b.dataset.act;
+  const item = STATE.history.find(h=>h.id===id); if(!item) return;
+  if(act==='load'){
+    STATE.html = item.html; STATE.current = item;
+    $('#empty-preview').style.display = 'none';
+    renderPreview(item.html); renderCode(item.html); extractSections(item.html); analyzeSeo(item.html);
+    toast('Geladen','ok');
+  } else if(act==='dl'){
+    download(item.html, `${slug(item.title)}.html`, 'text/html');
+  } else if(act==='del'){
+    STATE.history = STATE.history.filter(h=>h.id!==id);
+    localStorage.setItem('webgen_history', JSON.stringify(STATE.history));
+    renderHistory($('#history-search').value);
+  }
+});
+$('#history-search').addEventListener('input', e => renderHistory(e.target.value));
+renderHistory();
+
+/* -------- Shortcuts -------- */
+document.addEventListener('keydown', e => {
+  if((e.metaKey||e.ctrlKey) && e.key === 'Enter'){ e.preventDefault(); generate(); }
+  if((e.metaKey||e.ctrlKey) && e.key.toLowerCase() === 'd'){ e.preventDefault(); $('#theme-toggle').click(); }
+});
+
+/* -------- Connectivity check -------- */
+(async () => {
+  try{
+    const r = await fetch(`${PROXY}/health`, { method:'GET' }).catch(()=>null);
+    if(!r || !r.ok) $('#status-chip').innerHTML = '<span class="dot" style="background:var(--amber);box-shadow:0 0 12px var(--amber)"></span> Proxy unbekannt';
+  }catch(_){}
+})();
+</script>
+</body>
+</html>

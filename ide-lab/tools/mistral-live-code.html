@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mistral Live • Code Engine</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    * {
+      font-family: 'Orbitron', monospace;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #2d1b69 0%, #11998e 50%, #38ef7d 100%);
+      min-height: 100vh;
+      color: #e0e0e0;
+      overflow-x: hidden;
+    }
+
+    .glow-text {
+      text-shadow: 0 0 10px #38ef7d, 0 0 20px #38ef7d, 0 0 30px #38ef7d;
+    }
+
+    #chat-container {
+      margin: 30px auto;
+      max-width: 900px;
+      background: rgba(45, 27, 105, 0.95);
+      border: 1px solid #38ef7d;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 0 40px rgba(56, 239, 125, 0.3);
+      backdrop-filter: blur(15px);
+    }
+
+    .header-section {
+      text-align: center;
+      margin-bottom: 30px;
+      border-bottom: 2px solid #38ef7d;
+      padding-bottom: 20px;
+    }
+
+    .main-title {
+      font-size: 2.8rem;
+      font-weight: 900;
+      color: #38ef7d;
+      margin-bottom: 10px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #a0a0a0;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .status-badge {
+      display: inline-block;
+      background: linear-gradient(45deg, #38ef7d, #11998e);
+      color: #000;
+      padding: 10px 25px;
+      border-radius: 25px;
+      font-size: 0.85rem;
+      font-weight: 800;
+      margin-top: 15px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      box-shadow: 0 0 20px rgba(56, 239, 125, 0.5);
+    }
+
+    #chatHistory {
+      height: 450px;
+      background: rgba(0, 0, 0, 0.8);
+      border: 1px solid #38ef7d;
+      border-radius: 15px;
+      color: #e0e0e0;
+      padding: 25px;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      box-shadow: inset 0 0 25px rgba(56, 239, 125, 0.15);
+      resize: none;
+      scrollbar-width: thin;
+      scrollbar-color: #38ef7d #2d1b69;
+    }
+
+    #chatHistory::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    #chatHistory::-webkit-scrollbar-track {
+      background: #2d1b69;
+      border-radius: 10px;
+    }
+
+    #chatHistory::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #38ef7d, #11998e);
+      border-radius: 10px;
+    }
+
+    .input-section {
+      margin-top: 25px;
+      position: relative;
+    }
+
+    .input-group {
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid #38ef7d;
+      border-radius: 25px;
+      padding: 6px;
+      box-shadow: 0 0 20px rgba(56, 239, 125, 0.25);
+    }
+
+    #userPrompt {
+      background: transparent;
+      border: none;
+      color: #e0e0e0;
+      padding: 18px 30px;
+      font-family: 'Orbitron', monospace;
+      font-size: 1.05rem;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+
+    #userPrompt:focus {
+      outline: none;
+      box-shadow: none;
+      background: transparent;
+      color: #38ef7d;
+    }
+
+    #userPrompt::placeholder {
+      color: #777;
+      font-family: 'Orbitron', monospace;
+      font-weight: 400;
+    }
+
+    .btn-generate {
+      background: linear-gradient(45deg, #38ef7d, #11998e);
+      border: none;
+      color: #000;
+      font-family: 'Orbitron', monospace;
+      font-weight: 800;
+      font-size: 0.95rem;
+      padding: 15px 30px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 15px rgba(56, 239, 125, 0.3);
+    }
+
+    .btn-generate:hover {
+      background: linear-gradient(45deg, #11998e, #0a6b61);
+      color: #fff;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(56, 239, 125, 0.5);
+    }
+
+    .btn-generate:disabled {
+      opacity: 0.6;
+      transform: none;
+    }
+
+    .processing-indicator {
+      color: #38ef7d;
+      font-style: italic;
+      margin-top: 12px;
+      display: none;
+      animation: glow 2s infinite alternate;
+    }
+
+    @keyframes glow {
+      0% { 
+        opacity: 0.7; 
+        text-shadow: 0 0 10px #38ef7d;
+      }
+      100% { 
+        opacity: 1; 
+        text-shadow: 0 0 20px #38ef7d, 0 0 30px #38ef7d;
+      }
+    }
+
+    .code-hint {
+      color: #11998e;
+      font-size: 0.8rem;
+      margin-top: 15px;
+      text-align: center;
+      font-weight: 500;
+      letter-spacing: 1px;
+    }
+
+    @media (max-width: 768px) {
+      #chat-container {
+        margin: 15px;
+        padding: 20px;
+      }
+      
+      .main-title {
+        font-size: 2.2rem;
+        letter-spacing: 2px;
+      }
+      
+      #chatHistory {
+        height: 350px;
+        font-size: 0.85rem;
+        padding: 20px;
+      }
+      
+      #userPrompt {
+        padding: 15px 20px;
+        font-size: 1rem;
+      }
+      
+      .btn-generate {
+        padding: 12px 20px;
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container-fluid">
+    <div id="chat-container">
+      <div class="header-section">
+        <h1 class="main-title glow-text">MISTRAL</h1>
+        <div class="subtitle">Code Generation Engine</div>
+        <div class="status-badge">🔥 Codestral-Latest Active</div>
+      </div>
+      
+      <textarea id="chatHistory" disabled placeholder="Mistral Code Engine initialized. Ready for code generation and technical assistance..."></textarea>
+      
+      <div class="input-section">
+        <div class="processing-indicator" id="processingIndicator">
+          🔥 Mistral is generating code...
+        </div>
+        
+        <div class="input-group">
+          <input type="text" id="userPrompt" class="form-control" placeholder="Describe your code requirements..." autocomplete="off">
+          <button class="btn btn-generate" id="generateButton" onclick="generateCode()">
+            <span id="generateText">GENERATE</span>
+            <span id="processingText" style="display: none;">
+              <span class="spinner-border spinner-border-sm"></span>
+              PROCESSING
+            </span>
+          </button>
+        </div>
+        
+        <div class="code-hint">
+          💡 Try: "Write a Python function", "Debug this code", "Explain algorithm"
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const BACKEND_URL = "https://secure-all.replit.app/api/chat";
+    
+    let chatHistory = [];
+    let isGenerating = false;
+    
+    const chatHistoryElement = document.getElementById("chatHistory");
+    const userPromptElement = document.getElementById("userPrompt");
+    const generateButton = document.getElementById("generateButton");
+    const generateText = document.getElementById("generateText");
+    const processingText = document.getElementById("processingText");
+    const processingIndicator = document.getElementById("processingIndicator");
+
+    async function generateCode() {
+      if (isGenerating) return;
+      
+      const prompt = userPromptElement.value.trim();
+      if (!prompt) return;
+
+      // UI Updates
+      isGenerating = true;
+      generateButton.disabled = true;
+      generateText.style.display = 'none';
+      processingText.style.display = 'inline-block';
+      processingIndicator.style.display = 'block';
+      userPromptElement.disabled = true;
+
+      // Add user message
+      chatHistory.push({ role: "user", content: prompt });
+      updateDisplay();
+      userPromptElement.value = "";
+
+      try {
+        const response = await fetch(BACKEND_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            model: "codestral-latest",
+            messages: chatHistory,
+            temperature: 0.3,
+            max_tokens: 2500
+          })
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Server responded with ${response.status}: ${errorText}`);
+        }
+
+        const data = await response.json();
+        
+        if (data.choices && data.choices[0] && data.choices[0].message) {
+          const assistantMessage = data.choices[0].message.content.trim();
+          chatHistory.push({ role: "assistant", content: assistantMessage });
+        } else {
+          throw new Error("Invalid response structure from server");
+        }
+
+      } catch (error) {
+        console.error("Generation error:", error);
+        chatHistory.push({ 
+          role: "system", 
+          content: `❌ Generation failed: ${error.message}` 
+        });
+      } finally {
+        updateDisplay();
+        
+        // Reset UI
+        isGenerating = false;
+        generateButton.disabled = false;
+        generateText.style.display = 'inline-block';
+        processingText.style.display = 'none';
+        processingIndicator.style.display = 'none';
+        userPromptElement.disabled = false;
+        userPromptElement.focus();
+      }
+    }
+
+    function updateDisplay() {
+      let displayText = "";
+      
+      chatHistory.forEach(msg => {
+        if (msg.role === "user") {
+          displayText += `[REQUEST] ${msg.content}\n\n`;
+        } else if (msg.role === "assistant") {
+          displayText += `[MISTRAL] ${msg.content}\n\n`;
+        } else if (msg.role === "system") {
+          displayText += `${msg.content}\n\n`;
+        }
+      });
+      
+      chatHistoryElement.value = displayText;
+      chatHistoryElement.scrollTop = chatHistoryElement.scrollHeight;
+    }
+
+    // Event Listeners
+    document.addEventListener("DOMContentLoaded", function() {
+      userPromptElement.addEventListener("keydown", function(event) {
+        if (event.key === "Enter" && !event.shiftKey) {
+          event.preventDefault();
+          generateCode();
+        }
+      });
+      
+      userPromptElement.focus();
+      
+      // Initialize with welcome message
+      chatHistory.push({
+        role: "system",
+        content: "🔥 Mistral Code Engine initialized. Connected to secure-all.replit.app\n✅ Model: Codestral-Latest specialized for code generation\n✅ Optimized for: Programming, debugging, algorithms, technical analysis"
+      });
+      updateDisplay();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🚀 Genitus Inc. Universal Editor</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
+
+  <!-- Quill -->
+  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+  <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/quill-markdown-shortcuts@0.0.10/dist/quill.markdown-shortcuts.min.js"></script>
+
+  <!-- Mammoth.js for DOCX -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
+
+  <!-- JSZip for ODT -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+  <!-- PapaParse for CSV -->
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+  <!-- PDF.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+
+  <!-- Marked for Markdown -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <style>
+    body {
+      background-color: #f9f9f9;
+      color: #222;
+      font-family: 'Orbitron', sans-serif;
+    }
+    h1 {
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 20px;
+      color: #004aad;
+    }
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    #editor {
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      height: 500px;
+      padding: 10px;
+    }
+    .ql-toolbar {
+      border-radius: 8px 8px 0 0;
+    }
+    .pagination {
+      margin-top: 15px;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid #ccc;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      padding: 15px;
+    }
+    .card-title {
+      font-weight: 700;
+      color: #004aad;
+    }
+  </style>
+</head>
+<body>
+  <div class="container py-4">
+    <h1>📂 Genitus Inc. Universal Editor</h1>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <input type="file" id="fileInput" class="form-control">
+      <button class="btn btn-success" id="saveBtn">💾 Save</button>
+      <button class="btn btn-danger" onclick="clearStorage()">🧹 Clear</button>
+      <button class="btn btn-primary" onclick="downloadTXT()">⬇️ Export TXT</button>
+      <button class="btn btn-warning" onclick="downloadMD()">⬇️ Export MD</button>
+      <button class="btn btn-info d-none" id="toggleCSV">🔄 Switch CSV View</button>
+    </div>
+
+    <!-- Output -->
+    <div id="dataContainer" class="row"></div>
+
+    <!-- Quill Editor -->
+    <div id="editor"></div>
+
+    <!-- Pagination -->
+    <div id="pagination" class="pagination d-flex justify-content-center"></div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "genitus_universal_editor";
+    let currentData = null;
+    let currentType = null;
+    let quill;
+    let csvViewMode = "cards";
+    let currentPage = 1;
+    const rowsPerPage = 50;
+
+    // Init Quill
+    function initQuill() {
+      if (!quill) {
+        quill = new Quill('#editor', {
+          theme: 'snow',
+          modules: {
+            toolbar: [
+              [{ header: [1, 2, 3, false] }],
+              ['bold', 'italic', 'underline', 'strike'],
+              [{ list: 'ordered'}, { list: 'bullet' }],
+              ['blockquote', 'code-block'],
+              [{ 'align': [] }],
+              ['clean']
+            ]
+          }
+        });
+        new QuillMarkdown(quill);
+      }
+    }
+
+    // Welcome Message
+    const welcomeText = `
+👋 Willkommen im Universal Editor!
+
+Unterstützte Formate:
+📄 DOCX, DOC (Word Dokumente)
+📝 ODT (OpenOffice Writer)
+📑 TXT, MD, XML (Text & Markdown)
+📊 CSV (Tabellen mit Pagination)
+📕 PDF (Text-Extraktion)
+🧾 JSON (Strukturierte Daten)
+
+🚀 Einfach eine Datei oben auswählen und loslegen!
+    `;
+
+    // On load → restore or show welcome
+    window.onload = () => {
+      initQuill();
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        currentData = parsed.data;
+        currentType = parsed.type;
+        renderData(currentType, currentData);
+      } else {
+        quill.setText(welcomeText);
+      }
+    };
+
+    // Upload handler
+    document.getElementById("fileInput").addEventListener("change", function(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      if (file.name.endsWith(".pdf")) {
+        parsePDF(file).then(pages => {
+          currentData = pages.map(p => p.content).join("\n\n");
+          currentType = "pdf";
+          renderData("txt", currentData); 
+        });
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const content = e.target.result;
+        try {
+          if (file.name.endsWith(".json")) {
+            currentData = JSON.parse(content);
+            currentType = "json";
+          } else if (file.name.endsWith(".csv")) {
+            currentData = parseCSV(content);
+            currentType = "csv";
+          } else if (file.name.endsWith(".docx") || file.name.endsWith(".doc")) {
+            parseDOCX(file);
+            return;
+          } else if (file.name.endsWith(".odt")) {
+            parseODT(file);
+            return;
+          } else if (file.name.endsWith(".txt") || file.name.endsWith(".md") || file.name.endsWith(".xml")) {
+            currentData = content;
+            currentType = "txt";
+          } else {
+            alert("⚠️ Unsupported format: " + file.name);
+            return;
+          }
+          renderData(currentType, currentData);
+        } catch (err) {
+          alert("❌ Fehler beim Laden der Datei");
+        }
+      };
+      reader.readAsText(file);
+    });
+
+    // CSV Parser
+    function parseCSV(text) {
+      const [headerLine, ...lines] = text.split("\n").map(l => l.trim()).filter(l => l.length);
+      const headers = headerLine.split(",");
+      return lines.map(line => {
+        const values = line.split(",");
+        const obj = {};
+        headers.forEach((h, i) => obj[h.trim()] = values[i] ? values[i].trim() : "");
+        return obj;
+      });
+    }
+
+    // PDF Parser
+    async function parsePDF(file) {
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      let pages = [];
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
+        const strings = textContent.items.map(item => item.str);
+        pages.push({ page: i, content: strings.join(" ") });
+      }
+      return pages;
+    }
+
+    // DOCX
+    function parseDOCX(file) {
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        mammoth.extractRawText({ arrayBuffer: event.target.result })
+          .then(result => {
+            currentData = result.value;
+            currentType = "txt";
+            renderData("txt", currentData);
+          })
+          .catch(err => alert("❌ Fehler DOCX: " + err));
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    // ODT
+    async function parseODT(file) {
+      const arrayBuffer = await file.arrayBuffer();
+      try {
+        const zip = await JSZip.loadAsync(arrayBuffer);
+        const contentXml = await zip.file("content.xml").async("string");
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(contentXml, "application/xml");
+
+        currentData = Array.from(xmlDoc.getElementsByTagName("text:p"))
+          .map(p => p.textContent)
+          .join("\n");
+        currentType = "txt";
+        renderData("txt", currentData);
+      } catch (err) {
+        alert("❌ Fehler ODT: " + err);
+      }
+    }
+
+    // Render
+    function renderData(type, data) {
+      const container = document.getElementById("dataContainer");
+      const editor = document.getElementById("editor");
+      const pagination = document.getElementById("pagination");
+      container.innerHTML = "";
+      pagination.innerHTML = "";
+      document.getElementById("toggleCSV").classList.add("d-none");
+
+      if (type === "json") {
+        let list = [];
+        if (data.personas) list = data.personas;
+        else if (data.prompts) list = data.prompts;
+        else if (Array.isArray(data)) list = data;
+        else list = [data];
+
+        list.forEach(item => {
+          let details = "";
+          Object.keys(item).forEach(key => {
+            details += `<p><strong>${key}:</strong> ${item[key]}</p>`;
+          });
+          container.innerHTML += `
+            <div class="col-md-6">
+              <div class="card">
+                <h5 class="card-title">${item.name || "Untitled"}</h5>
+                ${details}
+              </div>
+            </div>`;
+        });
+      }
+
+      if (type === "csv") {
+        document.getElementById("toggleCSV").classList.remove("d-none");
+        renderCSV(data);
+      }
+
+      if (type === "txt") {
+        initQuill();
+        quill.root.innerHTML = marked.parse(typeof data === "string" ? data : JSON.stringify(data, null, 2));
+      }
+    }
+
+    // CSV render with pagination
+    function renderCSV(data) {
+      const container = document.getElementById("dataContainer");
+      const pagination = document.getElementById("pagination");
+      container.innerHTML = "";
+      pagination.innerHTML = "";
+
+      const totalPages = Math.ceil(data.length / rowsPerPage);
+      const start = (currentPage - 1) * rowsPerPage;
+      const end = start + rowsPerPage;
+      const pageData = data.slice(start, end);
+
+      if (csvViewMode === "cards") {
+        pageData.forEach(row => {
+          let details = "";
+          Object.keys(row).forEach(k => {
+            details += `<p><strong>${k}:</strong> ${row[k]}</p>`;
+          });
+          container.innerHTML += `
+            <div class="col-md-6">
+              <div class="card">
+                <h5 class="card-title">CSV Row</h5>
+                ${details}
+              </div>
+            </div>`;
+        });
+      } else {
+        let table = `<table class="table table-bordered"><thead><tr>`;
+        Object.keys(data[0]).forEach(k => table += `<th>${k}</th>`);
+        table += `</tr></thead><tbody>`;
+        pageData.forEach(row => {
+          table += `<tr>`;
+          Object.values(row).forEach(v => table += `<td>${v}</td>`);
+          table += `</tr>`;
+        });
+        table += `</tbody></table>`;
+        container.innerHTML = `<div class="col-12">${table}</div>`;
+      }
+
+      if (totalPages > 1) {
+        for (let i = 1; i <= totalPages; i++) {
+          pagination.innerHTML += `<button class="btn btn-sm ${i === currentPage ? "btn-primary" : "btn-light"} mx-1" onclick="goToPage(${i})">${i}</button>`;
+        }
+      }
+    }
+
+    function goToPage(page) {
+      currentPage = page;
+      renderCSV(currentData);
+    }
+
+    // Toggle CSV view
+    document.getElementById("toggleCSV").addEventListener("click", () => {
+      csvViewMode = csvViewMode === "cards" ? "table" : "cards";
+      renderCSV(currentData);
+    });
+
+    // Save
+    document.getElementById("saveBtn").addEventListener("click", () => {
+      if (currentData && currentType) {
+        if (currentType === "txt") {
+          currentData = quill.getText();
+        }
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ type: currentType, data: currentData }));
+        alert("✅ Gespeichert!");
+      }
+    });
+
+    // Export TXT
+    function downloadTXT() {
+      const text = quill ? quill.getText() : JSON.stringify(currentData, null, 2);
+      const blob = new Blob([text], { type: "text/plain" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "genitus_doc.txt";
+      link.click();
+    }
+
+    // Export MD
+    function downloadMD() {
+      const text = quill ? quill.root.innerHTML : JSON.stringify(currentData, null, 2);
+      const blob = new Blob([text], { type: "text/markdown" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "genitus_doc.md";
+      link.click();
+    }
+
+    // Clear
+    function clearStorage() {
+      localStorage.removeItem(STORAGE_KEY);
+      if (quill) quill.setText(welcomeText);
+      alert("🧹 Cleared!");
+    }
+  </script>
+</body>
+</html>

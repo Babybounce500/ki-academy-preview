@@ -1,0 +1,680 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Mistral Agents All-in-One</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&display=swap">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #00f7ff;
+      --primary-glow: rgba(0, 247, 255, 0.5);
+      --bg-dark: #0e0e0e;
+      --bg-panel: #181818;
+      --bg-input: #222;
+      --text-bright: #f0f0f0;
+      --text-dim: #aaa;
+      --accent-success: #0af;
+      --accent-warning: #ffcc00;
+      --accent-error: #ff4d4d;
+      --code-bg: #121212;
+      --code-text: #0f0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Orbitron', system-ui, sans-serif;
+    }
+
+    body {
+      background: var(--bg-dark);
+      color: var(--text-bright);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      padding: 20px 0;
+      margin-bottom: 30px;
+      border-bottom: 1px solid var(--primary-color);
+      position: relative;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      letter-spacing: 2px;
+      color: var(--primary-color);
+      text-shadow: 0 0 10px var(--primary-glow);
+      animation: pulse 3s infinite;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+      color: var(--primary-color);
+    }
+
+    .chat-window {
+      height: calc(100vh - 320px);
+      min-height: 300px;
+      overflow-y: auto;
+      padding: 15px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      margin-bottom: 15px;
+      border: 1px solid #333;
+      scrollbar-width: thin;
+      scrollbar-color: var(--primary-color) #333;
+    }
+
+    .chat-window::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .chat-window::-webkit-scrollbar-track {
+      background: #333;
+    }
+
+    .chat-window::-webkit-scrollbar-thumb {
+      background-color: var(--primary-color);
+      border-radius: 4px;
+    }
+
+    .message {
+      margin: 15px 0;
+      padding: 15px;
+      border-radius: 8px;
+      word-break: break-word;
+      max-width: 90%;
+      line-height: 1.5;
+    }
+
+    .message p {
+      margin-bottom: 12px;
+    }
+
+    .message p:last-child {
+      margin-bottom: 0;
+    }
+
+    .message code {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 2px 5px;
+      border-radius: 3px;
+      font-family: monospace;
+      font-size: 0.9em;
+    }
+
+    .user {
+      background: rgba(0, 247, 255, 0.1);
+      border-left: 3px solid var(--primary-color);
+      text-align: right;
+      margin-left: auto;
+    }
+
+    .bot {
+      background: rgba(0, 0, 0, 0.3);
+      border-left: 3px solid var(--accent-success);
+      margin-right: auto;
+    }
+
+    .tool {
+      background: rgba(255, 204, 0, 0.1);
+      border-left: 3px solid var(--accent-warning);
+      font-size: 0.9em;
+      color: var(--text-dim);
+      margin-right: auto;
+      max-width: 85%;
+    }
+
+    .chat-tabs {
+      display: flex;
+      gap: 6px;
+      margin: 10px 0;
+      flex-wrap: wrap;
+    }
+
+    .chat-tabs button {
+      background: #222;
+      color: #fff;
+      border: 1px solid #0ff;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9em;
+      transition: all 0.2s ease;
+    }
+
+    .chat-tabs button:hover {
+      background: #0ff;
+      color: #000;
+      transform: translateY(-2px);
+    }
+
+    .chat-tabs button.active {
+      background: var(--primary-color);
+      color: #000;
+      box-shadow: 0 0 10px var(--primary-glow);
+    }
+
+    .input-bar {
+      display: flex;
+      margin-top: 10px;
+      position: relative;
+    }
+
+    .input-bar textarea {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid #0ff;
+      background: #000;
+      color: #fff;
+      border-radius: 8px 0 0 8px;
+      resize: none;
+      height: 60px;
+      font-size: 1rem;
+    }
+
+    .input-bar button {
+      background: linear-gradient(135deg, #00f7ff, #0088ff);
+      border: none;
+      padding: 0 25px;
+      cursor: pointer;
+      border-radius: 0 8px 8px 0;
+      font-weight: bold;
+      color: #000;
+      transition: all 0.3s;
+    }
+
+    .input-bar button:hover {
+      background: linear-gradient(135deg, #00d8ff, #0077ff);
+      transform: scale(1.05);
+    }
+
+    pre {
+      background: var(--code-bg);
+      padding: 15px;
+      border-radius: 8px;
+      overflow-x: auto;
+      color: var(--code-text);
+      margin: 15px 0;
+      font-family: 'Consolas', 'Monaco', monospace;
+      border-left: 3px solid #0ff;
+    }
+
+    code {
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+
+    .code-block {
+      position: relative;
+    }
+
+    .code-block .copy-btn {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background: rgba(0, 0, 0, 0.5);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 5px 8px;
+      font-size: 12px;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .code-block:hover .copy-btn {
+      opacity: 1;
+    }
+
+    img {
+      max-width: 100%;
+      border-radius: 8px;
+      margin: 15px 0;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
+    }
+
+    .status {
+      margin-top: 10px;
+      font-size: 0.9em;
+      padding: 8px 12px;
+      border-radius: 4px;
+      transition: all 0.3s;
+    }
+
+    .status.success {
+      background: rgba(0, 255, 128, 0.1);
+      color: #0f0;
+    }
+
+    .status.error {
+      background: rgba(255, 0, 0, 0.1);
+      color: red;
+    }
+
+    .status.warning {
+      background: rgba(255, 204, 0, 0.1);
+      color: orange;
+    }
+
+    @keyframes pulse {
+      0% { text-shadow: 0 0 5px var(--primary-glow); }
+      50% { text-shadow: 0 0 20px var(--primary-glow); }
+      100% { text-shadow: 0 0 5px var(--primary-glow); }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 10px;
+      }
+
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      .chat-window {
+        height: calc(100vh - 280px);
+      }
+
+      .chat-tabs {
+        overflow-x: auto;
+        padding-bottom: 5px;
+        margin-bottom: 15px;
+      }
+
+      .chat-tabs button {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+        white-space: nowrap;
+      }
+
+      .input-bar textarea {
+        height: 50px;
+        font-size: 0.9rem;
+      }
+
+      .message {
+        padding: 10px;
+        max-width: 95%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .chat-window {
+        height: calc(100vh - 250px);
+      }
+
+      .input-bar button {
+        padding: 0 15px;
+      }
+    }
+  </style>
+  </head>
+<body>
+  </head>
+<body class="bg-grid">
+  <nav class="neural-nav">
+    <a href="/" class="neural-nav-brand"><span style="font-size:1.4rem;">⚙️</span> NEURAL MISTRAL</a>
+    <button class="neural-nav-toggle" onclick="document.querySelector('.neural-nav-links').classList.toggle('show')">☰</button>
+    <ul class="neural-nav-links">
+      <li><a href="/">Solutions</a></li>
+      <li><a href="/neural-agents.html" class="active">Neural</a></li>
+      <li><a href="/agent-light.html">Agent Light</a></li>
+      <li><a href="/agent.html">Agent</a></li>
+      <li><a href="/LeCode.html">LeCode</a></li>
+      <li><a href="/urbot.html">Urbot</a></li>
+      <li><a href="/devstral.html">Devstral</a></li>
+      <li><a href="/voxtral.html">Voxtral</a></li>
+      <li><a href="/pixtral.html">Pixtral</a></li>
+      <li><a href="/mistral-all-in-one.html">All-in-One</a></li>
+    </ul>
+  </nav>
+  <div class="neural-main">
+  <div class="container">
+    <header>
+      <h1>MISTRAL AGENTS ALL-IN-ONE</h1>
+    </header>
+
+    <div class="chat-window" id="chat-log"></div>
+
+    <div class="chat-tabs">
+      <button onclick="setMode('default')" class="active" id="default-tab">💬 Chat</button>
+      <button onclick="setMode('web')" id="web-tab">🌍 Web Search</button>
+      <button onclick="setMode('code')" id="code-tab">💻 Code Run</button>
+      <button onclick="setMode('image')" id="image-tab">🖼️ Bild</button>
+      <button onclick="setMode('doc')" id="doc-tab">📂 Library</button>
+    </div>
+
+    <div class="input-bar">
+      <textarea id="chat-input" placeholder="Schreibe eine Nachricht..." rows="2"></textarea>
+      <button onclick="sendMessage()">Senden</button>
+    </div>
+
+    <div class="status" id="chat-status">Modus: Default</div>
+  </div>
+
+  <script>
+    const AGENT_ID = "ag_0199a9aedfd671e1ac6668755d9d321a";
+    const LIBRARY_ID = "0199ac78-29a7-7303-ae78-01e98d3a35ae";
+
+    let currentMode = "default";
+
+    function setMode(mode) {
+      currentMode = mode;
+      document.getElementById("chat-status").textContent = "Modus: " + mode;
+
+      // Update active tab
+      document.querySelectorAll('.chat-tabs button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      document.getElementById(`${mode}-tab`).classList.add('active');
+
+      // Update placeholder text based on mode
+      const input = document.getElementById("chat-input");
+      switch(mode) {
+        case 'web':
+          input.placeholder = "Stelle eine Frage für Web-Suche...";
+          break;
+        case 'code':
+          input.placeholder = "Beschreibe Code, den ich erstellen oder ausführen soll...";
+          break;
+        case 'image':
+          input.placeholder = "Beschreibe das Bild, das du generieren möchtest...";
+          break;
+        case 'doc':
+          input.placeholder = "Stelle eine Frage zu deinen Dokumenten...";
+          break;
+        default:
+          input.placeholder = "Schreibe eine Nachricht...";
+      }
+    }
+
+    function formatTextWithParagraphs(text) {
+      if (!text) return "";
+
+      // Replace newlines with paragraph breaks
+      const paragraphs = text.split(/\n{2,}/g);
+
+      return paragraphs.map(p => {
+        // Handle code blocks with ```
+        if (p.includes("```")) {
+          const parts = p.split(/```([^`]*?)```/g);
+          let result = "";
+
+          for (let i = 0; i < parts.length; i++) {
+            if (i % 2 === 0) {
+              // Normal text
+              if (parts[i].trim()) {
+                result += `<p>${parts[i].replace(/\n/g, "<br>")}</p>`;
+              }
+            } else {
+              // Code block
+              const codeContent = parts[i].trim();
+              const language = codeContent.split('\n')[0].trim();
+              const code = language ? codeContent.substring(language.length).trim() : codeContent;
+
+              result += `<div class="code-block">
+                <pre><code>${code}</code></pre>
+                <button class="copy-btn" onclick="copyToClipboard(this)">Kopieren</button>
+              </div>`;
+            }
+          }
+          return result;
+        } else {
+          // Regular paragraph
+          return `<p>${p.replace(/\n/g, "<br>")}</p>`;
+        }
+      }).join("");
+    }
+
+    function copyToClipboard(button) {
+      const codeBlock = button.previousElementSibling;
+      const code = codeBlock.textContent;
+
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = "Kopiert!";
+        setTimeout(() => {
+          button.textContent = "Kopieren";
+        }, 2000);
+      });
+    }
+
+    function addMessage(content, sender) {
+      const log = document.getElementById("chat-log");
+      const msg = document.createElement("div");
+      msg.className = "message " + sender;
+
+      if (typeof content === "string") {
+        if (sender === "user") {
+          msg.innerHTML = `🧍 ${content}`;
+        } else if (sender === "bot") {
+          msg.innerHTML = `🤖 ${formatTextWithParagraphs(content)}`;
+        } else {
+          msg.innerHTML = `🛠 ${content}`;
+        }
+      } else {
+        // For complex content objects
+        msg.innerHTML = (sender === "user" ? "🧍 " : sender === "bot" ? "🤖 " : "🛠 ") + content;
+      }
+
+      log.appendChild(msg);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById("chat-input");
+      const text = input.value.trim();
+      if (!text) return;
+
+      addMessage(text, "user");
+      input.value = "";
+
+      try {
+        let promptText = text;
+
+        // Formatiere den Prompt basierend auf dem Modus
+        if (currentMode === "image") {
+          // Bei Bildgenerierung explizit darauf hinweisen, ein Bild zu erstellen
+          promptText = `Generiere ein Bild von: ${text}. Nutze ausschließlich dein image_generation tool, um ein Bild zu erzeugen. Antworte nicht mit Text, sondern erstelle direkt das Bild.`;
+        } else if (currentMode === "web") {
+          promptText = `Suche im Web nach: ${text}. Nutze dein web_search tool und gib eine ausführliche, gut strukturierte Antwort.`;
+        } else if (currentMode === "code") {
+          promptText = `Führe folgenden Code aus oder erstelle Code nach dieser Beschreibung: ${text}.
+Nutze dein code_interpreter tool. Zeige sowohl den Code als auch die Ausgabe.
+Formatiere den Code ordentlich mit Syntax-Highlighting und Kommentaren.
+Falls es sich um eine Aufgabenbeschreibung handelt, erstelle einen vollständigen, funktionierenden Code.`;
+        } else if (currentMode === "doc") {
+          promptText = `Suche in der Library ${LIBRARY_ID} nach Informationen zu: ${text}. Gib eine gut strukturierte, umfassende Antwort.`;
+        }
+
+        document.getElementById("chat-status").textContent = "Verarbeite Anfrage...";
+
+        // Sende Anfrage an den hartcodierten Agenten
+        const response = await fetch("/mistral/v1/conversations", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            },
+          body: JSON.stringify({
+            agent_id: AGENT_ID,
+            stream: false,
+            inputs: [{
+              role: "user",
+              content: promptText,
+              object: "entry",
+              type: "message.input"
+            }]
+          })
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error?.message || "API-Fehler");
+        }
+
+        const data = await response.json();
+
+        if (data.outputs && data.outputs.length > 0) {
+          data.outputs.forEach(entry => {
+            if (entry.type === "message.output") {
+              if (Array.isArray(entry.content)) {
+                let textParts = [];
+                let hasImage = false;
+
+                entry.content.forEach(part => {
+                  if (part.type === "text") {
+                    textParts.push(part.text);
+                  }
+                  if (part.type === "tool_file") {
+                    hasImage = true;
+                    displayImage(part.file_id);
+                  }
+                  if (part.type === "tool_reference") {
+                    const linkHtml = `<a href="${part.url}" target="_blank" style="color: var(--primary-color);">🔗 ${part.title || part.url}</a>`;
+                    textParts.push(linkHtml);
+                  }
+                });
+
+                if (textParts.length > 0) {
+                  addMessage(textParts.join("\n\n"), "bot");
+                }
+
+                if (hasImage && currentMode === "image") {
+                  addMessage("Bild wurde generiert! (siehe unten)", "bot");
+                }
+              } else if (typeof entry.content === "string") {
+                addMessage(entry.content, "bot");
+              }
+            }
+            if (entry.type === "tool.execution") {
+              const toolInfo = entry.info || {};
+              let toolMessage = `Tool: ${entry.name}`;
+
+              // Spezielle Behandlung für Code Interpreter
+              if (entry.name === "code_interpreter") {
+                if (toolInfo.code) {
+                  addMessage(`Ausgeführter Code:\n\`\`\`${toolInfo.language || ''}\n${toolInfo.code}\n\`\`\``, "tool");
+                }
+
+                if (toolInfo.code_output) {
+                  addMessage(`Ausgabe:\n\`\`\`\n${toolInfo.code_output}\n\`\`\``, "tool");
+                }
+              } else {
+                addMessage(toolMessage, "tool");
+              }
+            }
+          });
+        } else {
+          addMessage("Keine Antwort vom Server erhalten.", "bot");
+        }
+
+        document.getElementById("chat-status").textContent = `Modus: ${currentMode}`;
+      } catch (err) {
+        addMessage("❌ Fehler: " + err.message, "bot");
+        console.error(err);
+        document.getElementById("chat-status").textContent = `Fehler: ${err.message}`;
+      }
+    }
+
+    async function displayImage(fileId) {
+      try {
+        const res = await fetch(`/v1/files/${fileId}/content`, {
+          headers: { }
+        });
+
+        if (!res.ok) {
+          throw new Error("Fehler beim Laden des Bildes");
+        }
+
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+
+        const img = document.createElement("img");
+        img.src = url;
+        img.style.maxWidth = "100%";
+        img.alt = "Generiertes Bild";
+        img.loading = "lazy";
+
+        const imgContainer = document.createElement("div");
+        imgContainer.className = "message bot image-container";
+        imgContainer.appendChild(img);
+
+        document.getElementById("chat-log").appendChild(imgContainer);
+        document.getElementById("chat-log").scrollTop = document.getElementById("chat-log").scrollHeight;
+      } catch (e) {
+        addMessage("❌ Fehler beim Laden des Bildes: " + e.message, "bot");
+      }
+    }
+
+    // Quick Send: Enter = senden, Shift+Enter = Zeilenumbruch
+    document.getElementById("chat-input").addEventListener("keydown", e => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    // Auto-resize textarea as user types
+    document.getElementById("chat-input").addEventListener("input", function() {
+      this.style.height = "auto";
+      const newHeight = Math.min(this.scrollHeight, 150);
+      this.style.height = newHeight + "px";
+    });
+
+    // Initialisierung
+    window.onload = function() {
+      // Set default active tab
+      document.getElementById("default-tab").classList.add("active");
+
+      // Welcome message
+      addMessage("Willkommen beim Mistral All-in-One Interface! Wähle einen Modus und starte die Unterhaltung.", "bot");
+
+      // Add event listener for window resize to adjust chat window height
+      window.addEventListener("resize", adjustChatWindowHeight);
+      adjustChatWindowHeight();
+    }
+
+    function adjustChatWindowHeight() {
+      const chatWindow = document.getElementById("chat-log");
+      const viewportHeight = window.innerHeight;
+      const headerHeight = document.querySelector("header").offsetHeight;
+      const tabsHeight = document.querySelector(".chat-tabs").offsetHeight;
+      const inputBarHeight = document.querySelector(".input-bar").offsetHeight;
+      const statusHeight = document.getElementById("chat-status").offsetHeight;
+      const padding = 60; // Additional padding
+
+      const newHeight = viewportHeight - headerHeight - tabsHeight - inputBarHeight - statusHeight - padding;
+      chatWindow.style.height = Math.max(300, newHeight) + "px";
+    }
+  </script>
+  </div>
+  <footer class="neural-footer">
+    <div style="margin-bottom: 0.5rem;">
+      <span class="neural-badge neural-badge-primary">POWERED BY MISTRAL AI</span>
+      <span class="neural-badge neural-badge-eu">EU COMPLIANT</span>
+    </div>
+    <div>
+      <span class="neural-text-muted">GENITUS Neural Mistral Suite — Alle API-Calls laufen über deinen eigenen Server</span>
+    </div>
+  </footer>
+</body>
+</html>
+
+

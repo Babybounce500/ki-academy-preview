@@ -1,0 +1,1157 @@
+[
+ {
+  "slug": "ai-html-studio",
+  "file": "../academy/modules/tools/ai-html-studio.html",
+  "title": "AI HTML Studio",
+  "category": "HTML-Editor",
+  "description": "HTML-Editor mit Ace, Live-Vorschau (iframe) und KI-Chat.",
+  "sizeKB": 293,
+  "source": "E:/0VIBECODING/stack-source/publish/academy/modules/tools/ai-html-studio.html",
+  "variantOf": null,
+  "hasEditor": true,
+  "hasPreview": true,
+  "hasChat": true,
+  "engine": "ace",
+  "loads": true,
+  "jsErrors": 0,
+  "mobileScrollX": false,
+  "mobileOk": true,
+  "endpoints": [
+   {
+    "host": "cdnjs.cloudflare.com",
+    "status": 200
+   },
+   {
+    "host": "cdn.jsdelivr.net",
+    "status": 301
+   },
+   {
+    "host": "theserver-open-ai.replit.app",
+    "status": 200
+   }
+  ],
+  "brandingFlag": null,
+  "sameDomAsStudio": true,
+  "notes": ""
+ },
+ {
+  "slug": "ai-html-studio-free",
+  "file": "../academy/modules/tools/ai-html-studio-free.html",
+  "title": "AI HTML Studio (Free Tier)",
+  "category": "HTML-Editor",
+  "description": "Free-Tier-Variante des HTML-Editors mit Ace, Live-Vorschau und KI-Chat.",
+  "sizeKB": 263,
+  "source": "E:/0VIBECODING/stack-source/publish/academy/modules/tools/ai-html-studio-free.html",
+  "variantOf": "ai-html-studio",
+  "hasEditor": true,
+  "hasPreview": true,
+  "hasChat": true,
+  "engine": "ace",
+  "loads": true,
+  "jsErrors": 0,
+  "mobileScrollX": false,
+  "mobileOk": true,
+  "endpoints": [
+   {
+    "host": "cdnjs.cloudflare.com",
+    "status": 200
+   },
+   {
+    "host": "cdn.jsdelivr.net",
+    "status": 301
+   },
+   {
+    "host": "theserver-open-ai.replit.app",
+    "status": 200
+   }
+  ],
+  "brandingFlag": null,
+  "sameDomAsStudio": true,
+  "notes": ""
+ },
+ {
+  "slug": "rag-vector-ide",
+  "file": "../academy/modules/tools/rag-vector-ide.html",
+  "title": "RAG-Vektor-IDE",
+  "category": "RAG und Vektor",
+  "description": "HTML-Editor mit Ace und Live-Vorschau plus Embedding-/Vektor-Funktionen und KI-Chat.",
+  "sizeKB": 313,
+  "source": "E:/0VIBECODING/stack-source/publish/academy/modules/tools/rag-vector-ide.html",
+  "variantOf": null,
+  "hasEditor": true,
+  "hasPreview": true,
+  "hasChat": true,
+  "engine": "ace",
+  "loads": true,
+  "jsErrors": 0,
+  "mobileScrollX": false,
+  "mobileOk": true,
+  "endpoints": [
+   {
+    "host": "cdnjs.cloudflare.com",
+    "status": 200
+   },
+   {
+    "host": "unpkg.com",
+    "status": 200
+   },
+   {
+    "host": "cdn.jsdelivr.net",
+    "status": 301
+   },
+   {
+    "host": "theserver-open-ai.replit.app",
+    "status": 200
+   }
+  ],
+  "brandingFlag": null,
+  "sameDomAsStudio": true,
+  "notes": ""
+ },
+ {
+  "slug": "claude-ide",
+  "file": "../academy/modules/tools/claude-ide.html",
+  "title": "Claude IDE",
+  "category": "KI-Coding-Chat",
+  "description": "Textarea-basiertes Claude-Coding-Studio mit Chat.",
+  "sizeKB": 82,
+  "source": "E:/0VIBECODING/stack-source/publish/academy/modules/tools/claude-ide.html",
+  "variantOf": null,
+  "hasEditor": false,
+  "hasPreview": true,
+  "hasChat": true,
+  "engine": "textarea",
+  "loads": true,
+  "jsErrors": 0,
+  "mobileScrollX": false,
+  "mobileOk": true,
+  "endpoints": [
+   {
+    "host": "glow-up-gemini.replit.app",
+    "status": 200
+   },
+   {
+    "host": "cdnjs.cloudflare.com",
+    "status": 200
+   },
+   {
+    "host": "cdn.jsdelivr.net",
+    "status": 301
+   }
+  ],
+  "brandingFlag": null,
+  "sameDomAsStudio": false,
+  "notes": "Kein Ace/Monaco, nur textarea."
+ },
+ {
+  "slug": "lecode-studio",
+  "file": "../academy/modules/tools/lecode-studio.html",
+  "title": "LeCode Studio",
+  "category": "KI-Coding-Chat",
+  "description": "KI-Coding-Assistent mit Ace-Editor und Chat.",
+  "sizeKB": 69,
+  "source": "E:/0VIBECODING/stack-source/publish/academy/modules/tools/lecode-studio.html",
+  "variantOf": null,
+  "hasEditor": true,
+  "hasPreview": true,
+  "hasChat": true,
+  "engine": "ace",
+  "loads": true,
+  "jsErrors": 0,
+  "mobileScrollX": false,
+  "mobileOk": true,
+  "endpoints": [
+   {
+    "host": "unpkg.com",
+    "status": 200
+   },
+   {
+    "host": "cdnjs.cloudflare.com",
+    "status": 200
+   },
+   {
+    "host": "html-editor.replit.app",
+    "status": 200
+   },
+   {
+    "host": "theserver-open-ai.replit.app",
+    "status": 200
+   }
+  ],
+  "brandingFlag": null,
+  "sameDomAsStudio": false,
+  "notes": ""
+ },
+ {
+  "slug": "python-ide",
+  "file": "../academy/modules/tools/python-ide.html",
+  "title": "Python-IDE",
+  "category": "Python",
+  "description": "Python-Entwicklungsumgebung mit KI-Chat und runCode-Funktion.",
+  "sizeKB": 37,
+  "source": "E:/0VIBECODING/stack-source/publish/academy/modules/tools/python-ide.html",
+  "variantOf": null,
+  "hasEditor": true,
+  "hasPreview": false,
+  "hasChat": true,
+  "engine": "monaco",
+  "loads": true,
+  "jsErrors": 1,
+  "mobileScrollX": true,
+  "mobileOk": false,
+  "endpoints": [
+   {
+    "host": "cdn.jsdelivr.net",
+    "status": 301
+   },
+   {
+    "host": "unpkg.com",
+    "status": 200
+   }
+  ],
+  "brandingFlag": null,
+  "sameDomAsStudio": false,
+  "notes": "Schluessel-Muster im Text ist ein Platzhalter (Fehlalarm). 1 JS-Fehler; mobil horizontales Scrollen."
+ },
+ {
+  "slug": "vision-bot",
+  "file": "../academy/modules/tools/vision-bot.html",
+  "title": "Vision-Bot",
+  "category": "Sonstiges",
+  "description": "Chatbot mit Bild-Eingabe (Vision), kein Code-Editor.",
+  "sizeKB": 27,
+  "source": "E:/0VIBECODING/stack-source/publish/academy/modules/tools/vision-bot.html",
+  "variantOf": null,
+  "hasEditor": false,
+  "hasPreview": false,
+  "hasChat": true,
+  "engine": "textarea",
+  "loads": true,
+  "jsErrors": 0,
+  "mobileScrollX": false,
+  "mobileOk": true,
+  "endpoints": [
+   {
+    "host": "cdn.jsdelivr.net",
+    "status": 301
+   }
+  ],
+  "brandingFlag": null,
+  "sameDomAsStudio": false,
+  "notes": "Kein Editor, Chat-Tool."
+ },
+ {
+  "slug": "batch-prozessor",
+  "file": "../academy/modules/tools/batch-prozessor.html",
+  "title": "Batch-Prozessor",
+  "category": "Sonstiges",
+  "description": "Mistral-Streaming-Batch-Verarbeitung ueber SERVER5.",
+  "sizeKB": 40,
+  "source": "E:/0VIBECODING/stack-source/publish/academy/modules/tools/batch-prozessor.html",
+  "variantOf": null,
+  "hasEditor": false,
+  "hasPreview": true,
+  "hasChat": false,
+  "engine": "textarea",
+  "loads": true,
+  "jsErrors": 0,
+  "mobileScrollX": false,
+  "mobileOk": true,
+  "endpoints": [
+   {
+    "host": "cdnjs.cloudflare.com",
+    "status": 200
+   },
+   {
+    "host": "theserver-open-ai.replit.app",
+    "status": 200
+   }
+  ],
+  "brandingFlag": null,
+  "sameDomAsStudio": false,
+  "notes": "Kein Editor."
+ },
+ {
+  "slug": "css-stripper",
+  "file": "../academy/modules/tools/css-stripper.html",
+  "title": "CSS-Stripper",
+  "category": "Sonstiges",
+  "description": "Wandelt HTML-Dateien stapelweise in nacktes HTML um.",
+  "sizeKB": 16,
+  "source": "E:/0VIBECODING/stack-source/publish/academy/modules/tools/css-stripper.html",
+  "variantOf": null,
+  "hasEditor": true,
+  "hasPreview": false,
+  "hasChat": false,
+  "engine": "textarea",
+  "loads": true,
+  "jsErrors": 0,
+  "mobileScrollX": true,
+  "mobileOk": false,
+  "endpoints": [
+   {
+    "host": "cdnjs.cloudflare.com",
+    "status": 200
+   },
+   {
+    "host": "cdn.jsdelivr.net",
+    "status": 301
+   }
+  ],
+  "brandingFlag": null,
+  "sameDomAsStudio": false,
+  "notes": "Mobil horizontales Scrollen (411px)."
+ },
+ {
+  "slug": "ide-18",
+  "file": "tools/ide-18.html",
+  "title": "AI HTML Studio (IDE 18)",
+  "category": "HTML-Editor",
+  "description": "Aeltere IDE-Fassung mit Ace, Live-Vorschau und KI-Chat.",
+  "sizeKB": 165,
+  "source": "E:/0VIBECODING/stack-source/modules-extra/ide-18.html",
+  "variantOf": "ai-html-studio",
+  "hasEditor": true,
+  "hasPreview": true,
+  "hasChat": true,
+  "engine": "ace",
+  "loads": true,
+  "jsErrors": 0,
+  "mobileScrollX": false,
+  "mobileOk": true,
+  "endpoints": [
+   {
+    "host": "cdnjs.cloudflare.com",
+    "status": 200
+   },
+   {
+    "host": "cdn.jsdelivr.net",
+    "status": 301
+   },
+   {
+    "host": "theserver-open-ai.replit.app",
+    "status": 200
+   }
+  ],
+  "brandingFlag": null,
+  "sameDomAsStudio": true,
+  "notes": ""
+ },
+ {
+  "slug": "ide-free-tier",
+  "file": "tools/ide-free-tier.html",
+  "title": "AI HTML Studio (Free Tier, Original)",
+  "category": "HTML-Editor",
+  "description": "Free-Tier-Fassung mit Ace und Live-Vorschau.",
+  "sizeKB": 213,
+  "source": "E:/0VIBECODING/stack-source/modules-extra/ide-free-tier.html",
+  "variantOf": "ai-html-studio-free",
+  "hasEditor": true,
+  "hasPreview": true,
+  "hasChat": false,
+  "engine": "ace",
+  "loads": true,
+  "jsErrors": 1,
+  "mobileScrollX": false,
+  "mobileOk": true,
+  "endpoints": [
+   {
+    "host": "cdnjs.cloudflare.com",
+    "status": 200
+   },
+   {
+    "host": "cdn.jsdelivr.net",
+    "status": 301
+   },
+   {
+    "host": "theserver-open-ai.replit.app",
+    "status": 200
+   },
+   {
+    "host": "genitus-embeddings.replit.app",
+    "status": 404
+   }
+  ],
+  "brandingFlag": null,
+  "sameDomAsStudio": true,
+  "notes": "Kein Chat-Eingabefeld erkannt; 1 JS-Fehler."
+ },
+ {
+  "slug": "ide-embeddings",
+  "file": "tools/ide-embeddings.html",
+  "title": "IDE mit Embeddings",
+  "category": "RAG und Vektor",
+  "description": "HTML-IDE mit Ace, Vorschau, KI-Chat und Embeddings.",
+  "sizeKB": 194,
+  "source": "E:/0VIBECODING/stack-source/modules/ide-embeddings.html",
+  "variantOf": "rag-vector-ide",
+  "hasEditor": true,
+  "hasPreview": true,
+  "hasChat": true,
+  "engine": "ace",
+  "loads": true,
+  "jsErrors": 0,
+  "mobileScrollX": false,
+  "mobileOk": true,
+  "endpoints": [
+   {
+    "host": "cdnjs.cloudflare.com",
+    "status": 200
+   },
+   {
+    "host": "cdn.jsdelivr.net",
+    "status": 301
+   },
+   {
+    "host": "theserver-open-ai.replit.app",
+    "status": 200
+   },
+   {
+    "host": "genitus-embeddings.replit.app",
+    "status": 404
+   }
+  ],
+  "brandingFlag": null,
+  "sameDomAsStudio": true,
+  "notes": ""
+ },
+ {
+  "slug": "lecode-core",
+  "file": "tools/lecode-core.html",
+  "title": "LeCode Core",
+  "category": "KI-Coding-Chat",
+  "description": "LeCode-Kernfassung mit Ace-Editor und Chat.",
+  "sizeKB": 44,
+  "source": "E:/0VIBECODING/stack-source/modules/lecode-core.html",
+  "variantOf": null,
+  "hasEditor": true,
+  "hasPreview": false,
+  "hasChat": true,
+  "engine": "ace",
+  "loads": true,
+  "jsErrors": 0,
+  "mobileScrollX": false,
+  "mobileOk": true,
+  "endpoints": [
+   {
+    "host": "unpkg.com",
+    "status": 200
+   },
+   {
+    "host": "cdnjs.cloudflare.com",
+    "status": 200
+   },
+   {
+    "host": "html-editor.replit.app",
+    "status": 200
+   },
+   {
+    "host": "theserver-open-ai.replit.app",
+    "status": 200
+   }
+  ],
+  "brandingFlag": null,
+  "sameDomAsStudio": false,
+  "notes": ""
+ },
+ {
+  "slug": "genitus-vector-editor",
+  "file": "tools/genitus-vector-editor.html",
+  "title": "Genitus Vektor-Editor (Le-IDE)",
+  "category": "RAG und Vektor",
+  "description": "RAG-Vektor-Editor mit Ace, Live-Vorschau und KI-Chat.",
+  "sizeKB": 261,
+  "source": "E:/0VIBECODING/stack-source/modules/genitus-vector-editor.html",
+  "variantOf": "rag-vector-ide",
+  "hasEditor": true,
+  "hasPreview": true,
+  "hasChat": true,
+  "engine": "ace",
+  "loads": true,
+  "jsErrors": 0,
+  "mobileScrollX": false,
+  "mobileOk": true,
+  "endpoints": [
+   {
+    "host": "cdnjs.cloudflare.com",
+    "status": 200
+   },
+   {
+    "host": "unpkg.com",
+    "status": 200
+   },
+   {
+    "host": "cdn.jsdelivr.net",
+    "status": 301
+   },
+   {
+    "host": "theserver-open-ai.replit.app",
+    "status": 200
+   },
+   {
+    "host": "genitus-embeddings.replit.app",
+    "status": 404
+   }
+  ],
+  "brandingFlag": null,
+  "sameDomAsStudio": true,
+  "notes": ""
+ },
+ {
+  "slug": "server-batch-lecode",
+  "file": "tools/server-batch-lecode.html",
+  "title": "Batch-Prozessor (LeCode)",
+  "category": "Sonstiges",
+  "description": "Mistral-Streaming-Batch-Verarbeitung (LeCode-Fassung).",
+  "sizeKB": 40,
+  "source": "E:/0VIBECODING/stack-source/modules/server-batch-lecode.html",
+  "variantOf": "batch-prozessor",
+  "hasEditor": false,
+  "hasPreview": true,
+  "hasChat": false,
+  "engine": "textarea",
+  "loads": true,
+  "jsErrors": 0,
+  "mobileScrollX": false,
+  "mobileOk": true,
+  "endpoints": [
+   {
+    "host": "cdnjs.cloudflare.com",
+    "status": 200
+   },
+   {
+    "host": "theserver-open-ai.replit.app",
+    "status": 200
+   }
+  ],
+  "brandingFlag": null,
+  "sameDomAsStudio": false,
+  "notes": "Kein Editor."
+ },
+ {
+  "slug": "html-editor-mobil",
+  "file": "tools/html-editor-mobil.html",
+  "title": "Mobiler HTML-Editor",
+  "category": "HTML-Editor",
+  "description": "Minimaler responsiver HTML-Editor mit textarea und Ausgabe-iframe.",
+  "sizeKB": 3,
+  "source": "E:/0-BLUEHOST-EXPORT-JUNI-2026/HTML/HTML-SUB-2/EDITOR.html",
+  "variantOf": null,
+  "hasEditor": true,
+  "hasPreview": true,
+  "hasChat": false,
+  "engine": "textarea",
+  "loads": true,
+  "jsErrors": 0,
+  "mobileScrollX": false,
+  "mobileOk": true,
+  "endpoints": [
+   {
+    "host": "cdn.jsdelivr.net",
+    "status": 301
+   }
+  ],
+  "brandingFlag": null,
+  "sameDomAsStudio": false,
+  "notes": "Sehr klein, ohne Syntax-Hervorhebung."
+ },
+ {
+  "slug": "ai-html-studio-deluxe",
+  "file": "tools/ai-html-studio-deluxe.html",
+  "title": "AI HTML Studio Deluxe",
+  "category": "HTML-Editor",
+  "description": "Umfangreichste Fassung des AI HTML Studio mit Ace, Live-Vorschau, KI-Chat und Pyodide.",
+  "sizeKB": 258,
+  "source": "E:/0VIBECODING/stack-source/archive-picks/_modul-quellen/VARIANTE_IDE-DELUXE_264510.html",
+  "variantOf": "ai-html-studio",
+  "hasEditor": true,
+  "hasPreview": true,
+  "hasChat": true,
+  "engine": "ace",
+  "loads": true,
+  "jsErrors": 1,
+  "mobileScrollX": false,
+  "mobileOk": true,
+  "endpoints": [
+   {
+    "host": "cdnjs.cloudflare.com",
+    "status": 200
+   },
+   {
+    "host": "unpkg.com",
+    "status": 200
+   },
+   {
+    "host": "cdn.jsdelivr.net",
+    "status": 301
+   },
+   {
+    "host": "theserver-open-ai.replit.app",
+    "status": 200
+   },
+   {
+    "host": "genitus-embeddings.replit.app",
+    "status": 404
+   }
+  ],
+  "brandingFlag": null,
+  "sameDomAsStudio": true,
+  "notes": "1 JS-Fehler auf dem Desktop."
+ },
+ {
+  "slug": "langchain-ide",
+  "file": "tools/langchain-ide.html",
+  "title": "LangChain-IDE",
+  "category": "HTML-Editor",
+  "description": "Free-Tier-Studio mit Ace, Live-Vorschau, KI-Chat und Pyodide.",
+  "sizeKB": 243,
+  "source": "E:/0-BLUEHOST-EXPORT-JUNI-2026/HTML/HTML-SUB-4/LANGCHAIN-IDE (1).html",
+  "variantOf": "ai-html-studio-free",
+  "hasEditor": true,
+  "hasPreview": true,
+  "hasChat": true,
+  "engine": "ace",
+  "loads": true,
+  "jsErrors": 0,
+  "mobileScrollX": false,
+  "mobileOk": true,
+  "endpoints": [
+   {
+    "host": "cdnjs.cloudflare.com",
+    "status": 200
+   },
+   {
+    "host": "cdn.jsdelivr.net",
+    "status": 301
+   },
+   {
+    "host": "theserver-open-ai.replit.app",
+    "status": 200
+   },
+   {
+    "host": "genitus-embeddings.replit.app",
+    "status": 404
+   }
+  ],
+  "brandingFlag": null,
+  "sameDomAsStudio": true,
+  "notes": ""
+ },
+ {
+  "slug": "html-pro",
+  "file": "tools/html-pro.html",
+  "title": "HTML Pro (schlanke Fassung)",
+  "category": "HTML-Editor",
+  "description": "Schlankere Fassung des AI HTML Studio mit Ace und Live-Vorschau.",
+  "sizeKB": 67,
+  "source": "E:/0-BLUEHOST-EXPORT-JUNI-2026/HTML/HTML-SUB-4/HTML-PRO.html",
+  "variantOf": "ai-html-studio",
+  "hasEditor": true,
+  "hasPreview": true,
+  "hasChat": false,
+  "engine": "ace",
+  "loads": true,
+  "jsErrors": 0,
+  "mobileScrollX": false,
+  "mobileOk": true,
+  "endpoints": [
+   {
+    "host": "cdnjs.cloudflare.com",
+    "status": 200
+   }
+  ],
+  "brandingFlag": null,
+  "sameDomAsStudio": true,
+  "notes": "Kein KI-Chat erkannt."
+ },
+ {
+  "slug": "mistral-agents",
+  "file": "tools/mistral-agents.html",
+  "title": "Mistral Agents All-in-One",
+  "category": "KI-Coding-Chat",
+  "description": "Mistral-Agenten-Chat mit Textfeld.",
+  "sizeKB": 19,
+  "source": "E:/0-HTML-REPLIT-STACK/cumex-2026books/cumex/MASTER-HTML-GALLERY/LLM-AI-Tools/LLM-STACK__mistral-hub/misc__neural-agents.html",
+  "variantOf": null,
+  "hasEditor": false,
+  "hasPreview": false,
+  "hasChat": true,
+  "engine": "textarea",
+  "loads": true,
+  "jsErrors": 0,
+  "mobileScrollX": false,
+  "mobileOk": true,
+  "endpoints": [
+   {
+    "host": "cdn.jsdelivr.net",
+    "status": 301
+   }
+  ],
+  "brandingFlag": null,
+  "sameDomAsStudio": false,
+  "notes": "Kein Editor, Code-Bezug nur ueber Agenten."
+ },
+ {
+  "slug": "gpturbo-software-factory",
+  "file": "tools/gpturbo-software-factory.html",
+  "title": "GPTurbo Software Factory",
+  "category": "KI-Coding-Chat",
+  "description": "Streaming-KI-Chat zur Code-Erzeugung mit Syntax-Hervorhebung und srcdoc-Vorschau.",
+  "sizeKB": 52,
+  "source": "E:/0-BLUEHOST-EXPORT-JUNI-2026/HTML/HTML-SUB-3/GPT.os1TURBO10stream2basic.html",
+  "variantOf": null,
+  "hasEditor": false,
+  "hasPreview": true,
+  "hasChat": true,
+  "engine": "other",
+  "loads": true,
+  "jsErrors": 0,
+  "mobileScrollX": false,
+  "mobileOk": true,
+  "endpoints": [
+   {
+    "host": "cdn.jsdelivr.net",
+    "status": 301
+   },
+   {
+    "host": "cdnjs.cloudflare.com",
+    "status": 200
+   },
+   {
+    "host": "chat.openai.com",
+    "status": 308
+   },
+   {
+    "host": "babybounce500.github.io",
+    "status": 404
+   },
+   {
+    "host": "chatgpt.com",
+    "status": 200
+   },
+   {
+    "host": "theserver-open-ai.replit.app",
+    "status": 200
+   }
+  ],
+  "brandingFlag": null,
+  "sameDomAsStudio": false,
+  "notes": "Kein Editor-Widget, Ausgabe per Highlighting."
+ },
+ {
+  "slug": "lecode-ai-coding",
+  "file": "tools/lecode-ai-coding.html",
+  "title": "LeCode AI Coding",
+  "category": "KI-Coding-Chat",
+  "description": "Ace-Editor mit iframe-Vorschau und KI-Chat.",
+  "sizeKB": 23,
+  "source": "E:/0-HTML-REPLIT-STACK/cumex-2026books/cumex/MASTER-HTML-GALLERY/LLM-AI-Tools/LLM-STACK__mistral-hub/misc__LeCode.html",
+  "variantOf": null,
+  "hasEditor": true,
+  "hasPreview": true,
+  "hasChat": true,
+  "engine": "ace",
+  "loads": true,
+  "jsErrors": 0,
+  "mobileScrollX": false,
+  "mobileOk": true,
+  "endpoints": [
+   {
+    "host": "unpkg.com",
+    "status": 200
+   },
+   {
+    "host": "cdnjs.cloudflare.com",
+    "status": 200
+   },
+   {
+    "host": "domusaurea.tech",
+    "status": 200
+   }
+  ],
+  "brandingFlag": null,
+  "sameDomAsStudio": false,
+  "notes": ""
+ },
+ {
+  "slug": "html-editor-vollbild",
+  "file": "tools/html-editor-vollbild.html",
+  "title": "Vollbild-HTML-Editor",
+  "category": "HTML-Editor",
+  "description": "Vollbild-Editor mit Ace, Toolbar und Ausgabe-iframe.",
+  "sizeKB": 10,
+  "source": "E:/0-BLUEHOST-EXPORT-JUNI-2026/HTML/HTML-SUB-4/HTML3.html",
+  "variantOf": null,
+  "hasEditor": true,
+  "hasPreview": true,
+  "hasChat": false,
+  "engine": "ace",
+  "loads": true,
+  "jsErrors": 0,
+  "mobileScrollX": false,
+  "mobileOk": true,
+  "endpoints": [
+   {
+    "host": "cdnjs.cloudflare.com",
+    "status": 200
+   }
+  ],
+  "brandingFlag": null,
+  "sameDomAsStudio": false,
+  "notes": "Kein KI-Chat."
+ },
+ {
+  "slug": "claude-dev-studio-lecode",
+  "file": "tools/claude-dev-studio-lecode.html",
+  "title": "Claude Development Studio (LeCode)",
+  "category": "KI-Coding-Chat",
+  "description": "Claude-Chat mit Ace-Editor zur Code-Erzeugung.",
+  "sizeKB": 62,
+  "source": "E:/0-BLUEHOST-EXPORT-JUNI-2026/HTML/HTML-SUB-4/index-claude (1).html",
+  "variantOf": "claude-ide",
+  "hasEditor": true,
+  "hasPreview": false,
+  "hasChat": true,
+  "engine": "ace",
+  "loads": true,
+  "jsErrors": 0,
+  "mobileScrollX": false,
+  "mobileOk": true,
+  "endpoints": [
+   {
+    "host": "unpkg.com",
+    "status": 200
+   },
+   {
+    "host": "cdnjs.cloudflare.com",
+    "status": 200
+   },
+   {
+    "host": "theserver-open-ai.replit.app",
+    "status": 200
+   },
+   {
+    "host": "api.anthropic.com",
+    "status": 404
+   },
+   {
+    "host": "babybounce500.github.io",
+    "status": 404
+   }
+  ],
+  "brandingFlag": null,
+  "sameDomAsStudio": false,
+  "notes": "Titel \"Claude Chat Export\" im h1."
+ },
+ {
+  "slug": "lecode-fusion",
+  "file": "tools/lecode-fusion.html",
+  "title": "LeCode Fusion",
+  "category": "KI-Coding-Chat",
+  "description": "Coding-Studio mit Textareas und KI-Chat.",
+  "sizeKB": 41,
+  "source": "E:/0-HTML-REPLIT-STACK/cumex-2026books/cumex/MASTER-HTML-GALLERY/LLM-AI-Tools/LLM-STACK__TOGETHER-AI/misc__REAL-LeCODE.html",
+  "variantOf": "lecode-core",
+  "hasEditor": false,
+  "hasPreview": false,
+  "hasChat": true,
+  "engine": "textarea",
+  "loads": true,
+  "jsErrors": 0,
+  "mobileScrollX": false,
+  "mobileOk": true,
+  "endpoints": [
+   {
+    "host": "unpkg.com",
+    "status": 200
+   },
+   {
+    "host": "cdnjs.cloudflare.com",
+    "status": 200
+   },
+   {
+    "host": "html-editor.replit.app",
+    "status": 200
+   },
+   {
+    "host": "theserver-open-ai.replit.app",
+    "status": 200
+   }
+  ],
+  "brandingFlag": null,
+  "sameDomAsStudio": false,
+  "notes": "Kein Ace/Monaco."
+ },
+ {
+  "slug": "rag-crud-ultimate",
+  "file": "tools/rag-crud-ultimate.html",
+  "title": "RAG + CRUD System (Ultimate)",
+  "category": "RAG und Vektor",
+  "description": "RAG-und-CRUD-Oberflaeche mit Monaco-Editor und Codestral-Chat.",
+  "sizeKB": 114,
+  "source": "E:/0-HTML-REPLIT-STACK/cumex-2026books/cumex/MASTER-HTML-GALLERY/LLM-AI-Tools/LLM-STACK__AICodePilot/misc__rag-crud-final-ultimate.html",
+  "variantOf": null,
+  "hasEditor": true,
+  "hasPreview": false,
+  "hasChat": true,
+  "engine": "monaco",
+  "loads": true,
+  "jsErrors": 0,
+  "mobileScrollX": false,
+  "mobileOk": true,
+  "endpoints": [
+   {
+    "host": "cdnjs.cloudflare.com",
+    "status": 200
+   },
+   {
+    "host": "theserver-open-ai.replit.app",
+    "status": 200
+   }
+  ],
+  "brandingFlag": null,
+  "sameDomAsStudio": false,
+  "notes": ""
+ },
+ {
+  "slug": "sketch-to-code",
+  "file": "tools/sketch-to-code.html",
+  "title": "Sketch to Code",
+  "category": "KI-Coding-Chat",
+  "description": "Wandelt Skizzen per Mistral-Vision in HTML um, mit Vorschau-iframe.",
+  "sizeKB": 48,
+  "source": "E:/0-BLUEHOST-EXPORT-JUNI-2026/HTML/HTML-SUB-4/NEURALscetchtocode.html",
+  "variantOf": null,
+  "hasEditor": true,
+  "hasPreview": true,
+  "hasChat": true,
+  "engine": "textarea",
+  "loads": true,
+  "jsErrors": 0,
+  "mobileScrollX": true,
+  "mobileOk": false,
+  "endpoints": [
+   {
+    "host": "api.mistral.ai",
+    "status": 404
+   }
+  ],
+  "brandingFlag": null,
+  "sameDomAsStudio": false,
+  "notes": "Mobil horizontales Scrollen (405px). Eigener Mistral-Key nötig (Schlüssel wurde aus der Veröffentlichung entfernt)."
+ },
+ {
+  "slug": "genitus-lecode-chat",
+  "file": "tools/genitus-lecode-chat.html",
+  "title": "Genitus LeCode (Chat)",
+  "category": "KI-Coding-Chat",
+  "description": "LeCode-Studio mit Textareas und KI-Chat.",
+  "sizeKB": 47,
+  "source": "E:/0-HTML-REPLIT-STACK/cumex-2026books/cumex/MASTER-HTML-GALLERY/LLM-AI-Tools/LLM-STACK__TOGETHER-AI/misc__LeCODE-NEURAL.html",
+  "variantOf": null,
+  "hasEditor": true,
+  "hasPreview": false,
+  "hasChat": true,
+  "engine": "textarea",
+  "loads": true,
+  "jsErrors": 0,
+  "mobileScrollX": false,
+  "mobileOk": true,
+  "endpoints": [
+   {
+    "host": "unpkg.com",
+    "status": 200
+   },
+   {
+    "host": "cdnjs.cloudflare.com",
+    "status": 200
+   },
+   {
+    "host": "html-editor.replit.app",
+    "status": 200
+   },
+   {
+    "host": "theserver-open-ai.replit.app",
+    "status": 200
+   }
+  ],
+  "brandingFlag": null,
+  "sameDomAsStudio": false,
+  "notes": ""
+ },
+ {
+  "slug": "genitus-ide-free",
+  "file": "tools/genitus-ide-free.html",
+  "title": "Genitus IDE (Free)",
+  "category": "HTML-Editor",
+  "description": "Freier HTML-Editor mit Ace, Live-Vorschau und Pyodide.",
+  "sizeKB": 209,
+  "source": "E:/0-HTML-REPLIT-STACK/cumex-2026books/cumex/MASTER-HTML-GALLERY/LLM-AI-Tools/LLM-STACK__vektor-ide/misc__index.html",
+  "variantOf": "ai-html-studio-free",
+  "hasEditor": true,
+  "hasPreview": true,
+  "hasChat": false,
+  "engine": "ace",
+  "loads": true,
+  "jsErrors": 1,
+  "mobileScrollX": false,
+  "mobileOk": true,
+  "endpoints": [
+   {
+    "host": "cdnjs.cloudflare.com",
+    "status": 200
+   },
+   {
+    "host": "cdn.jsdelivr.net",
+    "status": 301
+   },
+   {
+    "host": "theserver-open-ai.replit.app",
+    "status": 200
+   },
+   {
+    "host": "genitus-embeddings.replit.app",
+    "status": 404
+   }
+  ],
+  "brandingFlag": null,
+  "sameDomAsStudio": true,
+  "notes": "1 JS-Fehler; kein Chat erkannt."
+ },
+ {
+  "slug": "mistral-live-code",
+  "file": "tools/mistral-live-code.html",
+  "title": "Mistral Live Code Engine",
+  "category": "KI-Coding-Chat",
+  "description": "Kleiner Mistral-Chat fuer Code-Fragen.",
+  "sizeKB": 10,
+  "source": "E:/0-HTML-REPLIT-STACK/cumex-2026books/cumex/MASTER-HTML-GALLERY/Misc-Tools/REPLIT-BATCH-6__secureALL/misc__MISTRALlive.html",
+  "variantOf": null,
+  "hasEditor": true,
+  "hasPreview": false,
+  "hasChat": true,
+  "engine": "textarea",
+  "loads": true,
+  "jsErrors": 0,
+  "mobileScrollX": false,
+  "mobileOk": true,
+  "endpoints": [
+   {
+    "host": "cdn.jsdelivr.net",
+    "status": 301
+   },
+   {
+    "host": "secure-all.replit.app",
+    "status": 200
+   }
+  ],
+  "brandingFlag": null,
+  "sameDomAsStudio": false,
+  "notes": "Sehr schlicht, kein Editor."
+ },
+ {
+  "slug": "webgen-pro",
+  "file": "tools/webgen-pro.html",
+  "title": "WebGen Pro Website-Studio",
+  "category": "KI-Coding-Chat",
+  "description": "KI-Website-Generator mit Vorschau-iframe und Chat.",
+  "sizeKB": 47,
+  "source": "E:/0-HTML-REPLIT-STACK/cumex-2026books/cumex/MASTER-HTML-GALLERY/Misc-Tools/REPLIT-BATCH-6__WebSiteEnhancer1211/misc__webgen-pro.html",
+  "variantOf": null,
+  "hasEditor": false,
+  "hasPreview": true,
+  "hasChat": true,
+  "engine": "textarea",
+  "loads": true,
+  "jsErrors": 0,
+  "mobileScrollX": true,
+  "mobileOk": false,
+  "endpoints": [
+   {
+    "host": "cdnjs.cloudflare.com",
+    "status": 200
+   },
+   {
+    "host": "theserver-open-ai.replit.app",
+    "status": 200
+   }
+  ],
+  "brandingFlag": null,
+  "sameDomAsStudio": false,
+  "notes": "Mobil horizontales Scrollen (429px)."
+ },
+ {
+  "slug": "nextgen-lecode-mistral",
+  "file": "tools/nextgen-lecode-mistral.html",
+  "title": "NextGen LeCode (Mistral)",
+  "category": "KI-Coding-Chat",
+  "description": "Ace-Editor mit Mistral-KI-Chat.",
+  "sizeKB": 20,
+  "source": "E:/0-BLUEHOST-EXPORT-JUNI-2026/HTML/HTML-SUB-4/MISTRALcode.html",
+  "variantOf": null,
+  "hasEditor": true,
+  "hasPreview": false,
+  "hasChat": true,
+  "engine": "ace",
+  "loads": true,
+  "jsErrors": 0,
+  "mobileScrollX": false,
+  "mobileOk": true,
+  "endpoints": [
+   {
+    "host": "unpkg.com",
+    "status": 200
+   },
+   {
+    "host": "cdnjs.cloudflare.com",
+    "status": 200
+   },
+   {
+    "host": "api.mistral.ai",
+    "status": 404
+   },
+   {
+    "host": "domusaurea.tech",
+    "status": 200
+   }
+  ],
+  "brandingFlag": null,
+  "sameDomAsStudio": false,
+  "notes": "Eigener Mistral-Key nötig (Schlüssel wurde aus der Veröffentlichung entfernt)."
+ },
+ {
+  "slug": "universal-editor",
+  "file": "tools/universal-editor.html",
+  "title": "Universal Editor",
+  "category": "Markdown und Text",
+  "description": "Editor mit contenteditable-Bereichen.",
+  "sizeKB": 13,
+  "source": "E:/0-BLUEHOST-EXPORT-JUNI-2026/HTML/HTML-SUB-4/infosysJSON20lightword11.html",
+  "variantOf": null,
+  "hasEditor": false,
+  "hasPreview": false,
+  "hasChat": false,
+  "engine": "other",
+  "loads": true,
+  "jsErrors": 1,
+  "mobileScrollX": true,
+  "mobileOk": false,
+  "endpoints": [
+   {
+    "host": "cdn.jsdelivr.net",
+    "status": 301
+   },
+   {
+    "host": "cdn.quilljs.com",
+    "status": 301
+   },
+   {
+    "host": "cdnjs.cloudflare.com",
+    "status": 200
+   }
+  ],
+  "brandingFlag": null,
+  "sameDomAsStudio": false,
+  "notes": "Kein Viewport-Meta, mobil nicht angepasst; 1 JS-Fehler."
+ }
+]

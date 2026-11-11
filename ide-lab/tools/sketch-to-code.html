@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sketch to Code - AI-Powered Design Tool</title>
+    <meta name="description" content="Transform your hand-drawn sketches into production-ready HTML code with AI-powered technology. Draw, generate, and export beautiful websites instantly.">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Sketch to Code - AI Design Tool">
+    <meta property="og:description" content="Transform sketches into code with AI">
+    <meta property="og:type" content="website">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+        }
+
+        :root {
+            --bg-primary: hsl(222, 84%, 4.9%);
+            --bg-secondary: hsl(215, 28%, 17%);
+            --text-primary: hsl(210, 40%, 98%);
+            --text-secondary: hsl(215, 20%, 65%);
+            --border-color: rgba(148, 163, 184, 0.2);
+            --blue-500: #3b82f6;
+            --cyan-500: #06b6d4;
+            --slate-700: #334155;
+            --slate-800: #1e293b;
+            --slate-900: #0f172a;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 320px;
+            background: rgba(15, 23, 42, 0.5);
+            border-right: 1px solid var(--border-color);
+            backdrop-filter: blur(24px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            height: 64px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--blue-500), var(--cyan-500));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            margin-right: 12px;
+        }
+
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        .tool-section {
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #cbd5e1;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 16px;
+        }
+
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .tool-btn {
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--slate-700);
+            background: rgba(30, 41, 59, 0.5);
+            color: #94a3b8;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .tool-btn:hover {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: #475569;
+            color: #cbd5e1;
+            transform: translateY(-1px);
+        }
+
+        .tool-btn.active {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: #3b82f6;
+            color: #93c5fd;
+        }
+
+        .tool-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .tool-label {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .color-picker {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(30, 41, 59, 0.3);
+            border-radius: 8px;
+            border: 1px solid var(--slate-700);
+            margin-bottom: 16px;
+        }
+
+        .color-preview {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: 1px solid #475569;
+        }
+
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .color-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            border: 2px solid #475569;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .color-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .color-btn.active {
+            border-color: #3b82f6;
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .slider-container {
+            margin-bottom: 16px;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--slate-800);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--blue-500);
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--blue-500);
+            cursor: pointer;
+            border: none;
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-clear {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #f87171;
+        }
+
+        .btn-clear:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.5);
+        }
+
+        .btn-save {
+            background: rgba(34, 197, 94, 0.1);
+            border-color: rgba(34, 197, 94, 0.3);
+            color: #4ade80;
+        }
+
+        .btn-save:hover {
+            background: rgba(34, 197, 94, 0.2);
+            border-color: rgba(34, 197, 94, 0.5);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-header {
+            height: 64px;
+            background: rgba(15, 23, 42, 0.3);
+            border-bottom: 1px solid var(--border-color);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-divider {
+            height: 24px;
+            width: 1px;
+            background: #475569;
+        }
+
+        .btn-generate {
+            background: linear-gradient(135deg, var(--blue-500), var(--cyan-500));
+            color: white;
+            padding: 10px 24px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-generate:hover {
+            background: linear-gradient(135deg, #2563eb, #0891b2);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-generate:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .canvas-container {
+            flex: 1;
+            padding: 24px;
+        }
+
+        .canvas-wrapper {
+            height: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(8px);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            padding: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        canvas {
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            background: white;
+            cursor: crosshair;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Code Panel */
+        .code-panel {
+            width: 384px;
+            background: rgba(15, 23, 42, 0.5);
+            border-left: 1px solid var(--border-color);
+            backdrop-filter: blur(24px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .code-header {
+            height: 64px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #6b7280;
+        }
+
+        .status-dot.active {
+            background: #22c55e;
+            box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+        }
+
+        .code-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            padding: 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .code-btn {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid;
+            background: rgba(59, 130, 246, 0.1);
+            border-color: rgba(59, 130, 246, 0.3);
+            color: #60a5fa;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .code-btn:hover {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.5);
+        }
+
+        .code-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .code-content {
+            flex: 1;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .code-textarea {
+            flex: 1;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--slate-700);
+            border-radius: 8px;
+            color: #cbd5e1;
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 16px;
+            resize: none;
+            outline: none;
+        }
+
+        .code-textarea:focus {
+            border-color: var(--blue-500);
+        }
+
+        .preview-container {
+            border-radius: 8px;
+            border: 1px solid var(--slate-700);
+            overflow: hidden;
+            background: white;
+        }
+
+        .preview-iframe {
+            width: 100%;
+            height: 256px;
+            border: none;
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid currentColor;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--slate-800);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--slate-800);
+            border: 1px solid var(--slate-700);
+            border-radius: 12px;
+            padding: 16px 24px;
+            color: white;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .toast-description {
+            font-size: 14px;
+            color: #94a3b8;
+        }
+
+        /* Responsive */
+        @media (max-width: 1280px) {
+            .code-panel {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Left Sidebar - Tools -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">SC</div>
+                <div>
+                    <div style="font-size: 18px; font-weight: 600;">Sketch to Code</div>
+                    <div style="font-size: 12px; color: #94a3b8;">AI-Powered Tool</div>
+                </div>
+            </div>
+            
+            <div class="sidebar-content">
+                <!-- Drawing Tools -->
+                <div class="tool-section">
+                    <div class="section-title">Drawing Tools</div>
+                    <div class="tool-grid">
+                        <button class="tool-btn active" data-tool="brush" title="Free drawing">
+                            <svg class="tool-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
+                            </svg>
+                            <span class="tool-label">Brush</span>
+                        </button>
+                        <button class="tool-btn" data-tool="pencil" title="Precise lines">
+                            <svg class="tool-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                            </svg>
+                            <span class="tool-label">Pencil</span>
+                        </button>
+                        <button class="tool-btn" data-tool="eraser" title="Remove content">
+                            <svg class="tool-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                            <span class="tool-label">Eraser</span>
+                        </button>
+                        <button class="tool-btn" data-tool="rectangle" title="Add shapes">
+                            <svg class="tool-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <rect x="4" y="4" width="16" height="16" stroke-width="2"/>
+                            </svg>
+                            <span class="tool-label">Rectangle</span>
+                        </button>
+                        <button class="tool-btn" data-tool="circle" title="Round shapes">
+                            <svg class="tool-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="8" stroke-width="2"/>
+                            </svg>
+                            <span class="tool-label">Circle</span>
+                        </button>
+                        <button class="tool-btn" data-tool="text" title="Add labels">
+                            <svg class="tool-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
+                            </svg>
+                            <span class="tool-label">Text</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Color Picker -->
+                <div class="tool-section">
+                    <div class="section-title">Colors</div>
+                    <div class="color-picker">
+                        <div class="color-preview" id="currentColorPreview" style="background-color: #000000;"></div>
+                        <div>
+                            <div style="font-size: 14px; color: #cbd5e1;">Current Color</div>
+                            <div style="font-size: 12px; color: #64748b; font-family: monospace;" id="currentColorText">#000000</div>
+                        </div>
+                    </div>
+                    <div class="color-grid" id="colorGrid">
+                        <button class="color-btn active" data-color="#1f2937" style="background-color: #1f2937;"></button>
+                        <button class="color-btn" data-color="#374151" style="background-color: #374151;"></button>
+                        <button class="color-btn" data-color="#6b7280" style="background-color: #6b7280;"></button>
+                        <button class="color-btn" data-color="#9ca3af" style="background-color: #9ca3af;"></button>
+                        <button class="color-btn" data-color="#d1d5db" style="background-color: #d1d5db;"></button>
+                        <button class="color-btn" data-color="#ef4444" style="background-color: #ef4444;"></button>
+                        <button class="color-btn" data-color="#f97316" style="background-color: #f97316;"></button>
+                        <button class="color-btn" data-color="#eab308" style="background-color: #eab308;"></button>
+                        <button class="color-btn" data-color="#22c55e" style="background-color: #22c55e;"></button>
+                        <button class="color-btn" data-color="#3b82f6" style="background-color: #3b82f6;"></button>
+                        <button class="color-btn" data-color="#8b5cf6" style="background-color: #8b5cf6;"></button>
+                        <button class="color-btn" data-color="#ec4899" style="background-color: #ec4899;"></button>
+                        <button class="color-btn" data-color="#06b6d4" style="background-color: #06b6d4;"></button>
+                        <button class="color-btn" data-color="#10b981" style="background-color: #10b981;"></button>
+                        <button class="color-btn" data-color="#f59e0b" style="background-color: #f59e0b;"></button>
+                    </div>
+                </div>
+
+                <!-- Brush Size -->
+                <div class="tool-section">
+                    <div class="slider-container">
+                        <div class="slider-header">
+                            <div class="section-title" style="margin-bottom: 0;">Brush Size</div>
+                            <div style="font-size: 14px; color: #94a3b8; background: var(--slate-800); padding: 4px 8px; border-radius: 4px; font-family: monospace;">
+                                <span id="brushSizeValue">10</span>px
+                            </div>
+                        </div>
+                        <input type="range" class="slider" id="brushSize" min="1" max="50" value="10">
+                        <div style="display: flex; justify-content: space-between; font-size: 12px; color: #64748b; margin-top: 8px;">
+                            <span>1px</span>
+                            <span>25px</span>
+                            <span>50px</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="tool-section" style="padding-top: 16px; border-top: 1px solid var(--slate-700);">
+                    <button class="action-btn btn-clear" id="clearBtn">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                        Clear Canvas
+                    </button>
+                    <button class="action-btn btn-save" id="saveBtn">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+                        </svg>
+                        Save Drawing
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="main-header">
+                <div class="header-title">
+                    <h2 style="font-size: 20px; font-weight: 600;">Design Canvas</h2>
+                    <div class="header-divider"></div>
+                    <p style="font-size: 14px; color: #94a3b8;">Draw your ideas and transform them into code</p>
+                </div>
+                <button class="btn-generate" id="generateBtn">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                    <span>Generate Code</span>
+                </button>
+            </div>
+            
+            <div class="canvas-container">
+                <div class="canvas-wrapper">
+                    <canvas id="drawingCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar - Code Panel -->
+        <div class="code-panel">
+            <div class="code-header">
+                <div>
+                    <h3 style="font-size: 18px; font-weight: 600;">Generated Code</h3>
+                    <p style="font-size: 12px; color: #94a3b8;">AI-powered HTML</p>
+                </div>
+                <div class="status-indicator">
+                    <div class="status-dot" id="statusDot"></div>
+                    <span style="font-size: 12px; color: #94a3b8;" id="statusText">No code</span>
+                </div>
+            </div>
+
+            <div class="code-actions">
+                <button class="code-btn" id="copyBtn" disabled>
+                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                    </svg>
+                    Copy
+                </button>
+                <button class="code-btn" id="downloadBtn" disabled>
+                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                    </svg>
+                    Download
+                </button>
+            </div>
+
+            <div class="code-content">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span style="font-size: 14px; font-weight: 500; color: #cbd5e1;">HTML Code</span>
+                    <button class="code-btn" id="previewBtn" style="padding: 6px 12px;" disabled>
+                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        </svg>
+                        Preview
+                    </button>
+                </div>
+                <textarea class="code-textarea" id="codeTextarea" placeholder="Generated HTML code will appear here..."></textarea>
+                <div class="preview-container hidden" id="previewContainer">
+                    <iframe class="preview-iframe" id="previewFrame" sandbox="allow-scripts allow-same-origin"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <div class="toast-title" id="toastTitle"></div>
+        <div class="toast-description" id="toastDescription"></div>
+    </div>
+
+    <script>
+        // ============= CONFIGURATION =============
+        const CONFIG = {
+            // MISTRAL API KEY - Replace with your actual API key
+            MISTRAL_API_KEY: '',
+            
+            // API Endpoint
+            MISTRAL_API_URL: 'https://api.mistral.ai/v1/chat/completions',
+            
+            // Model
+            MODEL: 'pixtral-12b-2409'
+        };
+
+        // ============= CANVAS STATE =============
+        let canvas, ctx;
+        let isDrawing = false;
+        let isDragging = false;
+        let lastX = 0, lastY = 0;
+        let dragElement = null;
+        let dragOffsetX = 0, dragOffsetY = 0;
+        let elements = [];
+        
+        let currentTool = 'brush';
+        let currentColor = '#000000';
+        let currentSize = 10;
+
+        // ============= INITIALIZATION =============
+        function init() {
+            canvas = document.getElementById('drawingCanvas');
+            ctx = canvas.getContext('2d');
+            
+            // Set canvas size
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            
+            // Initialize canvas
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Event listeners
+            setupEventListeners();
+            loadSavedData();
+        }
+
+        function resizeCanvas() {
+            const wrapper = canvas.parentElement;
+            const width = wrapper.clientWidth - 48;
+            const height = wrapper.clientHeight - 48;
+            
+            // Save current drawing
+            const imageData = canvas.toDataURL();
+            
+            canvas.width = width;
+            canvas.height = height;
+            
+            // Restore drawing
+            if (imageData && imageData !== 'data:,') {
+                const img = new Image();
+                img.onload = () => {
+                    ctx.drawImage(img, 0, 0);
+                    drawElements();
+                };
+                img.src = imageData;
+            } else {
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                drawElements();
+            }
+        }
+
+        function setupEventListeners() {
+            // Canvas events
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseleave', stopDrawing);
+            canvas.addEventListener('touchstart', handleTouch(startDrawing));
+            canvas.addEventListener('touchmove', handleTouch(draw));
+            canvas.addEventListener('touchend', handleTouch(stopDrawing));
+
+            // Tool buttons
+            document.querySelectorAll('.tool-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const tool = btn.dataset.tool;
+                    if (tool === 'rectangle') {
+                        addRectangle();
+                    } else if (tool === 'text') {
+                        addText();
+                    } else {
+                        setTool(tool);
+                    }
+                });
+            });
+
+            // Color buttons
+            document.querySelectorAll('.color-btn').forEach(btn => {
+                btn.addEventListener('click', () => setColor(btn.dataset.color));
+            });
+
+            // Brush size
+            document.getElementById('brushSize').addEventListener('input', (e) => {
+                currentSize = parseInt(e.target.value);
+                document.getElementById('brushSizeValue').textContent = currentSize;
+            });
+
+            // Action buttons
+            document.getElementById('clearBtn').addEventListener('click', clearCanvas);
+            document.getElementById('saveBtn').addEventListener('click', saveDrawing);
+            document.getElementById('generateBtn').addEventListener('click', generateCode);
+            
+            // Code panel buttons
+            document.getElementById('copyBtn').addEventListener('click', copyCode);
+            document.getElementById('downloadBtn').addEventListener('click', downloadCode);
+            document.getElementById('previewBtn').addEventListener('click', togglePreview);
+        }
+
+        function handleTouch(handler) {
+            return function(e) {
+                e.preventDefault();
+                const touch = e.touches[0] || e.changedTouches[0];
+                const mouseEvent = new MouseEvent(e.type.replace('touch', 'mouse'), {
+                    clientX: touch.clientX,
+                    clientY: touch.clientY
+                });
+                handler(mouseEvent);
+            };
+        }
+
+        // ============= DRAWING FUNCTIONS =============
+        function getMousePos(e) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
+        }
+
+        function startDrawing(e) {
+            const pos = getMousePos(e);
+            
+            // Check for element dragging
+            for (let i = elements.length - 1; i >= 0; i--) {
+                if (isClickOnElement(pos, elements[i])) {
+                    isDragging = true;
+                    dragElement = elements[i];
+                    dragOffsetX = pos.x - dragElement.x;
+                    dragOffsetY = pos.y - dragElement.y;
+                    return;
+                }
+            }
+            
+            isDrawing = true;
+            lastX = pos.x;
+            lastY = pos.y;
+            
+            if (currentTool === 'brush' || currentTool === 'pencil' || currentTool === 'eraser') {
+                ctx.beginPath();
+                ctx.moveTo(pos.x, pos.y);
+            }
+        }
+
+        function draw(e) {
+            const pos = getMousePos(e);
+            
+            if (isDragging && dragElement) {
+                dragElement.x = pos.x - dragOffsetX;
+                dragElement.y = pos.y - dragOffsetY;
+                redrawCanvas();
+                return;
+            }
+            
+            if (!isDrawing) return;
+            
+            if (currentTool === 'brush' || currentTool === 'pencil') {
+                ctx.globalCompositeOperation = 'source-over';
+                ctx.strokeStyle = currentColor;
+                ctx.lineWidth = currentSize;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.lineTo(pos.x, pos.y);
+                ctx.stroke();
+            } else if (currentTool === 'eraser') {
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.lineWidth = currentSize;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.lineTo(pos.x, pos.y);
+                ctx.stroke();
+            }
+            
+            lastX = pos.x;
+            lastY = pos.y;
+        }
+
+        function stopDrawing() {
+            if (isDragging) {
+                isDragging = false;
+                dragElement = null;
+                saveData();
+                return;
+            }
+            
+            if (!isDrawing) return;
+            isDrawing = false;
+            ctx.beginPath();
+            saveData();
+        }
+
+        function isClickOnElement(pos, element) {
+            if (element.type === 'rect') {
+                return pos.x >= element.x && pos.x <= element.x + element.width &&
+                       pos.y >= element.y && pos.y <= element.y + element.height;
+            } else if (element.type === 'text') {
+                const textWidth = element.text.length * 10;
+                return pos.x >= element.x && pos.x <= element.x + textWidth &&
+                       pos.y >= element.y - 16 && pos.y <= element.y;
+            }
+            return false;
+        }
+
+        function redrawCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            const savedCanvas = sessionStorage.getItem('canvasData');
+            if (savedCanvas) {
+                const img = new Image();
+                img.onload = () => {
+                    ctx.drawImage(img, 0, 0);
+                    drawElements();
+                };
+                img.src = savedCanvas;
+            } else {
+                drawElements();
+            }
+        }
+
+        function drawElements() {
+            elements.forEach(element => {
+                ctx.globalCompositeOperation = 'source-over';
+                ctx.fillStyle = element.color;
+                
+                if (element.type === 'rect') {
+                    ctx.fillRect(element.x, element.y, element.width, element.height);
+                } else if (element.type === 'text') {
+                    ctx.font = '16px Arial';
+                    ctx.fillText(element.text, element.x, element.y);
+                }
+            });
+        }
+
+        // ============= TOOL FUNCTIONS =============
+        function setTool(tool) {
+            currentTool = tool;
+            document.querySelectorAll('.tool-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.tool === tool);
+            });
+        }
+
+        function setColor(color) {
+            currentColor = color;
+            document.getElementById('currentColorPreview').style.backgroundColor = color;
+            document.getElementById('currentColorText').textContent = color;
+            document.querySelectorAll('.color-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.color === color);
+            });
+        }
+
+        function addRectangle() {
+            const newRect = {
+                type: 'rect',
+                x: 50,
+                y: 50,
+                width: 100,
+                height: 60,
+                color: currentColor
+            };
+            elements.push(newRect);
+            ctx.fillStyle = newRect.color;
+            ctx.fillRect(newRect.x, newRect.y, newRect.width, newRect.height);
+            saveData();
+        }
+
+        function addText() {
+            const text = prompt('Enter text:');
+            if (!text || !text.trim()) return;
+            
+            const newText = {
+                type: 'text',
+                x: 50,
+                y: 100,
+                text: text.trim(),
+                color: currentColor
+            };
+            elements.push(newText);
+            ctx.fillStyle = newText.color;
+            ctx.font = '16px Arial';
+            ctx.fillText(newText.text, newText.x, newText.y);
+            saveData();
+        }
+
+        function clearCanvas() {
+            elements = [];
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            sessionStorage.removeItem('canvasData');
+            sessionStorage.removeItem('elementsData');
+            document.getElementById('codeTextarea').value = '';
+            updateCodeStatus(false);
+            showToast('Canvas cleared', 'Your canvas has been cleared');
+        }
+
+        function saveDrawing() {
+            const imageData = canvas.toDataURL();
+            const blob = dataURItoBlob(imageData);
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `drawing-${Date.now()}.png`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('Drawing saved', 'Your drawing has been downloaded');
+        }
+
+        // ============= CODE GENERATION =============
+        async function generateCode() {
+            const imageData = canvas.toDataURL();
+            if (!imageData || imageData === 'data:,') {
+                showToast('Error', 'Please draw something first', true);
+                return;
+            }
+
+            if (!CONFIG.MISTRAL_API_KEY || CONFIG.MISTRAL_API_KEY === 'YOUR_MISTRAL_API_KEY_HERE') {
+                showToast('API Key Missing', 'Please configure your Mistral API key in the CONFIG section', true);
+                return;
+            }
+
+            const generateBtn = document.getElementById('generateBtn');
+            const originalContent = generateBtn.innerHTML;
+            generateBtn.disabled = true;
+            generateBtn.innerHTML = '<div class="spinner"></div><span>Generating...</span>';
+
+            try {
+                const base64Data = imageData.replace(/^data:image\/[a-z]+;base64,/, '');
+                
+                const response = await fetch(CONFIG.MISTRAL_API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${CONFIG.MISTRAL_API_KEY}`
+                    },
+                    body: JSON.stringify({
+                        model: CONFIG.MODEL,
+                        messages: [{
+                            role: 'user',
+                            content: [
+                                {
+                                    type: 'text',
+                                    text: `You are an ELITE SENIOR WEB DEVELOPER (10+ years) with expertise in modern frameworks and pixel-perfect implementation. Analyze this hand-drawn wireframe/sketch with EXTREME PRECISION and create a STUNNING, PRODUCTION-READY website.
+
+🎯 CRITICAL WIREFRAME INTERPRETATION:
+- ANY drawn rectangles, boxes, or frames represent WEBSITE CONTAINERS (headers, content areas, sidebars, footers)
+- Lines and borders indicate LAYOUT STRUCTURE and sections
+- Text elements show CONTENT and NAVIGATION items
+- Hand-drawn shapes are DELIBERATE DESIGN ELEMENTS, not random sketches
+- Treat ALL drawn elements as INTENTIONAL WEBSITE COMPONENTS
+
+🎯 VISION ANALYSIS REQUIREMENTS:
+- Study EVERY element, line, shape, text, and layout detail in the wireframe
+- Identify the PURPOSE: Is it e-commerce, portfolio, dashboard, landing page, app interface?
+- Recognize UI patterns: navigation, cards, forms, buttons, content sections
+- Understand the visual hierarchy and information architecture
+- Detect any specific design elements: icons, images, charts, tables
+- Convert drawn rectangles/frames into proper HTML sections and divs
+
+🎯 MANDATORY TECHNICAL IMPLEMENTATION:
+FRAMEWORK: Bootstrap 5 + custom CSS (CDN links required)
+RESPONSIVE: 5+ breakpoints with extensive media queries
+- xs: 0-575px (mobile portrait)
+- sm: 576-767px (mobile landscape) 
+- md: 768-991px (tablet)
+- lg: 992-1199px (desktop)
+- xl: 1200-1399px (large desktop)
+- xxl: 1400px+ (ultra-wide)
+
+🎯 ADVANCED STYLING REQUIREMENTS:
+- CSS Grid + Flexbox for complex layouts
+- CSS Custom Properties for design system
+- Advanced animations: @keyframes, transform, transition
+- Modern CSS: backdrop-filter, clip-path, gradients, shadows
+- Professional typography stack with Google Fonts
+- Consistent 8px grid system for spacing
+- Advanced hover states and micro-interactions
+- Loading animations and skeleton screens
+- Dark/light theme support with CSS variables
+
+🎯 JAVASCRIPT FUNCTIONALITY:
+- Interactive navigation with smooth scrolling
+- Form validation with real-time feedback
+- Image galleries with lightbox functionality
+- Accordion/tabs for content organization
+- Search/filter functionality where appropriate
+- Mobile menu with smooth animations
+- Scroll-triggered animations (AOS or custom)
+- Performance optimization (lazy loading, debouncing)
+
+🎯 PROFESSIONAL FEATURES:
+- SEO meta tags and Open Graph
+- Accessibility: ARIA labels, keyboard navigation, screen reader support
+- Performance: minified inline CSS, optimized images
+- Modern browser features: CSS Grid, Flexbox, Custom Properties
+- Cross-browser compatibility
+- Print stylesheets
+- Progressive enhancement
+
+🎯 CONTENT STRATEGY:
+- Use realistic, professional placeholder content
+- Industry-appropriate imagery descriptions
+- Proper heading hierarchy (h1-h6)
+- Meaningful alt texts for images
+- Professional copywriting tone
+
+Return ONLY complete HTML with embedded CSS and JavaScript. NO explanations, NO markdown formatting. Start with <!DOCTYPE html> and deliver enterprise-grade code.`
+                                },
+                                {
+                                    type: 'image_url',
+                                    image_url: {
+                                        url: `data:image/png;base64,${base64Data}`
+                                    }
+                                }
+                            ]
+                        }],
+                        max_tokens: 12000,
+                        temperature: 0.05
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('API request failed');
+                }
+
+                const data = await response.json();
+                const generatedCode = data.choices[0]?.message?.content || '';
+                const cleanCode = generatedCode.replace(/```html\n?/g, '').replace(/```\n?/g, '').trim();
+                
+                document.getElementById('codeTextarea').value = cleanCode;
+                updateCodeStatus(true);
+                showToast('Success', 'Code generated successfully!');
+            } catch (error) {
+                console.error('Code generation error:', error);
+                showToast('Error', 'Failed to generate code. Check your API key and network connection.', true);
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = originalContent;
+            }
+        }
+
+        function copyCode() {
+            const code = document.getElementById('codeTextarea').value;
+            if (!code.trim()) {
+                showToast('Error', 'No code to copy', true);
+                return;
+            }
+            
+            navigator.clipboard.writeText(code).then(() => {
+                showToast('Copied!', 'Code copied to clipboard');
+            }).catch(() => {
+                showToast('Error', 'Failed to copy code', true);
+            });
+        }
+
+        function downloadCode() {
+            const code = document.getElementById('codeTextarea').value;
+            if (!code.trim()) {
+                showToast('Error', 'No code to download', true);
+                return;
+            }
+            
+            const blob = new Blob([code], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `generated-website-${Date.now()}.html`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('Downloaded!', 'Code saved as HTML file');
+        }
+
+        function togglePreview() {
+            const container = document.getElementById('previewContainer');
+            const iframe = document.getElementById('previewFrame');
+            const code = document.getElementById('codeTextarea').value;
+            
+            if (container.classList.contains('hidden')) {
+                container.classList.remove('hidden');
+                iframe.srcdoc = code;
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+
+        function updateCodeStatus(hasCode) {
+            const statusDot = document.getElementById('statusDot');
+            const statusText = document.getElementById('statusText');
+            const copyBtn = document.getElementById('copyBtn');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const previewBtn = document.getElementById('previewBtn');
+            
+            if (hasCode) {
+                statusDot.classList.add('active');
+                statusText.textContent = 'Ready';
+                copyBtn.disabled = false;
+                downloadBtn.disabled = false;
+                previewBtn.disabled = false;
+            } else {
+                statusDot.classList.remove('active');
+                statusText.textContent = 'No code';
+                copyBtn.disabled = true;
+                downloadBtn.disabled = true;
+                previewBtn.disabled = true;
+            }
+        }
+
+        // ============= UTILITIES =============
+        function saveData() {
+            sessionStorage.setItem('canvasData', canvas.toDataURL());
+            sessionStorage.setItem('elementsData', JSON.stringify(elements));
+        }
+
+        function loadSavedData() {
+            const savedElements = sessionStorage.getItem('elementsData');
+            if (savedElements) {
+                elements = JSON.parse(savedElements);
+            }
+            
+            const savedCanvas = sessionStorage.getItem('canvasData');
+            if (savedCanvas) {
+                const img = new Image();
+                img.onload = () => {
+                    ctx.drawImage(img, 0, 0);
+                    drawElements();
+                };
+                img.src = savedCanvas;
+            }
+        }
+
+        function dataURItoBlob(dataURI) {
+            const byteString = atob(dataURI.split(',')[1]);
+            const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+            const ab = new ArrayBuffer(byteString.length);
+            const ia = new Uint8Array(ab);
+            for (let i = 0; i < byteString.length; i++) {
+                ia[i] = byteString.charCodeAt(i);
+            }
+            return new Blob([ab], { type: mimeString });
+        }
+
+        function showToast(title, description, isError = false) {
+            const toast = document.getElementById('toast');
+            const toastTitle = document.getElementById('toastTitle');
+            const toastDescription = document.getElementById('toastDescription');
+            
+            toastTitle.textContent = title;
+            toastDescription.textContent = description;
+            
+            if (isError) {
+                toast.style.borderColor = '#ef4444';
+                toast.style.background = 'rgba(239, 68, 68, 0.1)';
+            } else {
+                toast.style.borderColor = 'var(--slate-700)';
+                toast.style.background = 'var(--slate-800)';
+            }
+            
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

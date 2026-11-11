@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>NextGen AI Development Studio - LeCode Fusion</title>
+    <link href="https://unpkg.com/spectre.css/dist/spectre.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-tomorrow.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet"/>
+    <style>
+        body, html { margin:0; padding:0; height:100%; font-family:'Orbitron','Helvetica Neue',sans-serif; background:#121212; color:#fff; }
+
+        .navbar {
+            background:#1a1a2e; color:#fff; padding:5px 15px; font-size:18px; font-weight:900;
+            font-family:'Orbitron',sans-serif; display:flex; justify-content:space-between;
+            align-items:center; gap:20px; height:40px; box-shadow:0 0 20px rgba(0,255,136,0.3);
+            letter-spacing:2px; position:relative; overflow:hidden;
+        }
+        #matrixCanvas { position:absolute; top:0; left:0; opacity:0.4; pointer-events:none; }
+        .navbar > span { position:relative; z-index:10; text-shadow:0 0 10px #fff,0 0 20px rgba(0,255,255,0.5); }
+        .nav-controls { display:flex; gap:15px; align-items:center; position:relative; z-index:10; }
+
+        .cache-badge {
+            padding:2px 10px; border-radius:4px; font-size:10px; font-weight:700; cursor:pointer;
+            border:1px solid #00ff88; color:#00ff88; background:rgba(0,255,136,0.08);
+            transition:all 0.2s; letter-spacing:1px; font-family:'Orbitron',sans-serif;
+        }
+        .cache-badge.active { background:rgba(0,255,136,0.25); box-shadow:0 0 8px rgba(0,255,136,0.5); }
+
+        .container { padding:0; display:flex; flex-direction:column; height:calc(100% - 40px); }
+
+        #chat-container {
+            flex-grow:1; display:flex; flex-direction:column; border-radius:8px;
+            box-shadow:0 0 10px rgba(0,0,0,0.1); background:#1e1e1e; overflow:hidden;
+            position:relative; margin:0;
+        }
+
+        #chatHistory {
+            flex-grow:1; padding:10px; overflow-y:auto; background:#1e1e1e;
+            word-wrap:break-word; color:#fff; scrollbar-width:thin; scrollbar-color:#888 #333;
+        }
+        #chatHistory::-webkit-scrollbar { width:8px; }
+        #chatHistory::-webkit-scrollbar-thumb { background:#888; border-radius:4px; }
+        #chatHistory::-webkit-scrollbar-track { background:#333; }
+
+        .user-message, .assistant-message { padding:10px; margin-bottom:10px; border-radius:4px; transition:background-color 0.3s; white-space:pre-wrap; }
+        .user-message { background-color:#4b0082; }
+        .assistant-message { background-color:#008000; }
+
+        .input-group { display:flex; width:100%; margin-top:auto; position:sticky; bottom:0; background:#1e1e1e; padding:10px 0; }
+        .input-group input { flex:1; padding:10px; border:none; border-radius:4px 0 0 4px; font-size:16px; background:#fff; color:#333; }
+        .input-group button { padding:10px; border:none; background:#007bff; color:#fff; cursor:pointer; border-radius:0 4px 4px 0; font-size:16px; }
+        .input-group button:hover { background:#0056b3; }
+
+        .form-buttons { display:flex; flex-wrap:wrap; gap:10px; margin-top:10px; }
+        .form-buttons button { flex:1 1 18%; padding:5px; font-size:14px; }
+
+        #loading { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); z-index:10; text-align:center; display:none; background:rgba(0,0,0,0.6); padding:20px; border-radius:8px; }
+        #loading .spinner { display:inline-block; width:40px; height:40px; border:4px solid #f3f3f3; border-top:4px solid #007bff; border-radius:50%; animation:spin 1s linear infinite; }
+        @keyframes spin { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+
+        .file-preview { display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; padding:10px; background:#1a1a2e; border-radius:4px; min-height:30px; }
+        .file-preview-item { padding:5px 10px; background:#0099ff; color:#fff; border-radius:4px; display:flex; align-items:center; gap:5px; font-size:12px; }
+        .file-preview-item button { background:none; border:none; color:#fff; cursor:pointer; font-weight:bold; padding:0; }
+
+        pre { background:#2d2d2d; padding:10px; border-radius:5px; overflow:auto; }
+        code { font-family:'Fira Code',monospace; }
+        .highlighted { background:#ffeb3b; color:#000; }
+
+        /* ── CLAUDE PANEL ── */
+        #claude-panel { display:none; background:#0d1117; border-top:1px solid #00ff8840; padding:10px 15px; }
+        #claude-panel.visible { display:block; }
+
+        .cp-tabs { display:flex; gap:8px; margin-bottom:10px; }
+        .cp-tab {
+            padding:4px 14px; border-radius:4px; border:1px solid #333; cursor:pointer;
+            background:#1a1a2e; color:#666; font-size:11px; font-family:'Orbitron',sans-serif; transition:all 0.2s;
+        }
+        .cp-tab.active { border-color:#00ff88; color:#00ff88; background:rgba(0,255,136,0.1); }
+        .cp-pane { display:none; }
+        .cp-pane.active { display:block; }
+        .cp-pane textarea {
+            width:100%; background:#1e1e1e; color:#ccc; border:1px solid #333; border-radius:4px;
+            padding:8px; font-size:12px; font-family:monospace; resize:vertical; box-sizing:border-box;
+        }
+        .cp-btn {
+            padding:4px 12px; border-radius:4px; cursor:pointer; margin-right:6px; margin-top:6px;
+            background:rgba(0,255,136,0.08); color:#00ff88; border:1px solid #00ff88;
+            font-size:11px; font-family:'Orbitron',sans-serif; transition:all 0.2s;
+        }
+        .cp-btn:hover { background:rgba(0,255,136,0.2); }
+        .cp-btn.danger { color:#ff4444; border-color:#ff4444; background:rgba(255,68,68,0.08); }
+        .cp-btn.danger:hover { background:rgba(255,68,68,0.2); }
+        #cache-status { margin-top:6px; font-size:11px; color:#888; font-family:monospace; }
+        #batch-log { margin-top:8px; padding:8px; background:#111; border-radius:4px; font-family:monospace; font-size:11px; max-height:110px; overflow-y:auto; color:#aaa; }
+        .blog-ok { color:#00ff88; }
+        .blog-err { color:#ff4444; }
+
+        @media (max-width:600px) {
+            .navbar { flex-direction:column; align-items:flex-start; padding:5px 10px; height:auto; }
+            .container { height:calc(100% - 50px); }
+            .form-buttons button { flex:0 0 auto; width:20%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <canvas id="matrixCanvas"></canvas>
+        <span>Genitus Inc - LeCode</span>
+        <div class="nav-controls">
+            <span class="cache-badge" id="cacheBadge" onclick="toggleCachePanel()">Cache OFF</span>
+            <label style="display:flex;align-items:center;gap:6px;color:#0099ff;cursor:pointer;font-size:12px;">
+                <input type="checkbox" id="autoContinueCheckbox" onchange="toggleAutoContinue()" style="cursor:pointer;width:14px;height:14px;">
+                <span>Auto-Continue</span>
+            </label>
+            <select id="modelSelect" onchange="switchModel()" style="padding:5px 10px;border-radius:4px;border:1px solid #0099ff;background:#1e1e1e;color:#fff;cursor:pointer;">
+                <option value="mistral">🔮 Codestral</option>
+                <option value="claude">🤖 Claude 4.5</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="chat-container">
+            <div id="chatHistory"></div>
+            <div id="loading"><div class="spinner"></div></div>
+
+            <div class="file-preview" id="filePreview">
+                <span style="color:#888;">No files uploaded</span>
+            </div>
+
+            <div class="input-group">
+                <input class="form-input" id="userPrompt" placeholder="Enter your message..." type="text"/>
+                <button class="btn btn-primary input-group-btn" onclick="fetchChatCompletion()">
+                    <i class="fas fa-paper-plane"></i>Send
+                </button>
+            </div>
+
+            <div class="form-buttons">
+                <button class="btn btn-success" onclick="runGeneratedHtml()"><i class="fas fa-play"></i>HTML</button>
+                <button class="btn btn-primary" onclick="window.open('https://html-editor.replit.app','_blank')"><i class="fas fa-edit"></i>Editor</button>
+                <button class="btn btn-info" onclick="downloadSnippet()"><i class="fas fa-download"></i>DL</button>
+                <button class="btn btn-warning" onclick="highlightLastAssistantResponse()"><i class="fas fa-highlighter"></i>Copy</button>
+                <button class="btn btn-secondary" onclick="continueMessage()" style="display:none;"><i class="fas fa-ellipsis-h"></i>Continue</button>
+                <input type="file" id="chatFileInput" style="display:none;" onchange="uploadChatFile()">
+                <input type="file" id="mediaFileInput" style="display:none;" accept="image/*,application/pdf" onchange="uploadMediaFile()">
+                <button class="btn btn-secondary" onclick="document.getElementById('chatFileInput').click()"><i class="fas fa-upload"></i>TXT</button>
+                <button class="btn btn-secondary" onclick="document.getElementById('mediaFileInput').click()"><i class="fas fa-image"></i>Media</button>
+                <button class="btn btn-danger" onclick="deleteUploadedFile()"><i class="fas fa-trash"></i>Delete</button>
+                <button class="btn btn-dark" onclick="clearChatHistory()"><i class="fas fa-times"></i>Clear</button>
+                <button class="btn btn-warning" onclick="saveConversation()"><i class="fas fa-save"></i>Convo</button>
+            </div>
+
+            <!-- ── CLAUDE PANEL (Cache + Batch) ── -->
+            <div id="claude-panel">
+                <div class="cp-tabs">
+                    <div class="cp-tab active" onclick="cpTab('cache')">🧠 Prompt Cache</div>
+                    <div class="cp-tab" onclick="cpTab('batch')">📦 Batch</div>
+                </div>
+
+                <div id="cp-cache" class="cp-pane active">
+                    <textarea id="cacheInput" rows="3" placeholder="System-Prompt hier eingeben — wird bei jedem Claude-Request als 'system' Feld mitgeschickt..."></textarea>
+                    <button class="cp-btn" onclick="saveCache()">💾 Cachen</button>
+                    <button class="cp-btn danger" onclick="clearCache()">✗ Löschen</button>
+                    <div id="cache-status"></div>
+                </div>
+
+                <div id="cp-batch" class="cp-pane">
+                    <textarea id="batchPromptsInput" rows="4" placeholder="Ein Prompt pro Zeile. Optional: ID ||| Prompt&#10;&#10;Beispiel:&#10;req-1 ||| Schreib einen animierten Button&#10;req-2 ||| Erkläre CSS Flexbox"></textarea>
+                    <button class="cp-btn" onclick="executeBatch()">▶ Batch starten</button>
+                    <button class="cp-btn" onclick="checkActiveBatch()">⟳ Status</button>
+                    <button class="cp-btn" onclick="fetchBatchResults()">⬇ Ergebnisse</button>
+                    <div id="batch-log"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <textarea id="generatedHtml" style="display:none;"></textarea>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-html.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+    <script>
+        // ╔═══════════════════════════════════════════════════════════╗
+        // ║  LeCode AI · Codestral + Claude · Cache + Batch Edition   ║
+        // ╚═══════════════════════════════════════════════════════════╝
+
+        const BACKEND          = 'https://theserver-open-ai.replit.app';
+        const MISTRAL_ENDPOINT = BACKEND + '/mistral/chat/completions';   // fixed: was /mistral/chat
+        const CLAUDE_ENDPOINT  = BACKEND + '/claude/messages';
+        const BATCH_ENDPOINT   = BACKEND + '/claude/messages/batches';
+
+        let currentModel        = 'mistral';
+        let chatHistory         = [];
+        let uploadedFiles       = [];
+        let isLoading           = false;
+        let isIncomplete        = false;
+        let autoContinueEnabled = false;
+        let continuationTimeout = null;
+        let updateScheduled     = false;
+        let cachedSystemPrompt  = '';
+        let activeBatchId       = null;
+
+        const userPromptEl   = document.getElementById("userPrompt");
+        const chatHistoryEl  = document.getElementById("chatHistory");
+        const filePreviewEl  = document.getElementById("filePreview");
+
+        if (typeof pdfjsLib !== 'undefined') {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        }
+
+        function scheduleUpdateChatDisplay() {
+            if (updateScheduled) return;
+            updateScheduled = true;
+            requestAnimationFrame(() => { updateChatDisplay(); updateScheduled = false; });
+        }
+
+        // ── MODEL SWITCH ──────────────────────────────────────────────
+        function switchModel() {
+            currentModel = document.getElementById('modelSelect').value;
+            localStorage.setItem('selectedModel', currentModel);
+            isIncomplete = false;
+            document.getElementById('claude-panel').classList.toggle('visible', currentModel === 'claude');
+        }
+
+        // ── AUTO-CONTINUE ─────────────────────────────────────────────
+        function toggleAutoContinue() {
+            const cb = document.getElementById('autoContinueCheckbox');
+            autoContinueEnabled = cb.checked;
+            localStorage.setItem('autoContinueEnabled', autoContinueEnabled);
+        }
+
+        // ── CLAUDE PANEL TABS ─────────────────────────────────────────
+        function cpTab(name) {
+            ['cache','batch'].forEach(n => {
+                document.getElementById('cp-' + n).classList.toggle('active', n === name);
+            });
+            document.querySelectorAll('.cp-tab').forEach((t,i) => t.classList.toggle('active', ['cache','batch'][i] === name));
+        }
+
+        function toggleCachePanel() {
+            if (currentModel !== 'claude') {
+                document.getElementById('modelSelect').value = 'claude';
+                switchModel();
+            } else {
+                document.getElementById('claude-panel').classList.toggle('visible');
+            }
+            cpTab('cache');
+        }
+
+        function updateCacheBadge() {
+            const b = document.getElementById('cacheBadge');
+            b.textContent = cachedSystemPrompt ? 'Cache ON' : 'Cache OFF';
+            b.classList.toggle('active', !!cachedSystemPrompt);
+        }
+
+        // ── PROMPT CACHE ──────────────────────────────────────────────
+        function saveCache() {
+            const val = (document.getElementById('cacheInput').value || '').trim();
+            if (!val) { setCacheStatus('✗ Kein Text eingegeben.', 'err'); return; }
+            cachedSystemPrompt = val;
+            localStorage.setItem('cachedSystemPrompt', val);
+            updateCacheBadge();
+            setCacheStatus(`✅ ${val.length} Zeichen gecacht — wird bei jedem Claude-Request mitgeschickt.`, 'ok');
+        }
+
+        function clearCache() {
+            cachedSystemPrompt = '';
+            localStorage.removeItem('cachedSystemPrompt');
+            document.getElementById('cacheInput').value = '';
+            updateCacheBadge();
+            setCacheStatus('Cache geleert.', '');
+        }
+
+        function setCacheStatus(msg, type) {
+            const el = document.getElementById('cache-status');
+            if (!el) return;
+            el.textContent = msg;
+            el.style.color = type === 'ok' ? '#00ff88' : type === 'err' ? '#ff4444' : '#888';
+        }
+
+        // ── FILE UPLOADS ──────────────────────────────────────────────
+        async function uploadMediaFile() {
+            const fi = document.getElementById("mediaFileInput");
+            const file = fi.files[0]; if (!file) return;
+            if (file.type.startsWith('image/')) handleImageUpload(file);
+            else if (file.type === 'application/pdf') handlePDFUpload(file);
+            else alert("Only images and PDFs supported");
+            fi.value = '';
+        }
+
+        function handleImageUpload(file) {
+            const r = new FileReader();
+            r.onload = e => {
+                uploadedFiles.push({ name:file.name, type:'image', mediaType:file.type, base64:e.target.result });
+                updateFilePreview();
+            };
+            r.readAsDataURL(file);
+        }
+
+        function handlePDFUpload(file) {
+            const r = new FileReader();
+            r.onload = async e => {
+                try {
+                    const pdf = await pdfjsLib.getDocument(new Uint8Array(e.target.result)).promise;
+                    let text = `PDF: ${file.name} (${pdf.numPages} pages)\n\n`;
+                    for (let i = 1; i <= pdf.numPages; i++) {
+                        const page = await pdf.getPage(i);
+                        const tc = await page.getTextContent();
+                        text += `--- Page ${i} ---\n${tc.items.map(x=>x.str).join(' ')}\n\n`;
+                    }
+                    const entry = { name:file.name, type:'pdf', text, pages:pdf.numPages };
+                    if (currentModel === 'claude') {
+                        const vp = (await pdf.getPage(1)).getViewport({scale:1.5});
+                        const cv = document.createElement('canvas');
+                        cv.width = vp.width; cv.height = vp.height;
+                        await (await pdf.getPage(1)).render({canvasContext:cv.getContext('2d'), viewport:vp}).promise;
+                        entry.imageBase64 = cv.toDataURL('image/png').split(',')[1];
+                    }
+                    uploadedFiles.push(entry);
+                    updateFilePreview();
+                } catch(err) { alert('PDF error: ' + err.message); }
+            };
+            r.readAsArrayBuffer(file);
+        }
+
+        function updateFilePreview() {
+            if (!uploadedFiles.length) {
+                filePreviewEl.innerHTML = '<span style="color:#888;">No files uploaded</span>';
+            } else {
+                filePreviewEl.innerHTML = uploadedFiles.map((f,i) => `
+                    <div class="file-preview-item">
+                        <i class="fas fa-${f.type==='image'?'image':'file-pdf'}"></i>
+                        ${f.name} <button onclick="removeFile(${i})">×</button>
+                    </div>`).join('');
+            }
+        }
+
+        function removeFile(i) { uploadedFiles.splice(i,1); updateFilePreview(); }
+
+        // ── MAIN SEND ─────────────────────────────────────────────────
+        async function fetchChatCompletion() {
+            const prompt = userPromptEl.value.trim();
+            if (!prompt) { alert("Please enter a message"); return; }
+
+            isLoading = true;
+            document.getElementById('loading').style.display = 'block';
+            updateButtonStates();
+
+            chatHistory.push({ role:'user', content:prompt, files:uploadedFiles.length ? [...uploadedFiles] : null, model:currentModel });
+            updateChatDisplay();
+
+            try {
+                const idx = chatHistory.length;
+                chatHistory.push({ role:'assistant', content:'', model:currentModel });
+
+                const onChunk = chunk => {
+                    chatHistory[idx].content += chunk;
+                    scheduleUpdateChatDisplay();
+                    document.getElementById('generatedHtml').value = chatHistory[idx].content;
+                };
+
+                let response = '';
+                if (currentModel === 'mistral') response = await callMistralAPIStream(onChunk);
+                else response = await callClaudeAPIStream(onChunk);
+
+                updateChatDisplay();
+                isIncomplete = response.endsWith('...') || response.toLowerCase().includes('continued') || response.length > 7500;
+                updateButtonStates();
+
+                if (autoContinueEnabled && isIncomplete) {
+                    if (continuationTimeout) clearTimeout(continuationTimeout);
+                    continuationTimeout = setTimeout(() => continueMessage(), 2000);
+                }
+            } catch(err) {
+                console.error(err);
+                alert(`Error (${currentModel}): ${err.message}`);
+            } finally {
+                isLoading = false;
+                document.getElementById('loading').style.display = 'none';
+                userPromptEl.value = '';
+                uploadedFiles = [];
+                updateFilePreview();
+                updateButtonStates();
+            }
+        }
+
+        // ── CONTINUE ──────────────────────────────────────────────────
+        async function continueMessage() {
+            if (!isIncomplete || isLoading) return;
+            isLoading = true;
+            document.getElementById('loading').style.display = 'block';
+            updateButtonStates();
+            try {
+                const lastIdx = chatHistory.length - 1;
+                const onChunk = chunk => {
+                    chatHistory[lastIdx].content += chunk;
+                    scheduleUpdateChatDisplay();
+                    document.getElementById('generatedHtml').value = chatHistory[lastIdx].content;
+                };
+                // Push a continue prompt temporarily so history is correct
+                chatHistory.push({ role:'user', content:"Please continue your previous response where it left off.", model:currentModel });
+                let response = '';
+                if (currentModel === 'mistral') response = await callMistralAPIStream(onChunk);
+                else response = await callClaudeAPIStream(onChunk);
+                // Remove the continue prompt from visible history
+                chatHistory.splice(lastIdx + 1, 1);
+                updateChatDisplay();
+                isIncomplete = response.endsWith('...') || response.toLowerCase().includes('continued') || response.length > 7500;
+                updateButtonStates();
+                if (autoContinueEnabled && isIncomplete) {
+                    if (continuationTimeout) clearTimeout(continuationTimeout);
+                    continuationTimeout = setTimeout(() => continueMessage(), 1500);
+                }
+            } catch(err) { alert(`Continue error: ${err.message}`); }
+            finally { isLoading = false; document.getElementById('loading').style.display = 'none'; updateButtonStates(); }
+        }
+
+        function updateButtonStates() {
+            const s = document.querySelector('button[onclick="fetchChatCompletion()"]');
+            const c = document.querySelector('button[onclick="continueMessage()"]');
+            if (s) s.style.display = isLoading ? 'none' : 'block';
+            if (c) c.style.display = (isIncomplete && !isLoading) ? 'block' : 'none';
+        }
+
+        // ── MISTRAL STREAMING ──────────────────────────────────────────
+        async function callMistralAPIStream(onChunk) {
+            const msgs = chatHistory
+                .filter(m => (m.role==='user' && (!m.files||!m.files.length)) || (m.role==='assistant' && m.model==='mistral' && m.content.trim()))
+                .map(m => ({ role:m.role, content:m.content }));
+
+            const body = {
+                model: "codestral-latest",
+                temperature: 0.7, top_p: 1, max_tokens: 32768, stream: true,
+                messages: [
+                    { role:"system", content:"You are a high-end senior web developer with expertise in HTML5, CSS3, Media Queries, and JavaScript." },
+                    ...msgs
+                ],
+                response_format: { type:'text' }, safe_prompt: false
+            };
+
+            const resp = await fetch(MISTRAL_ENDPOINT, {
+                method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body)
+            });
+            if (!resp.ok) { const e = await resp.json().catch(()=>({})); throw new Error(e.message||e.error||`HTTP ${resp.status}`); }
+
+            return readSSE(resp, parsed => parsed.choices?.[0]?.delta?.content, onChunk);
+        }
+
+        // ── CLAUDE STREAMING ───────────────────────────────────────────
+        async function callClaudeAPIStream(onChunk) {
+            const messages = [];
+            chatHistory.forEach(msg => {
+                if (msg.role === 'user') {
+                    const content = [];
+                    if (msg.files) {
+                        msg.files.forEach(f => {
+                            if (f.type === 'image') content.push({ type:'image', source:{type:'base64', media_type:f.mediaType, data:f.base64.split(',')[1]} });
+                            else if (f.type === 'pdf' && f.imageBase64) content.push({ type:'image', source:{type:'base64', media_type:'image/png', data:f.imageBase64} });
+                        });
+                    }
+                    content.push({ type:'text', text:msg.content });
+                    messages.push({ role:'user', content });
+                } else if (msg.role === 'assistant' && msg.model === 'claude' && msg.content.trim()) {
+                    messages.push({ role:'assistant', content:msg.content });
+                }
+            });
+
+            const body = { model:"claude-sonnet-4-5-20250929", max_tokens:8192, temperature:0.7, stream:true, messages };
+            if (cachedSystemPrompt) body.system = cachedSystemPrompt;
+
+            const resp = await fetch(CLAUDE_ENDPOINT, {
+                method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body)
+            });
+            if (!resp.ok) { const e = await resp.json().catch(()=>({})); throw new Error(e.message||e.error||`HTTP ${resp.status}`); }
+
+            // Claude native SSE: content_block_delta → delta.text
+            return readSSE(resp, parsed => (parsed.type === 'content_block_delta') ? parsed.delta?.text : null, onChunk);
+        }
+
+        // ── SHARED SSE READER ─────────────────────────────────────────
+        async function readSSE(resp, extract, onChunk) {
+            const reader = resp.body.getReader();
+            const dec = new TextDecoder();
+            let full = '', buf = '';
+            try {
+                while (true) {
+                    const {done, value} = await reader.read();
+                    if (done) break;
+                    buf += dec.decode(value, {stream:true});
+                    const lines = buf.split('\n'); buf = lines.pop();
+                    for (const line of lines) {
+                        const t = line.trim();
+                        if (!t.startsWith('data:')) continue;
+                        const d = t.slice(5).trim();
+                        if (d === '[DONE]') return full;
+                        try {
+                            const p = JSON.parse(d);
+                            const c = extract(p);
+                            if (c) { onChunk(c); full += c; }
+                        } catch(_) {}
+                    }
+                }
+            } finally { reader.cancel(); }
+            return full;
+        }
+
+        // ── BATCH API (Proxy) ─────────────────────────────────────────
+        async function executeBatch() {
+            const raw = (document.getElementById('batchPromptsInput')||{}).value || '';
+            const lines = raw.split('\n').map(l=>l.trim()).filter(Boolean);
+            if (!lines.length) { batchLog('✗ Keine Prompts eingegeben.','err'); return; }
+
+            const requests = lines.map((line,i) => {
+                let id = `req-${i+1}`, text = line;
+                if (line.includes('|||')) { const p = line.split('|||'); id = p[0].trim(); text = p[1].trim(); }
+                const req = { custom_id:id, params:{ model:"claude-haiku-3-5-20241022", max_tokens:2048, messages:[{role:'user',content:text}] } };
+                if (cachedSystemPrompt) req.params.system = cachedSystemPrompt;
+                return req;
+            });
+
+            batchLog(`▶ Sende ${requests.length} Requests...`, '');
+            try {
+                const resp = await fetch(BATCH_ENDPOINT, {
+                    method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({requests})
+                });
+                const data = await resp.json();
+                if (data.id) {
+                    activeBatchId = data.id;
+                    batchLog(`✅ Batch: ${data.id} · ${data.processing_status}`, 'ok');
+                } else {
+                    batchLog(`✗ ${data.error?.message||data.message||JSON.stringify(data)}`, 'err');
+                }
+            } catch(e) { batchLog(`✗ ${e.message}`, 'err'); }
+        }
+
+        async function checkActiveBatch() {
+            if (!activeBatchId) { batchLog('✗ Keine Batch-ID.','err'); return; }
+            try {
+                const d = await fetch(`${BATCH_ENDPOINT}/${activeBatchId}`).then(r=>r.json());
+                const rc = d.request_counts || {};
+                batchLog(`${d.processing_status} · ✓${rc.succeeded||0} ✗${rc.errored||0} ⟳${rc.processing||0}`, 'ok');
+            } catch(e) { batchLog(`✗ ${e.message}`, 'err'); }
+        }
+
+        async function fetchBatchResults() {
+            if (!activeBatchId) { batchLog('✗ Keine Batch-ID.','err'); return; }
+            batchLog('⟳ Lade Ergebnisse...', '');
+            try {
+                const resp = await fetch(`${BATCH_ENDPOINT}/${activeBatchId}/results`);
+                if (!resp.ok) { batchLog(`✗ HTTP ${resp.status} — noch nicht fertig?`, 'err'); return; }
+                const jsonl = await resp.text();
+                let summary = '**Batch Ergebnisse:**\n\n';
+                jsonl.trim().split('\n').filter(Boolean).forEach(line => {
+                    try {
+                        const r = JSON.parse(line);
+                        summary += `**[${r.custom_id}]**\n${r.result?.message?.content?.[0]?.text||JSON.stringify(r.result)}\n\n---\n\n`;
+                    } catch(_) {}
+                });
+                chatHistory.push({ role:'assistant', content:summary, model:'claude' });
+                updateChatDisplay();
+                batchLog(`✅ Ergebnisse in Chat geladen.`, 'ok');
+            } catch(e) { batchLog(`✗ ${e.message}`, 'err'); }
+        }
+
+        function batchLog(msg, type) {
+            const log = document.getElementById('batch-log'); if (!log) return;
+            const d = document.createElement('div');
+            d.className = type === 'ok' ? 'blog-ok' : type === 'err' ? 'blog-err' : '';
+            d.textContent = msg;
+            log.appendChild(d);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        // ── CHAT DISPLAY ──────────────────────────────────────────────
+        function updateChatDisplay() {
+            chatHistoryEl.innerHTML = "";
+            chatHistory.forEach(msg => {
+                const div = document.createElement("div");
+                div.classList.add(msg.role === "user" ? "user-message" : "assistant-message");
+
+                if (msg.model) {
+                    const badge = document.createElement("small");
+                    badge.style.cssText = 'color:#0099ff;display:block;margin-bottom:5px;font-size:10px;';
+                    badge.textContent = msg.model === 'mistral' ? '🔮 Codestral' : '🤖 Claude';
+                    div.appendChild(badge);
+                }
+                if (msg.files && msg.files.length) {
+                    const fi = document.createElement("small");
+                    fi.style.cssText = 'color:#888;display:block;margin-bottom:5px;font-size:11px;';
+                    fi.textContent = `📎 ${msg.files.map(f=>f.name).join(', ')}`;
+                    div.appendChild(fi);
+                }
+
+                const codeRe = /```(?:\w+)?\n?([\s\S]*?)\n?```/gi;
+                let last = 0, m;
+                while ((m = codeRe.exec(msg.content)) !== null) {
+                    if (m.index > last) div.appendChild(document.createTextNode(msg.content.substring(last, m.index)));
+                    const src = m[1].trim();
+                    let lang = 'plaintext';
+                    if (src.includes('<!DOCTYPE')||src.includes('<html')) lang='html';
+                    else if (src.includes('function ')||src.includes('const ')||src.includes('let ')) lang='javascript';
+                    else if (src.includes('def ')) lang='python';
+                    const pre = document.createElement("pre");
+                    const code = document.createElement("code");
+                    code.className = `language-${lang}`;
+                    code.textContent = src;
+                    pre.appendChild(code); div.appendChild(pre);
+                    last = codeRe.lastIndex;
+                }
+                if (last < msg.content.length) div.appendChild(document.createTextNode(msg.content.substring(last)));
+                chatHistoryEl.appendChild(div);
+            });
+            if (typeof Prism !== 'undefined') { try { Prism.highlightAll(); } catch(_) {} }
+            chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
+        }
+
+        // ── FILE / TEXT / HTML OPS ────────────────────────────────────
+        function uploadChatFile() {
+            const fi = document.getElementById("chatFileInput");
+            const f = fi.files[0]; if (!f) return;
+            const r = new FileReader();
+            r.onload = e => { chatHistory.push({ role:'user', content:`📄 ${f.name}\n\n${e.target.result}`, model:currentModel }); updateChatDisplay(); };
+            r.readAsText(f);
+        }
+        function deleteUploadedFile() { uploadedFiles = []; updateFilePreview(); }
+        function runGeneratedHtml() {
+            const html = document.getElementById('generatedHtml').value;
+            if (!html) { alert("No HTML content!"); return; }
+            const w = window.open(); w.document.open(); w.document.write(html); w.document.close();
+        }
+        function downloadSnippet() {
+            const blocks = document.querySelectorAll(".assistant-message pre code");
+            if (!blocks.length) { alert("No code snippet!"); return; }
+            const blob = new Blob([blocks[blocks.length-1].textContent], {type:"text/html"});
+            const a = Object.assign(document.createElement("a"), {href:URL.createObjectURL(blob), download:"snippet.html"});
+            a.click();
+        }
+        function highlightLastAssistantResponse() {
+            const blocks = document.querySelectorAll(".assistant-message pre code");
+            if (!blocks.length) { alert("No code snippet!"); return; }
+            const last = blocks[blocks.length-1];
+            last.classList.add("highlighted");
+            const sel = window.getSelection(); sel.removeAllRanges();
+            const range = document.createRange(); range.selectNodeContents(last); sel.addRange(range);
+            try { document.execCommand("copy"); alert("Copied!"); } catch(_) {}
+            setTimeout(() => { last.classList.remove("highlighted"); sel.removeAllRanges(); }, 1000);
+        }
+        function saveConversation() { localStorage.setItem('chatHistory', JSON.stringify(chatHistory)); alert("Saved!"); }
+        function loadConversation() {
+            const s = localStorage.getItem('chatHistory');
+            if (s) { try { chatHistory = JSON.parse(s); updateChatDisplay(); } catch(_) {} }
+        }
+        function clearChatHistory() {
+            if (!confirm('Clear all chat history?')) return;
+            chatHistory = []; uploadedFiles = []; isIncomplete = false;
+            updateChatDisplay(); updateFilePreview(); updateButtonStates();
+            localStorage.removeItem('chatHistory');
+        }
+
+        // ── INIT ──────────────────────────────────────────────────────
+        document.addEventListener("DOMContentLoaded", () => {
+            const sm = localStorage.getItem('selectedModel');
+            currentModel = (sm === 'claude' || sm === 'mistral') ? sm : 'mistral';
+            document.getElementById('modelSelect').value = currentModel;
+            if (currentModel === 'claude') document.getElementById('claude-panel').classList.add('visible');
+
+            autoContinueEnabled = localStorage.getItem('autoContinueEnabled') === 'true';
+            const cb = document.getElementById('autoContinueCheckbox');
+            if (cb) cb.checked = autoContinueEnabled;
+
+            const scp = localStorage.getItem('cachedSystemPrompt');
+            if (scp) {
+                cachedSystemPrompt = scp;
+                document.getElementById('cacheInput').value = scp;
+                updateCacheBadge();
+            }
+
+            userPromptEl.addEventListener("keydown", e => {
+                if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); fetchChatCompletion(); }
+            });
+            loadConversation();
+        });
+
+        // ── NAVBAR ANIMATION ──────────────────────────────────────────
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx    = canvas.getContext('2d');
+        const navbar = document.querySelector('.navbar');
+        function resizeCanvas() { canvas.width = navbar.offsetWidth; canvas.height = navbar.offsetHeight; }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        const orbs = [
+            {x:0.2,y:0.5,vx:0.0003,vy:0.0002,r:60,color:'0,255,136'},
+            {x:0.8,y:0.5,vx:-0.0002,vy:0.0003,r:80,color:'0,150,255'},
+            {x:0.5,y:0.3,vx:0.0002,vy:-0.0002,r:50,color:'150,100,255'}
+        ];
+        let time = 0;
+        function drawSmoothGradient() {
+            ctx.fillStyle = 'rgba(26,26,46,0.02)';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            orbs.forEach((o,i) => {
+                o.x += o.vx; o.y += o.vy;
+                if(o.x<0)o.x=1; if(o.x>1)o.x=0; if(o.y<0)o.y=1; if(o.y>1)o.y=0;
+                const sx=o.x*canvas.width, sy=o.y*canvas.height;
+                const g = ctx.createRadialGradient(sx,sy,0,sx,sy,o.r);
+                const a = 0.15+0.05*Math.sin(time*0.002+i);
+                g.addColorStop(0,`rgba(${o.color},${a})`);
+                g.addColorStop(1,`rgba(${o.color},0)`);
+                ctx.fillStyle=g; ctx.fillRect(sx-o.r,sy-o.r,o.r*2,o.r*2);
+            });
+            time++;
+        }
+        (function animate(){ drawSmoothGradient(); requestAnimationFrame(animate); })();
+
+        // ── WELCOME ───────────────────────────────────────────────────
+        window.addEventListener('load', () => {
+            if (!chatHistory || chatHistory.length === 0) {
+                chatHistory = [{ role:'assistant', model:'mistral', content:`🚀 Welcome to Genitus Inc — LeCode Fusion
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✨ FEATURES:
+· 🔮 Codestral — Mistral AI Code Model (Streaming)
+· 🤖 Claude Sonnet 4.5 — Vision & Multimodal
+· 🧠 Prompt Cache — System-Prompt einmal cachen, Kosten sparen
+· 📦 Batch Mode — Mehrere Requests parallel via API senden
+· 📄 File Upload (TXT / Image / PDF)
+· ⚡ Auto-Continue für lange Antworten
+
+💡 Claude auswählen → Cache / Batch Panel erscheint unten.`
+                }];
+                updateChatDisplay();
+            }
+        });
+    </script>
+</body>
+</html>

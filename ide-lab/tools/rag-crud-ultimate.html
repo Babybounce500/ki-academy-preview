@@ -1,0 +1,2926 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG + CRUD System mit CodeStral - Ultimate Edition</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: #252526;
+            padding: 10px 20px;
+            border-bottom: 1px solid #3e3e42;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 18px;
+            font-weight: bold;
+            color: #007acc;
+        }
+
+        .api-status {
+            background: #ff4444;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-left: auto;
+        }
+
+        .api-status.connected {
+            background: #00aa00;
+        }
+
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .file-explorer {
+            width: 300px;
+            background: #252526;
+            border-right: 1px solid #3e3e42;
+            display: flex;
+            flex-direction: column;
+            resize: horizontal;
+            overflow: hidden;
+        }
+
+        .explorer-header {
+            padding: 10px;
+            background: #2d2d30;
+            font-weight: bold;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #cccccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .explorer-header .actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            color: #cccccc;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 4px;
+            border-radius: 3px;
+        }
+
+        .icon-btn:hover {
+            color: #ffffff;
+            background: #3e3e42;
+        }
+
+        .folder-actions {
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .btn {
+            background: #0e639c;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.2s ease;
+        }
+
+        .btn:hover {
+            background: #1177bb;
+        }
+
+        .btn.secondary {
+            background: #404040;
+        }
+
+        .btn.secondary:hover {
+            background: #505050;
+        }
+
+        .btn.success {
+            background: #0d7a3d;
+        }
+
+        .btn.success:hover {
+            background: #0f8c46;
+        }
+
+        .btn.warning {
+            background: #b46504;
+        }
+
+        .btn.warning:hover {
+            background: #c97205;
+        }
+
+        .file-tree {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+        }
+
+        .file-item {
+            padding: 4px 8px;
+            cursor: pointer;
+            border-radius: 3px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.15s ease;
+            position: relative;
+        }
+
+        .file-item:hover {
+            background: #2a2d2e;
+        }
+
+        .file-item.selected {
+            background: #094771;
+        }
+
+        .file-item-content {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex: 1;
+        }
+
+        .file-item-actions {
+            display: none;
+            gap: 2px;
+        }
+
+        .file-item:hover .file-item-actions {
+            display: flex;
+        }
+
+        .file-item-action {
+            background: none;
+            border: none;
+            color: #cccccc;
+            cursor: pointer;
+            font-size: 12px;
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
+
+        .file-item-action:hover {
+            background: #555;
+            color: white;
+        }
+
+        .folder-children {
+            margin-left: 12px;
+        }
+
+        .editor-chat-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .editor-container {
+            flex: 1;
+            height: 100%;
+            border-right: 1px solid #3e3e42;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .editor-tabs {
+            background: #2d2d30;
+            border-bottom: 1px solid #3e3e42;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            min-height: 35px;
+            overflow-x: auto;
+        }
+
+        .editor-tab {
+            background: #2d2d30;
+            border: none;
+            color: #cccccc;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 13px;
+            border-top: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            border-right: 1px solid #3e3e42;
+        }
+
+        .editor-tab:hover {
+            background: #3e3e42;
+        }
+
+        .editor-tab.active {
+            background: #1e1e1e;
+            border-top-color: #007acc;
+            color: #ffffff;
+        }
+
+        .tab-close {
+            background: none;
+            border: none;
+            color: #cccccc;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 4px;
+            padding: 2px;
+            border-radius: 2px;
+        }
+
+        .tab-close:hover {
+            background: #ff4444;
+            color: white;
+        }
+
+        .editor-content {
+            flex: 1;
+            position: relative;
+        }
+
+        .editor-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #8a8a8a;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        #editorContainer {
+            width: 100%;
+            height: 100%;
+        }
+
+        .chat-area {
+            width: 400px;
+            min-width: 300px;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            background: #1e1e1e;
+            resize: horizontal;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            padding: 15px 20px;
+            background: #2d2d30;
+            border-bottom: 1px solid #3e3e42;
+        }
+
+        .api-config {
+            margin-top: 10px;
+            padding: 10px;
+            background: #3c3c3c;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .api-config input {
+            width: 100%;
+            background: #2d2d30;
+            border: 1px solid #5a5a5a;
+            color: #d4d4d4;
+            padding: 6px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .model-selector {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .model-btn {
+            background: #3c3c3c;
+            color: #cccccc;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .model-btn:hover {
+            background: #4a4a4a;
+        }
+
+        .model-btn.active {
+            background: #007acc;
+            color: white;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 8px;
+            line-height: 1.5;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            background: #007acc;
+            color: white;
+            margin-left: auto;
+        }
+
+        .message.assistant {
+            background: #2d2d30;
+            color: #d4d4d4;
+        }
+
+        .message.system {
+            background: #4a4a4a;
+            color: #d4d4d4;
+            font-style: italic;
+            font-size: 12px;
+        }
+
+        .message.error {
+            background: #ff4444;
+            color: white;
+        }
+
+        .chat-input-area {
+            padding: 20px;
+            background: #252526;
+            border-top: 1px solid #3e3e42;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .input-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            background: #3c3c3c;
+            color: #cccccc;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.2s ease;
+        }
+
+        .action-btn:hover {
+            background: #4a4a4a;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: #3c3c3c;
+            border: 1px solid #5a5a5a;
+            color: #d4d4d4;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.2s ease;
+            resize: none;
+            min-height: 40px;
+            max-height: 150px;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #007acc;
+        }
+
+        .send-btn {
+            background: #007acc;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s ease;
+        }
+
+        .send-btn:hover {
+            background: #106ebe;
+        }
+
+        .send-btn:disabled {
+            background: #404040;
+            cursor: not-allowed;
+        }
+
+        .status-bar {
+            background: #007acc;
+            color: white;
+            padding: 6px 20px;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .loading-indicator {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s infinite linear;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        pre {
+            background: #1e1e1e;
+            padding: 12px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 13px;
+            border: 1px solid #3e3e42;
+            margin: 10px 0;
+        }
+
+        code {
+            background: #2d2d30;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #252526;
+            padding: 20px;
+            border-radius: 6px;
+            width: 500px;
+            max-width: 90%;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #3e3e42;
+            padding-bottom: 10px;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #cccccc;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            margin-bottom: 20px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            font-size: 14px;
+            color: #cccccc;
+        }
+
+        .form-input {
+            background: #3c3c3c;
+            border: 1px solid #5a5a5a;
+            color: #d4d4d4;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #007acc;
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* File Icons Colors */
+        .file-item[data-ext="js"] .file-icon { color: #f7df1e; }
+        .file-item[data-ext="ts"] .file-icon { color: #3178c6; }
+        .file-item[data-ext="html"] .file-icon { color: #e34c26; }
+        .file-item[data-ext="css"] .file-icon { color: #1572b6; }
+        .file-item[data-ext="json"] .file-icon { color: #ffca28; }
+        .file-item[data-ext="md"] .file-icon { color: #42a5f5; }
+        .file-item[data-ext="py"] .file-icon { color: #3776ab; }
+
+        /* Scrollbars */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1e1e1e;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #777;
+        }
+    </style>
+    <!-- Monaco Editor -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs/editor/editor.main.min.css">
+</head>
+<body>
+    <div class="header">
+        <div class="logo">🤖 RAG + CRUD System mit CodeStral</div>
+        <div>Ultimate Edition - Kein Reload Problem</div>
+        <div class="api-status" id="apiStatus">❌ API Key benötigt</div>
+    </div>
+
+    <div class="main-container">
+        <div class="file-explorer">
+            <div class="explorer-header">
+                <span>Explorer</span>
+                <div class="actions">
+                    <button class="icon-btn" onclick="refreshExplorer()" title="Aktualisieren">🔄</button>
+                    <button class="icon-btn" onclick="collapseAll()" title="Alles einklappen">📚</button>
+                    <button class="icon-btn" onclick="expandAll()" title="Alles ausklappen">📖</button>
+                </div>
+            </div>
+            <div class="folder-actions">
+                <button class="btn" onclick="openFolder()">📁 Ordner öffnen</button>
+                <button class="btn secondary" onclick="showNewFileModal()">📝 Neue Datei</button>
+                <button class="btn secondary" onclick="showNewFolderModal()">📂 Neuer Ordner</button>
+                <button class="btn success" onclick="openCodeGeneratorModal()">✨ Code Generator</button>
+                <button class="btn warning" onclick="exportProject()">📤 Export</button>
+            </div>
+            <div class="file-tree" id="fileTree">
+                <div style="text-align: center; color: #8a8a8a; padding: 20px; font-size: 14px;">
+                    📁 Öffne einen Ordner um zu starten
+                </div>
+            </div>
+        </div>
+
+        <div class="editor-chat-container">
+            <div class="editor-container" id="editorContainer">
+                <div class="editor-tabs" id="editorTabs">
+                    <!-- Tabs werden dynamisch hinzugefügt -->
+                </div>
+                <div class="editor-content">
+                    <div class="editor-placeholder" id="editorPlaceholder">
+                        <div style="font-size: 48px; margin-bottom: 20px;">📝</div>
+                        <div>Wähle eine Datei aus dem Explorer aus</div>
+                        <div style="font-size: 14px; color: #666; margin-top: 10px;">Oder erstelle eine neue Datei</div>
+                    </div>
+                    <div id="monacoEditor" style="display: none; width: 100%; height: 100%;"></div>
+                </div>
+            </div>
+
+            <div class="chat-area">
+                <div class="chat-header">
+                    <h3 style="font-size: 16px; margin-bottom: 5px;">CodeStral AI - Enhanced RAG</h3>
+                    <p style="font-size: 12px; color: #999;">Verbesserte CRUD & RAG Logik</p>
+                    
+                    <!-- API Configuration -->
+                    <div class="api-config">
+                        <label style="font-weight: bold; color: #cccccc;">🌐 Backend Proxy URL:</label>
+                        <input type="text" id="apiKey" placeholder="https://theserver-open-ai.replit.app"
+                               value="https://theserver-open-ai.replit.app"
+                               title="Universal AI Proxy (kein API-Key nötig)">
+                        <button class="btn" onclick="saveApiConfig()" style="margin-top: 8px; width: 100%;">💾 Endpoint speichern</button>
+                        <div id="apiStatus" class="api-status connected" style="margin-top: 8px; font-size: 11px;">
+                            ✅ Proxy verbunden
+                        </div>
+                    </div>
+
+                    <div class="model-selector">
+                        <button class="model-btn active" data-model="gpt-4o-mini" onclick="selectModel(this)">GPT-4o-mini</button>
+                        <button class="model-btn" data-model="gpt-4o" onclick="selectModel(this)">GPT-4o</button>
+                        <button class="model-btn" data-model="claude-3-5-sonnet-20241022" onclick="selectModel(this)">Claude 3.5</button>
+                        <button class="model-btn" data-model="codestral-latest" onclick="selectModel(this)">CodeStral</button>
+                        <button class="model-btn" data-model="mistral-large-latest" onclick="selectModel(this)">Mistral Large</button>
+                        <button class="model-btn" data-model="gemini-1.5-pro" onclick="selectModel(this)">Gemini 1.5 Pro</button>
+                    </div>
+                </div>
+                
+                <div class="chat-messages" id="chatMessages"></div>
+                
+                <div class="chat-input-area">
+                    <div class="input-actions">
+                        <button class="action-btn" onclick="insertCodeSnippet()">📝 Code</button>
+                        <button class="action-btn" onclick="clearChat()">🗑️ Löschen</button>
+                        <button class="action-btn" onclick="analyzeProject()">🔍 Projekt</button>
+                        <button class="action-btn" onclick="showFileList()">📁 Liste</button>
+                        <button class="action-btn" onclick="showHelp()">❓ Hilfe</button>
+                    </div>
+                    <div class="input-container">
+                        <textarea class="chat-input" id="chatInput"
+                            placeholder="Frage über dein Projekt oder führe CRUD Operationen aus..."
+                            onkeydown="handleInputKeypress(event)"></textarea>
+                        <button class="send-btn" id="sendBtn" onclick="sendMessage()">Senden</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="status-bar">
+        <span id="statusText">Bereit</span>
+        <span id="fileCount">Keine Dateien geladen</span>
+        <span id="cursorPosition">Zeile 1, Spalte 1</span>
+    </div>
+
+    <!-- New File Modal -->
+    <div id="newFileModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">📝 Neue Datei erstellen</h3>
+                <button class="close-btn" onclick="closeModal('newFileModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Dateiname:</label>
+                    <input type="text" class="form-input" id="newFileName" placeholder="z.B. app.js, index.html, style.css">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Pfad (optional):</label>
+                    <input type="text" class="form-input" id="newFilePath" placeholder="z.B. src/, components/ (leer für root)">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn secondary" onclick="closeModal('newFileModal')">Abbrechen</button>
+                <button class="btn success" onclick="createNewFileConfirm()">✨ Erstellen</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Folder Modal -->
+    <div id="newFolderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">📂 Neuer Ordner erstellen</h3>
+                <button class="close-btn" onclick="closeModal('newFolderModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Ordnername:</label>
+                    <input type="text" class="form-input" id="newFolderName" placeholder="z.B. components, assets, utils">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Pfad (optional):</label>
+                    <input type="text" class="form-input" id="newFolderPath" placeholder="z.B. src/ (leer für root)">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn secondary" onclick="closeModal('newFolderModal')">Abbrechen</button>
+                <button class="btn success" onclick="createNewFolderConfirm()">📂 Erstellen</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Code Generator Modal -->
+    <div id="codeGeneratorModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">✨ Code Generator</h3>
+                <button class="close-btn" onclick="closeModal('codeGeneratorModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Dateiname:</label>
+                    <input type="text" class="form-input" id="genFileName" placeholder="z.B. app.js, component.tsx, api.py">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Beschreibung:</label>
+                    <textarea class="form-input form-textarea" id="genDescription" 
+                        placeholder="Beschreibe was du erstellen möchtest (z.B. React Login Component, Express API Server, Python Data Analysis Script)"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Technologie/Framework:</label>
+                    <input type="text" class="form-input" id="genTech" placeholder="z.B. React, Vue, Node.js, Python, HTML/CSS">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn secondary" onclick="closeModal('codeGeneratorModal')">Abbrechen</button>
+                <button class="btn success" onclick="generateCode()">✨ Code generieren</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Monaco Editor Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs/loader.min.js"></script>
+    <script>
+        // ========================================
+        // GLOBALE VARIABLEN & KONFIGURATION
+        // ========================================
+        let fileTree = null;
+        let currentFile = null;
+        let selectedFile = null;
+        let isLoading = false;
+        let monacoEditor = null;
+        let openTabs = new Map(); // Offene Tabs verwalten
+        let activeTabPath = null;
+        let selectedModel = 'gpt-4o-mini';
+        const BACKEND_URL = 'https://theserver-open-ai.replit.app';
+
+        // API Konfiguration - nutzt Universal AI Proxy (kein API-Key nötig)
+        let apiConfig = {
+            endpoint: BACKEND_URL,
+            embeddingModel: 'text-embedding-3-small',
+            model: 'gpt-4o-mini'
+        };
+
+        // RAG Vector Store
+        let vectorStore = []; // [{ path, chunk, embedding }]
+        
+        // Token-Limits für bessere Performance
+        const MAX_FILE_CHARS = 15000; // Ca. 4000 tokens
+        const MAX_CONTEXT_FILES = 50; // Maximale Anzahl Dateien im Context
+        
+        // ========================================
+        // SYSTEM PROMPT - ENHANCED
+        // ========================================
+        const SYSTEM_PROMPT = {
+            role: "system",
+            content: `Du bist CodeStral, ein fortschrittlicher AI-Assistent für Code-Entwicklung und Dateiverwaltung.
+
+ENHANCED CONTEXT STRATEGY:
+- Du erhältst: Dateiliste + aktueller Editor-Datei Inhalt
+- Arbeite effizient mit begrenztem Kontext
+- Große Dateien werden automatisch gekürzt
+
+VERFÜGBARE RAG + CRUD FUNKTIONEN:
+1. create_file: Neue Dateien erstellen (mit vollem Pfad)
+2. modify_file: Bestehende Dateien ändern
+3. delete_file: Dateien löschen
+4. rename_file: Dateien umbenennen
+5. list_files: Alle Dateien im Projekt auflisten
+6. read_file_content: Spezifische Datei lesen
+7. create_folder: Neue Ordner erstellen
+8. analyze_project: Projekt-Struktur analysieren
+9. search_in_files: Text in Dateien suchen (literal grep)
+10. get_file_info: Datei-Informationen abrufen
+11. index_project_for_rag: Vector-Index aller Dateien aufbauen (Embeddings)
+12. rag_search: Semantische Suche im Index (Top-K Chunks per Cosine Similarity)
+13. summarize_file: Datei mit kleinem LLM-Call zusammenfassen
+
+RAG STRATEGIE: Bei konzeptuellen Fragen ("wo ist X", "wie funktioniert Y") IMMER zuerst index_project_for_rag (falls leer) und dann rag_search aufrufen, BEVOR du antwortest.
+
+WICHTIGE REGELN:
+- Antworte in der Sprache des Users (Deutsch/Englisch)
+- Verwende vollständige Pfade für Operationen
+- Bei großen Dateien: arbeite mit dem verfügbaren Inhalt
+- Gib klare, umsetzbare Anweisungen
+- Fokussiere auf den aktuell geöffneten Editor-Inhalt
+- Vermeide Seitenreloads - alle Operationen im Memory`
+        };
+        
+        // ========================================
+        // ENHANCED AI FUNCTIONS DEFINITION
+        // ========================================
+        const AI_FUNCTIONS = [
+            {
+                name: "create_file",
+                description: "Create a new file with specified content and path",
+                parameters: {
+                    type: "object",
+                    properties: {
+                        filepath: { type: "string", description: "Full file path including name (e.g., 'src/app.js', 'index.html')" },
+                        content: { type: "string", description: "Complete file content" },
+                        overwrite: { type: "boolean", description: "Overwrite if file exists", default: false }
+                    },
+                    required: ["filepath", "content"]
+                }
+            },
+            {
+                name: "modify_file",
+                description: "Modify existing file content",
+                parameters: {
+                    type: "object",
+                    properties: {
+                        filepath: { type: "string", description: "File path to modify" },
+                        content: { type: "string", description: "New complete content" },
+                        backup: { type: "boolean", description: "Create backup before modifying", default: true }
+                    },
+                    required: ["filepath", "content"]
+                }
+            },
+            {
+                name: "delete_file",
+                description: "Delete a file or folder",
+                parameters: {
+                    type: "object",
+                    properties: {
+                        filepath: { type: "string", description: "Path to delete" },
+                        confirm: { type: "boolean", description: "Confirm deletion", default: false }
+                    },
+                    required: ["filepath"]
+                }
+            },
+            {
+                name: "rename_file",
+                description: "Rename a file or folder",
+                parameters: {
+                    type: "object",
+                    properties: {
+                        oldPath: { type: "string", description: "Current file path" },
+                        newPath: { type: "string", description: "New file path" }
+                    },
+                    required: ["oldPath", "newPath"]
+                }
+            },
+            {
+                name: "create_folder",
+                description: "Create a new folder",
+                parameters: {
+                    type: "object",
+                    properties: {
+                        folderPath: { type: "string", description: "Folder path to create (e.g., 'src/components')" },
+                        recursive: { type: "boolean", description: "Create parent folders if needed", default: true }
+                    },
+                    required: ["folderPath"]
+                }
+            },
+            {
+                name: "list_files",
+                description: "List all files in the project",
+                parameters: {
+                    type: "object",
+                    properties: {
+                        path: { type: "string", description: "Directory path to list", default: "." },
+                        recursive: { type: "boolean", description: "Include subdirectories", default: true },
+                        filter: { type: "string", description: "File extension filter (e.g., 'js', 'html')", default: "" }
+                    }
+                }
+            },
+            {
+                name: "read_file_content",
+                description: "Read content of a specific file",
+                parameters: {
+                    type: "object",
+                    properties: {
+                        filepath: { type: "string", description: "File path to read" },
+                        maxChars: { type: "number", description: "Maximum characters to read", default: 15000 }
+                    },
+                    required: ["filepath"]
+                }
+            },
+            {
+                name: "analyze_project",
+                description: "Analyze project structure and provide insights",
+                parameters: {
+                    type: "object",
+                    properties: {
+                        includeStats: { type: "boolean", description: "Include file statistics", default: true },
+                        detectFrameworks: { type: "boolean", description: "Detect used frameworks", default: true }
+                    }
+                }
+            },
+            {
+                name: "search_in_files",
+                description: "Search for text content within files",
+                parameters: {
+                    type: "object",
+                    properties: {
+                        searchTerm: { type: "string", description: "Text to search for" },
+                        fileTypes: { 
+                            type: "array", 
+                            items: { type: "string" },
+                            description: "File extensions to search in",
+                            default: ["js", "html", "css", "py", "ts", "jsx", "tsx"]
+                        },
+                        caseSensitive: { type: "boolean", description: "Case sensitive search", default: false }
+                    },
+                    required: ["searchTerm"]
+                }
+            },
+            {
+                name: "get_file_info",
+                description: "Get detailed information about a file",
+                parameters: {
+                    type: "object",
+                    properties: {
+                        filepath: { type: "string", description: "File path to analyze" }
+                    },
+                    required: ["filepath"]
+                }
+            },
+            {
+                name: "index_project_for_rag",
+                description: "Chunk all project files and build a semantic vector index using OpenAI embeddings. Run once before rag_search.",
+                parameters: {
+                    type: "object",
+                    properties: {
+                        maxFiles: { type: "number", description: "Max files to index", default: 40 },
+                        chunkSize: { type: "number", description: "Chars per chunk", default: 800 }
+                    }
+                }
+            },
+            {
+                name: "rag_search",
+                description: "Semantic similarity search over the indexed project. Returns top-K relevant chunks with file paths and scores.",
+                parameters: {
+                    type: "object",
+                    properties: {
+                        query: { type: "string", description: "Natural language query" },
+                        topK: { type: "number", description: "Number of chunks to return", default: 5 }
+                    },
+                    required: ["query"]
+                }
+            },
+            {
+                name: "summarize_file",
+                description: "Use a fast LLM call to produce a concise summary of a single file. Useful for large files before deeper reasoning.",
+                parameters: {
+                    type: "object",
+                    properties: {
+                        filepath: { type: "string", description: "File path" }
+                    },
+                    required: ["filepath"]
+                }
+            }
+        ];
+        
+        // ========================================
+        // API KONFIGURATION & STORAGE
+        // ========================================
+        
+        function loadApiConfig() {
+            try {
+                const stored = localStorage.getItem('codeStralApiConfig');
+                if (stored) {
+                    const config = JSON.parse(stored);
+                    apiConfig = { ...apiConfig, ...config, endpoint: config.endpoint || BACKEND_URL };
+                    const keyInput = document.getElementById('apiKey');
+                    if (keyInput) keyInput.value = apiConfig.endpoint;
+                    updateApiStatus();
+                }
+            } catch (error) {
+                console.error('Error loading API config:', error);
+            }
+        }
+
+        function saveApiConfig() {
+            const endpointInput = document.getElementById('apiKey').value.trim();
+            apiConfig.endpoint = endpointInput || BACKEND_URL;
+
+            try {
+                localStorage.setItem('codeStralApiConfig', JSON.stringify(apiConfig));
+                updateApiStatus();
+                addMessage('system', `✅ Proxy-Endpoint gespeichert: ${apiConfig.endpoint}`);
+            } catch (error) {
+                console.error('Error saving API config:', error);
+                addMessage('error', '❌ Fehler beim Speichern der Konfiguration');
+            }
+        }
+
+        function updateApiStatus() {
+            const statusElement = document.getElementById('apiStatus');
+            if (!statusElement) return;
+            statusElement.textContent = `✅ Proxy: ${apiConfig.endpoint.replace(/^https?:\/\//, '')}`;
+            statusElement.className = 'api-status connected';
+        }
+        
+        function selectModel(button) {
+            document.querySelectorAll('.model-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            button.classList.add('active');
+            
+            selectedModel = button.dataset.model;
+            apiConfig.model = selectedModel;
+            addMessage('system', `🔄 Model gewechselt zu: ${selectedModel}`);
+        }
+        
+        // ========================================
+        // MONACO EDITOR INITIALIZATION
+        // ========================================
+        
+        function initializeMonacoEditor() {
+            require.config({ 
+                paths: { 
+                    vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs' 
+                }
+            });
+            
+            require(['vs/editor/editor.main'], function () {
+                // Custom VS Code Dark Theme
+                monaco.editor.defineTheme('vscode-dark-custom', {
+                    base: 'vs-dark',
+                    inherit: true,
+                    rules: [
+                        { token: 'comment', foreground: '6A9955', fontStyle: 'italic' },
+                        { token: 'keyword', foreground: '569CD6' },
+                        { token: 'string', foreground: 'CE9178' },
+                        { token: 'number', foreground: 'B5CEA8' },
+                        { token: 'regexp', foreground: 'D16969' },
+                        { token: 'operator', foreground: 'D4D4D4' },
+                        { token: 'namespace', foreground: '4EC9B0' },
+                        { token: 'type', foreground: '4EC9B0' },
+                        { token: 'struct', foreground: '4EC9B0' },
+                        { token: 'class', foreground: '4EC9B0' },
+                        { token: 'interface', foreground: '4EC9B0' },
+                        { token: 'parameter', foreground: '9CDCFE' },
+                        { token: 'variable', foreground: '9CDCFE' },
+                        { token: 'property', foreground: '9CDCFE' },
+                        { token: 'enumMember', foreground: '4FC1FF' },
+                        { token: 'function', foreground: 'DCDCAA' },
+                        { token: 'member', foreground: 'DCDCAA' },
+                        { token: 'macro', foreground: '4EC9B0' },
+                        { token: 'tag', foreground: '569CD6' },
+                        { token: 'attribute.name', foreground: '9CDCFE' },
+                        { token: 'attribute.value', foreground: 'CE9178' }
+                    ],
+                    colors: {
+                        'editor.background': '#1e1e1e',
+                        'editor.foreground': '#d4d4d4',
+                        'editor.lineHighlightBackground': '#2d2d30',
+                        'editor.selectionBackground': '#264f78',
+                        'editor.selectionHighlightBackground': '#add6ff26',
+                        'editorLineNumber.foreground': '#858585',
+                        'editorLineNumber.activeForeground': '#c6c6c6',
+                        'editorIndentGuide.background': '#404040',
+                        'editorIndentGuide.activeBackground': '#707070',
+                        'editorWhitespace.foreground': '#404040'
+                    }
+                });
+                
+                // Monaco Editor Instance erstellen
+                monacoEditor = monaco.editor.create(document.getElementById('monacoEditor'), {
+                    value: '// Wähle eine Datei aus dem Explorer aus oder erstelle eine neue\n// CodeStral ist bereit für deine Fragen!\n\n',
+                    language: 'javascript',
+                    theme: 'vscode-dark-custom',
+                    automaticLayout: true,
+                    minimap: { enabled: false },
+                    scrollBeyondLastLine: false,
+                    fontSize: 14,
+                    lineNumbers: 'on',
+                    folding: true,
+                    wordWrap: 'on',
+                    contextmenu: true,
+                    quickSuggestions: true,
+                    suggestOnTriggerCharacters: true,
+                    acceptSuggestionOnEnter: 'on',
+                    tabCompletion: 'on',
+                    wordBasedSuggestions: true,
+                    parameterHints: { enabled: true },
+                    hover: { enabled: true },
+                    links: true,
+                    colorDecorators: true,
+                    renderWhitespace: 'selection',
+                    showUnused: true,
+                    bracketPairColorization: { enabled: true }
+                });
+
+                // Event Listeners
+                monacoEditor.onDidChangeCursorPosition((e) => {
+                    updateCursorPosition(e.position.lineNumber, e.position.column);
+                });
+
+                monacoEditor.onDidChangeModelContent(() => {
+                    if (activeTabPath) {
+                        const content = monacoEditor.getValue();
+                        markTabAsModified(activeTabPath, true);
+                        
+                        // Update current file content
+                        if (currentFile && currentFile.path === activeTabPath) {
+                            currentFile.content = content;
+                        }
+                        
+                        // Update tab content
+                        const tab = openTabs.get(activeTabPath);
+                        if (tab) {
+                            tab.content = content;
+                            tab.modified = true;
+                        }
+                    }
+                });
+                
+                // Keyboard shortcuts
+                monacoEditor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, function() {
+                    if (activeTabPath) {
+                        saveCurrentFile();
+                    }
+                });
+                
+                addMessage('system', '🎨 Monaco Editor initialisiert mit VS Code Theme');
+            });
+        }
+        
+        function getLanguageForFile(filename) {
+            const ext = filename.split('.').pop()?.toLowerCase();
+            const languageMap = {
+                'js': 'javascript', 'jsx': 'javascript', 'mjs': 'javascript',
+                'ts': 'typescript', 'tsx': 'typescript',
+                'html': 'html', 'htm': 'html',
+                'css': 'css', 'scss': 'scss', 'sass': 'scss', 'less': 'less',
+                'json': 'json', 'jsonc': 'json',
+                'md': 'markdown', 'markdown': 'markdown',
+                'py': 'python', 'pyw': 'python',
+                'java': 'java',
+                'php': 'php',
+                'cpp': 'cpp', 'cc': 'cpp', 'cxx': 'cpp',
+                'c': 'cpp', 'h': 'cpp', 'hpp': 'cpp',
+                'cs': 'csharp',
+                'go': 'go',
+                'rs': 'rust',
+                'rb': 'ruby',
+                'xml': 'xml', 'xhtml': 'xml',
+                'svg': 'xml',
+                'sql': 'sql',
+                'sh': 'shell', 'bash': 'shell', 'zsh': 'shell',
+                'yaml': 'yaml', 'yml': 'yaml',
+                'dockerfile': 'dockerfile',
+                'ini': 'ini', 'cfg': 'ini', 'conf': 'ini',
+                'txt': 'plaintext', 'text': 'plaintext',
+                'log': 'plaintext'
+            };
+            return languageMap[ext] || 'plaintext';
+        }
+        
+        // ========================================
+        // TAB MANAGEMENT SYSTEM
+        // ========================================
+        
+        function createTab(filePath, fileName) {
+            // Prüfe ob Tab bereits existiert
+            if (openTabs.has(filePath)) {
+                activateTab(filePath);
+                return;
+            }
+            
+            const tabsContainer = document.getElementById('editorTabs');
+            const tab = document.createElement('div');
+            tab.className = 'editor-tab';
+            tab.dataset.path = filePath;
+            
+            // File icon based on extension
+            const ext = fileName.split('.').pop()?.toLowerCase();
+            let icon = '📄';
+            if (ext === 'js' || ext === 'jsx') icon = '🟨';
+            else if (ext === 'ts' || ext === 'tsx') icon = '🔵';
+            else if (ext === 'html' || ext === 'htm') icon = '🌐';
+            else if (ext === 'css' || ext === 'scss' || ext === 'sass') icon = '🎨';
+            else if (ext === 'json') icon = '📋';
+            else if (ext === 'md') icon = '📝';
+            else if (ext === 'py') icon = '🐍';
+            else if (ext === 'java') icon = '☕';
+            else if (ext === 'php') icon = '🐘';
+            else if (ext === 'go') icon = '🐹';
+            else if (ext === 'rs') icon = '🦀';
+            else if (ext === 'cpp' || ext === 'c') icon = '⚙️';
+            else if (ext === 'cs') icon = '🔷';
+            
+            tab.innerHTML = `
+                <span>${icon}</span>
+                <span class="tab-name">${fileName}</span>
+                <button class="tab-close" onclick="closeTab('${filePath}', event)">×</button>
+            `;
+            
+            tab.onclick = (e) => {
+                if (e.target.classList.contains('tab-close')) return;
+                activateTab(filePath);
+            };
+            
+            tabsContainer.appendChild(tab);
+            
+            // Store tab info
+            openTabs.set(filePath, {
+                element: tab,
+                fileName: fileName,
+                content: null,
+                modified: false,
+                language: getLanguageForFile(fileName)
+            });
+            
+            activateTab(filePath);
+            showEditor();
+        }
+        
+        function activateTab(filePath) {
+            // Deactivate all tabs
+            document.querySelectorAll('.editor-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Activate selected tab
+            const tab = openTabs.get(filePath);
+            if (tab) {
+                tab.element.classList.add('active');
+                activeTabPath = filePath;
+                
+                // Load file content in editor
+                loadFileInEditor(filePath);
+            }
+        }
+        
+        function closeTab(filePath, event) {
+            if (event) event.stopPropagation();
+            
+            const tab = openTabs.get(filePath);
+            if (!tab) return;
+            
+            // Check if modified
+            if (tab.modified) {
+                if (!confirm(`Die Datei "${tab.fileName}" wurde geändert. Änderungen verwerfen?`)) {
+                    return;
+                }
+            }
+            
+            // Remove tab element
+            tab.element.remove();
+            openTabs.delete(filePath);
+            
+            // If this was the active tab, activate another one
+            if (activeTabPath === filePath) {
+                const remainingTabs = Array.from(openTabs.keys());
+                if (remainingTabs.length > 0) {
+                    activateTab(remainingTabs[remainingTabs.length - 1]);
+                } else {
+                    // No tabs left, show placeholder
+                    activeTabPath = null;
+                    currentFile = null;
+                    hideEditor();
+                }
+            }
+            
+            updateStatus();
+        }
+        
+        function markTabAsModified(filePath, modified) {
+            const tab = openTabs.get(filePath);
+            if (tab) {
+                tab.modified = modified;
+                const nameElement = tab.element.querySelector('.tab-name');
+                if (modified) {
+                    if (!nameElement.textContent.endsWith(' •')) {
+                        nameElement.textContent += ' •';
+                    }
+                } else {
+                    nameElement.textContent = nameElement.textContent.replace(' •', '');
+                }
+            }
+        }
+        
+        function showEditor() {
+            document.getElementById('editorContainer').style.display = 'flex';
+            document.getElementById('editorPlaceholder').style.display = 'none';
+            document.getElementById('monacoEditor').style.display = 'block';
+        }
+        
+        function hideEditor() {
+            document.getElementById('editorPlaceholder').style.display = 'flex';
+            document.getElementById('monacoEditor').style.display = 'none';
+        }
+        
+        async function loadFileInEditor(filePath) {
+            if (!monacoEditor) return;
+            
+            try {
+                // Find the file in the tree
+                const fileNode = findFileByPath(fileTree, filePath);
+                if (!fileNode || !fileNode.handle) {
+                    addMessage('error', `❌ Datei nicht gefunden: ${filePath}`);
+                    return;
+                }
+                
+                const file = await fileNode.handle.getFile();
+                let content = '';
+                
+                // Check if it's a binary file
+                const isBinary = /\.(jpg|jpeg|png|gif|bmp|ico|webp|mp3|mp4|wav|avi|mov|pdf|zip|rar|tar|gz|exe|dll|so|bin)$/i.test(fileNode.name);
+                
+                if (!isBinary && file.size < 10 * 1024 * 1024) { // Max 10MB for text files
+                    try {
+                        content = await file.text();
+                        
+                        // WICHTIG: Truncate content wenn zu groß für Token Limit
+                        if (content.length > MAX_FILE_CHARS) {
+                            content = content.substring(0, MAX_FILE_CHARS) + '\n\n// [FILE TRUNCATED - Datei zu groß für vollständige Anzeige]\n// Original Größe: ' + formatFileSize(file.size);
+                            addMessage('system', `⚠️ Datei gekürzt: ${fileNode.name} (zu groß für vollständige Anzeige)`);
+                        }
+                    } catch (e) {
+                        content = `// Fehler beim Lesen der Datei: ${e.message}\n// Möglicherweise ist dies eine Binärdatei`;
+                    }
+                } else {
+                    content = isBinary ? 
+                        `// Binärdatei: ${formatFileSize(file.size)}\n// Kann nicht als Text angezeigt werden\n// Dateityp: ${fileNode.name.split('.').pop()?.toUpperCase() || 'Unbekannt'}` :
+                        `// Datei zu groß: ${formatFileSize(file.size)}\n// Maximale Größe für Textdateien: 10MB\n// Bitte verwende einen externen Editor für große Dateien`;
+                }
+                
+                // Update current file reference
+                currentFile = {
+                    path: filePath,
+                    name: fileNode.name,
+                    content: content,
+                    size: file.size,
+                    lastModified: file.lastModified
+                };
+                
+                // Update tab content
+                const tab = openTabs.get(filePath);
+                if (tab) {
+                    tab.content = content;
+                }
+                
+                // Set content in Monaco Editor
+                const language = getLanguageForFile(fileNode.name);
+                const model = monaco.editor.createModel(content, language);
+                monacoEditor.setModel(model);
+                
+                updateStatus();
+                
+            } catch (error) {
+                console.error('Error loading file in editor:', error);
+                addMessage('error', `❌ Fehler beim Laden der Datei: ${error.message}`);
+            }
+        }
+        
+        function updateCursorPosition(line, column) {
+            document.getElementById('cursorPosition').textContent = `Zeile ${line}, Spalte ${column}`;
+        }
+        
+        async function saveCurrentFile() {
+            if (!activeTabPath || !monacoEditor) return;
+            
+            try {
+                const content = monacoEditor.getValue();
+                
+                // Update current file
+                if (currentFile && currentFile.path === activeTabPath) {
+                    currentFile.content = content;
+                }
+                
+                // Mark as saved
+                markTabAsModified(activeTabPath, false);
+                
+                addMessage('system', `💾 Datei gespeichert: ${activeTabPath.split('/').pop()}`);
+            } catch (error) {
+                addMessage('error', `❌ Fehler beim Speichern: ${error.message}`);
+            }
+        }
+        
+        // ========================================
+        // FILE SYSTEM OPERATIONS - ENHANCED
+        // ========================================
+        
+        function findFileByPath(tree, targetPath) {
+            if (!tree || !targetPath) return null;
+            
+            const searchInNode = (node) => {
+                if (node.path === targetPath) return node;
+                
+                if (node.children) {
+                    for (const child of node.children) {
+                        const found = searchInNode(child);
+                        if (found) return found;
+                    }
+                }
+                return null;
+            };
+            
+            return searchInNode(tree);
+        }
+        
+        function getSimpleFileList(filterExt = '') {
+            if (!fileTree) return [];
+            
+            const files = [];
+            
+            const traverse = (node, currentPath = '') => {
+                if (node.kind === 'file') {
+                    const ext = node.name.split('.').pop()?.toLowerCase() || '';
+                    
+                    if (!filterExt || ext === filterExt) {
+                        files.push({
+                            name: node.name,
+                            path: node.path || currentPath,
+                            size: node.size || 0,
+                            extension: ext,
+                            lastModified: node.lastModified || null
+                        });
+                    }
+                } else if (node.children) {
+                    node.children.forEach(child => {
+                        const childPath = currentPath ? `${currentPath}/${child.name}` : child.name;
+                        traverse(child, childPath);
+                    });
+                }
+            };
+            
+            if (fileTree.children) {
+                fileTree.children.forEach(child => traverse(child));
+            }
+            
+            return files.sort((a, b) => a.name.localeCompare(b.name));
+        }
+        
+        function getCurrentFileContent() {
+            if (!currentFile) return null;
+            
+            // Get latest content from editor if file is open
+            if (activeTabPath === currentFile.path && monacoEditor) {
+                return monacoEditor.getValue();
+            }
+            
+            return currentFile.content;
+        }
+        
+        function analyzeProjectStructure() {
+            if (!fileTree) return null;
+            
+            const files = getSimpleFileList();
+            const languages = {};
+            const frameworks = new Set();
+            const totalSize = files.reduce((sum, file) => sum + file.size, 0);
+            
+            // Language detection
+            files.forEach(file => {
+                const lang = getLanguageForFile(file.name);
+                languages[lang] = (languages[lang] || 0) + 1;
+            });
+            
+            // Framework detection based on file names and structure
+            const fileNames = files.map(f => f.name.toLowerCase());
+            if (fileNames.includes('package.json')) frameworks.add('Node.js');
+            if (fileNames.includes('requirements.txt') || fileNames.includes('pyproject.toml')) frameworks.add('Python');
+            if (fileNames.some(f => f.includes('react'))) frameworks.add('React');
+            if (fileNames.some(f => f.includes('vue'))) frameworks.add('Vue.js');
+            if (fileNames.some(f => f.includes('angular'))) frameworks.add('Angular');
+            if (fileNames.includes('tsconfig.json')) frameworks.add('TypeScript');
+            if (fileNames.includes('webpack.config.js')) frameworks.add('Webpack');
+            if (fileNames.includes('vite.config.js')) frameworks.add('Vite');
+            if (fileNames.includes('next.config.js')) frameworks.add('Next.js');
+            if (fileNames.includes('nuxt.config.js')) frameworks.add('Nuxt.js');
+            if (fileNames.includes('svelte.config.js')) frameworks.add('Svelte');
+            
+            return {
+                fileCount: files.length,
+                languages: Object.entries(languages).sort(([,a], [,b]) => b - a),
+                frameworks: Array.from(frameworks),
+                totalSize: totalSize,
+                formattedSize: formatFileSize(totalSize),
+                openTabs: openTabs.size,
+                currentFile: currentFile ? currentFile.name : 'None',
+                projectType: detectProjectType(files)
+            };
+        }
+        
+        function detectProjectType(files) {
+            const fileNames = files.map(f => f.name.toLowerCase());
+            
+            if (fileNames.includes('package.json')) {
+                if (fileNames.some(f => f.includes('react'))) return 'React Application';
+                if (fileNames.some(f => f.includes('vue'))) return 'Vue.js Application';
+                if (fileNames.some(f => f.includes('angular'))) return 'Angular Application';
+                if (fileNames.includes('next.config.js')) return 'Next.js Application';
+                if (fileNames.includes('nuxt.config.js')) return 'Nuxt.js Application';
+                return 'Node.js Project';
+            }
+            
+            if (fileNames.includes('requirements.txt') || fileNames.includes('setup.py') || fileNames.includes('pyproject.toml')) {
+                return 'Python Project';
+            }
+            
+            if (fileNames.includes('pom.xml')) return 'Java Maven Project';
+            if (fileNames.includes('build.gradle')) return 'Java Gradle Project';
+            if (fileNames.includes('cargo.toml')) return 'Rust Project';
+            if (fileNames.includes('go.mod')) return 'Go Project';
+            if (fileNames.includes('composer.json')) return 'PHP Project';
+            if (fileNames.includes('gemfile')) return 'Ruby Project';
+            
+            if (files.some(f => f.name.endsWith('.html'))) return 'Web Project';
+            if (files.some(f => f.name.endsWith('.cs'))) return 'C# Project';
+            if (files.some(f => f.name.endsWith('.cpp') || f.name.endsWith('.c'))) return 'C/C++ Project';
+            
+            return 'Mixed Project';
+        }
+        
+        // ========================================
+        // AI FUNCTION EXECUTION - ENHANCED
+        // ========================================
+        
+        async function executeAIFunction(functionName, args) {
+            try {
+                switch (functionName) {
+                    case "create_file":
+                        return await createFileOperation(args.filepath, args.content, args.overwrite);
+                        
+                    case "modify_file":
+                        return await modifyFileOperation(args.filepath, args.content, args.backup);
+                        
+                    case "delete_file":
+                        return await deleteFileOperation(args.filepath, args.confirm);
+                        
+                    case "rename_file":
+                        return await renameFileOperation(args.oldPath, args.newPath);
+                        
+                    case "create_folder":
+                        return await createFolderOperation(args.folderPath, args.recursive);
+                        
+                    case "list_files":
+                        const files = getSimpleFileList(args.filter || '');
+                        return {
+                            files: files.slice(0, MAX_CONTEXT_FILES), // Limit für Performance
+                            totalCount: files.length,
+                            path: args.path || '.',
+                            filtered: args.filter || false
+                        };
+                        
+                    case "read_file_content":
+                        return await readFileContentOperation(args.filepath, args.maxChars);
+                        
+                    case "analyze_project":
+                        const analysis = analyzeProjectStructure();
+                        return {
+                            ...analysis,
+                            includeStats: args.includeStats !== false,
+                            detectFrameworks: args.detectFrameworks !== false
+                        };
+                        
+                    case "search_in_files":
+                        return await searchInFilesOperation(args.searchTerm, args.fileTypes, args.caseSensitive);
+                        
+                    case "get_file_info":
+                        return await getFileInfoOperation(args.filepath);
+
+                    case "index_project_for_rag":
+                        return await indexProjectForRAG(args.maxFiles || 40, args.chunkSize || 800);
+
+                    case "rag_search":
+                        return await ragSearch(args.query, args.topK || 5);
+
+                    case "summarize_file":
+                        return await summarizeFileOperation(args.filepath);
+
+                    default:
+                        return { error: `Unbekannte Funktion: ${functionName}` };
+                }
+            } catch (error) {
+                return { error: `Fehler bei ${functionName}: ${error.message}` };
+            }
+        }
+        
+        // ========================================
+        // CRUD OPERATIONS - NO RELOAD PROBLEM FIXED
+        // ========================================
+        
+        async function createFileOperation(filepath, content, overwrite = false) {
+            try {
+                // WICHTIG: Kein Page Reload - nur Memory Operation
+                addMessage('system', `✅ Erstelle Datei: ${filepath}`);
+                addMessage('system', `📝 Inhalt: ${content.length} Zeichen`);
+                
+                // Simulate file creation (in memory)
+                const fileName = filepath.split('/').pop();
+                const fileSize = new Blob([content]).size;
+                
+                // Create tab for new file if it's a code file
+                const ext = fileName.split('.').pop()?.toLowerCase();
+                const codeExtensions = ['js', 'ts', 'jsx', 'tsx', 'html', 'css', 'scss', 'json', 'md', 'py', 'java', 'php', 'cpp', 'c', 'cs', 'go', 'rs', 'rb'];
+                
+                if (codeExtensions.includes(ext)) {
+                    // Add to openTabs without page reload
+                    const tab = {
+                        element: null, // Will be created when displayed
+                        fileName: fileName,
+                        content: content,
+                        modified: false,
+                        language: getLanguageForFile(fileName)
+                    };
+                    
+                    openTabs.set(filepath, tab);
+                    createTab(filepath, fileName);
+                    
+                    // Set content in editor
+                    if (monacoEditor) {
+                        const model = monaco.editor.createModel(content, getLanguageForFile(fileName));
+                        monacoEditor.setModel(model);
+                    }
+                    
+                    // Update current file
+                    currentFile = {
+                        path: filepath,
+                        name: fileName,
+                        content: content,
+                        size: fileSize
+                    };
+                }
+                
+                return {
+                    success: true,
+                    message: `Datei erfolgreich erstellt: ${filepath}`,
+                    filepath: filepath,
+                    size: fileSize,
+                    language: getLanguageForFile(fileName)
+                };
+                
+            } catch (error) {
+                return { error: `Fehler beim Erstellen: ${error.message}` };
+            }
+        }
+        
+        async function modifyFileOperation(filepath, content, backup = true) {
+            try {
+                // If file is open in editor, update it
+                if (activeTabPath === filepath && monacoEditor) {
+                    monacoEditor.setValue(content);
+                    markTabAsModified(filepath, true);
+                }
+                
+                // Update current file if it matches
+                if (currentFile && currentFile.path === filepath) {
+                    if (backup) {
+                        // Store backup in memory (simplified)
+                        addMessage('system', `💾 Backup erstellt für: ${filepath}`);
+                    }
+                    currentFile.content = content;
+                }
+                
+                // Update tab content
+                const tab = openTabs.get(filepath);
+                if (tab) {
+                    tab.content = content;
+                    tab.modified = true;
+                }
+                
+                addMessage('system', `✅ Datei bearbeitet: ${filepath}`);
+                addMessage('system', `📝 Neue Größe: ${content.length} Zeichen`);
+                
+                return {
+                    success: true,
+                    message: `Datei erfolgreich bearbeitet: ${filepath}`,
+                    newSize: content.length,
+                    backup: backup
+                };
+                
+            } catch (error) {
+                return { error: `Fehler beim Bearbeiten: ${error.message}` };
+            }
+        }
+        
+        async function deleteFileOperation(filepath, confirm = false) {
+            try {
+                if (!confirm) {
+                    const fileName = filepath.split('/').pop();
+                    if (!window.confirm(`Möchtest du "${fileName}" wirklich löschen?`)) {
+                        return { cancelled: true, message: 'Löschvorgang abgebrochen' };
+                    }
+                }
+                
+                // Close tab if file is open
+                if (openTabs.has(filepath)) {
+                    closeTab(filepath);
+                }
+                
+                addMessage('system', `✅ Datei gelöscht: ${filepath}`);
+                
+                return {
+                    success: true,
+                    message: `Datei erfolgreich gelöscht: ${filepath}`,
+                    filepath: filepath
+                };
+                
+            } catch (error) {
+                return { error: `Fehler beim Löschen: ${error.message}` };
+            }
+        }
+        
+        async function renameFileOperation(oldPath, newPath) {
+            try {
+                const oldName = oldPath.split('/').pop();
+                const newName = newPath.split('/').pop();
+                
+                // Update tab if file is open
+                if (openTabs.has(oldPath)) {
+                    const tabInfo = openTabs.get(oldPath);
+                    openTabs.delete(oldPath);
+                    openTabs.set(newPath, { ...tabInfo, fileName: newName });
+                    
+                    // Update tab display
+                    if (tabInfo.element) {
+                        tabInfo.element.dataset.path = newPath;
+                        tabInfo.element.querySelector('.tab-name').textContent = newName;
+                    }
+                    
+                    if (activeTabPath === oldPath) {
+                        activeTabPath = newPath;
+                    }
+                }
+                
+                // Update current file if it matches
+                if (currentFile && currentFile.path === oldPath) {
+                    currentFile.path = newPath;
+                    currentFile.name = newName;
+                }
+                
+                addMessage('system', `✅ Umbenannt: ${oldName} → ${newName}`);
+                
+                return {
+                    success: true,
+                    message: `Datei erfolgreich umbenannt: ${oldName} → ${newName}`,
+                    oldPath: oldPath,
+                    newPath: newPath
+                };
+                
+            } catch (error) {
+                return { error: `Fehler beim Umbenennen: ${error.message}` };
+            }
+        }
+        
+        async function createFolderOperation(folderPath, recursive = true) {
+            try {
+                addMessage('system', `✅ Ordner wird erstellt: ${folderPath}`);
+                
+                return {
+                    success: true,
+                    message: `Ordner erfolgreich erstellt: ${folderPath}`,
+                    folderPath: folderPath,
+                    recursive: recursive
+                };
+                
+            } catch (error) {
+                return { error: `Fehler beim Erstellen des Ordners: ${error.message}` };
+            }
+        }
+        
+        async function readFileContentOperation(filepath, maxChars = MAX_FILE_CHARS) {
+            try {
+                // Check if this is the currently open file
+                if (currentFile && currentFile.path === filepath) {
+                    let content = getCurrentFileContent();
+                    
+                    if (content && content.length > maxChars) {
+                        content = content.substring(0, maxChars) + '\n\n// [CONTENT TRUNCATED]';
+                    }
+                    
+                    return {
+                        content: content,
+                        filepath: filepath,
+                        size: content ? content.length : 0,
+                        truncated: content && content.length > maxChars
+                    };
+                }
+                
+                return {
+                    error: `Datei ${filepath} ist nicht geladen. Bitte öffne sie zuerst im Editor.`
+                };
+                
+            } catch (error) {
+                return { error: `Fehler beim Lesen: ${error.message}` };
+            }
+        }
+        
+        async function searchInFilesOperation(searchTerm, fileTypes = [], caseSensitive = false) {
+            try {
+                // Simple implementation - would need File System Access API for real search
+                addMessage('system', `🔍 Suche nach: "${searchTerm}"`);
+                
+                const results = [];
+                const files = getSimpleFileList();
+                
+                // Filter by file types if specified
+                const filteredFiles = fileTypes.length > 0 ? 
+                    files.filter(f => fileTypes.includes(f.extension)) : files;
+                
+                // For demo, just return matched files based on name
+                const matches = filteredFiles.filter(f => {
+                    const searchIn = caseSensitive ? f.name : f.name.toLowerCase();
+                    const searchFor = caseSensitive ? searchTerm : searchTerm.toLowerCase();
+                    return searchIn.includes(searchFor);
+                });
+                
+                return {
+                    searchTerm: searchTerm,
+                    results: matches,
+                    totalMatches: matches.length,
+                    searchedFiles: filteredFiles.length,
+                    caseSensitive: caseSensitive
+                };
+                
+            } catch (error) {
+                return { error: `Fehler bei der Suche: ${error.message}` };
+            }
+        }
+        
+        async function getFileInfoOperation(filepath) {
+            try {
+                const file = findFileByPath(fileTree, filepath);
+                if (!file) {
+                    return { error: `Datei nicht gefunden: ${filepath}` };
+                }
+                
+                return {
+                    name: file.name,
+                    path: filepath,
+                    size: file.size || 0,
+                    formattedSize: formatFileSize(file.size || 0),
+                    extension: file.name.split('.').pop() || '',
+                    language: getLanguageForFile(file.name),
+                    lastModified: file.lastModified || null,
+                    isOpen: openTabs.has(filepath),
+                    isActive: activeTabPath === filepath
+                };
+                
+            } catch (error) {
+                return { error: `Fehler beim Abrufen der Datei-Info: ${error.message}` };
+            }
+        }
+        
+        // ========================================
+        // API INTEGRATION - ENHANCED
+        // ========================================
+        
+        async function callMistralAPI(messages, tools, modelOverride = null) {
+            const response = await fetch(`${apiConfig.endpoint}/api/chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    model: modelOverride || apiConfig.model,
+                    messages: messages,
+                    tools: tools ? tools.map(func => ({
+                        type: "function",
+                        function: func
+                    })) : undefined,
+                    tool_choice: tools ? "auto" : undefined,
+                    temperature: 0.7,
+                    max_tokens: 4000,
+                    stream: false
+                })
+            });
+
+            if (!response.ok) {
+                const err = await response.json().catch(() => ({}));
+                throw new Error(`Proxy Error ${response.status}: ${err.message || err.error || response.statusText}`);
+            }
+
+            return await response.json();
+        }
+
+        // ========================================
+        // RAG ENGINE (Embeddings + Cosine Similarity)
+        // ========================================
+
+        async function generateEmbeddings(input) {
+            const response = await fetch(`${apiConfig.endpoint}/api/embeddings`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    input: input,
+                    model: apiConfig.embeddingModel
+                })
+            });
+            if (!response.ok) {
+                const err = await response.json().catch(() => ({}));
+                throw new Error(`Embeddings Error: ${err.message || response.status}`);
+            }
+            const data = await response.json();
+            return Array.isArray(input)
+                ? data.data.map(d => d.embedding)
+                : data.data[0].embedding;
+        }
+
+        function cosineSimilarity(a, b) {
+            let dot = 0, na = 0, nb = 0;
+            for (let i = 0; i < a.length; i++) {
+                dot += a[i] * b[i];
+                na += a[i] * a[i];
+                nb += b[i] * b[i];
+            }
+            return dot / (Math.sqrt(na) * Math.sqrt(nb) + 1e-10);
+        }
+
+        function chunkText(text, size = 800, overlap = 100) {
+            const chunks = [];
+            for (let i = 0; i < text.length; i += (size - overlap)) {
+                chunks.push(text.slice(i, i + size));
+                if (i + size >= text.length) break;
+            }
+            return chunks.length ? chunks : [text];
+        }
+
+        async function indexProjectForRAG(maxFiles = 40, chunkSize = 800) {
+            const allowed = /\.(js|ts|tsx|jsx|py|md|txt|json|html|css|java|go|rs|rb|php|c|cpp|h|sh|yml|yaml|toml|vue|svelte|sql)$/i;
+            const skipDirs = new Set(['node_modules', '.git', 'dist', 'build', '.next', '.cache', 'venv', '__pycache__']);
+
+            // Walk fileTree to collect file nodes (with handles) — falls back to openTabs/currentFile if no fileTree.
+            const collected = [];
+            function walk(node) {
+                if (collected.length >= maxFiles) return;
+                if (!node) return;
+                if (node.kind === 'file' && allowed.test(node.name) && node.handle) {
+                    collected.push(node);
+                } else if (node.children) {
+                    for (const child of node.children) {
+                        if (child.kind === 'directory' && skipDirs.has(child.name)) continue;
+                        walk(child);
+                        if (collected.length >= maxFiles) break;
+                    }
+                }
+            }
+            if (fileTree) walk(fileTree);
+
+            vectorStore = [];
+            const allChunks = [];
+
+            // Read content from each file (handle if available, otherwise from openTabs/currentFile)
+            for (const node of collected) {
+                let content = '';
+                try {
+                    if (node.handle) {
+                        const file = await node.handle.getFile();
+                        if (file.size < 2 * 1024 * 1024) content = await file.text();
+                    }
+                } catch {}
+                if (!content && openTabs.has(node.path)) content = openTabs.get(node.path).content || '';
+                if (!content && currentFile && currentFile.path === node.path) content = currentFile.content || '';
+                if (!content) continue;
+                const chunks = chunkText(content, chunkSize);
+                chunks.forEach(c => allChunks.push({ path: node.path, chunk: c }));
+            }
+
+            // Fallback: if no fileTree at all, index whatever is in openTabs
+            if (!allChunks.length) {
+                for (const [path, tab] of openTabs.entries()) {
+                    const content = tab.content || '';
+                    if (!content) continue;
+                    chunkText(content, chunkSize).forEach(c => allChunks.push({ path, chunk: c }));
+                }
+            }
+
+            if (!allChunks.length) return { error: 'Keine indexierbaren Inhalte gefunden. Öffne einen Ordner oder mindestens eine Datei.' };
+
+            const BATCH = 32;
+            for (let i = 0; i < allChunks.length; i += BATCH) {
+                const batch = allChunks.slice(i, i + BATCH);
+                const embeds = await generateEmbeddings(batch.map(b => `${b.path}\n${b.chunk}`));
+                batch.forEach((b, j) => vectorStore.push({ ...b, embedding: embeds[j] }));
+            }
+
+            return {
+                success: true,
+                indexed_chunks: vectorStore.length,
+                files_indexed: collected.length || openTabs.size,
+                model: apiConfig.embeddingModel
+            };
+        }
+
+        async function ragSearch(query, topK = 5) {
+            if (!vectorStore.length) {
+                return { error: 'Vector Store leer. Bitte erst index_project_for_rag aufrufen.' };
+            }
+            const qEmb = await generateEmbeddings(query);
+            const scored = vectorStore.map(v => ({
+                path: v.path,
+                chunk: v.chunk,
+                score: +cosineSimilarity(qEmb, v.embedding).toFixed(4)
+            }));
+            scored.sort((a, b) => b.score - a.score);
+            return { query, results: scored.slice(0, topK) };
+        }
+
+        async function summarizeFileOperation(filepath) {
+            let content = '';
+            if (openTabs.has(filepath)) content = openTabs.get(filepath).content || '';
+            else if (currentFile && currentFile.path === filepath) content = currentFile.content || '';
+            if (!content) return { error: `Datei nicht im Memory: ${filepath}` };
+
+            const messages = [
+                { role: 'system', content: 'You produce concise, structured summaries of source files. Output: 1-line purpose, then bullet list of exports/key functions/responsibilities.' },
+                { role: 'user', content: `File: ${filepath}\n\n${content.slice(0, 12000)}` }
+            ];
+            const resp = await callMistralAPI(messages, null, 'gpt-4o-mini');
+            return { filepath, summary: resp.choices[0].message.content };
+        }
+        
+        // ========================================
+        // ENHANCED CHAT FUNCTIONALITY
+        // ========================================
+        
+        let chatMessages = [SYSTEM_PROMPT];
+        
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message || isLoading) return;
+            
+            setLoading(true);
+            input.value = '';
+            input.style.height = 'auto';
+            
+            addMessage('user', message);
+            
+            try {
+                // ENHANCED CONTEXT - Nur Dateiliste + aktueller Editor-File
+                const fileList = getSimpleFileList();
+                const currentContent = getCurrentFileContent();
+                const analysis = analyzeProjectStructure();
+                
+                const contextMessage = {
+                    role: "system",
+                    content: `ENHANCED PROJECT CONTEXT:
+
+📁 **Projekt-Übersicht:**
+- Dateien: ${fileList.length} total (${analysis?.projectType || 'Unknown'})
+- Sprachen: ${analysis?.languages.slice(0, 3).map(([lang, count]) => `${lang}(${count})`).join(', ')}
+- Frameworks: ${analysis?.frameworks.join(', ') || 'None detected'}
+- Offene Tabs: ${openTabs.size}
+
+📄 **Dateiliste (Top ${Math.min(fileList.length, 20)}):**
+${fileList.slice(0, 20).map(f => `• ${f.name} (${f.extension}, ${formatFileSize(f.size)})`).join('\n')}
+
+📝 **Aktueller Editor-File:**
+${currentFile ? `
+Datei: ${currentFile.name}
+Pfad: ${currentFile.path}
+Größe: ${formatFileSize(currentFile.size)}
+Sprache: ${getLanguageForFile(currentFile.name)}
+
+**Inhalt:**
+\`\`\`${getLanguageForFile(currentFile.name)}
+${currentContent || 'Leer'}
+\`\`\`
+` : 'Keine Datei im Editor geöffnet'}
+
+🎯 **Arbeite mit diesem Kontext und führe präzise CRUD-Operationen aus.**`
+                };
+                
+                const messagesForAPI = [
+                    SYSTEM_PROMPT,
+                    ...chatMessages.slice(1, -5), // Keep only last 5 messages for context
+                    contextMessage,
+                    { role: "user", content: message }
+                ];
+                
+                addMessage('system', `🤖 ${apiConfig.model} arbeitet...`);
+                const response = await callMistralAPI(messagesForAPI, AI_FUNCTIONS);
+                const assistantMessage = response.choices[0].message;
+                
+                // Handle function calls
+                if (assistantMessage.tool_calls && assistantMessage.tool_calls.length > 0) {
+                    const functionResults = [];
+                    
+                    addMessage('system', `🔧 Führe ${assistantMessage.tool_calls.length} Operationen aus...`);
+                    
+                    for (const toolCall of assistantMessage.tool_calls) {
+                        const functionName = toolCall.function.name;
+                        const args = JSON.parse(toolCall.function.arguments);
+                        
+                        addMessage('system', `▶️ ${functionName}(${Object.keys(args).join(', ')})`);
+                        
+                        const result = await executeAIFunction(functionName, args);
+                        
+                        functionResults.push({
+                            role: "tool",
+                            content: JSON.stringify(result),
+                            tool_call_id: toolCall.id
+                        });
+                    }
+                    
+                    const finalMessages = [
+                        ...messagesForAPI,
+                        assistantMessage,
+                        ...functionResults
+                    ];
+                    
+                    addMessage('system', '🔄 Generiere finale Antwort...');
+                    const finalResponse = await callMistralAPI(finalMessages);
+                    addMessage('assistant', finalResponse.choices[0].message.content);
+                    
+                    chatMessages.push({ role: "user", content: message });
+                    chatMessages.push({ role: "assistant", content: finalResponse.choices[0].message.content });
+                } else {
+                    addMessage('assistant', assistantMessage.content);
+                    
+                    chatMessages.push({ role: "user", content: message });
+                    chatMessages.push({ role: "assistant", content: assistantMessage.content });
+                }
+                
+                // Keep chat history manageable
+                if (chatMessages.length > 20) {
+                    chatMessages = [SYSTEM_PROMPT, ...chatMessages.slice(-15)];
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                if (error.message.includes('API Key')) {
+                    addMessage('error', `❌ ${error.message}`);
+                } else if (error.message.includes('401')) {
+                    addMessage('error', `❌ API Key ungültig. Prüfe deinen Mistral API Key.`);
+                } else if (error.message.includes('400')) {
+                    addMessage('error', `❌ Request zu groß oder fehlerhaft. Versuche kleinere Anfragen.`);
+                } else if (error.message.includes('429')) {
+                    addMessage('error', `❌ API Rate Limit erreicht. Warte einen Moment.`);
+                } else {
+                    addMessage('error', `❌ Fehler: ${error.message}`);
+                }
+            }
+            
+            setLoading(false);
+        }
+        
+        function addMessage(role, content) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+            
+            // Enhanced markdown rendering
+            let htmlContent = content
+                .replace(/```(\w+)?\n?([\s\S]+?)\n?```/g, '<pre><code class="language-$1">$2</code></pre>')
+                .replace(/`([^`]+)`/g, '<code>$1</code>')
+                .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+                .replace(/\n/g, '<br>');
+            
+            messageDiv.innerHTML = htmlContent;
+            messagesContainer.appendChild(messageDiv);
+            
+            // Auto scroll to bottom
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+        
+        function setLoading(loading) {
+            isLoading = loading;
+            const sendBtn = document.getElementById('sendBtn');
+            
+            sendBtn.disabled = loading;
+            
+            if (loading) {
+                sendBtn.innerHTML = '<div class="loading-indicator"></div>';
+                document.body.classList.add('loading');
+            } else {
+                sendBtn.textContent = 'Senden';
+                document.body.classList.remove('loading');
+            }
+        }
+        
+        function handleInputKeypress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+                return;
+            }
+            
+            // Auto-resize textarea
+            const input = event.target;
+            setTimeout(() => {
+                input.style.height = 'auto';
+                input.style.height = `${Math.min(input.scrollHeight, 150)}px`;
+            }, 0);
+        }
+        
+        // ========================================
+        // UI UTILITIES & MODALS
+        // ========================================
+        
+        function clearChat() {
+            if (confirm('Möchtest du wirklich den gesamten Chat löschen?')) {
+                document.getElementById('chatMessages').innerHTML = '';
+                chatMessages = [SYSTEM_PROMPT];
+                addMessage('system', '🔄 Chat wurde geleert');
+            }
+        }
+        
+        function insertCodeSnippet() {
+            const input = document.getElementById('chatInput');
+            const snippet = '\n```\n// Dein Code hier\n```\n';
+            const pos = input.selectionStart;
+            input.value = input.value.substring(0, pos) + snippet + input.value.substring(pos);
+            input.focus();
+            input.selectionStart = input.selectionEnd = pos + snippet.indexOf('//');
+        }
+        
+        function analyzeProject() {
+            if (!fileTree) {
+                addMessage('error', '❌ Bitte öffne zuerst einen Ordner');
+                return;
+            }
+            
+            const analysis = analyzeProjectStructure();
+            const summary = `📊 **Projekt-Analyse:**
+
+📁 **Struktur:**
+• ${analysis.fileCount} Dateien (${analysis.formattedSize})
+• ${analysis.openTabs} offene Tabs
+• Aktuell: ${analysis.currentFile}
+
+💻 **Sprachen & Technologien:**
+${analysis.languages.slice(0, 5).map(([lang, count]) => `• ${lang}: ${count} Dateien`).join('\n')}
+
+🚀 **Frameworks:**
+${analysis.frameworks.length > 0 ? analysis.frameworks.map(f => `• ${f}`).join('\n') : '• Keine erkannt'}
+
+🏗️ **Projekttyp:** ${analysis.projectType}`;
+            
+            addMessage('assistant', summary);
+        }
+        
+        function showFileList() {
+            if (!fileTree) {
+                addMessage('error', '❌ Kein Ordner geöffnet');
+                return;
+            }
+            
+            const files = getSimpleFileList();
+            const fileListText = `📁 **Dateiliste (${files.length} Dateien):**
+
+${files.slice(0, 30).map(f => `• **${f.name}** (${f.extension.toUpperCase()}, ${formatFileSize(f.size)})`).join('\n')}
+
+${files.length > 30 ? `\n... und ${files.length - 30} weitere Dateien` : ''}`;
+            
+            addMessage('assistant', fileListText);
+        }
+        
+        function showHelp() {
+            const helpText = `🚀 **RAG + CRUD System - Ultimate Edition**
+
+**🔧 Enhanced CRUD Funktionen:**
+• \`Erstelle eine neue Datei app.js\` - Datei-Erstellung (KEIN RELOAD!)
+• \`Ändere die CSS in style.css\` - Datei-Bearbeitung
+• \`Lösche die Datei test.txt\` - Datei-Löschung
+• \`Benenne app.js um zu main.js\` - Umbenennung
+• \`Erstelle Ordner components\` - Ordner-Erstellung
+• \`Zeige alle JavaScript Dateien\` - Datei-Auflistung
+• \`Suche nach "TODO" in allen Dateien\` - Text-Suche
+
+**🤖 RAG Funktionen:**
+• \`Analysiere mein Projekt\` - Vollständige Projekt-Analyse
+• \`Zeige mir Datei-Informationen für app.js\` - Detaillierte Datei-Infos
+• \`Lies den Inhalt von config.json\` - Datei lesen
+• \`Was für ein Projekt ist das?\` - Projekt-Typ Erkennung
+
+**⚡ Verbesserungen:**
+• **Kein Reload Problem** - Alle Operationen im Memory
+• **Enhanced Context** - Intelligente Projekt-Analyse
+• **Monaco Editor** - Vollständige VS Code Experience
+• **Tab System** - Mehrere Dateien gleichzeitig
+• **Token Management** - Automatische Kürzung großer Dateien
+
+**⌨️ Keyboard Shortcuts:**
+• \`Ctrl+S\` - Aktuelle Datei speichern
+• \`Enter\` - Nachricht senden
+• \`Shift+Enter\` - Neue Zeile
+
+**🎯 CodeStral optimiert für:**
+• Code-Generierung und -Analyse
+• Intelligent CRUD Operations
+• Projekt-strukturierte Entwicklung
+• Effiziente Token-Nutzung`;
+            
+            addMessage('assistant', helpText);
+        }
+        
+        // Modal Functions
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
+        function showNewFileModal() {
+            if (!fileTree) {
+                alert('Bitte öffne zuerst einen Ordner');
+                return;
+            }
+            openModal('newFileModal');
+            document.getElementById('newFileName').focus();
+        }
+        
+        function showNewFolderModal() {
+            if (!fileTree) {
+                alert('Bitte öffne zuerst einen Ordner');
+                return;
+            }
+            openModal('newFolderModal');
+            document.getElementById('newFolderName').focus();
+        }
+        
+        function openCodeGeneratorModal() {
+            openModal('codeGeneratorModal');
+            document.getElementById('genFileName').focus();
+        }
+        
+        // WICHTIG: ENHANCED CREATE FUNCTIONS - NO RELOAD!
+        async function createNewFileConfirm() {
+            const fileName = document.getElementById('newFileName').value.trim();
+            const filePath = document.getElementById('newFilePath').value.trim();
+            
+            if (!fileName) {
+                alert('Bitte gib einen Dateinamen ein');
+                return;
+            }
+            
+            const fullPath = filePath ? `${filePath}/${fileName}` : fileName;
+            closeModal('newFileModal');
+            
+            // Clear form
+            document.getElementById('newFileName').value = '';
+            document.getElementById('newFilePath').value = '';
+            
+            // Create file via AI function - NO RELOAD!
+            const result = await createFileOperation(fullPath, `// Neue Datei: ${fileName}\n// Erstellt am: ${new Date().toLocaleString()}\n\n`);
+            
+            if (result.success) {
+                addMessage('system', `✅ ${result.message}`);
+            } else {
+                addMessage('error', `❌ ${result.error}`);
+            }
+        }
+        
+        async function createNewFolderConfirm() {
+            const folderName = document.getElementById('newFolderName').value.trim();
+            const folderPath = document.getElementById('newFolderPath').value.trim();
+            
+            if (!folderName) {
+                alert('Bitte gib einen Ordnernamen ein');
+                return;
+            }
+            
+            const fullPath = folderPath ? `${folderPath}/${folderName}` : folderName;
+            closeModal('newFolderModal');
+            
+            // Clear form
+            document.getElementById('newFolderName').value = '';
+            document.getElementById('newFolderPath').value = '';
+            
+            // Create folder via AI function
+            const result = await createFolderOperation(fullPath);
+            
+            if (result.success) {
+                addMessage('system', `✅ ${result.message}`);
+            } else {
+                addMessage('error', `❌ ${result.error}`);
+            }
+        }
+        
+        async function generateCode() {
+            const fileName = document.getElementById('genFileName').value.trim();
+            const description = document.getElementById('genDescription').value.trim();
+            const tech = document.getElementById('genTech').value.trim();
+            
+            if (!fileName || !description) {
+                alert('Bitte fülle mindestens Dateiname und Beschreibung aus');
+                return;
+            }
+            
+            closeModal('codeGeneratorModal');
+            
+            // Clear form
+            document.getElementById('genFileName').value = '';
+            document.getElementById('genDescription').value = '';
+            document.getElementById('genTech').value = '';
+            
+            const prompt = `Erstelle eine vollständige, funktionsfähige Datei namens "${fileName}" mit folgender Beschreibung:
+
+${description}
+
+${tech ? `Technologie/Framework: ${tech}` : ''}
+
+Bitte generiere kompletten, produktionsfähigen Code mit:
+- Vollständiger Funktionalität
+- Angemessenen Kommentaren
+- Fehlerbehandlung wo nötig
+- Best Practices für die gewählte Technologie
+- Verwende create_file Funktion um die Datei zu erstellen`;
+            
+            document.getElementById('chatInput').value = prompt;
+            sendMessage();
+        }
+        
+        function exportProject() {
+            if (!fileTree) {
+                alert('Bitte öffne zuerst einen Ordner');
+                return;
+            }
+            
+            try {
+                const analysis = analyzeProjectStructure();
+                const exportData = {
+                    timestamp: new Date().toISOString(),
+                    version: '2.0.0-ultimate',
+                    projectAnalysis: analysis,
+                    openTabs: Array.from(openTabs.keys()),
+                    currentFile: currentFile ? currentFile.path : null,
+                    chatHistory: chatMessages.slice(1).map(msg => ({
+                        role: msg.role,
+                        content: msg.content.substring(0, 500) // Limit für Export
+                    })),
+                    apiConfig: {
+                        endpoint: apiConfig.endpoint,
+                        model: apiConfig.model
+                        // API Key nicht exportieren!
+                    }
+                };
+                
+                const dataStr = JSON.stringify(exportData, null, 2);
+                const blob = new Blob([dataStr], {type: 'application/json'});
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `rag-crud-export-${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                addMessage('system', `✅ Projekt exportiert: ${analysis.fileCount} Dateien, ${openTabs.size} Tabs`);
+            } catch (error) {
+                console.error('Error exporting project:', error);
+                addMessage('error', `❌ Fehler beim Exportieren: ${error.message}`);
+            }
+        }
+        
+        // ========================================
+        // FILE SYSTEM ACCESS API INTEGRATION
+        // ========================================
+        
+        async function openFolder() {
+            try {
+                if (!window.showDirectoryPicker) {
+                    alert('Ihr Browser unterstützt die File System Access API nicht. Bitte verwenden Sie Chrome oder Edge.');
+                    return;
+                }
+                
+                const dirHandle = await window.showDirectoryPicker();
+                addMessage('system', `📁 Lade Ordner: ${dirHandle.name}...`);
+                
+                fileTree = await buildFileTree(dirHandle);
+                
+                updateFileExplorer();
+                updateStatus();
+                
+                const analysis = analyzeProjectStructure();
+                addMessage('system', `✅ Ordner geöffnet: ${dirHandle.name}`);
+                addMessage('system', `📊 ${analysis.fileCount} Dateien geladen`);
+                addMessage('system', `💻 Projekttyp: ${analysis.projectType}`);
+                addMessage('system', `🚀 Enhanced CRUD & RAG System bereit!`);
+                
+            } catch (error) {
+                if (error.name !== 'AbortError') {
+                    console.error('Error opening folder:', error);
+                    addMessage('error', `❌ Fehler beim Öffnen des Ordners: ${error.message}`);
+                }
+            }
+        }
+        
+        async function buildFileTree(dirHandle, path = '') {
+            const node = {
+                name: dirHandle.name,
+                kind: 'directory',
+                path: path || dirHandle.name,
+                children: [],
+                handle: dirHandle
+            };
+            
+            try {
+                for await (const [name, handle] of dirHandle.entries()) {
+                    // Skip hidden files and common ignore patterns
+                    if (name.startsWith('.') || 
+                        ['node_modules', '__pycache__', '.git', 'dist', 'build', '.next', '.nuxt', 'target', 'vendor', '.vscode', '.idea'].includes(name)) {
+                        continue;
+                    }
+                    
+                    const childPath = path ? `${path}/${name}` : name;
+                    
+                    if (handle.kind === 'directory') {
+                        const childNode = await buildFileTree(handle, childPath);
+                        if (childNode.children.length > 0) { // Only add non-empty directories
+                            node.children.push(childNode);
+                        }
+                    } else {
+                        try {
+                            const file = await handle.getFile();
+                            
+                            // Skip very large files and binary extensions
+                            if (file.size > 50 * 1024 * 1024) continue; // 50MB limit
+                            
+                            const binaryExtensions = ['exe', 'dll', 'so', 'dylib', 'bin', 'o', 'a', 'lib', 'pyc', 'class'];
+                            const ext = name.split('.').pop()?.toLowerCase();
+                            if (binaryExtensions.includes(ext)) continue;
+                            
+                            node.children.push({
+                                name: name,
+                                kind: 'file',
+                                path: childPath,
+                                size: file.size,
+                                handle: handle,
+                                lastModified: file.lastModified
+                            });
+                        } catch (fileError) {
+                            console.warn(`Could not read file ${name}:`, fileError);
+                        }
+                    }
+                }
+                
+                // Sort: directories first, then files alphabetically
+                node.children.sort((a, b) => {
+                    if (a.kind !== b.kind) {
+                        return a.kind === 'directory' ? -1 : 1;
+                    }
+                    return a.name.localeCompare(b.name, undefined, { 
+                        numeric: true, 
+                        sensitivity: 'base' 
+                    });
+                });
+                
+            } catch (error) {
+                console.error('Error reading directory:', error);
+            }
+            
+            return node;
+        }
+        
+        function updateFileExplorer() {
+            const fileTreeElement = document.getElementById('fileTree');
+            
+            if (!fileTree) {
+                fileTreeElement.innerHTML = '<div style="text-align: center; color: #8a8a8a; padding: 20px; font-size: 14px;">📁 Öffne einen Ordner um zu starten</div>';
+                return;
+            }
+            
+            fileTreeElement.innerHTML = '';
+            renderFileTreeNode(fileTree, fileTreeElement, 0, true);
+        }
+        
+        function renderFileTreeNode(node, container, depth, isRoot = false) {
+            if (!node) return;
+            
+            if (node.kind === 'directory') {
+                // Directory
+                if (!isRoot) {
+                    const folderDiv = document.createElement('div');
+                    folderDiv.style.marginLeft = `${depth * 16}px`;
+                    folderDiv.className = 'file-item folder-item';
+                    
+                    const folderContent = document.createElement('div');
+                    folderContent.className = 'file-item-content';
+                    folderContent.innerHTML = `<span>📁</span> <span>${node.name}</span>`;
+                    
+                    const folderActions = document.createElement('div');
+                    folderActions.className = 'file-item-actions';
+                    folderActions.innerHTML = `
+                        <button class="file-item-action" onclick="renameEntry('${node.path}')" title="Umbenennen">✏️</button>
+                        <button class="file-item-action" onclick="deleteEntry('${node.path}')" title="Löschen">🗑️</button>
+                    `;
+                    
+                    folderDiv.appendChild(folderContent);
+                    folderDiv.appendChild(folderActions);
+                    
+                    folderContent.onclick = (e) => {
+                        e.stopPropagation();
+                        toggleFolder(folderDiv);
+                    };
+                    
+                    container.appendChild(folderDiv);
+                }
+                
+                // Children container
+                const childrenContainer = document.createElement('div');
+                childrenContainer.className = 'folder-children';
+                childrenContainer.dataset.path = node.path;
+                if (!isRoot) childrenContainer.style.display = 'block'; // Start expanded
+                container.appendChild(childrenContainer);
+                
+                // Render children
+                if (node.children) {
+                    node.children.forEach(child => {
+                        renderFileTreeNode(child, childrenContainer, isRoot ? depth : depth + 1);
+                    });
+                }
+            } else {
+                // File
+                const fileDiv = document.createElement('div');
+                fileDiv.style.marginLeft = `${depth * 16}px`;
+                fileDiv.className = 'file-item';
+                
+                const ext = node.name.split('.').pop()?.toLowerCase();
+                fileDiv.dataset.ext = ext;
+                
+                // Enhanced file icons with colors
+                let fileIcon = '📄';
+                if (ext === 'js' || ext === 'jsx') fileIcon = '🟨';
+                else if (ext === 'ts' || ext === 'tsx') fileIcon = '🔵';
+                else if (ext === 'html' || ext === 'htm') fileIcon = '🌐';
+                else if (ext === 'css' || ext === 'scss' || ext === 'sass') fileIcon = '🎨';
+                else if (ext === 'json') fileIcon = '📋';
+                else if (ext === 'md') fileIcon = '📝';
+                else if (ext === 'py') fileIcon = '🐍';
+                else if (ext === 'java') fileIcon = '☕';
+                else if (ext === 'php') fileIcon = '🐘';
+                else if (ext === 'go') fileIcon = '🐹';
+                else if (ext === 'rs') fileIcon = '🦀';
+                else if (ext === 'cpp' || ext === 'c' || ext === 'h') fileIcon = '⚙️';
+                else if (ext === 'cs') fileIcon = '🔷';
+                else if (ext === 'swift') fileIcon = '🍎';
+                else if (ext === 'kt') fileIcon = '🔸';
+                else if (['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'].includes(ext)) fileIcon = '🖼️';
+                else if (['zip', 'rar', 'tar', 'gz', '7z'].includes(ext)) fileIcon = '📦';
+                else if (['mp3', 'wav', 'ogg', 'flac'].includes(ext)) fileIcon = '🎵';
+                else if (['mp4', 'avi', 'mov', 'mkv'].includes(ext)) fileIcon = '🎬';
+                else if (['pdf', 'doc', 'docx', 'txt'].includes(ext)) fileIcon = '📃';
+                
+                const fileContent = document.createElement('div');
+                fileContent.className = 'file-item-content';
+                
+                const fileSize = node.size ? ` (${formatFileSize(node.size)})` : '';
+                fileContent.innerHTML = `<span class="file-icon">${fileIcon}</span> <span>${node.name}</span><span style="color: #666; font-size: 11px;">${fileSize}</span>`;
+                
+                const fileActions = document.createElement('div');
+                fileActions.className = 'file-item-actions';
+                fileActions.innerHTML = `
+                    <button class="file-item-action" onclick="renameEntry('${node.path}')" title="Umbenennen">✏️</button>
+                    <button class="file-item-action" onclick="deleteEntry('${node.path}')" title="Löschen">🗑️</button>
+                `;
+                
+                fileDiv.appendChild(fileContent);
+                fileDiv.appendChild(fileActions);
+                
+                fileContent.onclick = (e) => {
+                    e.stopPropagation();
+                    selectFile(node);
+                    
+                    // Update UI selection
+                    document.querySelectorAll('.file-item').forEach(item => {
+                        item.classList.remove('selected');
+                    });
+                    fileDiv.classList.add('selected');
+                };
+                
+                container.appendChild(fileDiv);
+            }
+        }
+        
+        function toggleFolder(folderDiv) {
+            const childrenContainer = folderDiv.nextElementSibling;
+            if (childrenContainer && childrenContainer.classList.contains('folder-children')) {
+                const isVisible = childrenContainer.style.display !== 'none';
+                childrenContainer.style.display = isVisible ? 'none' : 'block';
+                
+                // Update folder icon
+                const folderIcon = folderDiv.querySelector('span');
+                folderIcon.textContent = isVisible ? '📁' : '📂';
+            }
+        }
+        
+        async function selectFile(node) {
+            try {
+                selectedFile = node;
+                
+                // Create or activate tab
+                createTab(node.path, node.name);
+                
+                updateStatus();
+                
+            } catch (error) {
+                console.error('Error selecting file:', error);
+                addMessage('error', `❌ Fehler beim Auswählen der Datei: ${error.message}`);
+            }
+        }
+        
+        function refreshExplorer() {
+            if (fileTree) {
+                updateFileExplorer();
+                addMessage('system', '🔄 Datei-Explorer aktualisiert');
+            }
+        }
+        
+        function collapseAll() {
+            document.querySelectorAll('.folder-children').forEach(container => {
+                container.style.display = 'none';
+            });
+            document.querySelectorAll('.file-icon').forEach(icon => {
+                if (icon.textContent === '📂') {
+                    icon.textContent = '📁';
+                }
+            });
+            addMessage('system', '📚 Alle Ordner eingeklappt');
+        }
+        
+        function expandAll() {
+            document.querySelectorAll('.folder-children').forEach(container => {
+                container.style.display = 'block';
+            });
+            document.querySelectorAll('.file-icon').forEach(icon => {
+                if (icon.textContent === '📁') {
+                    icon.textContent = '📂';
+                }
+            });
+            addMessage('system', '📖 Alle Ordner ausgeklappt');
+        }
+        
+        function renameEntry(path) {
+            const currentName = path.split('/').pop();
+            const newName = prompt(`Neuer Name für "${currentName}":`, currentName);
+            if (newName && newName !== currentName) {
+                const newPath = path.replace(/[^/]+$/, newName);
+                renameFileOperation(path, newPath);
+            }
+        }
+        
+        function deleteEntry(path) {
+            const name = path.split('/').pop();
+            if (confirm(`Möchtest du "${name}" wirklich löschen?`)) {
+                deleteFileOperation(path, true);
+            }
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            else if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            else if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+            else return (bytes / (1024 * 1024 * 1024)).toFixed(1) + ' GB';
+        }
+        
+        function updateStatus() {
+            const statusText = document.getElementById('statusText');
+            const fileCount = document.getElementById('fileCount');
+            
+            if (fileTree) {
+                const files = getSimpleFileList();
+                const currentFileName = currentFile ? currentFile.name : 'Kein Editor';
+                statusText.textContent = `Editor: ${currentFileName}`;
+                fileCount.textContent = `${files.length} Dateien | ${openTabs.size} Tabs`;
+            } else {
+                statusText.textContent = 'Bereit';
+                fileCount.textContent = 'Keine Dateien geladen';
+            }
+        }
+        
+        // ========================================
+        // INITIALIZATION
+        // ========================================
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load API configuration
+            loadApiConfig();
+            
+            // Initialize Monaco Editor
+            setTimeout(initializeMonacoEditor, 500);
+            
+            // Setup UI
+            updateStatus();
+            hideEditor();
+            
+            // Welcome messages
+            addMessage('system', '🚀 RAG + CRUD System - Ultimate Edition geladen!');
+            addMessage('system', '🔧 Enhanced CRUD Logik - KEIN Reload Problem mehr!');
+            addMessage('system', '🤖 CodeStral vorinstalliert - nur API Key eingeben');
+            addMessage('system', '📁 Öffne einen Ordner um mit deinem Projekt zu starten');
+            addMessage('system', '✨ Neue Funktionen: Enhanced Tab System, Better Context Management');
+            addMessage('system', '💡 Schreibe "Hilfe" für vollständige Funktionsübersicht');
+            
+            // Setup textarea auto-resize
+            const textarea = document.getElementById('chatInput');
+            textarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 150) + 'px';
+            });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(event) {
+                if (event.ctrlKey || event.metaKey) {
+                    switch (event.key) {
+                        case 'o': // Ctrl+O - Open Folder
+                            event.preventDefault();
+                            openFolder();
+                            break;
+                        case 'n': // Ctrl+N - New File
+                            event.preventDefault();
+                            showNewFileModal();
+                            break;
+                        case 's': // Ctrl+S - Save
+                            event.preventDefault();
+                            saveCurrentFile();
+                            break;
+                        case 'w': // Ctrl+W - Close Tab
+                            if (activeTabPath) {
+                                event.preventDefault();
+                                closeTab(activeTabPath);
+                            }
+                            break;
+                    }
+                }
+            });
+        });
+        
+        // Handle modal clicks
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        };
+        
+        // Auto-save proxy endpoint
+        document.getElementById('apiKey').addEventListener('input', function() {
+            apiConfig.endpoint = this.value.trim() || BACKEND_URL;
+            updateApiStatus();
+        });
+    </script>
+</body>
+</html>

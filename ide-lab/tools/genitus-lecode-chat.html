@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Genitus Inc - LeCode</title>
+    <link href="https://unpkg.com/spectre.css/dist/spectre.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-tomorrow.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet"/>
+    <style>
+        /* ── BASE ── */
+        body, html { margin:0; padding:0; height:100%; font-family:'Orbitron','Helvetica Neue',sans-serif; background:#121212; color:#fff; }
+
+        /* ── NAVBAR ── */
+        .navbar {
+            background:#1a1a2e; color:#fff; padding:5px 15px; font-size:18px; font-weight:900;
+            font-family:'Orbitron',sans-serif; display:flex; justify-content:space-between; align-items:center;
+            gap:20px; height:40px; box-shadow:0 0 20px rgba(0,255,136,0.3); letter-spacing:2px;
+            position:relative; overflow:hidden;
+        }
+        #matrixCanvas { position:absolute; top:0; left:0; opacity:0.4; pointer-events:none; }
+        .navbar span { position:relative; z-index:10; text-shadow:0 0 10px #fff,0 0 20px rgba(0,255,255,0.5); }
+        .navbar-right { display:flex; gap:12px; align-items:center; position:relative; z-index:10; }
+
+        /* ── LAYOUT ── */
+        .container { padding:0; display:flex; flex-direction:column; height:calc(100% - 40px); }
+        #chat-container {
+            flex-grow:1; display:flex; flex-direction:column; border-radius:8px;
+            box-shadow:0 0 10px rgba(0,0,0,0.1); background:#1e1e1e; overflow:hidden; position:relative; margin:0;
+        }
+        #chatHistory {
+            flex-grow:1; padding:10px; overflow-y:auto; border-radius:4px; background:#1e1e1e;
+            word-wrap:break-word; color:#fff; scrollbar-width:thin; scrollbar-color:#888 #333;
+        }
+        #chatHistory::-webkit-scrollbar { width:8px; }
+        #chatHistory::-webkit-scrollbar-thumb { background:#888; border-radius:4px; }
+        #chatHistory::-webkit-scrollbar-track { background:#333; }
+
+        /* ── MESSAGES ── */
+        .user-message, .assistant-message {
+            padding:10px; margin-bottom:10px; border-radius:4px; transition:background-color 0.3s;
+        }
+        .user-message { background:#4b0082; text-align:left; }
+        .assistant-message { background:#004d00; text-align:left; white-space:pre-wrap; }
+        .assistant-message.streaming { background:#003300; }
+
+        /* ── MARKDOWN inside assistant ── */
+        .assistant-message h1,.assistant-message h2,.assistant-message h3 { color:#00ff88; margin:8px 0 4px; font-size:1em; }
+        .assistant-message h1 { font-size:1.1em; }
+        .assistant-message p { margin:4px 0; line-height:1.6; white-space:pre-wrap; }
+        .assistant-message ul,.assistant-message ol { margin:4px 0 4px 20px; }
+        .assistant-message li { margin-bottom:2px; line-height:1.5; }
+        .assistant-message code { background:rgba(0,255,136,0.12); color:#00ff88; padding:1px 5px; border-radius:3px; font-family:'Fira Code','Courier New',monospace; font-size:.88em; }
+        .assistant-message pre { background:#111; border:1px solid rgba(0,255,136,0.2); border-radius:5px; padding:10px; margin:6px 0; overflow-x:auto; position:relative; white-space:pre; }
+        .assistant-message pre code { background:none; color:#a8ff60; padding:0; font-size:.82em; white-space:pre; }
+        .assistant-message blockquote { border-left:3px solid #0099ff; margin:4px 0; padding:4px 10px; color:rgba(255,255,255,0.7); background:rgba(0,153,255,0.06); border-radius:0 4px 4px 0; }
+        .assistant-message table { border-collapse:collapse; width:100%; margin:6px 0; font-size:.85em; }
+        .assistant-message th { background:rgba(0,255,136,0.15); color:#00ff88; padding:5px 8px; text-align:left; border:1px solid rgba(0,255,136,0.2); }
+        .assistant-message td { padding:4px 8px; border:1px solid rgba(255,255,255,0.08); }
+        .assistant-message strong { color:#fff; font-weight:700; }
+        .assistant-message em { color:rgba(255,255,255,0.8); font-style:italic; }
+        .assistant-message hr { border:none; border-top:1px solid rgba(0,255,136,0.2); margin:8px 0; }
+
+        /* copy button on code blocks */
+        .copy-code-btn {
+            position:absolute; top:5px; right:6px; background:rgba(0,153,255,0.2);
+            border:1px solid rgba(0,153,255,0.4); color:#0099ff; padding:2px 8px;
+            border-radius:3px; font-size:11px; cursor:pointer; transition:all .2s; font-family:sans-serif;
+        }
+        .copy-code-btn:hover { background:rgba(0,153,255,0.4); color:#fff; }
+
+        /* ── INPUT AREA ── */
+        .input-group {
+            display:flex; width:100%; margin-top:auto; position:sticky; bottom:0;
+            background:#1e1e1e; padding:10px 0;
+        }
+        .input-group input {
+            flex:1; padding:10px; border:none; border-radius:4px 0 0 4px;
+            font-size:16px; background:#fff; color:#333;
+        }
+        .input-group button {
+            padding:10px; border:none; background:#007bff; color:#fff;
+            cursor:pointer; border-radius:0 4px 4px 0; font-size:16px;
+        }
+        .input-group button:hover { background:#0056b3; }
+
+        /* ── TOOLBAR BUTTONS ── */
+        .form-buttons { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; padding:0 4px 6px; }
+        .form-buttons button { flex:1 1 18%; padding:5px; font-size:13px; }
+
+        /* ── LOADING ── */
+        #loading {
+            position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+            z-index:10; text-align:center; display:none;
+            background:rgba(0,0,0,0.6); padding:20px; border-radius:8px;
+        }
+        #loading .spinner {
+            display:inline-block; width:40px; height:40px;
+            border:4px solid #f3f3f3; border-top:4px solid #007bff;
+            border-radius:50%; animation:spin 1s linear infinite;
+        }
+        @keyframes spin { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+
+        /* ── FILE PREVIEW ── */
+        .file-preview {
+            display:flex; gap:10px; flex-wrap:wrap; margin-top:6px;
+            padding:8px 10px; background:#1a1a2e; border-radius:4px; min-height:28px;
+        }
+        .file-preview-item {
+            padding:4px 10px; background:#0099ff; color:#fff; border-radius:4px;
+            display:flex; align-items:center; gap:5px; font-size:12px;
+        }
+        .file-preview-item button { background:none; border:none; color:#fff; cursor:pointer; font-weight:bold; padding:0; }
+
+        /* ── CLAUDE PANEL (Prompt Cache + Batch) ── */
+        #claude-panel {
+            display:none; background:#0a0a1a; border-top:1px solid rgba(241,122,58,0.3);
+            padding:10px 12px; flex-shrink:0;
+        }
+        #claude-panel.visible { display:block; }
+        .panel-tabs { display:flex; gap:4px; margin-bottom:8px; }
+        .panel-tab {
+            padding:4px 12px; border-radius:4px 4px 0 0; font-size:11px; font-weight:700; cursor:pointer;
+            background:rgba(255,255,255,0.04); border:1px solid rgba(241,122,58,0.2);
+            border-bottom:none; color:rgba(255,255,255,0.5); transition:all .2s;
+        }
+        .panel-tab.active { background:rgba(241,122,58,0.15); color:#f17a3a; border-color:rgba(241,122,58,0.4); }
+        .panel-section { display:none; }
+        .panel-section.active { display:block; }
+        .panel-row { display:flex; gap:8px; align-items:flex-start; margin-bottom:6px; }
+        .panel-label { font-size:10px; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:.05em; margin-bottom:3px; font-family:sans-serif; }
+        .panel-input {
+            width:100%; padding:6px 8px; background:#111; border:1px solid rgba(241,122,58,0.2);
+            border-radius:4px; color:#fff; font-size:12px; font-family:'Fira Code',monospace;
+        }
+        .panel-input:focus { outline:none; border-color:#f17a3a; }
+        .panel-textarea { resize:vertical; min-height:60px; }
+        .panel-btn {
+            padding:5px 14px; background:#f17a3a; border:none; border-radius:4px;
+            color:#fff; font-size:11px; font-weight:700; cursor:pointer; white-space:nowrap;
+            font-family:'Orbitron',sans-serif;
+        }
+        .panel-btn:hover { background:#d66327; }
+        .panel-btn-sec { background:transparent; border:1px solid rgba(241,122,58,0.3); color:#f17a3a; }
+        .panel-btn-sec:hover { background:rgba(241,122,58,0.1); }
+        .cache-badge {
+            display:inline-flex; align-items:center; gap:4px; padding:2px 8px;
+            border-radius:10px; font-size:10px; font-weight:700; font-family:sans-serif;
+        }
+        .cache-badge.on  { background:rgba(76,175,80,0.2); color:#81c784; border:1px solid rgba(76,175,80,0.3); }
+        .cache-badge.off { background:rgba(255,255,255,0.06); color:rgba(255,255,255,0.3); border:1px solid rgba(255,255,255,0.1); }
+        .batch-status-item {
+            background:#0a0600; border-left:3px solid rgba(241,122,58,0.4);
+            padding:5px 8px; border-radius:0 4px 4px 0; font-size:11px;
+            font-family:'Fira Code',monospace; margin-bottom:4px; color:rgba(240,232,216,0.8);
+        }
+        .batch-status-item.ok  { border-left-color:#4caf50; }
+        .batch-status-item.err { border-left-color:#f44336; }
+        #batch-log { max-height:100px; overflow-y:auto; margin-top:6px; }
+
+        /* ── MISC ── */
+        pre { background:#2d2d2d; padding:10px; border-radius:5px; overflow:auto; }
+        code { font-family:'Fira Code',monospace; }
+        select.navbar-select { padding:4px 8px; border-radius:4px; border:1px solid #0099ff; background:#1e1e1e; color:#fff; cursor:pointer; font-size:12px; }
+
+        @media(max-width:600px) {
+            .navbar { flex-direction:column; align-items:flex-start; padding:5px 10px; height:auto; }
+            .container { height:calc(100% - 60px); }
+            .form-buttons { flex-wrap:nowrap; overflow-x:auto; }
+            .form-buttons button { flex:0 0 auto; width:20%; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     NAVBAR
+══════════════════════════════════════ -->
+<div class="navbar">
+    <canvas id="matrixCanvas"></canvas>
+    <span>Genitus Inc — LeCode</span>
+    <div class="navbar-right">
+        <label style="display:flex;align-items:center;gap:5px;color:#0099ff;cursor:pointer;font-size:11px;">
+            <input type="checkbox" id="autoContinueCheckbox" onchange="toggleAutoContinue()" style="cursor:pointer;width:13px;height:13px;">
+            <span>Auto-Continue</span>
+        </label>
+        <span id="cacheIndicator" class="cache-badge off">⬜ Cache OFF</span>
+        <select id="modelSelect" class="navbar-select" onchange="switchModel()">
+            <option value="mistral">🔮 Codestral</option>
+            <option value="claude">🤖 Claude 4.5</option>
+        </select>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     MAIN CONTAINER
+══════════════════════════════════════ -->
+<div class="container">
+    <div id="chat-container">
+        <div id="chatHistory"></div>
+        <div id="loading"><div class="spinner"></div></div>
+
+        <div class="file-preview" id="filePreview">
+            <span style="color:#888;">No files uploaded</span>
+        </div>
+
+        <!-- ── CLAUDE PANEL ── -->
+        <div id="claude-panel">
+            <div class="panel-tabs">
+                <div class="panel-tab active" onclick="switchPanelTab('cache-tab',this)">🧠 Prompt Caching</div>
+                <div class="panel-tab" onclick="switchPanelTab('batch-tab',this)">📦 Batch Mode</div>
+                <div class="panel-tab" onclick="switchPanelTab('key-tab',this)">🔑 API Key</div>
+            </div>
+
+            <!-- Cache Tab -->
+            <div id="cache-tab" class="panel-section active">
+                <div class="panel-label">System Prompt (wird gecacht — min. ~10k Tokens für echten Cache-Hit)</div>
+                <textarea id="systemPromptInput" class="panel-input panel-textarea" rows="3"
+                    placeholder="Du bist ein Senior Web Developer bei Genitus Inc. Antworte immer mit production-ready Code..."
+                    oninput="updateCacheStatus()"></textarea>
+                <div style="display:flex;gap:8px;margin-top:5px;align-items:center;flex-wrap:wrap;">
+                    <button class="panel-btn" onclick="applyCacheSystemPrompt()">✓ Anwenden + Cachen</button>
+                    <button class="panel-btn panel-btn-sec" onclick="clearSystemPrompt()">✕ Leeren</button>
+                    <span id="tokenEstimate" style="font-size:10px;color:rgba(255,255,255,0.4);font-family:sans-serif;">~0 Tokens</span>
+                </div>
+            </div>
+
+            <!-- Batch Tab -->
+            <div id="batch-tab" class="panel-section">
+                <div class="panel-label">Batch Prompts — eine Zeile = ein Request (ID ||| Prompt oder nur Prompt)</div>
+                <textarea id="batchPromptsInput" class="panel-input panel-textarea" rows="4"
+                    placeholder="fix-sql ||| Fix SQL injection: function login(u,p){ db.query('SELECT * FROM users WHERE u='+u) }&#10;review-api ||| Review this REST endpoint for security issues&#10;gen-tests ||| Generate Jest tests for the payment module"></textarea>
+                <div style="display:flex;gap:8px;margin-top:5px;flex-wrap:wrap;">
+                    <button class="panel-btn" onclick="executeBatch()">🚀 Batch an Anthropic senden</button>
+                    <button class="panel-btn panel-btn-sec" onclick="checkActiveBatch()">⟳ Status prüfen</button>
+                    <button class="panel-btn panel-btn-sec" onclick="fetchBatchResults()">📥 Ergebnisse laden</button>
+                </div>
+                <div id="batch-log"></div>
+            </div>
+
+            <!-- API Key Tab -->
+            <div id="key-tab" class="panel-section">
+                <div class="panel-label">Anthropic API Key (für Batch + natives Prompt Caching)</div>
+                <input type="password" id="anthropicKey" class="panel-input" placeholder="sk-ant-api03-...">
+                <div style="font-size:10px;color:rgba(255,255,255,0.35);margin-top:4px;font-family:sans-serif;">
+                    Nur lokal im Browser gespeichert. Ohne Key: Proxy-Route ohne Caching-Header.
+                </div>
+                <div style="display:flex;gap:8px;margin-top:5px;">
+                    <button class="panel-btn" onclick="saveKey()">💾 Speichern</button>
+                    <button class="panel-btn panel-btn-sec" onclick="clearKey()">✕ Löschen</button>
+                </div>
+            </div>
+        </div>
+        <!-- END CLAUDE PANEL -->
+
+        <!-- Input -->
+        <div class="input-group">
+            <input class="form-input" id="userPrompt" placeholder="Enter your message..." type="text"/>
+            <button class="btn btn-primary input-group-btn" onclick="fetchChatCompletion()">
+                <i class="fas fa-paper-plane"></i>Send
+            </button>
+        </div>
+
+        <!-- Buttons -->
+        <div class="form-buttons">
+            <button class="btn btn-success" onclick="runGeneratedHtml()"><i class="fas fa-play"></i>HTML</button>
+            <button class="btn btn-primary" onclick="window.open('https://html-editor.replit.app','_blank')"><i class="fas fa-edit"></i>Editor</button>
+            <button class="btn btn-info" onclick="downloadSnippet()"><i class="fas fa-download"></i>DL</button>
+            <button class="btn btn-warning" onclick="highlightLastAssistantResponse()"><i class="fas fa-highlighter"></i>Copy</button>
+            <button class="btn btn-secondary" onclick="continueMessage()" id="continueBtn" style="display:none;"><i class="fas fa-ellipsis-h"></i>Continue</button>
+
+            <input type="file" id="chatFileInput" style="display:none;" onchange="uploadChatFile()">
+            <input type="file" id="mediaFileInput" style="display:none;" accept="image/*,application/pdf" onchange="uploadMediaFile()">
+
+            <button class="btn btn-secondary" onclick="document.getElementById('chatFileInput').click()"><i class="fas fa-upload"></i>TXT</button>
+            <button class="btn btn-secondary" onclick="document.getElementById('mediaFileInput').click()"><i class="fas fa-image"></i>Media</button>
+            <button class="btn btn-danger" onclick="deleteUploadedFile()"><i class="fas fa-trash"></i>Delete</button>
+            <button class="btn btn-dark" onclick="clearChatHistory()"><i class="fas fa-times"></i>Clear</button>
+            <button class="btn btn-warning" onclick="saveConversation()"><i class="fas fa-save"></i>Convo</button>
+        </div>
+    </div>
+</div>
+
+<textarea id="generatedHtml" style="display:none;"></textarea>
+
+<!-- ══════════════════════════════════════
+     EXTERNAL LIBS
+══════════════════════════════════════ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-html.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+<!-- ══════════════════════════════════════
+     NAVBAR ANIMATION
+══════════════════════════════════════ -->
+<script>
+(function(){
+    const canvas = document.getElementById('matrixCanvas');
+    const ctx    = canvas.getContext('2d');
+    const navbar = document.querySelector('.navbar');
+    function resize(){ canvas.width=navbar.offsetWidth; canvas.height=navbar.offsetHeight; }
+    resize(); window.addEventListener('resize', resize);
+    const orbs=[
+        {x:.2,y:.5,vx:.0003,vy:.0002,r:60,c:[0,255,136]},
+        {x:.8,y:.5,vx:-.0002,vy:.0003,r:80,c:[0,150,255]},
+        {x:.5,y:.3,vx:.0002,vy:-.0002,r:50,c:[150,100,255]}
+    ];
+    let t=0;
+    function draw(){
+        ctx.fillStyle='rgba(26,26,46,0.02)'; ctx.fillRect(0,0,canvas.width,canvas.height);
+        orbs.forEach((o,i)=>{
+            o.x+=o.vx; o.y+=o.vy;
+            if(o.x<0)o.x=1; if(o.x>1)o.x=0; if(o.y<0)o.y=1; if(o.y>1)o.y=0;
+            const sx=o.x*canvas.width, sy=o.y*canvas.height;
+            const g=ctx.createRadialGradient(sx,sy,0,sx,sy,o.r);
+            const a=.15+.05*Math.sin(t*.002+i);
+            g.addColorStop(0,`rgba(${o.c[0]},${o.c[1]},${o.c[2]},${a})`);
+            g.addColorStop(1,`rgba(${o.c[0]},${o.c[1]},${o.c[2]},0)`);
+            ctx.fillStyle=g; ctx.fillRect(sx-o.r,sy-o.r,o.r*2,o.r*2);
+        });
+        t++; requestAnimationFrame(draw);
+    }
+    draw();
+})();
+</script>
+
+<!-- ══════════════════════════════════════
+     MAIN LECODE ENGINE  (monolith)
+══════════════════════════════════════ -->
+<script>
+/* ═══════════════════════════════════════════════════
+   CONFIG
+═══════════════════════════════════════════════════ */
+const BACKEND = 'https://theserver-open-ai.replit.app';
+
+const MODEL_MAP = {
+    mistral: 'codestral-latest',
+    claude:  'claude-haiku-3-5-20241022'
+};
+
+const SYSTEM_DEFAULTS = {
+    mistral: 'You are Codestral, an expert coding assistant. Provide clean, well-commented, production-ready code. Use markdown fenced code blocks with correct language tags.',
+    claude:  'You are Claude, an expert AI coding assistant by Anthropic. Provide production-ready code with explanations. Format code blocks with fenced markdown. Be concise and precise.'
+};
+
+/* ═══════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════ */
+let chatHistory      = [];
+let currentModel     = 'mistral';
+let autoContinue     = false;
+let isLoading        = false;
+let abortCtrl        = null;
+let uploadedFileText = null;
+let uploadedMedia    = null;
+let uploadedFileName = null;
+let cachedSystemPrompt = null;   // when set, injected with cache_control for Claude
+let activeBatchId    = null;
+
+/* ═══════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════ */
+(function init(){
+    try { chatHistory = JSON.parse(localStorage.getItem('lecode_history') || '[]'); } catch(_){ chatHistory=[]; }
+
+    const savedKey = localStorage.getItem('lecode_ant_key');
+    if(savedKey){ const el=document.getElementById('anthropicKey'); if(el) el.value=savedKey; }
+
+    const savedSystem = localStorage.getItem('lecode_system');
+    if(savedSystem){
+        const el=document.getElementById('systemPromptInput');
+        if(el){ el.value=savedSystem; cachedSystemPrompt=savedSystem; updateCacheStatus(); }
+    }
+
+    if(typeof pdfjsLib!=='undefined')
+        pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+    updateChatDisplay();
+
+    document.getElementById('userPrompt').addEventListener('keydown', e=>{
+        if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); fetchChatCompletion(); }
+    });
+
+    // Show welcome if empty
+    window.addEventListener('load', ()=>{
+        if(!chatHistory.length){
+            chatHistory=[{role:'assistant',content:`🚀 Welcome to Genitus Inc — LeCode
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✨ FEATURES:
+• AI-Powered Web Dev with Codestral & Claude 4.5
+• Prompt Caching & Anthropic Batch API (Claude)
+• HTML Preview · Code Download · File Upload
+• Persistent Chat History · Auto-Continue
+
+💡 Claude Panel: Wähle Claude und nutze Prompt Caching
+   (System-Prompt wird gecacht → bis zu 90% Ersparnis)
+   und Batch Mode für mehrere Requests gleichzeitig.`}];
+            updateChatDisplay();
+        }
+    });
+})();
+
+/* ═══════════════════════════════════════════════════
+   MODEL SWITCH
+═══════════════════════════════════════════════════ */
+function switchModel(){
+    currentModel = document.getElementById('modelSelect').value;
+    const panel  = document.getElementById('claude-panel');
+    if(currentModel === 'claude'){
+        panel.classList.add('visible');
+    } else {
+        panel.classList.remove('visible');
+    }
+    updateCacheStatus();
+}
+
+/* ═══════════════════════════════════════════════════
+   PANEL TABS
+═══════════════════════════════════════════════════ */
+function switchPanelTab(id, el){
+    document.querySelectorAll('.panel-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.panel-section').forEach(s=>s.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById(id).classList.add('active');
+}
+
+/* ═══════════════════════════════════════════════════
+   PROMPT CACHING
+═══════════════════════════════════════════════════ */
+function estimateTokens(text){ return Math.round((text||'').trim().split(/\s+/).length*1.33); }
+
+function updateCacheStatus(){
+    const text  = (document.getElementById('systemPromptInput')||{}).value || '';
+    const tokens= estimateTokens(text);
+    const el    = document.getElementById('tokenEstimate');
+    if(el) el.textContent = `~${tokens.toLocaleString('de-DE')} Tokens ${tokens>=10000?'✅ Cache-fähig':'(min. 10k für Cache-Hit)'}`;
+
+    const badge = document.getElementById('cacheIndicator');
+    if(badge){
+        if(cachedSystemPrompt){
+            badge.className='cache-badge on'; badge.textContent='✅ Cache ON';
+        } else {
+            badge.className='cache-badge off'; badge.textContent='⬜ Cache OFF';
+        }
+    }
+}
+
+function applyCacheSystemPrompt(){
+    const text = (document.getElementById('systemPromptInput')||{}).value||'';
+    cachedSystemPrompt = text || null;
+    localStorage.setItem('lecode_system', text);
+    updateCacheStatus();
+    batchLog(`System-Prompt gesetzt (${estimateTokens(text)} Tokens). Cache wird beim nächsten Claude-Request injiziert.`, 'ok');
+}
+
+function clearSystemPrompt(){
+    const el=document.getElementById('systemPromptInput'); if(el) el.value='';
+    cachedSystemPrompt=null; localStorage.removeItem('lecode_system');
+    updateCacheStatus();
+}
+
+/* ═══════════════════════════════════════════════════
+   API KEY
+═══════════════════════════════════════════════════ */
+function saveKey(){
+    const v=(document.getElementById('anthropicKey')||{}).value||'';
+    localStorage.setItem('lecode_ant_key',v);
+    batchLog('API-Key gespeichert.','ok');
+}
+function clearKey(){
+    localStorage.removeItem('lecode_ant_key');
+    const el=document.getElementById('anthropicKey'); if(el) el.value='';
+    batchLog('API-Key gelöscht.','ok');
+}
+function getKey(){ return localStorage.getItem('lecode_ant_key')||''; }
+
+/* ═══════════════════════════════════════════════════
+   BUILD MESSAGES FOR CLAUDE (with cache_control)
+═══════════════════════════════════════════════════ */
+function buildClaudeSystem(){
+    if(!cachedSystemPrompt) return SYSTEM_DEFAULTS.claude;
+    // Return as array block with cache_control — only usable via direct Anthropic API
+    return [{
+        type: 'text',
+        text: cachedSystemPrompt,
+        cache_control: { type: 'ephemeral' }
+    }];
+}
+
+/* ═══════════════════════════════════════════════════
+   MAIN FETCH — SSE STREAMING via Proxy
+═══════════════════════════════════════════════════ */
+async function fetchChatCompletion(){
+    if(isLoading) return;
+
+    const inputEl  = document.getElementById('userPrompt');
+    const userText = (inputEl?inputEl.value:'').trim();
+    if(!userText && !uploadedFileText && !uploadedMedia) return;
+
+    // Build user content
+    let userContent = userText;
+    if(uploadedFileText) userContent = `[File: ${uploadedFileName}]\n\`\`\`\n${uploadedFileText}\n\`\`\`\n\n${userText}`;
+    if(uploadedMedia && uploadedMedia.type==='image'){
+        userContent=[
+            {type:'image_url',image_url:{url:`data:image/${uploadedMedia.mime};base64,${uploadedMedia.base64}`}},
+            {type:'text',text:userText||'What is in this image?'}
+        ];
+    }
+
+    chatHistory.push({role:'user', content:userContent});
+    if(inputEl) inputEl.value='';
+    updateChatDisplay();
+
+    // Add streaming placeholder
+    const streamingDiv = addStreamingPlaceholder();
+    setLoading(true);
+
+    abortCtrl = new AbortController();
+    let accumulated = '';
+
+    try {
+        const model = MODEL_MAP[currentModel] || MODEL_MAP.mistral;
+        let resp;
+
+        if(currentModel === 'claude'){
+            // Claude via proxy → POST /claude/messages  (max_tokens PFLICHT)
+            const sysText = cachedSystemPrompt || SYSTEM_DEFAULTS.claude;
+            resp = await fetch(`${BACKEND}/claude/messages`, {
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body:JSON.stringify({model, messages:chatHistory, max_tokens:4096, temperature:0.7, stream:true, system:sysText}),
+                signal:abortCtrl.signal
+            });
+        } else {
+            // Codestral via proxy → POST /mistral/chat/completions
+            const msgs = [{role:'system', content:SYSTEM_DEFAULTS.mistral}, ...chatHistory];
+            resp = await fetch(`${BACKEND}/mistral/chat/completions`, {
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body:JSON.stringify({model, messages:msgs, temperature:0.7, max_tokens:4096, stream:true}),
+                signal:abortCtrl.signal
+            });
+        }
+
+        if(!resp.ok){
+            const err=await resp.json().catch(()=>({}));
+            throw new Error(err.error||err.message||`HTTP ${resp.status}`);
+        }
+
+        // SSE reader — handles both Mistral (choices[0].delta.content) and Claude native (content_block_delta)
+        const reader  = resp.body.getReader();
+        const decoder = new TextDecoder();
+        let buf = '';
+
+        while(true){
+            const {done,value} = await reader.read();
+            if(done) break;
+            buf += decoder.decode(value,{stream:true});
+            const lines = buf.split('\n');
+            buf = lines.pop();
+
+            for(const line of lines){
+                const trimmed = line.trim();
+                if(!trimmed.startsWith('data:')) continue;
+                const data = trimmed.slice(5).trim();
+                if(data==='[DONE]') continue;
+                try{
+                    const parsed = JSON.parse(data);
+                    if(parsed.error) throw new Error(typeof parsed.error==='string'?parsed.error:parsed.error.message||JSON.stringify(parsed.error));
+                    // Mistral/OpenAI format
+                    const chunk = parsed.choices?.[0]?.delta?.content;
+                    // Claude native SSE format
+                    const chunkC = (parsed.type==='content_block_delta') ? parsed.delta?.text : null;
+                    const text = chunk || chunkC || '';
+                    if(text){
+                        accumulated += text;
+                        if(streamingDiv) streamingDiv.textContent = accumulated;
+                        streamingDiv && streamingDiv.scrollIntoView({block:'nearest'});
+                    }
+                } catch(pe){ if(pe.message!=='Unexpected end of JSON input') throw pe; }
+            }
+        }
+
+        // Finalize
+        if(streamingDiv){
+            const rendered = document.createElement('div');
+            rendered.innerHTML = renderMarkdown(accumulated);
+            addCopyButtons(rendered);
+            streamingDiv.replaceWith(rendered);
+        }
+        chatHistory.push({role:'assistant', content:accumulated});
+
+        // Detect HTML for "HTML" button
+        const htmlMatch = accumulated.match(/```html?\n([\s\S]+?)```/i);
+        if(htmlMatch){ const g=document.getElementById('generatedHtml'); if(g) g.value=htmlMatch[1]; }
+
+        autosave();
+
+        // Auto-continue
+        if(autoContinue && isIncomplete(accumulated)){
+            setTimeout(()=>{ chatHistory.push({role:'user',content:'Please continue from where you left off.'}); updateChatDisplay(); fetchChatCompletion(); },600);
+        }
+
+        const cb=document.getElementById('continueBtn');
+        if(cb) cb.style.display = isIncomplete(accumulated)?'inline-flex':'none';
+
+    } catch(e){
+        if(e.name==='AbortError') return;
+        if(streamingDiv) streamingDiv.textContent = `⚠ Fehler: ${e.message}`;
+        chatHistory.push({role:'assistant',content:`⚠️ **Fehler:** ${e.message}`});
+    } finally {
+        setLoading(false);
+        abortCtrl=null;
+    }
+}
+
+/* ═══════════════════════════════════════════════════
+   BATCH API  (via Proxy — kein API Key nötig)
+═══════════════════════════════════════════════════ */
+async function executeBatch(){
+    const raw = (document.getElementById('batchPromptsInput')||{}).value||'';
+    const lines = raw.split('\n').map(l=>l.trim()).filter(Boolean);
+    if(!lines.length){ batchLog('✗ Keine Prompts eingegeben.','err'); return; }
+
+    const model = MODEL_MAP.claude;
+    const requests = lines.map((line,idx)=>{
+        let id=`req-${idx+1}`, text=line;
+        if(line.includes('|||')){ const p=line.split('|||'); id=p[0].trim(); text=p[1].trim(); }
+        const req = { custom_id:id, params:{ model, max_tokens:2048, messages:[{role:'user',content:text}] } };
+        if(cachedSystemPrompt) req.params.system = cachedSystemPrompt;
+        return req;
+    });
+
+    batchLog(`▶ Sende Batch mit ${requests.length} Requests...`,'');
+    try{
+        const resp = await fetch(`${BACKEND}/claude/messages/batches`,{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({requests})
+        });
+        const data=await resp.json();
+        if(data.id){
+            activeBatchId=data.id;
+            batchLog(`✅ Batch erstellt: ${data.id} · ${data.processing_status}`,'ok');
+        } else {
+            batchLog(`✗ ${data.error?.message||data.message||JSON.stringify(data)}`,'err');
+        }
+    } catch(e){
+        batchLog(`✗ ${e.message}`,'err');
+    }
+}
+
+async function checkActiveBatch(){
+    if(!activeBatchId){ batchLog('✗ Keine aktive Batch-ID.','err'); return; }
+    try{
+        const resp=await fetch(`${BACKEND}/claude/messages/batches/${activeBatchId}`);
+        const d=await resp.json();
+        const rc=d.request_counts||{};
+        batchLog(`Status: ${d.processing_status} · ✓${rc.succeeded||0} ✗${rc.errored||0} ⟳${rc.processing||0}`,'ok');
+    } catch(e){ batchLog(`✗ ${e.message}`,'err'); }
+}
+
+async function fetchBatchResults(){
+    if(!activeBatchId){ batchLog('✗ Keine aktive Batch-ID.','err'); return; }
+    batchLog('⟳ Lade Ergebnisse...','');
+    try{
+        const resp = await fetch(`${BACKEND}/claude/messages/batches/${activeBatchId}/results`);
+        if(!resp.ok){ batchLog(`✗ HTTP ${resp.status} — Batch evtl. noch nicht fertig.`,'err'); return; }
+        const jsonl = await resp.text();
+        const lines = jsonl.trim().split('\n').filter(Boolean);
+        let summary='**Batch Ergebnisse:**\n\n';
+        lines.forEach(line=>{
+            try{
+                const r=JSON.parse(line);
+                summary+=`**[${r.custom_id}]**\n${r.result?.message?.content?.[0]?.text||JSON.stringify(r.result)}\n\n---\n\n`;
+            }catch(_){}
+        });
+        chatHistory.push({role:'assistant',content:summary});
+        updateChatDisplay();
+        batchLog(`✅ ${lines.length} Ergebnisse in Chat geladen.`,'ok');
+    } catch(e){ batchLog(`✗ ${e.message}`,'err'); }
+}
+
+function batchLog(msg, type=''){
+    const log=document.getElementById('batch-log'); if(!log) return;
+    const d=document.createElement('div');
+    d.className='batch-status-item'+(type?' '+type:'');
+    d.textContent=`[${new Date().toLocaleTimeString('de-DE')}] ${msg}`;
+    log.insertBefore(d,log.firstChild);
+    if(log.children.length>20) log.removeChild(log.lastChild);
+}
+
+/* ═══════════════════════════════════════════════════
+   CHAT DISPLAY + MARKDOWN
+═══════════════════════════════════════════════════ */
+function updateChatDisplay(){
+    const c=document.getElementById('chatHistory'); if(!c) return;
+    c.innerHTML='';
+    chatHistory.forEach(msg=>{
+        const div=document.createElement('div');
+        div.className=msg.role==='user'?'user-message':'assistant-message';
+        const text=typeof msg.content==='string'?msg.content:msg.content.map?.(x=>x.text||'').join('')||'';
+        if(msg.role==='assistant'){ div.innerHTML=renderMarkdown(text); addCopyButtons(div); }
+        else div.textContent=text;
+        c.appendChild(div);
+    });
+    c.scrollTop=c.scrollHeight;
+}
+
+function addStreamingPlaceholder(){
+    const c=document.getElementById('chatHistory'); if(!c) return null;
+    const div=document.createElement('div');
+    div.className='assistant-message streaming';
+    div.textContent='▋';
+    c.appendChild(div); c.scrollTop=c.scrollHeight;
+    return div;
+}
+
+function renderMarkdown(text){
+    if(!text) return '';
+    let h=text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+    // Fenced code
+    h=h.replace(/```(\w*)\n([\s\S]*?)```/g,(_,lang,code)=>{
+        const cls=lang?` class="language-${lang}"`:'';
+        return `<pre><button class="copy-code-btn" onclick="copyCodeBlock(this)">Copy</button><code${cls}>${code.trimEnd()}</code></pre>`;
+    });
+    h=h.replace(/```([\s\S]*?)```/g,'<pre><button class="copy-code-btn" onclick="copyCodeBlock(this)">Copy</button><code>$1</code></pre>');
+
+    // Inline code (avoid double-encoding)
+    h=h.replace(/`([^`\n]+)`/g,'<code>$1</code>');
+
+    // Headers
+    h=h.replace(/^### (.+)$/gm,'<h3>$1</h3>');
+    h=h.replace(/^## (.+)$/gm,'<h2>$1</h2>');
+    h=h.replace(/^# (.+)$/gm,'<h1>$1</h1>');
+
+    // Bold/italic
+    h=h.replace(/\*\*\*(.+?)\*\*\*/g,'<strong><em>$1</em></strong>');
+    h=h.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+    h=h.replace(/\*(.+?)\*/g,'<em>$1</em>');
+
+    // Blockquote
+    h=h.replace(/^&gt; (.+)$/gm,'<blockquote>$1</blockquote>');
+
+    // Unordered list
+    h=h.replace(/((?:^[-*+] .+\n?)+)/gm,block=>{
+        const items=block.trim().split('\n').map(l=>`<li>${l.replace(/^[-*+] /,'')}</li>`).join('');
+        return `<ul>${items}</ul>`;
+    });
+
+    // Ordered list
+    h=h.replace(/((?:^\d+\. .+\n?)+)/gm,block=>{
+        const items=block.trim().split('\n').map(l=>`<li>${l.replace(/^\d+\. /,'')}</li>`).join('');
+        return `<ol>${items}</ol>`;
+    });
+
+    // HR
+    h=h.replace(/^---+$/gm,'<hr>');
+
+    // Paragraphs
+    h=h.replace(/^(?!<[houpl]|<blockquote|<hr|<pre|<div)(.+)$/gm,'<p>$1</p>');
+    h=h.replace(/<p>\s*<\/p>/g,'');
+
+    return h;
+}
+
+function addCopyButtons(container){
+    if(typeof Prism!=='undefined')
+        container.querySelectorAll('code[class*="language-"]').forEach(b=>Prism.highlightElement(b));
+}
+
+function copyCodeBlock(btn){
+    const code=btn.nextElementSibling; if(!code) return;
+    navigator.clipboard.writeText(code.textContent).then(()=>{
+        btn.textContent='Copied!'; setTimeout(()=>btn.textContent='Copy',1500);
+    });
+}
+
+/* ═══════════════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════════════ */
+function isIncomplete(text){
+    const t=text.trim();
+    return (t.match(/```/g)||[]).length%2!==0 || (!t.match(/[.!?»"')\]}`]$/) && t.length>100);
+}
+function setLoading(s){
+    isLoading=s;
+    const l=document.getElementById('loading'); if(l) l.style.display=s?'block':'none';
+}
+function autosave(){ try{localStorage.setItem('lecode_history',JSON.stringify(chatHistory));}catch(_){} }
+function toggleAutoContinue(){ const c=document.getElementById('autoContinueCheckbox'); autoContinue=c?c.checked:false; }
+
+/* ═══════════════════════════════════════════════════
+   CONTINUE
+═══════════════════════════════════════════════════ */
+function continueMessage(){
+    if(isLoading) return;
+    chatHistory.push({role:'user',content:'Please continue from where you left off.'});
+    updateChatDisplay();
+    fetchChatCompletion();
+}
+
+/* ═══════════════════════════════════════════════════
+   RUN HTML
+═══════════════════════════════════════════════════ */
+function runGeneratedHtml(){
+    let html=(document.getElementById('generatedHtml')||{}).value||'';
+    if(!html){
+        const last=[...chatHistory].reverse().find(m=>m.role==='assistant');
+        if(last){ const m=(typeof last.content==='string'?last.content:'').match(/```html?\n([\s\S]+?)```/i); if(m) html=m[1]; }
+    }
+    if(!html){ alert('Kein HTML generiert.'); return; }
+    const w=window.open('','_blank'); if(w){ w.document.write(html); w.document.close(); }
+}
+
+/* ═══════════════════════════════════════════════════
+   DOWNLOAD
+═══════════════════════════════════════════════════ */
+function downloadSnippet(){
+    const last=[...chatHistory].reverse().find(m=>m.role==='assistant');
+    if(!last){ alert('Kein Inhalt.'); return; }
+    const content=typeof last.content==='string'?last.content:'';
+    const htmlM=content.match(/```html?\n([\s\S]+?)```/i);
+    const jsM  =content.match(/```(?:js|javascript)\n([\s\S]+?)```/i);
+    const pyM  =content.match(/```python\n([\s\S]+?)```/i);
+    let blob,name;
+    if(htmlM){blob=new Blob([htmlM[1]],{type:'text/html'});name=`lecode-${Date.now()}.html`;}
+    else if(jsM){blob=new Blob([jsM[1]],{type:'text/javascript'});name=`lecode-${Date.now()}.js`;}
+    else if(pyM){blob=new Blob([pyM[1]],{type:'text/plain'});name=`lecode-${Date.now()}.py`;}
+    else{blob=new Blob([content],{type:'text/plain'});name=`lecode-${Date.now()}.txt`;}
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+/* ═══════════════════════════════════════════════════
+   COPY
+═══════════════════════════════════════════════════ */
+function highlightLastAssistantResponse(){
+    const last=[...chatHistory].reverse().find(m=>m.role==='assistant'); if(!last){alert('Nichts.');return;}
+    const text=typeof last.content==='string'?last.content:JSON.stringify(last.content);
+    navigator.clipboard.writeText(text).then(()=>{
+        const btn=document.querySelector('button[onclick="highlightLastAssistantResponse()"]');
+        if(btn){btn.innerHTML='<i class="fas fa-check"></i>Copied!';setTimeout(()=>{btn.innerHTML='<i class="fas fa-highlighter"></i>Copy';},1500);}
+    });
+}
+
+/* ═══════════════════════════════════════════════════
+   FILE UPLOAD
+═══════════════════════════════════════════════════ */
+function uploadChatFile(){
+    const input=document.getElementById('chatFileInput'); const file=input?.files[0]; if(!file) return;
+    new FileReader().onload=e=>{uploadedFileText=e.target.result;uploadedFileName=file.name;updateFilePreview();};
+    new FileReader().readAsText ? (() => { const r=new FileReader(); r.onload=e=>{uploadedFileText=e.target.result;uploadedFileName=file.name;updateFilePreview();}; r.readAsText(file); })() : null;
+    input.value='';
+}
+
+function uploadMediaFile(){
+    const input=document.getElementById('mediaFileInput'); const file=input?.files[0]; if(!file) return;
+    if(file.type==='application/pdf'){ extractPdfText(file); }
+    else if(file.type.startsWith('image/')){
+        const r=new FileReader();
+        r.onload=e=>{ uploadedMedia={type:'image',base64:e.target.result.split(',')[1],mime:file.type.split('/')[1],name:file.name}; uploadedFileName=file.name; updateFilePreview(); };
+        r.readAsDataURL(file);
+    }
+    input.value='';
+}
+
+async function extractPdfText(file){
+    if(typeof pdfjsLib==='undefined'){alert('PDF.js nicht geladen.');return;}
+    const buf=await file.arrayBuffer();
+    const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+    let txt='';
+    for(let p=1;p<=pdf.numPages;p++){ const pg=await pdf.getPage(p); const c=await pg.getTextContent(); txt+=c.items.map(i=>i.str).join(' ')+'\n'; }
+    uploadedFileText=txt; uploadedFileName=file.name; updateFilePreview();
+}
+
+function updateFilePreview(){
+    const p=document.getElementById('filePreview'); if(!p) return;
+    if(!uploadedFileText&&!uploadedMedia){ p.innerHTML='<span style="color:#888;">No files uploaded</span>'; return; }
+    p.innerHTML=`<div class="file-preview-item">${uploadedMedia?'🖼️':'📄'} ${uploadedFileName} <button onclick="deleteUploadedFile()">✕</button></div>`;
+}
+
+function deleteUploadedFile(){
+    uploadedFileText=null; uploadedMedia=null; uploadedFileName=null; updateFilePreview();
+}
+
+/* ═══════════════════════════════════════════════════
+   CLEAR / SAVE
+═══════════════════════════════════════════════════ */
+function clearChatHistory(){
+    if(!confirm('Chat-Verlauf wirklich löschen?')) return;
+    chatHistory=[]; localStorage.removeItem('lecode_history');
+    deleteUploadedFile(); updateChatDisplay();
+    const g=document.getElementById('generatedHtml'); if(g) g.value='';
+    const cb=document.getElementById('continueBtn'); if(cb) cb.style.display='none';
+}
+
+function saveConversation(){
+    autosave();
+    const blob=new Blob([JSON.stringify(chatHistory,null,2)],{type:'application/json'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`lecode-convo-${Date.now()}.json`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+/* ─── uploadChatFile fix (ensure FileReader is used once) ─── */
+(function fixUploadChatFile(){
+    document.getElementById('chatFileInput').addEventListener('change', function(){
+        const file=this.files[0]; if(!file) return;
+        const r=new FileReader();
+        r.onload=e=>{uploadedFileText=e.target.result;uploadedFileName=file.name;updateFilePreview();};
+        r.readAsText(file); this.value='';
+    });
+})();
+</script>
+
+</body>
+</html>
