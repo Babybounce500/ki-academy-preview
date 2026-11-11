@@ -1046,7 +1046,26 @@
     }
     return b;
   }
+  function repairHistory(hist) {
+    const out = [];
+    for (let i = 0; i < hist.length; i++) {
+      const m = hist[i]; out.push(m);
+      if (m.role !== 'assistant' || !Array.isArray(m.content)) continue;
+      const ids = m.content.filter((b) => b.type === 'tool_use').map((b) => b.id);
+      if (!ids.length) continue;
+      const nx = hist[i + 1];
+      const have = new Set(nx && nx.role === 'user' && Array.isArray(nx.content) ? nx.content.filter((b) => b.type === 'tool_result').map((b) => b.tool_use_id) : []);
+      const missing = ids.filter((id) => !have.has(id)).map((id) => ({ type: 'tool_result', tool_use_id: id, content: 'FEHLER: Aufruf nicht ausgefuehrt (unterbrochen oder abgeschnitten).', is_error: true }));
+      if (!missing.length) continue;
+      if (nx && nx.role === 'user') {
+        const rest = Array.isArray(nx.content) ? nx.content : [{ type: 'text', text: String(nx.content) }];
+        out.push({ role: 'user', content: missing.concat(rest) }); i++;
+      } else out.push({ role: 'user', content: missing });
+    }
+    return out;
+  }
   function compactForSend(hist) {
+    hist = repairHistory(hist);
     const out = hist.map((m, i) => (typeof m.content === 'string') ? m : { ...m, content: m.content.map((b) => trimBlock(b, i >= hist.length - 2)) });
     const fixed = FS_SYSTEM_PROMPT.length + JSON.stringify(FS_TOOLS).length;
     let start = 0;
@@ -1166,12 +1185,17 @@
         });
 
         history.push({ role: 'assistant', content: data.historyContent });
-        if (data.stop_reason !== 'tool_use') break;
+        if (data.stop_reason !== 'tool_use' && !data.historyContent.some((b) => b.type === 'tool_use')) break;
 
         const toolResults = [];
         for (const block of data.historyContent) {
           if (block.type !== 'tool_use') continue;
-          const outcome = await executeFsTool(block.name, block.input);
+          const lastTool = data.historyContent.filter((b) => b.type === 'tool_use').pop();
+          const cut = data.stop_reason === 'max_tokens' && block === lastTool;
+          const noPath = ['read_file', 'write_file', 'edit_file', 'append_file', 'search_in_file'].includes(block.name) && !(block.input && block.input.path);
+          const outcome = (cut || noPath)
+            ? { ok: false, error: 'Dein Aufruf war unvollstaendig (Ausgabe-Limit erreicht). Es wurde NICHTS geschrieben. Mache es in kleineren Schritten: write_file mit hoechstens ca. 120 Zeilen, danach append_file fuer jeden weiteren Teil. Keine langen Erklaerungen davor.' }
+            : await executeFsTool(block.name, block.input);
           if (outcome.ok && block.name !== 'read_file' && block.name !== 'list_files') treeChanged = true;
           // Neu geschriebene Datei sofort als Editor-Tab bereitstellen -- im Split-Modus
           // gleich aktiv anzeigen (man sieht sie live neben dem Chat entstehen), im
