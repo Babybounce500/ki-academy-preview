@@ -3873,8 +3873,6 @@ def _get_output():
         const CLAUDE_ENDPOINT     = 'https://theserver-open-ai.replit.app/claude/messages';
         const MISTRAL_ENDPOINT    = 'https://theserver-open-ai.replit.app/mistral/chat';
         const EMBEDDINGS_ENDPOINT = 'https://theserver-open-ai.replit.app/api/embeddings';
-        const RAG_QUERY_ENDPOINT  = 'https://genitus-embeddings.replit.app/query';
-
         let _agentPendingCode  = null;
         let _agentChatHistory  = [];   // {role, content, model, files?}
         let _agentFiles        = [];   // uploaded images/PDFs
@@ -5194,10 +5192,16 @@ REGELN:
   @media (max-width: 900px) {
     html, body { height: var(--ahs-vh, 100dvh) !important; }
     header { flex: 0 0 34px !important; padding: 0 10px !important; font-size: 14px !important; letter-spacing: 1px !important; }
-    #toolbar { flex: 0 0 auto !important; flex-wrap: nowrap !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch; gap: 6px !important; padding: 6px 8px !important; scrollbar-width: none; }
-    #toolbar::-webkit-scrollbar { display: none; }
-    #toolbar button { flex: 0 0 auto !important; min-width: 44px; min-height: 40px; }
-    #toolbar .ahs-tb-reset { display: none !important; }
+    /* Toolbar: nur die 7 wichtigsten Symbole, gleich breit, KEIN Scrollen (das Original setzte max-height + overflow-y: auto und liess sie wackeln) */
+    #toolbar { flex: 0 0 auto !important; display: flex !important; flex-wrap: nowrap !important; align-items: center !important; justify-content: space-between !important; gap: 2px !important; height: 48px !important; max-height: none !important; padding: 4px 6px !important; overflow: hidden !important; overscroll-behavior: none; touch-action: manipulation; contain: layout paint; box-shadow: none !important; border-bottom: 1px solid var(--ahs-line); }
+    #toolbar button { flex: 1 1 0 !important; min-width: 0 !important; max-width: 64px; height: 40px !important; padding: 0 !important; transition: none !important; transform: none !important; border: 1px solid transparent !important; border-radius: 10px !important; -webkit-user-select: none; user-select: none; }
+    #toolbar button:not(.ahs-tb-keep) { display: none !important; }
+    #toolbar button:hover { background: transparent !important; border-color: transparent !important; }
+    #toolbar button:active { background: var(--ahs-line) !important; transform: none !important; }
+    #toolbar button i { font-size: 18px !important; }
+    #toolbar button:focus:not(:focus-visible), #editorTabs button:focus:not(:focus-visible) { outline: none !important; box-shadow: none !important; }
+    #editorTabs, .ahs-pv, .ahs-sym { overflow-y: hidden !important; overscroll-behavior-x: contain; touch-action: pan-x; -webkit-overflow-scrolling: touch; }
+    #editorTabs button, .ahs-pv .ahs-chip, .ahs-sym button { transition: none !important; }
     #main { flex: 1 1 auto !important; min-height: 0 !important; height: auto !important; flex-direction: column !important; margin-bottom: calc(var(--ahs-nav-h) + env(safe-area-inset-bottom)); }
     body.ahs-kb #main { margin-bottom: 46px; }
     #main > #editorContainer, #main > #previewContainer { flex: 1 1 auto !important; min-height: 0 !important; height: auto !important; width: 100% !important; max-height: none !important; }
@@ -5583,7 +5587,7 @@ REGELN:
   mi('fa-download', 'Datei exportieren', function () { if (typeof exportCurrentFile === 'function') exportCurrentFile(); });
   mi('fa-up-right-from-square', 'Vorschau im neuen Tab', function () { bTab.click(); });
   mi('fa-circle-half-stroke', 'Hell oder Dunkel', function () { if (typeof toggleTheme === 'function') toggleTheme(); });
-  menu.appendChild(el('div', { class: 'sep' }));
+  var resetSep = el('div', { class: 'sep' }); menu.appendChild(resetSep);
   mi('fa-trash', 'Alles zurücksetzen (löscht Dateien)', function () { if (typeof resetAll === 'function') resetAll(); }, 'red');
   function openMore() { more.hidden = false; moreBack.hidden = false; }
 
@@ -5594,7 +5598,22 @@ REGELN:
   var tbSave = el('button', { type: 'button', title: 'Auswahl als Snippet speichern (Alt+Umschalt+S)', 'aria-label': 'Auswahl als Snippet speichern' }, '<i class="fa fa-star" aria-hidden="true"></i>');
   tbSave.addEventListener('click', quickSave);
   tb.insertBefore(tbSave, tb.firstChild); tb.insertBefore(tbSnip, tb.firstChild);
-  var rb = tb.querySelector('button[onclick="resetAll()"]'); if (rb) rb.classList.add('ahs-tb-reset');
+  tbSnip.classList.add('ahs-tb-keep'); tbSave.classList.add('ahs-tb-keep');
+  // Mobile Toolbar: nur wichtige Symbole sichtbar, der Rest wandert ins Mehr-Menü (Tipp ruft den Original-Button auf)
+  var KEEP = /newFile\(|formatCode\(|toggleFindReplace\(|exportCurrentFile\(|toggleFileTree\(/;
+  var SKIP = /resetAll\(|toggleLivePreview\(|toggleFullscreenPreview\(/;
+  var LABELS = [[/openSaveDialog\('html'\)/, 'Als HTML speichern', 'fa-floppy-disk'], [/openSaveDialog\('txt'\)/, 'Als Text speichern', 'fa-file-lines'], [/fileInput'\)\.click/, 'Datei öffnen', 'fa-folder-open'], [/folderInput'\)\.click/, 'Ordner öffnen', 'fa-folder'], [/showUploadModal/, 'Dateien hochladen', 'fa-cloud-arrow-up'], [/selectAll\(/, 'Alles markieren', 'fa-object-group'], [/copyText\(/, 'Kopieren', 'fa-copy'], [/pasteText\(/, 'Einfügen', 'fa-paste'], [/togglePythonTerminal/, 'Python-Terminal', 'fa-terminal']];
+  var extraSep = null;
+  Array.prototype.slice.call(tb.querySelectorAll('button')).forEach(function (b) {
+    var oc = b.getAttribute('onclick') || '';
+    if (b.classList.contains('ahs-tb-keep') || KEEP.test(oc)) { b.classList.add('ahs-tb-keep'); return; }
+    if (SKIP.test(oc)) return;
+    var lab = LABELS.filter(function (l) { return l[0].test(oc); })[0]; if (!lab) return;
+    if (!extraSep) { extraSep = el('div', { class: 'sep' }); menu.insertBefore(extraSep, resetSep); }
+    var item = el('button', { type: 'button' }, '<i class="fa ' + lab[2] + '" aria-hidden="true"></i><span></span>'); item.querySelector('span').textContent = lab[1];
+    item.addEventListener('click', function () { closeMore(); setTimeout(function () { b.click(); }, 40); });
+    menu.insertBefore(item, resetSep);
+  });
   document.addEventListener('keydown', function (e) {
     if (e.altKey && !e.ctrlKey && !e.metaKey && (e.key === 's' || e.key === 'S')) { e.preventDefault(); if (e.shiftKey) quickSave(); else sheet.hidden ? openSnip(true) : closeSnip(); }
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); window.runCode(); toast('Vorschau aktualisiert'); }
