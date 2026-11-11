@@ -6,11 +6,12 @@
     <title>Python IDE - Modern Development Environment</title>
     <meta name="description" content="Professional Python IDE with Monaco Editor, integrated terminal, and file management system">
     
-    <!-- Monaco Editor -->
-    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs/loader.js"></script>
-    
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+    <!-- Lucide muss VOR dem Monaco-AMD-Loader laden, sonst registriert es sich nicht global -->
+    
+    <!-- Monaco Editor -->
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs/loader.js"></script>
     
     <style>
         * {
