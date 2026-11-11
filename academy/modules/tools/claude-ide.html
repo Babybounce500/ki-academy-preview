@@ -251,13 +251,36 @@
   const IMAGE_EXTS = new Set(['png','jpg','jpeg','gif','webp','svg','bmp','ico']);
   function isImageExt(ext) { return IMAGE_EXTS.has(ext); }
 
+  /* ---- Projekte ---- */
+  const CIP = (function () {
+    const IDX = 'claudeide-projects';
+    function read() { try { const j = JSON.parse(localStorage.getItem(IDX) || 'null'); if (j && Array.isArray(j.list) && j.list.length) return j; } catch (e) {} return null; }
+    function write(st) { try { localStorage.setItem(IDX, JSON.stringify(st)); } catch (e) {} }
+    let st = read();
+    if (!st) { st = { active: 'p1', list: [{ id: 'p1', name: 'Projekt 1', created: Date.now(), updated: Date.now() }] }; write(st); }
+    if (!st.list.some((p) => p.id === st.active)) { st.active = st.list[0].id; write(st); }
+    const wsKey = (id) => id === 'p1' ? 'claudeide-workspace' : 'claudeide-ws-' + id;
+    const chKey = (id) => id === 'p1' ? 'claudeide-chat-history' : 'claudeide-chat-' + id;
+    return {
+      ws: () => wsKey(st.active), chat: () => chKey(st.active),
+      list: () => st.list.slice(), active: () => st.active,
+      name: () => (st.list.find((p) => p.id === st.active) || {}).name || 'Projekt',
+      touch() { const p = st.list.find((x) => x.id === st.active); if (p) { p.updated = Date.now(); write(st); } },
+      setActive(id) { st.active = id; write(st); },
+      add(name, id) { id = id || 'p' + Date.now().toString(36); st.list.push({ id, name: name || ('Projekt ' + (st.list.length + 1)), created: Date.now(), updated: Date.now() }); write(st); return id; },
+      rename(id, name) { const p = st.list.find((x) => x.id === id); if (p && name) { p.name = name; write(st); } },
+      drop(id) { st.list = st.list.filter((p) => p.id !== id); write(st); },
+      wsKeyOf: wsKey, chKeyOf: chKey
+    };
+  })();
   async function persistFs() {
-    try { await idbKeyval.set('claudeide-workspace', { files: fsFiles, folders: fsEmptyFolders }); }
+    try { CIP.touch(); } catch (e) {}
+    try { await idbKeyval.set(CIP.ws(), { files: fsFiles, folders: fsEmptyFolders }); }
     catch (e) { console.warn('Persistenz fehlgeschlagen (IndexedDB):', e); }
   }
   async function loadFs() {
     try {
-      const saved = await idbKeyval.get('claudeide-workspace');
+      const saved = await idbKeyval.get(CIP.ws());
       if (saved && saved.files instanceof Map) { fsFiles = saved.files; fsEmptyFolders = saved.folders || new Set(); }
     } catch (e) { console.warn('Laden fehlgeschlagen (IndexedDB):', e); }
     if (fsFiles.size === 0) {
@@ -911,12 +934,12 @@
   // Chat-Verlauf wie der Workspace in IndexedDB persistieren -- vorher ging die
   // Unterhaltung bei jedem Reload verloren, obwohl die Dateien erhalten blieben.
   async function persistHistory() {
-    try { await idbKeyval.set('claudeide-chat-history', history); }
+    try { await idbKeyval.set(CIP.chat(), history); }
     catch (e) { console.warn('Chat-Persistenz fehlgeschlagen (IndexedDB):', e); }
   }
   async function loadHistory() {
     try {
-      const saved = await idbKeyval.get('claudeide-chat-history');
+      const saved = await idbKeyval.get(CIP.chat());
       if (Array.isArray(saved) && saved.length) { history.push(...saved); return true; }
     } catch (e) { console.warn('Chat-Laden fehlgeschlagen (IndexedDB):', e); }
     return false;
@@ -956,6 +979,28 @@
     }
   }
 
+  /* ---- Projekt-Aktionen (von der Oberflaeche genutzt) ---- */
+  window.CI_PROJ = {
+    list: () => CIP.list(), active: () => CIP.active(), name: () => CIP.name(),
+    async switchTo(id) { await persistFs(); await persistHistory(); CIP.setActive(id); location.reload(); },
+    async create(name) { await persistFs(); await persistHistory(); const id = CIP.add(name); CIP.setActive(id); location.reload(); },
+    rename(id, name) { CIP.rename(id, name); },
+    async duplicate(id) {
+      await persistFs(); await persistHistory();
+      const src = CIP.list().find((p) => p.id === id); const nid = CIP.add((src ? src.name : 'Projekt') + ' (Kopie)');
+      try { const w = await idbKeyval.get(CIP.wsKeyOf(id)); if (w) await idbKeyval.set(CIP.wsKeyOf(nid), w); const c = await idbKeyval.get(CIP.chKeyOf(id)); if (c) await idbKeyval.set(CIP.chKeyOf(nid), c); } catch (e) {}
+      CIP.setActive(nid); location.reload();
+    },
+    async remove(id) {
+      try { await idbKeyval.del(CIP.wsKeyOf(id)); await idbKeyval.del(CIP.chKeyOf(id)); } catch (e) {}
+      CIP.drop(id);
+      if (!CIP.list().length) { const n = CIP.add('Projekt 1', 'p1'); CIP.setActive(n); }
+      else if (CIP.active() === id) CIP.setActive(CIP.list()[0].id);
+      location.reload();
+    },
+    async resetChat() { history.length = 0; try { await idbKeyval.del(CIP.chat()); } catch (e) {} location.reload(); },
+    async resetWorkspace() { try { await idbKeyval.del(CIP.ws()); await idbKeyval.del(CIP.chat()); } catch (e) {} location.reload(); }
+  };
   const msgList = document.getElementById('msgList');
   const chatInput = document.getElementById('chatInput');
   const chatSend = document.getElementById('chatSend');
@@ -1310,6 +1355,11 @@
     #pane-chat .n-bubble pre { max-width: 100%; overflow-x: auto; }
     #pane-chat .n-chat-inputbar { padding-left: clamp(12px, 2vw, 32px); padding-right: clamp(12px, 2vw, 32px); }
   }
+  .ci-projbtn { display: inline-flex; align-items: center; gap: 6px; max-width: 190px; min-height: 40px; }
+  .ci-projname { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 130px; }
+  .ahs-sheet .ci-sh { padding: 8px 12px 2px; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ahs-muted); }
+  .ahs-sheet .ci-cur { color: var(--ahs-accent); font-weight: 700; }
+  @media (max-width: 600px) { .ci-projbtn { max-width: 120px; padding-left: 8px; padding-right: 8px; } .ci-projname { max-width: 64px; } }
   .ci-nav, .ci-fab { display: none; }
   @media (max-width: 900px) {
     html, body { height: var(--ahs-vh, 100dvh) !important; }
@@ -1537,6 +1587,38 @@ var AHS = (function () {
   }).observe(tabBar, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
   var tc = $('#tabContent'); if (tc) new MutationObserver(sync).observe(tc, { attributes: true, subtree: true, attributeFilter: ['class', 'style'] });
   sync(); starters();
+
+  // ===== Projekte (mehrere Workspaces mit eigenem Chat) =====
+  (function () {
+    var P = window.CI_PROJ; if (!P) return;
+    var toggle = $('#layoutToggle'); if (!toggle || !toggle.parentNode) return;
+    var btn = AHS.el('button', 'n-btn n-btn-secondary ci-projbtn'); btn.type = 'button'; btn.id = 'ciProjBtn'; btn.setAttribute('aria-haspopup', 'dialog');
+    function label() { btn.innerHTML = '<span aria-hidden="true">📁</span><span class="ci-projname"></span><span aria-hidden="true">▾</span>'; btn.querySelector('.ci-projname').textContent = P.name(); btn.title = 'Projekte und Chat-Reset'; btn.setAttribute('aria-label', 'Projekt wechseln: ' + P.name()); }
+    label(); toggle.parentNode.insertBefore(btn, toggle);
+    var back = AHS.el('div', 'ahs-back'); back.hidden = true;
+    var sheet = AHS.el('section', 'ahs-sheet'); sheet.hidden = true; sheet.setAttribute('role', 'dialog'); sheet.setAttribute('aria-label', 'Projekte');
+    var menu = AHS.el('div', 'ahs-menu'); sheet.appendChild(menu); document.body.appendChild(back); document.body.appendChild(sheet);
+    function close() { sheet.hidden = true; back.hidden = true; }
+    back.addEventListener('click', close); document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+    function item(text, fn, cls) { var b = document.createElement('button'); b.type = 'button'; if (cls) b.className = cls; b.textContent = text; b.addEventListener('click', function () { close(); setTimeout(fn, 30); }); menu.appendChild(b); return b; }
+    function sep(t) { var d = document.createElement('div'); d.className = 'sep'; menu.appendChild(d); if (t) { var h = document.createElement('div'); h.className = 'ci-sh'; h.textContent = t; menu.appendChild(h); } }
+    function open() {
+      menu.innerHTML = ''; var cur = P.active();
+      var h = document.createElement('div'); h.className = 'ci-sh'; h.textContent = 'Deine Projekte'; menu.appendChild(h);
+      P.list().forEach(function (p) { var b = item((p.id === cur ? '✓  ' : '     ') + p.name, function () { if (p.id !== cur) P.switchTo(p.id); }); if (p.id === cur) b.className = 'ci-cur'; });
+      sep();
+      item('＋  Neues Projekt', function () { var n = prompt('Name des neuen Projekts:', 'Projekt ' + (P.list().length + 1)); if (n && n.trim()) P.create(n.trim()); });
+      item('✎  Projekt umbenennen', function () { var n = prompt('Neuer Name:', P.name()); if (n && n.trim()) { P.rename(cur, n.trim()); label(); AHS.toast('Umbenannt'); } });
+      item('⧉  Projekt duplizieren', function () { P.duplicate(cur); });
+      sep('Chat');
+      item('🧹  Chat zurücksetzen (Dateien bleiben)', function () { if (confirm('Den Chat dieses Projekts leeren? Die Dateien bleiben erhalten.')) P.resetChat(); });
+      sep('Gefahrenzone');
+      item('🗑  Projekt löschen', function () { if (confirm('Projekt „' + P.name() + '“ mit allen Dateien und dem Chat endgültig löschen?')) P.remove(cur); }, 'red');
+      item('⚠  Workspace und Chat leeren', function () { if (confirm('Alle Dateien und den Chat dieses Projekts löschen und neu beginnen?')) P.resetWorkspace(); }, 'red');
+      sheet.hidden = false; back.hidden = false;
+    }
+    btn.addEventListener('click', open);
+  })();
 })();
 </script>
 <!-- ===== Ende CLAUDE IDE POLISH LAYER ===== -->
