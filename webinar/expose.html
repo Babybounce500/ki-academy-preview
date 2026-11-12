@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Exposé – KI‑Webinar | Domvs Avrea O.P.N. GmbH</title>
+  <meta name="description"
+    content="Exposé für das Jobcenter/Arbeitsagentur: KI‑Webinar – Werde Webentwickler mit KI. 10 Stunden, Portfolio, Zertifikat, 24/7 Support per Coding‑Chatbot & E‑Mail, Live‑Calls zubuchbar. Förderfähig (BG/AVGS) – AZAV geplant/über Partner.">
+  <meta property="og:title" content="Exposé – KI‑Webinar | Domvs Avrea O.P.N. GmbH" />
+  <meta property="og:description"
+    content="10h kompakter Kurs: Webentwicklung + KI. Portfolio, Zertifikat, 24/7 Support, Live‑Calls. Bildungsgutschein/AVGS möglich." />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#0ea5e9">
+  <!-- TailwindCSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ["Orbitron", "ui-sans-serif", "system-ui", "-apple-system"]
+          },
+          colors: {
+            base: {
+              DEFAULT: "#0b0d0d",
+              50: "#0f1216"
+            },
+            neon: {
+              DEFAULT: "#22d3ee"
+            },
+            accent: {
+              DEFAULT: "#60a5fa"
+            }
+          },
+          boxShadow: {
+            neon: "0 0 0.5rem rgba(34,211,238,.9), 0 0 1.25rem rgba(96,165,250,.6)",
+          },
+          backgroundImage: {
+            grid: "radial-gradient(circle at 1px 1px, rgba(255,255,255,.07) 1px, transparent 0)",
+          },
+          animation: {
+            hue: "hue 12s linear infinite",
+            float: "float 6s ease-in-out infinite",
+            pulseSoft: "pulseSoft 3s infinite",
+            bounce: "bounce 0.5s infinite",
+          },
+          keyframes: {
+            hue: {
+              '0%': {
+                filter: 'hue-rotate(0deg)'
+              },
+              '100%': {
+                filter: 'hue-rotate(360deg)'
+              }
+            },
+            float: {
+              '0%,100%': {
+                transform: 'translateY(0)'
+              },
+              '50%': {
+                transform: 'translateY(-6px)'
+              }
+            },
+            pulseSoft: {
+              '0%, 100%': {
+                opacity: 1
+              },
+              '50%': {
+                opacity: 0.6
+              }
+            },
+            bounce: {
+              '0%, 100%': {
+                transform: 'translateY(-25%)',
+                animationTimingFunction: 'cubic-bezier(0.8,0,1,1)'
+              },
+              '50%': {
+                transform: 'none',
+                animationTimingFunction: 'cubic-bezier(0,0,0.2,1)'
+              }
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    .glass {
+      background: linear-gradient(180deg, rgba(255, 255, 255, .08), rgba(255, 255, 255, .04));
+      backdrop-filter: blur(8px);
+    }
+
+    .grad {
+      background: conic-gradient(from 180deg at 50% 50%, rgba(14, 165, 233, .25), rgba(96, 165, 250, .25), rgba(34, 197, 94, .15), rgba(14, 165, 233, .25));
+    }
+
+    .neon-border {
+      box-shadow: 0 0 0 .5px rgba(255, 255, 255, .15) inset, 0 0 0 1px rgba(34, 211, 238, .35), 0 0 18px rgba(96, 165, 250, .25);
+    }
+
+    .keypoint {
+      font-weight: 500;
+      color: #93c5fd;
+      /* Tailwind blue-300 */
+    }
+
+    .tag-badge {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      border-radius: 9999px;
+      display: inline-block;
+      color: #cbd5e1;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .tag-badge:hover {
+      background-color: rgba(14, 165, 233, 0.15);
+      color: #22d3ee;
+      box-shadow: 0 0 8px rgba(96, 165, 250, 0.4);
+    }
+
+    @media print {
+      .no-print {
+        display: none !important
+      }
+
+      body {
+        background: #fff
+      }
+    }
+
+    /* Custom styles for logo and responsive adjustments */
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .logo-img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+
+    /* Mobile styles */
+    @media (max-width: 768px) {
+      .logo-container {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+      }
+
+      .logo-img {
+        width: 32px;
+        height: 32px;
+        flex-shrink: 0;
+      }
+
+      .company-name {
+        font-size: 1rem;
+        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 200px;
+      }
+
+      /* Burger menu styles */
+      #mobileMenu {
+        transition: max-height 0.4s ease-in-out;
+        overflow: hidden;
+      }
+
+      #mobileMenu.hidden {
+        max-height: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+
+      #mobileMenu:not(.hidden) {
+        max-height: 400px;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+      }
+
+      /* CTA buttons */
+      .cta-button,
+      .secondary-button {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+        font-size: 1rem;
+        padding: 0.75rem 1.25rem;
+      }
+
+      .cta-button svg,
+      .secondary-button svg {
+        width: 1.25rem;
+        height: 1.25rem;
+      }
+
+      .group .relative.z-10 {
+        justify-content: center;
+      }
+
+      /* Footer and price CTA */
+      .footer-flex,
+      .price-cta-flex {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+
+      .price-cta-flex .cta-button,
+      .price-cta-flex .print-button {
+        width: 100%;
+      }
+
+      /* Hero section adjustments */
+      .hero-content {
+        flex-direction: column;
+        gap: 2rem;
+      }
+
+      .hero-video-container {
+        width: 100%;
+        margin-top: 1rem;
+      }
+
+      /* Stats section */
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+      }
+
+      /* Module section */
+      .module-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+      }
+
+      /* Contact section */
+      .contact-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-base text-zinc-100 antialiased">
+  <!-- Decorative background -->
+  <div class="fixed inset-0 -z-10">
+    <div class="absolute inset-0 bg-grid bg-[size:24px_24px] opacity-[.2]"></div>
+    <div class="absolute -top-24 -right-24 w-[42rem] h-[42rem] rounded-full grad blur-3xl opacity-30 animate-hue">
+    </div>
+    <div class="absolute -bottom-24 -left-24 w-[36rem] h-[36rem] rounded-full grad blur-3xl opacity-20 animate-hue">
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <header class="sticky top-0 z-30 backdrop-blur bg-base/70 border-b border-white/10">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="logo-container">
+        <img src="https://babybounce500.github.io/1c/2.png" alt="Domvs Avrea Logo" class="logo-img">
+        <p class="font-bold tracking-tight company-name">Domvs Avrea O.P.N</p>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="hidden md:flex items-center gap-6 text-sm" id="mainNav">
+        <a href="#ueberblick" class="hover:text-neon">Überblick</a>
+        <a href="#module" class="hover:text-neon">Module</a>
+        <a href="#foerderung" class="hover:text-neon">Förderung</a>
+        <a href="#support" class="hover:text-neon">Support</a>
+        <a href="#kontakt" class="hover:text-neon">Kontakt</a>
+      </nav>
+
+      <!-- Burger Button (Mobile Only) -->
+      <button id="burgerBtn" class="md:hidden text-neon focus:outline-none" aria-label="Menü öffnen">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+      <div class="flex items-center gap-3">
+      </div>
+    </div>
+
+    <!-- Mobile Dropdown -->
+    <div id="mobileMenu"
+      class="md:hidden hidden flex-col gap-4 p-4 bg-base border-t border-white/10 text-sm z-50">
+      <a href="#ueberblick" class="hover:text-neon">Überblick</a>
+      <a href="#module" class="hover:text-neon">Module</a>
+      <a href="#foerderung" class="hover:text-neon">Förderung</a>
+      <a href="#support" class="hover:text-neon">Support</a>
+      <a href="#kontakt" class="hover:text-neon">Kontakt</a>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="relative">
+    <div class="max-w-6xl mx-auto px-4 py-16 md:py-24">
+      <div class="grid md:grid-cols-2 gap-10 items-center hero-content">
+        <div>
+          <h1 class="text-4xl md:text-5xl font-bold leading-tight">
+            <span class="text-neon">KI‑Webinar</span> – Werde Webentwickler mit KI
+          </h1>
+          <p class="mt-4 text-zinc-300">DEUTSCHER Online‑Kurs (ca. <span class="keypoint">10 Stunden</span>) für einen
+            schnellen, praxisnahen Einstieg in <span class="keypoint">HTML, CSS & JavaScript</span> – mit <span
+              class="keypoint">KI‑Assistenz</span>, <span class="keypoint">Portfolio‑Projekte</span> und <span
+              class="keypoint">Zertifikat</span>.</p>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <span class="tag-badge">100 % online</span>
+            <span class="tag-badge">Start jederzeit</span>
+            <span class="tag-badge"><span class="keypoint">Zertifikat</span> nach <span
+                class="keypoint">Portfolio‑Prüfung</span></span>
+          </div>
+
+          <!-- Hero Call-to-Action with improved buttons -->
+          <div class="mt-8 flex flex-col sm:flex-row gap-4">
+            <!-- Primary CTA Button -->
+            <a href="https://domusaurea.tech/ki-webinar.html" target="_blank"
+              class="group relative inline-flex items-center justify-center px-8 py-4 rounded-lg bg-gradient-to-r from-neon to-accent text-black font-bold text-lg shadow-neon transition-all duration-300 transform hover:scale-105 hover:shadow-lg cta-button">
+              <span class="relative z-10 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                Jetzt Webinar starten
+              </span>
+            </a>
+
+            <!-- Secondary CTA Button -->
+            <a href="https://genitus-coding-ai.replit.app/" target="_blank"
+              class="group relative inline-flex items-center justify-center px-8 py-4 rounded-lg bg-transparent border-2 border-neon/40 text-neon font-bold text-lg shadow-neon transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:bg-neon/10 secondary-button">
+              <span class="relative z-10 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                </svg>
+                LeCode AI
+              </span>
+            </a>
+          </div>
+        </div>
+        <div class="glass neon-border rounded-2xl p-3 shadow-neon hero-video-container">
+          <div style="position:relative; padding-top:56.25%">
+            <iframe src="https://share.synthesia.io/embeds/videos/be426683-7eda-4cb9-b4e8-2b603b59d8bd"
+              title="Intro Video" allowfullscreen
+              class="absolute inset-0 w-full h-full rounded-xl border border-white/10"></iframe>
+          </div>
+          <p class="text-xs text-center mt-2 text-zinc-400">Kurz‑Intro: Was mit KI in der Webentwicklung möglich
+            ist</p>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="mt-10 grid grid-cols-2 md:grid-cols-4 gap-4 stats-grid">
+        <div class="glass rounded-xl p-4 text-center">
+          <div class="text-3xl font-bold text-neon">10h</div>
+          <div class="text-xs text-zinc-400">komprimiertes Lernprogramm</div>
+        </div>
+        <div class="glass rounded-xl p-4 text-center">
+          <div class="text-3xl font-bold text-neon">2+</div>
+          <div class="text-xs text-zinc-400"><span class="keypoint">Portfolio‑Projekte</span></div>
+        </div>
+        <div class="glass rounded-xl p-4 text-center">
+          <div class="text-3xl font-bold text-neon">24/7</div>
+          <div class="text-xs text-zinc-400">Support per <span class="keypoint">Coding‑Chatbot</span> & E‑Mail</div>
+        </div>
+        <div class="glass rounded-xl p-4 text-center">
+          <div class="text-3xl font-bold text-neon">AZAV</div>
+          <div class="text-xs text-zinc-400">in Vorbereitung / über Partner</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ÜBERBLICK -->
+  <section id="ueberblick" class="border-t border-white/10">
+    <div class="max-w-6xl mx-auto px-4 py-14">
+      <div class="grid md:grid-cols-2 gap-10 items-start">
+        <div>
+          <h2 class="text-2xl md:text-3xl font-bold">Überblick & Lernziele</h2>
+          <ul class="mt-4 space-y-3 text-zinc-300 list-disc list-inside">
+            <li>Grundlagen <span class="keypoint">HTML, CSS, JavaScript</span> praxisnah anwenden.</li>
+            <li>Mit <span class="keypoint">KI‑Tools</span> Code generieren, prüfen und verfeinern (<span
+                class="keypoint">Prompt‑Engineering</span>).</li>
+            <li>Mindestens zwei <span class="keypoint">Portfolio‑Projekte</span> umsetzen: <span
+                class="keypoint">Website</span> und <span class="keypoint">Web‑App</span>.</li>
+            <li><span class="keypoint">Zertifikat</span> nach bestandener <span
+                class="keypoint">KI‑gestützter Portfolio‑Prüfung</span>.</li>
+          </ul>
+          <p class="mt-4 text-zinc-400 text-sm">Zielgruppe: Arbeitsuchende (<span class="keypoint">ALG I/Bürgergeld</span>),
+            Quereinsteiger, Selbstständige. Vorkenntnisse: PC‑Grundkenntnisse, keine <span
+              class="keypoint">Programmiererfahrung</span> nötig.</p>
+        </div>
+        <div class="glass rounded-2xl p-6">
+          <h3 class="font-semibold">10‑Stunden‑Fahrplan</h3>
+          <ol class="mt-3 space-y-2 text-sm text-zinc-300">
+            <li><b>1.</b> Kick‑off & Setup (0.5h)</li>
+            <li><b>2.</b> <span class="keypoint">HTML</span> Essentials (2h)</li>
+            <li><b>3.</b> <span class="keypoint">CSS</span> Layout & Components (2h)</li>
+            <li><b>4.</b> <span class="keypoint">JavaScript</span> Basics (2h)</li>
+            <li><b>5.</b> <span class="keypoint">Prompt‑Engineering</span> für Devs (0.5h)</li>
+            <li><b>6.</b> Projektarbeit: <span class="keypoint">Portfolio‑Projekte</span> (2h)</li>
+            <li><b>7.</b> <span class="keypoint">KI‑Prüfung</span>, Feedback & <span class="keypoint">Zertifikat</span>
+              (1h)</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODULE / LINKS -->
+  <section id="module" class="border-t border-white/10">
+    <div class="max-w-6xl mx-auto px-4 py-14">
+      <h2 class="text-2xl md:text-3xl font-bold mb-6">Module & Ressourcen (mit Live‑Links)</h2>
+      <div class="grid md:grid-cols-3 gap-6 module-grid">
+        <!-- LeCode AI Info Tile -->
+        <div class="glass rounded-xl p-5 block hover:shadow-neon transition">
+          <h3 class="font-semibold">💻 LeCode AI</h3>
+          <p class="text-sm text-zinc-300">
+            <span class="keypoint">Code generieren & optimieren</span> mit modernster KI – ideal für HTML, CSS,
+            JavaScript & mehr.
+            <br />Perfekt für Portfolio-Projekte & schnelles Prototyping.
+          </p>
+        </div>
+
+        <!-- E-Book -->
+        <div class="glass rounded-xl p-5 block hover:shadow-neon transition">
+          <h3 class="font-semibold">📖 E‑Book</h3>
+          <p class="text-sm text-zinc-300">Komplettes Kursbuch: <span class="keypoint">HTML, CSS, JS</span> & <span
+              class="keypoint">KI‑Workflows</span>.</p>
+        </div>
+
+        <!-- Quiz -->
+        <div class="glass rounded-xl p-5 block hover:shadow-neon transition">
+          <h3 class="font-semibold">❓ Quiz</h3>
+          <p class="text-sm text-zinc-300">Selbsttests zur Lernstandskontrolle nach jedem Abschnitt.</p>
+        </div>
+
+        <!-- Aufgaben -->
+        <div class="glass rounded-xl p-5 block hover:shadow-neon transition">
+          <h3 class="font-semibold">📝 Aufgaben & Challenges</h3>
+          <p class="text-sm text-zinc-300">Praxisübungen & <span class="keypoint">Mini‑Projekte</span> für schnellen
+            Lernerfolg.</p>
+        </div>
+
+        <!-- Chatbot -->
+        <a href="https://genitus-coding-ai.replit.app/" target="_blank"
+          class="glass rounded-xl p-5 block hover:shadow-neon transition">
+          <h3 class="font-semibold">🤖 <span class="keypoint">Coding‑Chatbot</span> (24/7)</h3>
+          <p class="text-sm text-zinc-300">Sofort‑Hilfe bei <span class="keypoint">Codefragen</span>, Snippets & <span
+              class="keypoint">Debugging</span>.</p>
+        </a>
+
+        <!-- HTML Editor -->
+        <div class="glass rounded-xl p-5 block hover:shadow-neon transition">
+          <h3 class="font-semibold">🧪 Live‑Coding (<span class="keypoint">Browser‑Editor</span>)</h3>
+          <p class="text-sm text-zinc-300">Ohne Installation direkt im <span class="keypoint">Browser</span> entwickeln.
+          </p>
+        </div>
+
+        <!-- Prompt List -->
+        <div class="glass rounded-xl p-5 block hover:shadow-neon transition">
+          <h3 class="font-semibold">💡 <span class="keypoint">Prompt‑Listen</span></h3>
+          <p class="text-sm text-zinc-300">Erprobte <span class="keypoint">Prompts</span> für produktive <span
+              class="keypoint">KI‑Dev‑Workflows</span>.</p>
+        </div>
+
+        <!-- PDFs -->
+        <div class="glass rounded-xl p-5 block hover:shadow-neon transition">
+          <h3 class="font-semibold">📑 <span class="keypoint">HTML‑PDF</span></h3>
+          <p class="text-sm text-zinc-300">Nachschlagen & offline lernen.</p>
+        </div>
+        <div class="glass rounded-xl p-5 block hover:shadow-neon transition">
+          <h3 class="font-semibold">📑 <span class="keypoint">CSS‑PDF</span></h3>
+          <p class="text-sm text-zinc-300"><span class="keypoint">Layouts</span>, <span class="keypoint">Komponenten</span>,
+            <span class="keypoint">Utilities</span>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ZERTIFIKAT -->
+  <section class="border-t border-white/10">
+    <div class="max-w-6xl mx-auto px-4 py-14">
+      <div class="glass rounded-2xl p-6 md:p-10">
+        <h2 class="text-2xl md:text-3xl font-bold">Leistungsnachweis & <span class="keypoint">Zertifikat</span></h2>
+        <p class="mt-4 text-zinc-300">Mindestens zwei <span class="keypoint">Portfolio‑Projekte</span> (z.B. <span
+            class="keypoint">Website</span> und <span class="keypoint">Web‑App</span>) werden durch eine <span
+            class="keypoint">trainierte KI</span> auf <span class="keypoint">Kurs‑Standards</span> geprüft (<span
+            class="keypoint">Code‑Qualität</span>, <span class="keypoint">Responsiveness</span>, <span
+            class="keypoint">Funktionalität</span>). Bei Erfüllung der Kriterien wird das <span
+            class="keypoint">Zertifikat</span> automatisch generiert. Bei Abweichungen erhältst Du <span
+            class="keypoint">konkrete Revisionsempfehlungen</span> und kannst erneut einreichen.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PERSPEKTIVE & BENEFITS -->
+  <section id="perspektive" class="border-t border-white/10">
+    <div class="max-w-6xl mx-auto px-4 py-14">
+      <h2 class="text-2xl md:text-3xl font-bold mb-6">
+        Berufliche Perspektive & Benefits für Teilnehmer
+      </h2>
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Arbeitsmarkt-Relevanz -->
+        <div class="glass rounded-xl p-5 text-center hover:shadow-neon transition">
+          <h3 class="font-semibold text-neon">🚀 Arbeitsmarkt-Relevanz</h3>
+          <p class="text-sm text-zinc-300 mt-2">
+            Gefragte <span class="keypoint">Webentwickler-Skills</span> kombiniert mit
+            <span class="keypoint">KI-Kompetenz</span> – direkt einsetzbar in Unternehmen & Startups.
+          </p>
+        </div>
+
+        <!-- Vermittlungshemmnis verringern -->
+        <div class="glass rounded-xl p-5 text-center hover:shadow-neon transition">
+          <h3 class="font-semibold text-neon">🔑 Vermittlungshemmnis verringern</h3>
+          <p class="text-sm text-zinc-300 mt-2">
+            Teilnehmer überwinden fehlende IT-Kenntnisse und erhöhen
+            ihre Chancen auf <span class="keypoint">schnelle Jobvermittlung</span>.
+          </p>
+        </div>
+
+        <!-- Nachhaltige Perspektive -->
+        <div class="glass rounded-xl p-5 text-center hover:shadow-neon transition">
+          <h3 class="font-semibold text-neon">🌱 Nachhaltige Perspektive</h3>
+          <p class="text-sm text-zinc-300 mt-2">
+            Zertifikat + Portfolio sichern <span class="keypoint">langfristige berufliche Chancen</span>
+            in der digitalen Wirtschaft.
+          </p>
+        </div>
+
+        <!-- Benefits -->
+        <div class="glass rounded-xl p-5 text-center hover:shadow-neon transition">
+          <h3 class="font-semibold text-neon">🎯 Benefits für Teilnehmer</h3>
+          <ul class="mt-2 space-y-2 text-sm text-zinc-300 list-disc list-inside text-left">
+            <li>💼 Einstieg in IT-Berufe ohne Vorkenntnisse</li>
+            <li>🧑‍💻 Praxisnahe <span class="keypoint">Portfolio-Projekte</span></li>
+            <li>📜 <span class="keypoint">Zertifikat</span> für Bewerbungen</li>
+            <li>🏆 Jobchance bei Domvs Avrea</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SUPPORT -->
+  <section id="support" class="border-t border-white/10">
+    <div class="max-w-6xl mx-auto px-4 py-14">
+      <h2 class="text-2xl md:text-3xl font-bold">Support & Services</h2>
+      <div class="grid md:grid-cols-3 gap-6 mt-6">
+        <div class="glass rounded-xl p-6">
+          <h3 class="font-semibold">24/7 <span class="keypoint">Coding‑Chatbot</span></h3>
+          <p class="text-sm text-zinc-300 mt-2">Rund um die Uhr Hilfe bei Fragen zu <span class="keypoint">HTML</span>,
+            <span class="keypoint">CSS</span>, <span class="keypoint">JS</span> und <span class="keypoint">Debugging</span>.</p>
+        </div>
+        <div class="glass rounded-xl p-6">
+          <h3 class="font-semibold">E‑Mail‑Support</h3>
+          <p class="text-sm text-zinc-300 mt-2">Schnelle Hilfe per Mail – innerhalb kurzer Zeit Antwort von unserem
+            Team.</p>
+          <p class="text-xs text-zinc-400 mt-2">Kontakt: <span class="select-all">ai-agency@mylibby.ai</span></p>
+        </div>
+        <div class="glass rounded-xl p-6">
+          <h3 class="font-semibold"><span class="keypoint">Live‑Calls</span> (zubuchbar)</h3>
+          <p class="text-sm text-zinc-300 mt-2">1:1‑Sessions via <span class="keypoint">Video‑Call</span> (z.B.
+            30/60 Min.) für <span class="keypoint">Code‑Reviews</span> oder <span class="keypoint">Karrierefragen</span>.
+            Optional zubuchbar.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FÖRDERUNG -->
+  <section id="foerderung" class="border-t border-white/10">
+    <div class="max-w-6xl mx-auto px-4 py-14">
+      <h2 class="text-2xl md:text-3xl font-bold">Förderung & Qualität</h2>
+      <div class="grid md:grid-cols-2 gap-8 mt-6">
+        <div class="glass rounded-xl p-6">
+          <h3 class="font-semibold"><span class="keypoint">Bildungsgutschein</span> & <span class="keypoint">AVGS</span></h3>
+          <ul class="mt-3 space-y-2 text-sm text-zinc-300 list-disc list-inside">
+            <li><b><span class="keypoint">Bildungsgutschein</span></b>: Übernahme von <span class="keypoint">Kurs‑</span>,
+              <span class="keypoint">Prüfungs‑</span> und ggf. <span class="keypoint">Fahrtkosten</span> (<span
+                class="keypoint">AZAV‑Zulassung</span> erforderlich).</li>
+            <li><b><span class="keypoint">AVGS</span></b>: Finanzierung von <span class="keypoint">Aktivierungs‑</span>/<span
+                class="keypoint">Coaching‑Leistungen</span> (z.B. <span class="keypoint">Portfolio‑Coaching</span>).</li>
+            <li><b><span class="keypoint">Einstiegsgeld</span> / <span class="keypoint">LES</span></b>: Für Gründer:innen im
+              <span class="keypoint">Bürgergeld</span> zur Stabilisierung der Selbstständigkeit.</li>
+          </ul>
+          <p class="text-xs text-zinc-400 mt-3">Hinweis: Leistungen sind <span class="keypoint">Ermessensentscheidungen</span>
+            der Behörde; individuelle Beratung erforderlich.</p>
+        </div>
+        <div class="glass rounded-xl p-6">
+          <h3 class="font-semibold"><span class="keypoint">AZAV‑Status</span></h3>
+          <p class="text-sm text-zinc-300 mt-2">Die Domvs Avrea O.P.N. GmbH bereitet die <span class="keypoint">AZAV‑Zulassung</span>
+            vor. Kurzfristig kann der Kurs über <span class="keypoint">zertifizierte Partnerträger</span> eingebracht
+            werden, sodass Teilnehmer:innen dennoch
+            über <span class="keypoint">Gutscheine</span> gefördert werden können.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PREIS / CTA -->
+  <section class="border-t border-white/10">
+    <div class="max-w-6xl mx-auto px-4 py-14">
+      <div
+        class="glass rounded-2xl p-6 md:p-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div>
+          <h2 class="text-2xl md:text-3xl font-bold">Preis & Paket</h2>
+          <p class="mt-2 text-zinc-300">Kompletter Zugang inkl. <span class="keypoint">Materialien</span>, <span
+              class="keypoint">Portfolio‑Prüfung</span> & <span class="keypoint">Zertifikat</span>.</p>
+          <p class="text-sm text-zinc-400"><span class="keypoint">Live‑Calls</span>: optional zubuchbar.</p>
+        </div>
+        <div class="text-right sm:text-right text-center w-full">
+          <div class="text-4xl font-bold text-neon">600 €</div>
+          <div class="text-xs text-zinc-400">(Brutto, inkl. MwSt.)</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- KONTAKT -->
+  <section id="kontakt" class="border-t border-white/10">
+    <div class="max-w-6xl mx-auto px-4 py-14">
+      <h2 class="text-2xl md:text-3xl font-bold">Kontakt</h2>
+      <div class="mt-6 grid md:grid-cols-2 gap-6 contact-grid">
+        <div class="glass rounded-xl p-6">
+          <p class="text-sm text-zinc-300">Anbieter: <b>Domvs Avrea O.P.N. GmbH</b></p>
+          <p class="text-sm text-zinc-300">Adresse: <b>Hinter den Höfen 37, 40589 Düsseldorf</b></p>
+          <p class="text-sm text-zinc-300">Telefon: <b>+1 650 899 7660</b></p>
+          <p class="text-sm text-zinc-300">E‑Mail: <span class="select-all">ai-agency@mylibby.ai</span></p>
+          <p class="text-sm text-zinc-300">Web: <span class="select-all">https://domusaurea.tech</span></p>
+          <p class="text-sm text-zinc-300">HRB: <b>104430</b></p>
+          <p class="text-sm text-zinc-300">USt-IdNr.: <b>DE368202622</b></p>
+        </div>
+        <form class="glass rounded-xl p-6 space-y-3" action="mailto:ai-agency@mylibby.ai" method="post"
+          enctype="text/plain">
+          <div>
+            <label class="text-xs text-zinc-400">Name</label>
+            <input class="mt-1 w-full bg-white/5 border border-white/10 rounded-md p-2" placeholder="Vor- und Nachname"
+              name="name" required />
+          </div>
+          <div>
+            <label class="text-xs text-zinc-400">E‑Mail</label>
+            <input type="email" class="mt-1 w-full bg-white/5 border border-white/10 rounded-md p-2"
+              placeholder="name@mail.de" name="email" required />
+          </div>
+          <div>
+            <label class="text-xs text-zinc-400">Nachricht</label>
+            <textarea class="mt-1 w-full bg-white/5 border border-white/10 rounded-md p-2" rows="4"
+              placeholder="Ihre Nachricht…" name="message" required></textarea>
+          </div>
+          <!-- Contact Form Submit Button -->
+          <button type="submit"
+            class="group relative inline-flex items-center justify-center px-6 py-3 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 text-black font-semibold text-base shadow-neon transition-all duration-300 transform hover:scale-105 hover:shadow-lg cta-button w-full sm:w-auto">
+            <span class="relative z-10 flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              Kontaktanfrage senden
+            </span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer class="border-t border-white/10">
+    <div class="max-w-6xl mx-auto px-4 py-10 text-sm text-zinc-500">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 footer-flex">
+        <p>© <span id="y"></span> Domvs Avrea O.P.N. GmbH – KI‑Webinar Exposé</p>
+        <p>Dieses Exposé ist für die Einreichung beim Jobcenter / der Agentur für Arbeit gedacht. Alle Angaben ohne
+          Gewähr; Förderentscheidungen erfolgen im Ermessen der Behörde.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('y').textContent = new Date().getFullYear();
+
+    // Add this script to your page
+    document.addEventListener('DOMContentLoaded', function () {
+      const buttons = document.querySelectorAll('.group');
+
+      buttons.forEach(button => {
+        // Add hover effect for all buttons
+        button.addEventListener('mouseenter', function () {
+          this.classList.add('animate-pulseSoft');
+        });
+
+        button.addEventListener('mouseleave', function () {
+          this.classList.remove('animate-pulseSoft');
+        });
+
+        // Add click effect for all buttons
+        button.addEventListener('click', function (e) {
+          if (this.tagName === 'A' && this.getAttribute('href').startsWith('#')) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+              targetElement.scrollIntoView({ behavior: 'smooth' });
+            }
+          }
+          this.classList.add('animate-bounce');
+          setTimeout(() => {
+            this.classList.remove('animate-bounce');
+          }, 500);
+        });
+      });
+
+      // Mobile Burger Menu Toggle
+      document.getElementById("burgerBtn").addEventListener("click", () => {
+        const menu = document.getElementById("mobileMenu");
+        menu.classList.toggle("hidden");
+        menu.style.maxHeight = menu.classList.contains("hidden") ? "0" : "400px";
+      });
+    });
+  </script>
+</body>
+
+</html>
