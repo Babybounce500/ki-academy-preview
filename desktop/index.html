@@ -210,7 +210,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 <div class="shell" id="shell">
   <main class="canvas" id="canvas">
     <canvas id="fx" aria-hidden="true"></canvas>
-    <div class="brand"><h1>ORBITRON <span>VIBE CODING</span></h1><p>Redline Desktop // Explorer · Fenster · Chatrooms</p></div>
+    <div class="brand"><h1>ORBITRON <span>VIBE CODING</span></h1><p>Redline Desktop // Explorer · Fenster · Chatroom</p></div>
     <nav class="shortcuts" id="shortcuts" aria-label="Desktop-Verknüpfungen"></nav>
     <div id="windows"></div>
     <div id="snap"></div>
@@ -224,7 +224,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
     <div class="search"><i class="fa-solid fa-magnifying-glass"></i><input id="q" type="search" placeholder="Suchen (Strg+K)" autocomplete="off" spellcheck="false" aria-label="Apps und Dateien suchen"></div>
     <div class="tasks" id="tasks" aria-label="Offene Fenster"></div>
     <button class="bbtn hide-m" id="showDesk" type="button" title="Desktop anzeigen" aria-label="Desktop anzeigen"><i class="fa-regular fa-window-minimize"></i></button>
-    <button class="bbtn" id="chatBtn" type="button" title="Chatroom (KI-Mentor)" aria-label="Chatroom öffnen"><i class="fa-solid fa-comments"></i></button>
+    <button class="bbtn" id="chatBtn" type="button" title="Chatroom" aria-label="Chatroom öffnen"><i class="fa-solid fa-comments"></i></button>
     <button class="bbtn" id="exBtn" type="button" title="Explorer" aria-label="Explorer öffnen"><i class="fa-solid fa-folder-tree"></i></button>
     <div class="clock" title="Lokale Zeit"><b id="tm">--:--</b><small id="dt"></small></div>
   </footer>
@@ -250,7 +250,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
   /* ================= Daten ================= */
   var FOLDERS = [
     { id: 'Hub', name: 'Hub und Workshells', icon: 'fa-atom' },
-    { id: 'Chat', name: 'Chatrooms', icon: 'fa-comments' },
+    { id: 'Chat', name: 'Chatroom', icon: 'fa-comments' },
     { id: 'Coding', name: 'Coding-Tools', icon: 'fa-code' }
   ];
   var BASE_APPS = [
@@ -260,8 +260,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
     { n: 'IDE-Werkbank', d: '33 Editoren und IDEs zum Testen', f: 'Hub', i: 'fa-laptop-code', u: 'ide-lab/' },
     { n: 'Gamma-Bibliothek', d: 'Alle Folien als PDF', f: 'Hub', i: 'fa-images', u: 'gamma-pdfs/' },
     { n: 'Produktseite', d: 'Webinar-Reihe und Bundle', f: 'Hub', i: 'fa-store', u: 'product/' },
-    { n: 'Chatroom KI-Mentor', d: 'Fragen zum Kurs, Code-Werkstatt', f: 'Chat', i: 'fa-comments', u: 'chatroom/index.html' },
-    { n: 'Chatroom Experten', d: '14 Fachgebiete mit Live-Editor', f: 'Chat', i: 'fa-user-astronaut', u: 'chatroom/experten.html' },
+    { n: 'Chatroom', d: 'Externer Chatroom (genitus-chatroom)', f: 'Chat', i: 'fa-comments', u: 'https://genitus-chatroom.replit.app/' },
     { n: 'Claude IDE', d: 'Agent mit Workspace, Projekte und Chats', f: 'Coding', i: 'fa-brain', u: 'academy/modules/tools/claude-ide.html' },
     { n: 'LeCODE Studio', d: 'Code-Chat mit Vorschau', f: 'Coding', i: 'fa-terminal', u: 'academy/modules/tools/lecode-studio.html' },
     { n: 'AI HTML Studio', d: 'Editor mit Live-Vorschau und KI', f: 'Coding', i: 'fa-wand-magic-sparkles', u: 'academy/modules/tools/ai-html-studio.html' },
@@ -705,13 +704,13 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
     if (pins.length < 8) BASE_APPS.forEach(function (a) { var it = byKey[rel(abs(a.u)) || '.']; if (it && pins.indexOf(it) < 0 && pins.length < 8) pins.push(it); });
     var rec = recents.map(function (k) { return byKey[k]; }).filter(Boolean).slice(0, 4);
     s.innerHTML = '<div class="sh">Angeheftet</div><div class="sg" id="sPins"></div>' + (rec.length ? '<div class="sh">Zuletzt geöffnet</div><div class="sg" id="sRec"></div>' : '') +
-      '<div class="sa"><button type="button" data-a="ex"><i class="fa-solid fa-folder-tree"></i> Explorer öffnen</button><button type="button" data-a="chat2"><i class="fa-solid fa-user-astronaut"></i> Chatroom Experten</button><button type="button" data-a="desk"><i class="fa-regular fa-window-minimize"></i> Desktop anzeigen</button><button type="button" data-a="fx"><i class="fa-solid fa-wand-magic-sparkles"></i> Matrix-Effekt <span id="fxState"></span></button><button type="button" data-a="close"><i class="fa-solid fa-circle-xmark"></i> Alle Fenster schließen</button><button type="button" data-a="help"><i class="fa-solid fa-keyboard"></i> Tastenkürzel</button></div>';
+      '<div class="sa"><button type="button" data-a="ex"><i class="fa-solid fa-folder-tree"></i> Explorer öffnen</button><button type="button" data-a="desk"><i class="fa-regular fa-window-minimize"></i> Desktop anzeigen</button><button type="button" data-a="fx"><i class="fa-solid fa-wand-magic-sparkles"></i> Matrix-Effekt <span id="fxState"></span></button><button type="button" data-a="close"><i class="fa-solid fa-circle-xmark"></i> Alle Fenster schließen</button><button type="button" data-a="help"><i class="fa-solid fa-keyboard"></i> Tastenkürzel</button></div>';
     function fill(id, arr) { var box = s.querySelector(id); if (!box) return; arr.forEach(function (it) { var b = document.createElement('button'); b.type = 'button'; b.className = 'si'; b.innerHTML = '<div class="ic"><i class="fa-solid ' + esc(it.icon) + '"></i></div><span></span>'; b.querySelector('span').textContent = it.name; b.addEventListener('click', function () { hidePops(); openItem(it); }); b.addEventListener('contextmenu', function (e) { e.preventDefault(); itemMenu(it, e.clientX, e.clientY); }); box.appendChild(b); }); }
     fill('#sPins', pins); fill('#sRec', rec);
     s.querySelector('#fxState').textContent = fxOn ? '(an)' : '(aus)';
     s.querySelectorAll('.sa button').forEach(function (b) { b.addEventListener('click', function () {
       hidePops(); var a = b.dataset.a;
-      if (a === 'ex') openExplorer(); else if (a === 'chat2') openItem(byKey['chatroom/experten.html']); else if (a === 'desk') showDesktop(); else if (a === 'close') closeAll();
+      if (a === 'ex') openExplorer(); else if (a === 'desk') showDesktop(); else if (a === 'close') closeAll();
       else if (a === 'fx') { fxOn = !fxOn; store.set('fx', fxOn); fxCheck(); toast('Matrix-Effekt ' + (fxOn ? 'an' : 'aus')); }
       else if (a === 'help') toast('Strg+K Suche · Strg+Leertaste Start · Esc schließt Menüs · Explorer: Pfeile, Enter, F Favorit, / Suche · Fenster an den Rand ziehen = Snap');
     }); });
@@ -764,7 +763,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
   tick(); setInterval(tick, 20000);
   $('startBtn').addEventListener('click', toggleStart);
   $('exBtn').addEventListener('click', openExplorer);
-  $('chatBtn').addEventListener('click', function () { openItem(byKey['chatroom/index.html']); });
+  $('chatBtn').addEventListener('click', function () { openItem(byKey['https://genitus-chatroom.replit.app/']); });
   $('showDesk').addEventListener('click', showDesktop);
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') { hidePops(); return; }

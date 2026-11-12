@@ -6033,7 +6033,7 @@ sys.stderr = _io.StringIO()
     else if (k === 'snip') openSnip(true);
     else if (k === 'ai') { if (typeof toggleVectorPanel === 'function' && hasVector && $('#vectorPanel').classList.contains('open')) toggleVectorPanel(); if (typeof toggleAgentPanel === 'function') toggleAgentPanel(); }
     else if (k === 'vec') { if (hasAgent && $('#agentPanel').classList.contains('open') && typeof toggleAgentPanel === 'function') toggleAgentPanel(); if (typeof toggleVectorPanel === 'function') toggleVectorPanel(); }
-    else if (k === 'mentor') { window.open('../../../chatroom/index.html', '_blank', 'noopener'); }
+    else if (k === 'mentor') { window.open('https://genitus-chatroom.replit.app/', '_blank', 'noopener'); }
     else if (k === 'more') openMore();
   });
 
