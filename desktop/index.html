@@ -250,6 +250,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
   /* ================= Daten ================= */
   var FOLDERS = [
     { id: 'Hub', name: 'Hub und Workshells', icon: 'fa-atom' },
+    { id: 'Webinar', name: 'Webinar und Medien', icon: 'fa-video' },
     { id: 'Chat', name: 'Chatroom', icon: 'fa-comments' },
     { id: 'Coding', name: 'Coding-Tools', icon: 'fa-code' }
   ];
@@ -260,6 +261,11 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
     { n: 'IDE-Werkbank', d: '33 Editoren und IDEs zum Testen', f: 'Hub', i: 'fa-laptop-code', u: 'ide-lab/' },
     { n: 'Gamma-Bibliothek', d: 'Alle Folien als PDF', f: 'Hub', i: 'fa-images', u: 'gamma-pdfs/' },
     { n: 'Produktseite', d: 'Webinar-Reihe und Bundle', f: 'Hub', i: 'fa-store', u: 'product/' },
+    { n: 'WEBINAR-DEU', d: 'Kursseite auf Deutsch mit Synthesia-Video', f: 'Webinar', i: 'fa-graduation-cap', u: 'webinar/de.html' },
+    { n: 'WEBINAR-ENG', d: 'Course page in English with video', f: 'Webinar', i: 'fa-earth-europe', u: 'webinar/en.html' },
+    { n: 'Ebook-Reader', d: 'Kurs-E-Book im Reader (extern)', f: 'Webinar', i: 'fa-book-open', u: 'https://ebooks-auflag-2.replit.app/kindle1/AI-DEV-MERGE.html' },
+    { n: 'VIDEO-GER', d: 'Webinar-Video Deutsch (Synthesia)', f: 'Webinar', i: 'fa-circle-play', u: 'webinar/video.html?v=de', w: 980, h: 640 },
+    { n: 'VIDEO-ENG', d: 'Webinar video English (MP4)', f: 'Webinar', i: 'fa-film', u: 'webinar/video.html?v=en', w: 460, h: 800 },
     { n: 'Chatroom', d: 'Externer Chatroom (genitus-chatroom)', f: 'Chat', i: 'fa-comments', u: 'https://genitus-chatroom.replit.app/' },
     { n: 'Claude IDE', d: 'Agent mit Workspace, Projekte und Chats', f: 'Coding', i: 'fa-brain', u: 'academy/modules/tools/claude-ide.html' },
     { n: 'LeCODE Studio', d: 'Code-Chat mit Vorschau', f: 'Coding', i: 'fa-terminal', u: 'academy/modules/tools/lecode-studio.html' },
@@ -275,7 +281,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
   }
   BASE_APPS.forEach(function (a) {
     var url = abs(a.u);
-    add({ key: rel(url) || '.', name: a.n, desc: a.d, group: 'app:' + a.f, groupName: (FOLDERS.filter(function (f) { return f.id === a.f; })[0] || {}).name, icon: a.i === 'fa-snake' ? 'fa-terminal' : a.i, url: url, type: 'app', tags: [] });
+    add({ w: a.w, h: a.h, key: rel(url) || '.', name: a.n, desc: a.d, group: 'app:' + a.f, groupName: (FOLDERS.filter(function (f) { return f.id === a.f; })[0] || {}).name, icon: a.i === 'fa-snake' ? 'fa-terminal' : a.i, url: url, type: 'app', tags: [] });
   });
   var loadState = { wb: 'laedt', pdf: 'laedt' };
 
@@ -521,7 +527,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
   /* ================= Oeffnen ================= */
   function openItem(it, forceNew) {
     pushRecent(it.key);
-    var id = openWindow({ key: forceNew ? null : it.key, title: it.name, icon: it.icon, url: it.url });
+    var id = openWindow({ key: forceNew ? null : it.key, title: it.name, icon: it.icon, url: it.url, w: it.w, h: it.h });
     renderStart(); return id;
   }
 
