@@ -251,7 +251,6 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
   var FOLDERS = [
     { id: 'Hub', name: 'Hub und Workshells', icon: 'fa-atom' },
     { id: 'Webinar', name: 'Webinar und Medien', icon: 'fa-video' },
-    { id: 'Profil', name: 'Profil', icon: 'fa-user-tie' },
     { id: 'Coding', name: 'Coding-Tools', icon: 'fa-code' }
   ];
   var BASE_APPS = [
@@ -266,7 +265,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
     { n: 'Ebook-Reader', d: 'Kurs-E-Book im Reader (extern)', f: 'Webinar', i: 'fa-book-open', u: 'https://ebooks-auflag-2.replit.app/kindle1/AI-DEV-MERGE.html' },
     { n: 'VIDEO-GER', d: 'Webinar-Video Deutsch (Synthesia)', f: 'Webinar', i: 'fa-circle-play', u: 'webinar/video.html?v=de', w: 980, h: 640 },
     { n: 'EXPOSE', d: 'Exposé zum KI-Webinar: Module, Förderung, Leistungsnachweis', f: 'Webinar', i: 'fa-file-lines', u: 'webinar/expose.html', w: 1040, h: 700 },
-    { n: 'Profil', d: 'Profilseite von Daniel Gereci (extern)', f: 'Profil', i: 'fa-user-tie', u: 'https://danielgereci.com/', w: 1040, h: 700 },
+    { n: 'Profil', d: 'Profilseite von Daniel Gereci (extern)', f: 'Dateien', i: 'fa-user-tie', u: 'https://danielgereci.com/', w: 1040, h: 700 },
     { n: 'VIDEO-ENG', d: 'Webinar video English (MP4)', f: 'Webinar', i: 'fa-film', u: 'webinar/video.html?v=en', w: 460, h: 800 },
     { n: 'Chatroom', d: 'Externer Chatroom (genitus-chatroom)', f: 'Coding', i: 'fa-comments', u: 'https://genitus-chatroom.replit.app/' },
     { n: 'Claude IDE', d: 'Agent mit Workspace, Projekte und Chats', f: 'Coding', i: 'fa-brain', u: 'academy/modules/tools/claude-ide.html' },
@@ -283,7 +282,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
   }
   BASE_APPS.forEach(function (a) {
     var url = abs(a.u);
-    add({ w: a.w, h: a.h, key: rel(url) || '.', name: a.n, desc: a.d, group: 'app:' + a.f, groupName: (FOLDERS.filter(function (f) { return f.id === a.f; })[0] || {}).name, icon: a.i === 'fa-snake' ? 'fa-terminal' : a.i, url: url, type: 'app', tags: [] });
+    add({ w: a.w, h: a.h, key: rel(url) || '.', name: a.n, desc: a.d, group: 'app:' + a.f, groupName: (FOLDERS.filter(function (f) { return f.id === a.f; })[0] || { name: a.f }).name, icon: a.i === 'fa-snake' ? 'fa-terminal' : a.i, url: url, type: 'app', tags: [] });
   });
   var loadState = { wb: 'laedt', pdf: 'laedt' };
 
@@ -551,7 +550,15 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
     });
     var ex = document.createElement('section'); ex.innerHTML = '<h2 class="sec-title"><i class="fa-solid fa-folder-tree"></i> Dateien</h2><div class="sec-row"></div>';
     var b = document.createElement('button'); b.type = 'button'; b.className = 'dicon'; b.innerHTML = '<div class="ic"><i class="fa-solid fa-folder-tree"></i></div><span>Explorer</span>'; b.title = 'Alle Tools, PDFs und Favoriten durchsuchen'; b.addEventListener('click', openExplorer);
-    ex.querySelector('.sec-row').appendChild(b); box.appendChild(ex);
+    ex.querySelector('.sec-row').appendChild(b);
+    ALL.filter(function (x) { return x.group === 'app:Dateien'; }).forEach(function (it) {
+      var a = document.createElement('a'); a.className = 'dicon'; a.href = it.url; a.title = it.desc; a.rel = 'noopener';
+      a.innerHTML = '<div class="ic"><i class="fa-solid ' + esc(it.icon) + '"></i></div><span></span>'; a.querySelector('span').textContent = it.name;
+      a.addEventListener('click', function (e) { if (e.ctrlKey || e.metaKey || e.shiftKey) return; e.preventDefault(); openItem(it); });
+      a.addEventListener('contextmenu', function (e) { e.preventDefault(); itemMenu(it, e.clientX, e.clientY); });
+      ex.querySelector('.sec-row').appendChild(a);
+    });
+    box.appendChild(ex);
   }
 
   /* ================= Explorer ================= */
