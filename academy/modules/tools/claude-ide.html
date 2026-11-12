@@ -422,7 +422,7 @@
   return { text: cl.slice(0, at).concat(nl, cl.slice(at + key.length)).join('\n'), line: at + 1 };
 }
   function salvageCut(block, cut) {
-  const generic = { ok: false, error: 'Dein Aufruf war unvollstaendig (Ausgabe-Limit erreicht). Es wurde NICHTS geschrieben. Mache es in kleineren Schritten: write_file mit hoechstens ca. 120 Zeilen, danach append_file fuer jeden weiteren Teil. Keine langen Erklaerungen davor.' };
+  const generic = { ok: false, error: 'Dein Aufruf wurde vom Ausgabe-Limit abgeschnitten, es wurde NICHTS geschrieben. Schreibe diese Datei jetzt NICHT mehr mit write_file, sondern als Datei-Block direkt in deiner Textantwort: <<<FILE: pfad>>> Zeile fuer Zeile der komplette Inhalt <<<END FILE>>>. Er wird automatisch gespeichert, auch wenn er sehr lang ist. Keine Erklaerung davor.' };
   try {
     const raw = (window.__ciPartial || {})[block.id] || '';
     if (!cut || !/^(write_file|append_file)$/.test(block.name) || !raw) return generic;
@@ -455,6 +455,43 @@
     const n = next.split('\n').length - 1, lastLine = keep.replace(/\s+$/, '').split('\n').pop().slice(0, 100);
     return { ok: false, error: 'Deine Ausgabe wurde vom Limit abgeschnitten. Ich habe bis hierhin gespeichert: ' + p + ' (' + n + ' Zeilen). Letzte gespeicherte Zeile: "' + lastLine + '". Fahre jetzt mit append_file fort und schreibe direkt die naechste Zeile danach, ohne etwas zu wiederholen. Teile den Rest in Abschnitte von hoechstens ca. 100 Zeilen.' };
   } catch (e) { return generic; }
+}
+  function ciCollapseFiles(text, forModel) {
+  if (typeof text !== 'string' || text.indexOf('<<<FILE') < 0) return text;
+  var out = text.replace(/<<<FILE:\s*([^\n>]+?)\s*>>>[ \t]*\r?\n([\s\S]*?)(?:\r?\n)?<<<END FILE>>>/g, function (m, p, c) {
+    var n = c.split('\n').length;
+    return forModel ? '\n[Datei-Block gespeichert: ' + p.trim() + ', ' + n + ' Zeilen]\n' : '\n📝 Datei: ' + p.trim() + ' (' + n + ' Zeilen)\n';
+  });
+  var open = out.lastIndexOf('<<<FILE:');
+  if (open >= 0) {
+    var m2 = /<<<FILE:\s*([^\n>]+?)\s*>>>[ \t]*\r?\n?([\s\S]*)$/.exec(out.slice(open));
+    if (m2) out = out.slice(0, open) + (forModel ? '\n[Datei-Block ' + m2[1].trim() + ' (unvollstaendig)]\n' : '\n📝 schreibt ' + m2[1].trim() + ' ... (' + (m2[2] ? m2[2].split('\n').length : 0) + ' Zeilen bisher)\n');
+  }
+  return out;
+}
+  async function ciExtractFiles(turn) {
+  var re = /<<<FILE:\s*([^\n>]+?)\s*>>>[ \t]*\r?\n([\s\S]*?)(?:\r?\n)?<<<END FILE>>>/g;
+  re.lastIndex = turn.done;
+  var m, written = [];
+  while ((m = re.exec(turn.text)) !== null) {
+    turn.done = re.lastIndex;
+    var p = normalizePath(m[1].trim());
+    if (!p) continue;
+    var c = m[2].replace(/^```[\w-]*\r?\n/, '').replace(/\r?\n```\s*$/, '');
+    var ex = fsFiles.get(p);
+    if (ex && !ex.isImage && ex.content && ex.content.length > 0 && !turn.wrote.has(p)) {
+      var ok = await confirmAction('Claude möchte die bestehende Datei "' + p + '" überschreiben (' + ex.content.length + ' → ' + c.length + ' Zeichen). Fortfahren?');
+      if (!ok) { written.push({ p: p, ok: false }); continue; }
+    }
+    writeFile(p, c); turn.wrote.add(p);
+    try { refreshTab(p, c); } catch (e) {}
+    written.push({ p: p, ok: true, lines: c.split('\n').length });
+  }
+  if (written.some(function (w) { return w.ok; })) {
+    try { renderFsTree(); persistFs(); } catch (e) {}
+    written.filter(function (w) { return w.ok; }).forEach(function (w) { try { openFileTab(w.p, { activate: splitMode }); } catch (e) {} });
+  }
+  return written;
 }
   async function executeFsTool(name, input) {
     try {
@@ -869,7 +906,7 @@
     { name: 'delete_path', description: 'Löscht eine Datei oder (rekursiv) einen Ordner im Workspace.', input_schema: { type: 'object', properties: { path: { type: 'string' } }, required: ['path'] } },
     { name: 'create_folder', description: 'Legt einen leeren Ordner im Workspace an.', input_schema: { type: 'object', properties: { path: { type: 'string' } }, required: ['path'] } }
   ];
-  const FS_SYSTEM_PROMPT = "Du bist Claude mit Zugriff auf einen virtuellen Browser-Workspace (kein echtes Dateisystem, kein Bash, kein Server-Zugriff -- rein clientseitig in dieser Browser-Session). Werkzeuge: list_files, read_file, search_in_file, edit_file, append_file, write_file, delete_path, create_folder. Pfade sind relativ (z.B. \"src/app.js\").\nWICHTIG: Der KI-Zugang hat ein knappes Eingabelimit. Arbeite deshalb in kleinen Schritten:\n1. Rufe zuerst list_files auf (zeigt Groesse und Zeilenzahl).\n2. Lies Dateien mit mehr als ca. 200 Zeilen NICHT komplett. Finde die Stelle mit search_in_file und lies dann gezielt mit read_file (start_line/end_line, hoechstens ca. 150 Zeilen pro Aufruf). Das Ergebnis nennt, ab welcher Zeile es weitergeht.\n3. Aendere bestehende Dateien mit edit_file (kleiner, eindeutiger old_string mit etwas Kontext) statt sie komplett neu zu schreiben.\n4. Lege neue grosse Dateien in Etappen an: write_file mit dem ersten Teil (hoechstens ca. 150 Zeilen), danach append_file mit den weiteren Teilen.\nFuer Design-Umbauten (Farben, Look, Theme): Lies nur den <head>/Style-Bereich (search_in_file nach \"<style\" oder \"</style>\") und fuege mit EINEM edit_file einen neuen <style>-Block direkt vor </head> ein, der die bestehenden Regeln ueberschreibt, oder nutze edits mit mehreren Aenderungen in einem Aufruf. Vermeide viele einzelne Such- und Edit-Schritte. Pruefe am Ende nicht erneut, sondern melde kurz, was geaendert wurde.\nPDF-Dateien werden beim Hochladen automatisch in Text umgewandelt und als name.pdf.txt abgelegt: lies immer diese .txt-Datei, nie die .pdf selbst. Die Textdatei ist die Rohtext-Extraktion (Seitenmarken: === Seite N ===); bei Scans steht dort ein Hinweis ohne Inhalt.\nZeilennummern am Anfang gelesener Zeilen (z.B. \"  12|\") gehoeren nicht zum Dateiinhalt: nimm sie nie in old_string oder new_string auf. Antworte knapp -- die eigentliche Arbeit passiert ueber die Tools, nicht ueber lange Erklaerungen.";
+  const FS_SYSTEM_PROMPT = "Du bist Claude mit Zugriff auf einen virtuellen Browser-Workspace (kein echtes Dateisystem, kein Bash, kein Server-Zugriff -- rein clientseitig in dieser Browser-Session). Werkzeuge: list_files, read_file, search_in_file, edit_file, append_file, write_file, delete_path, create_folder. Pfade sind relativ (z.B. \"src/app.js\").\nWICHTIG: Der KI-Zugang hat ein knappes Eingabelimit. Arbeite deshalb in kleinen Schritten:\n1. Rufe zuerst list_files auf (zeigt Groesse und Zeilenzahl).\n2. Lies Dateien mit mehr als ca. 200 Zeilen NICHT komplett. Finde die Stelle mit search_in_file und lies dann gezielt mit read_file (start_line/end_line, hoechstens ca. 150 Zeilen pro Aufruf). Das Ergebnis nennt, ab welcher Zeile es weitergeht.\n3. Aendere bestehende Dateien mit edit_file (kleiner, eindeutiger old_string mit etwas Kontext) statt sie komplett neu zu schreiben.\n4. Lege neue grosse Dateien als Datei-Block an (siehe unten).\nFuer Design-Umbauten (Farben, Look, Theme): Lies nur den <head>/Style-Bereich (search_in_file nach \"<style\" oder \"</style>\") und fuege mit EINEM edit_file einen neuen <style>-Block direkt vor </head> ein, der die bestehenden Regeln ueberschreibt, oder nutze edits mit mehreren Aenderungen in einem Aufruf. Vermeide viele einzelne Such- und Edit-Schritte. Pruefe am Ende nicht erneut, sondern melde kurz, was geaendert wurde.\nPDF-Dateien werden beim Hochladen automatisch in Text umgewandelt und als name.pdf.txt abgelegt: lies immer diese .txt-Datei, nie die .pdf selbst. Die Textdatei ist die Rohtext-Extraktion (Seitenmarken: === Seite N ===); bei Scans steht dort ein Hinweis ohne Inhalt.\nGROSSE DATEIEN (mehr als ca. 60 Zeilen oder 3000 Zeichen, z.B. komplette Webseiten): Nutze dafuer NICHT write_file, sondern schreibe die Datei als Block direkt in deine Textantwort:\n<<<FILE: pfad/datei.html>>>\nkompletter Inhalt\n<<<END FILE>>>\nDer Inhalt wird automatisch gespeichert, auch bei sehr langen Dateien. Den Inhalt nicht in Backticks setzen. Mehrere Dateien = mehrere Bloecke nacheinander. Wird deine Antwort abgeschnitten, schreibe nach der Aufforderung direkt an der Stelle weiter, ohne den Block neu zu eroeffnen. Kleine Dateien (bis ca. 60 Zeilen) und Aenderungen weiterhin mit write_file bzw. edit_file. Platzhalter wie [Datei-Block gespeichert: ...] in frueheren Nachrichten sind nur Kuerzungen: schreibe sie nie selbst.\nLoesche niemals Dateien, die der Nutzer nicht ausdruecklich loeschen soll. Fuer eine verbesserte Version lege eine neue Datei an (z.B. name-v2.html) und lasse das Original unangetastet.\nZeilennummern am Anfang gelesener Zeilen (z.B. \"  12|\") gehoeren nicht zum Dateiinhalt: nimm sie nie in old_string oder new_string auf. Antworte knapp -- die eigentliche Arbeit passiert ueber die Tools, nicht ueber lange Erklaerungen.";
 
   // Streaming statt Non-Stream fuer den Tool-Loop: bei Non-Stream wartet fetch()
   // serverseitig (server/lib/http.js: fetchWithTimeout) auf die KOMPLETTE Antwort, bevor
@@ -1131,7 +1168,7 @@
   let snippetCounter = 0;
 
   function renderMarkdown(container, text) {
-    container.innerHTML = marked.parse(text);
+    container.innerHTML = marked.parse(ciCollapseFiles(text));
     container.querySelectorAll('pre > code').forEach((codeEl) => {
       const pre = codeEl.parentElement;
       const langMatch = /language-(\w+)/.exec(codeEl.className || '');
@@ -1171,6 +1208,7 @@
   }
 
   function toolStepText(name, input) {
+    if (/^(write_file|append_file)$/.test(name) && !(input && input.path)) return name + ' (Ausgabe abgeschnitten, wird als Datei-Block neu angefordert)';
     if (name === 'write_file') return 'write_file(' + input.path + ', ' + (input.content || '').length + ' Zeichen)';
     if (name === 'append_file') return 'append_file(' + input.path + ', +' + (input.content || '').length + ' Zeichen)';
     if (name === 'edit_file' && Array.isArray(input.edits)) return 'edit_file(' + input.path + ', ' + input.edits.length + ' Aenderungen)';
@@ -1186,6 +1224,7 @@
   const SEND_BUDGET = 44000;
   function isPlainUser(m) { return m.role === 'user' && (typeof m.content === 'string' || !m.content.some((b) => b.type === 'tool_result')); }
   function trimBlock(b, recent) {
+    if (b.type === 'text' && !recent && typeof b.text === 'string' && b.text.indexOf('<<<FILE') >= 0) return { ...b, text: ciCollapseFiles(b.text, true) };
     if (b.type === 'tool_result') { const t = typeof b.content === 'string' ? b.content : JSON.stringify(b.content); const cap = recent ? 14000 : 600; return t.length > cap ? { ...b, content: t.slice(0, cap) + '\n[... gekuerzt, ' + (t.length - cap) + ' Zeichen weggelassen]' } : b; }
     if (b.type === 'tool_use' && b.input) {
       const cap = recent ? 24000 : 300, inp = { ...b.input }; let changed = false;
@@ -1242,7 +1281,7 @@
     currentBubble = addMessage('assistant', '');
     currentBubble.innerHTML = '<span class="n-spinner"></span>';
     let firstChunk = true;
-    let iterations = 0; let autoCont = 0;
+    let iterations = 0; let autoCont = 0; const turnFB = { text: "", done: 0, wrote: new Set(), cut: false };
     let treeChanged = false;
     try {
       while (iterations++ < 30) {
@@ -1254,7 +1293,7 @@
             onTextDelta(index, fullText) {
               if (firstChunk) { currentBubble.innerHTML = ''; firstChunk = false; }
               if (!blockEls[index]) { blockEls[index] = document.createElement('div'); blockEls[index].className = 'msg-md'; currentBubble.appendChild(blockEls[index]); }
-              blockEls[index].textContent = fullText; // waehrend des Streamens nur Rohtext -- volles Markdown/Prism erst am Ende (siehe unten), sonst flackert unvollstaendiges Markdown
+              blockEls[index].textContent = ciCollapseFiles(fullText); // waehrend des Streamens nur Rohtext -- volles Markdown/Prism erst am Ende (siehe unten), sonst flackert unvollstaendiges Markdown
               msgList.scrollTop = msgList.scrollHeight;
             },
             onToolStep(index, block, phase) {
@@ -1333,9 +1372,13 @@
         });
 
         history.push({ role: 'assistant', content: data.historyContent });
+        { const tx = data.historyContent.filter((b) => b.type === 'text').map((b) => b.text).join('');
+          turnFB.text += (turnFB.cut ? '' : '\n') + tx; turnFB.cut = data.stop_reason === 'max_tokens';
+          const fw = await ciExtractFiles(turnFB);
+          fw.forEach((w) => { const d = document.createElement('div'); d.className = 'tool-step'; d.textContent = w.ok ? '💾 Gespeichert: ' + w.p + ' (' + w.lines + ' Zeilen)' : '⚠️ Nicht überschrieben: ' + w.p; currentBubble.appendChild(d); treeChanged = true; }); }
         if (data.stop_reason === 'max_tokens' && !data.historyContent.some((b) => b.type === 'tool_use') && data.historyContent.length) {
           if (autoCont++ < 6) {
-            history.push({ role: 'user', content: '[Automatisch] Dein Text wurde vom Ausgabelimit abgeschnitten. Mache genau an der abgebrochenen Stelle weiter, ohne etwas zu wiederholen.' });
+            history.push({ role: 'user', content: '[Automatisch] Dein Text wurde vom Ausgabelimit abgeschnitten. Mache genau an der abgebrochenen Stelle weiter, ohne etwas zu wiederholen. Warst du mitten in einem Datei-Block, schreibe den Inhalt direkt weiter (den Block nicht neu eroeffnen) und schliesse ihn mit <<<END FILE>>>.' });
             const nd = document.createElement('div'); nd.className = 'tool-step'; nd.textContent = '⏩ Antwort wird automatisch fortgesetzt (' + autoCont + '/6) ...'; currentBubble.appendChild(nd);
             continue;
           }
