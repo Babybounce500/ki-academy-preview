@@ -87,10 +87,30 @@ footer{margin-top:20px;padding:44px 0 36px;border-top:1px solid var(--line);back
 footer .cols{display:grid;gap:28px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
 footer h4{margin:0 0 10px;color:#fff;font-size:1rem}footer p{margin:0 0 8px}footer a{color:#93c5fd}
 .note{margin-top:22px;padding:10px 14px;border:1px dashed var(--gold);border-radius:10px;color:var(--gold);font-size:.82rem}
+.gate{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:16px;background:rgba(2,4,12,.92);backdrop-filter:blur(8px)}
+.gate[hidden]{display:none}.gate-box{position:relative;width:min(440px,100%);padding:30px 26px 24px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(160deg,#111a3d,#0a1028);box-shadow:0 30px 80px rgba(0,0,0,.6);text-align:center}
+.gate-box::before{content:"";position:absolute;left:0;right:0;top:0;height:5px;border-radius:20px 20px 0 0;background:linear-gradient(90deg,var(--blue),var(--indigo))}
+.gate-box h2{margin:6px 0 8px;font-size:1.5rem}.gate-box p{margin:0 0 14px;color:var(--muted);font-size:.92rem}
+.gate-box input{width:100%;min-height:48px;margin-bottom:12px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.07);color:#fff;font:inherit}
+.gate-box input:focus{border-color:var(--blue)}.gate-box .btn{width:100%;justify-content:center}
+.gate-err{margin:12px 0 0!important;color:#fca5a5!important;font-weight:600}.gate-buy{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+.sr{position:absolute;left:-9999px}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
+<div class="gate" id="loginModal" role="dialog" aria-modal="true" aria-labelledby="gateTitle">
+  <form class="gate-box" id="loginForm" autocomplete="off">
+    <h2 id="gateTitle">Premium-Zugang 🔒</h2>
+    <p>Gib deinen persönlichen Zugangs-Token ein, um das Webinar freizuschalten. Den Token erhältst du nach dem Kauf.</p>
+    <label class="sr" for="tokenInput">Zugangs-Token</label>
+    <input type="password" id="tokenInput" placeholder="Dein Token" autocomplete="off" autocapitalize="off" spellcheck="false">
+    <button class="btn primary" id="loginBtn" type="submit">Zugang freischalten →</button>
+    <p class="gate-err" id="loginError" role="alert" hidden>Ungültiger Token. Bitte versuche es erneut.</p>
+    <div class="gate-buy"><p>Noch kein Zugang?</p><a class="btn" href="../product/">Zum Angebot</a></div>
+  </form>
+</div>
+<div id="mainContent" style="display:none">
 <a class="skip" href="#main">Zum Inhalt springen</a>
 <header class="top"><div class="wrap in">
   <a class="brand" href="#start">Genitus Inc. Webinar</a>
@@ -158,6 +178,7 @@ footer h4{margin:0 0 10px;color:#fff;font-size:1rem}footer p{margin:0 0 8px}foot
   </div>
   <p class="note">Impressum und Datenschutz sind Platzhalter und müssen vor der Veröffentlichung ergänzt werden.</p>
 </div></footer>
+</div>
 <script>
 (function(){
   var VID={de:{type:'iframe',src:"https://share.synthesia.io/embeds/videos/be426683-7eda-4cb9-b4e8-2b603b59d8bd",ratio:'16/9',portrait:false,title:'Webinar-Video (Deutsch)'},en:{type:'video',src:"https://domusaurea.tech/webinarenglishvideo.mp4",ratio:'9/16',portrait:true,title:'Webinar video (English)'}};
@@ -180,6 +201,13 @@ footer h4{margin:0 0 10px;color:#fff;font-size:1rem}footer p{margin:0 0 8px}foot
   }
   document.querySelectorAll('.vtabs button').forEach(function(b){b.addEventListener('click',function(){show(b.dataset.v)})});
   show(cur);
+  var TOKEN="m91LHhnSieiGko-DqlMHLiUBILZzbsG1_YjbHvJ9ukI";
+  var modal=document.getElementById('loginModal'),mainEl=document.getElementById('mainContent'),tin=document.getElementById('tokenInput'),terr=document.getElementById('loginError');
+  function unlock(){modal.hidden=true;mainEl.style.display='block'}
+  var granted=false;try{granted=localStorage.getItem('access_granted')==='true'}catch(e){}
+  if(granted)unlock();else{try{tin.focus()}catch(e){}}
+  document.getElementById('loginForm').addEventListener('submit',function(e){e.preventDefault();
+    if(tin.value.trim()===TOKEN){try{localStorage.setItem('access_granted','true')}catch(x){}terr.hidden=true;unlock()}else{terr.hidden=false;tin.select()}});
   var burger=document.getElementById('burger'),nav=document.getElementById('nav');
   burger.addEventListener('click',function(){var o=nav.classList.toggle('open');burger.setAttribute('aria-expanded',String(o))});
   nav.addEventListener('click',function(e){if(e.target.closest('a')){nav.classList.remove('open');burger.setAttribute('aria-expanded','false')}});
