@@ -910,8 +910,28 @@
     return out;
   }
 
+  function ciFetch(url, opts) {
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  const toast = (m) => { try { if (window.AHS) AHS.toast(m); } catch (e) {} };
+  return (async () => {
+    let lastErr;
+    for (let i = 0; i < 4; i++) {
+      try {
+        const r = await fetch(url, opts);
+        if ((r.status === 429 || r.status === 502 || r.status === 503 || r.status === 504) && i < 3) { toast('KI-Server ausgelastet, neuer Versuch ' + (i + 2) + '/4 ...'); await sleep(1500 * (i + 1)); continue; }
+        return r;
+      } catch (e) {
+        if (e && e.name === 'AbortError') throw e;
+        lastErr = e;
+        if (i < 3) { toast('Verbindung zum KI-Server unterbrochen, neuer Versuch ' + (i + 2) + '/4 ...'); await sleep(1500 * (i + 1)); }
+      }
+    }
+    const err = new Error('Keine Verbindung zum KI-Server (Netzwerk- oder CORS-Fehler). Der Server startet vermutlich gerade oder ist kurz nicht erreichbar. Warte etwa eine Minute und sende erneut, die Seite musst du nicht neu laden.');
+    err.code = 'NETWORK'; err.cause = lastErr; throw err;
+  })();
+}
   async function streamClaudeTools(body, { onTextDelta, onToolStep, onToolInputDelta, onThinkingStep } = {}) {
-    const res = await fetch(BASE + '/claude/messages', {
+    const res = await ciFetch(BASE + '/claude/messages', {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...body, stream: true })
     });
     if (!res.ok) {

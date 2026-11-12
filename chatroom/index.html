@@ -393,6 +393,23 @@
     return 'Die Anfrage ist fehlgeschlagen' + (status ? ' (Code ' + status + ')' : '') + (msg ? ': ' + msg : '') + '.';
   }
 
+  async function fetchRetry(url, opts) {
+    var last;
+    for (var i = 0; i < 4; i++) {
+      try {
+        var r = await fetch(url, opts);
+        if ((r.status === 429 || r.status === 502 || r.status === 503 || r.status === 504) && i < 3) { await new Promise(function (ok) { setTimeout(ok, 1500 * (i + 1)); }); continue; }
+        return r;
+      } catch (e) {
+        if (e && e.name === "AbortError") throw e;
+        last = e;
+        if (i < 3) await new Promise(function (ok) { setTimeout(ok, 1500 * (i + 1)); });
+      }
+    }
+    var err = new Error("Keine Verbindung zum Mentor-Server (Netzwerk- oder CORS-Fehler). Er startet vermutlich gerade. Warte etwa eine Minute und sende erneut, ohne die Seite neu zu laden.");
+    err.known = true; throw err;
+  }
+
   async function streamAnswer(contents, onText, signal) {
     var model = CONFIG.models[state.model] || CONFIG.models.fast;
     var body = JSON.stringify({
@@ -400,7 +417,7 @@
       contents: contents,
       generationConfig: { maxOutputTokens: CONFIG.maxOutputTokens, temperature: 0.5 }
     });
-    var res = await fetch(CONFIG.endpoint + '/models/' + model + '/streamGenerateContent?alt=sse', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body, signal: signal });
+    var res = await fetchRetry(CONFIG.endpoint + '/models/' + model + '/streamGenerateContent?alt=sse', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body, signal: signal });
     if (!res.ok) { var e = new Error(errorText(res.status, await res.text())); e.known = true; throw e; }
     var reader = res.body.getReader(), dec = new TextDecoder(), buf = '', got = false;
     function handle(ev) {
