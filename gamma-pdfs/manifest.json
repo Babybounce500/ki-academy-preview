@@ -16,7 +16,8 @@
     ],
     "description": "Beschreibt, wie ein KI-Chatbot generierte Antworten im Local Storage speichert und wieder abruft.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/chatbots-bauen/ai-chatbot-local-storage.jpg"
   },
   {
     "file": "chatbots-bauen/building-ai-chatbots-openai-bootstrap5.pdf",
@@ -36,7 +37,8 @@
     ],
     "description": "Zeigt den Aufbau einer Chatbot-Oberfläche mit Bootstrap 5 und die Kernfunktionen für OpenAI-Anfragen, Datei-Upload und Chatverlauf.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/chatbots-bauen/building-ai-chatbots-openai-bootstrap5.jpg"
   },
   {
     "file": "chatbots-bauen/enhancing-chatbot-interactions-openai-bootstrap5.pdf",
@@ -56,7 +58,8 @@
     ],
     "description": "Erklärt ein HTML-Skript für eine Chatbot-Oberfläche mit Bootstrap-5-Struktur, Nutzerinteraktion und Anzeige des Chatverlaufs.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/chatbots-bauen/enhancing-chatbot-interactions-openai-bootstrap5.jpg"
   },
   {
     "file": "chatbots-bauen/intelligent-web-search-chatbot.pdf",
@@ -75,7 +78,8 @@
     ],
     "description": "Stellt einen Chatbot mit Websuche vor: Chatverlauf, Eingabe, schnelle Suche und die Funktionsschritte von der Nutzereingabe bis zur Antwort.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/chatbots-bauen/intelligent-web-search-chatbot.jpg"
   },
   {
     "file": "chatbots-bauen/ai-chatbot-local-storage-productivity.pdf",
@@ -94,7 +98,8 @@
     ],
     "description": "Zeigt Vorteile der Local-Storage-Integration für Chatbots, etwa gespeicherte Antworten und weniger redundante Interaktionen.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/chatbots-bauen/ai-chatbot-local-storage-productivity.jpg"
   },
   {
     "file": "chatbots-bauen/voice-bot-interface-ki.pdf",
@@ -114,7 +119,8 @@
     ],
     "description": "Beschreibt eine Sprach-Chat-Oberfläche mit Befehlsverarbeitung, Spracherkennung, Text-zu-Audio und KI-Chat-Completions.",
     "standHinweis": "Enthält Tool-Namen/Versionen vom Stand 2023/24 (z. B. ChatGPT 1.0, GPT-3.5, DALL·E, Bard), vor Nutzung prüfen.",
-    "review": null
+    "review": null,
+    "thumb": "thumbs/chatbots-bauen/voice-bot-interface-ki.jpg"
   },
   {
     "file": "chatgpt-ki-grundlagen/chatgpt-und-openai-guide.pdf",
@@ -133,7 +139,8 @@
     ],
     "description": "Webinar-Guide von den ChatGPT-Grundlagen bis zu Entwicklungsmöglichkeiten mit OpenAI.",
     "standHinweis": "Enthält Tool-Namen/Versionen vom Stand 2023/24 (z. B. ChatGPT 1.0, GPT-3.5, DALL·E, Bard), vor Nutzung prüfen.",
-    "review": null
+    "review": null,
+    "thumb": "thumbs/chatgpt-ki-grundlagen/chatgpt-und-openai-guide.jpg"
   },
   {
     "file": "chatgpt-ki-grundlagen/einstieg-ki-welt-chatgpt-power-user.pdf",
@@ -152,7 +159,8 @@
     ],
     "description": "Einsteigerkurs: Was KI ist, KI im Alltag und wie man ChatGPT zum Power-User-Werkzeug nutzt.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/chatgpt-ki-grundlagen/einstieg-ki-welt-chatgpt-power-user.jpg"
   },
   {
     "file": "chatgpt-ki-grundlagen/einfuehrung-chatgpt.pdf",
@@ -171,7 +179,8 @@
     ],
     "description": "Webinar zu Grundlagen und Anwendungsmöglichkeiten von ChatGPT im Alltag.",
     "standHinweis": "Enthält Tool-Namen/Versionen vom Stand 2023/24 (z. B. ChatGPT 1.0, GPT-3.5, DALL·E, Bard), vor Nutzung prüfen.",
-    "review": null
+    "review": null,
+    "thumb": "thumbs/chatgpt-ki-grundlagen/einfuehrung-chatgpt.jpg"
   },
   {
     "file": "chatgpt-ki-grundlagen/einfuehrung-chatgpt-basic-einstieg.pdf",
@@ -190,7 +199,8 @@
     ],
     "description": "Webinar für absolute Einsteiger: Grundlagen der KI und der effektive Einsatz von ChatGPT.",
     "standHinweis": "Enthält Tool-Namen/Versionen vom Stand 2023/24 (z. B. ChatGPT 1.0, GPT-3.5, DALL·E, Bard), vor Nutzung prüfen.",
-    "review": null
+    "review": null,
+    "thumb": "thumbs/chatgpt-ki-grundlagen/einfuehrung-chatgpt-basic-einstieg.jpg"
   },
   {
     "file": "chatgpt-ki-grundlagen/einfuehrung-chatgpt-umfassender-ueberblick.pdf",
@@ -209,7 +219,8 @@
     ],
     "description": "Webinar, das zeigt, wie ChatGPT komplexe Aufgaben vereinfacht und Arbeitsabläufe unterstützt.",
     "standHinweis": "Enthält Tool-Namen/Versionen vom Stand 2023/24 (z. B. ChatGPT 1.0, GPT-3.5, DALL·E, Bard), vor Nutzung prüfen.",
-    "review": null
+    "review": null,
+    "thumb": "thumbs/chatgpt-ki-grundlagen/einfuehrung-chatgpt-umfassender-ueberblick.jpg"
   },
   {
     "file": "chatgpt-ki-grundlagen/entdecke-chatgpt-webinar-guide.pdf",
@@ -228,7 +239,8 @@
     ],
     "description": "Scroll-Guide zum Webinar Einführung in ChatGPT mit Einstieg in die Welt der KI.",
     "standHinweis": "Enthält Tool-Namen/Versionen vom Stand 2023/24 (z. B. ChatGPT 1.0, GPT-3.5, DALL·E, Bard), vor Nutzung prüfen.",
-    "review": null
+    "review": null,
+    "thumb": "thumbs/chatgpt-ki-grundlagen/entdecke-chatgpt-webinar-guide.jpg"
   },
   {
     "file": "chatgpt-ki-grundlagen/kurs-2-fortgeschrittene-gpt-nutzer.pdf",
@@ -247,7 +259,8 @@
     ],
     "description": "Aufbaukurs zu Optimierung, Workflow und Best Practices für GPT-Nutzer.",
     "standHinweis": "Enthält Tool-Namen/Versionen vom Stand 2023/24 (z. B. ChatGPT 1.0, GPT-3.5, DALL·E, Bard), vor Nutzung prüfen.",
-    "review": null
+    "review": null,
+    "thumb": "thumbs/chatgpt-ki-grundlagen/kurs-2-fortgeschrittene-gpt-nutzer.jpg"
   },
   {
     "file": "eu-ai-act/eu-ai-act-rechtsrahmen.pdf",
@@ -266,7 +279,8 @@
     ],
     "description": "Erklärt den EU AI Act als einheitlichen, risikobasierten Rechtsrahmen für Künstliche Intelligenz.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/eu-ai-act/eu-ai-act-rechtsrahmen.jpg"
   },
   {
     "file": "git-vscode-tools/copilot-vscode-10-hours.pdf",
@@ -286,7 +300,8 @@
     ],
     "description": "Kursstruktur eines Videokurses zu KI-gestützter Entwicklung mit 10 Modulen, Videos, Hand-outs und Download-Repos.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/git-vscode-tools/copilot-vscode-10-hours.jpg"
   },
   {
     "file": "git-vscode-tools/git-github-masterclass.pdf",
@@ -306,7 +321,8 @@
     ],
     "description": "Kurs mit 10 Modulen zu Versionskontrolle, Repositories, Commits, GitHub-Automatisierung, Copilot und VS Code.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/git-vscode-tools/git-github-masterclass.jpg"
   },
   {
     "file": "git-vscode-tools/vscode-copilot-anfaenger-bis-profi.pdf",
@@ -326,7 +342,8 @@
     ],
     "description": "Lernpfad in 10 Modulen vom Git-Einsteiger zum VS-Code- und Copilot-Nutzer.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/git-vscode-tools/vscode-copilot-anfaenger-bis-profi.jpg"
   },
   {
     "file": "ki-coding/ai-schreibt-deine-erste-webseite-coding-potential.pdf",
@@ -345,7 +362,8 @@
     ],
     "description": "Kurs, der zeigt, wie man mit KI die erste Webseite ohne Coding-Kenntnisse erstellt; startet mit HTML-Grundstruktur und wichtigen Tags.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/ki-coding/ai-schreibt-deine-erste-webseite-coding-potential.jpg"
   },
   {
     "file": "ki-coding/ai-schreibt-deine-erste-webseite-keine-zeile.pdf",
@@ -364,7 +382,8 @@
     ],
     "description": "Guide zum Erstellen der ersten Webseite mit KI, ohne selbst Code zu tippen: HTML, GitHub Pages und CSS mit KI-Unterstützung.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/ki-coding/ai-schreibt-deine-erste-webseite-keine-zeile.jpg"
   },
   {
     "file": "ki-coding/become-web-developer-with-ai.pdf",
@@ -384,7 +403,8 @@
     ],
     "description": "Zeigt, wie man mit KI als Coding-Coach Webseiten baut und veröffentlicht, auch ohne Programmiererfahrung.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/ki-coding/become-web-developer-with-ai.jpg"
   },
   {
     "file": "ki-coding/build-interactive-websites-with-ai.pdf",
@@ -404,7 +424,8 @@
     ],
     "description": "Zeigt KI-gestützte interaktive Webseiten mit responsivem Layout (Flexbox, Grid), Chatbot-Interface und Formularen.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/ki-coding/build-interactive-websites-with-ai.jpg"
   },
   {
     "file": "ki-coding/final-noob-ai-webdev-kurs.pdf",
@@ -424,7 +445,8 @@
     ],
     "description": "Kurs, in dem man per Copy & Paste mit KI die erste Webseite erstellt; beginnt mit HTML-Grundgerüst und Tags.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/ki-coding/final-noob-ai-webdev-kurs.jpg"
   },
   {
     "file": "ki-coding/finaler-noob-ai-webdev-kurs.pdf",
@@ -444,7 +466,8 @@
     ],
     "description": "Ausführliche Fassung des Noob-Kurses: HTML-Grundlagen und Webseiten per Copy & Paste mit KI erstellen.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/ki-coding/finaler-noob-ai-webdev-kurs.jpg"
   },
   {
     "file": "ki-coding/html-ai-integration.pdf",
@@ -463,7 +486,8 @@
     ],
     "description": "Webinar zu HTML-Grundlagen und dazu, wie ChatGPT den HTML-Coding-Workflow beschleunigt.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/ki-coding/html-ai-integration.jpg"
   },
   {
     "file": "ki-coding/ki-gestuetzte-webentwicklung-noob-kurs.pdf",
@@ -483,7 +507,8 @@
     ],
     "description": "Einsteigerkurs in Modulen: Was Webentwicklung und KI sind und wie man damit ohne Vorkenntnisse Webseiten erstellt.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/ki-coding/ki-gestuetzte-webentwicklung-noob-kurs.jpg"
   },
   {
     "file": "ki-coding/ki-gestuetzte-webentwicklung-fuer-anfaenger.pdf",
@@ -502,7 +527,8 @@
     ],
     "description": "60-Minuten-Crashkurs: HTML-Grundgerüst mit KI-Tools erstellen, Schritt für Schritt für Anfänger.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/ki-coding/ki-gestuetzte-webentwicklung-fuer-anfaenger.jpg"
   },
   {
     "file": "ki-coding/mit-ki-zum-web-entwickler-werden.pdf",
@@ -521,7 +547,8 @@
     ],
     "description": "Kurs, der zeigt, wie man mit KI als persönlichem Coding-Coach die erste Webseite ohne Vorkenntnisse erstellt.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/ki-coding/mit-ki-zum-web-entwickler-werden.jpg"
   },
   {
     "file": "ki-coding/nur-ki-coding-kit.pdf",
@@ -540,7 +567,8 @@
     ],
     "description": "Zeigt, wie KI alle Schritte der Webentwicklung von der Code-Generierung bis zur Bereitstellung unterstützt.",
     "standHinweis": "Enthält Tool-Namen/Versionen vom Stand 2023/24 (z. B. ChatGPT 1.0, GPT-3.5, DALL·E, Bard), vor Nutzung prüfen.",
-    "review": null
+    "review": null,
+    "thumb": "thumbs/ki-coding/nur-ki-coding-kit.jpg"
   },
   {
     "file": "ki-coding/transform-ideas-into-websites-with-ai.pdf",
@@ -559,7 +587,8 @@
     ],
     "description": "Erklärt, wie KI als persönlicher Coding-Assistent beim Erstellen von Webseiten ohne Programmierkenntnisse hilft.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/ki-coding/transform-ideas-into-websites-with-ai.jpg"
   },
   {
     "file": "ki-coding/foundations-ai-web-development-javascript.pdf",
@@ -578,7 +607,8 @@
     ],
     "description": "Webinar zum Generieren von JavaScript-Code mit KI-Unterstützung.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/ki-coding/foundations-ai-web-development-javascript.jpg"
   },
   {
     "file": "ki-im-buero/calc-und-chatgpt-datenmanagement.pdf",
@@ -598,7 +628,8 @@
     ],
     "description": "Kurs, der Excel/Calc-Grundlagen mit ChatGPT für praxisnahes Datenmanagement kombiniert.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/ki-im-buero/calc-und-chatgpt-datenmanagement.jpg"
   },
   {
     "file": "ki-im-buero/excel-mit-chatgpt-triple-boost.pdf",
@@ -617,7 +648,8 @@
     ],
     "description": "Programm, das praxisnahe Excel-Übungen mit ChatGPT-Unterstützung kombiniert.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/ki-im-buero/excel-mit-chatgpt-triple-boost.jpg"
   },
   {
     "file": "ki-im-buero/excel-webinar-10-power-module.pdf",
@@ -636,7 +668,8 @@
     ],
     "description": "Webinar in 10 Modulen von Excel-Grundlagen bis zur professionellen Anwendung.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/ki-im-buero/excel-webinar-10-power-module.jpg"
   },
   {
     "file": "ki-im-buero/webinar-6-ki-im-buero.pdf",
@@ -656,7 +689,8 @@
     ],
     "description": "Webinar zu KI-Anwendungen im Büro: E-Mail, Support, Legal, Übersetzung und Dokumentenerstellung.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/ki-im-buero/webinar-6-ki-im-buero.jpg"
   },
   {
     "file": "llm-anbieter/mistral-ai-modelle-architektur-analyse.pdf",
@@ -676,7 +710,8 @@
     ],
     "description": "Analyse von Mistral AI, seinen Modellen und APIs im Vergleich zu OpenAI und zur Kombination für Entwickler.",
     "standHinweis": "Enthält Tool-Namen/Versionen vom Stand 2023/24 (z. B. ChatGPT 1.0, GPT-3.5, DALL·E, Bard), vor Nutzung prüfen.",
-    "review": null
+    "review": null,
+    "thumb": "thumbs/llm-anbieter/mistral-ai-modelle-architektur-analyse.jpg"
   },
   {
     "file": "llm-anbieter/mistral-ai-revolutionaere-modelle-analyse.pdf",
@@ -696,7 +731,8 @@
     ],
     "description": "Detaillierte Analyse von Architektur, API-Integration, OpenAI-Vergleich und Monetarisierungsmöglichkeiten von Mistral AI.",
     "standHinweis": "Enthält Tool-Namen/Versionen vom Stand 2023/24 (z. B. ChatGPT 1.0, GPT-3.5, DALL·E, Bard), vor Nutzung prüfen.",
-    "review": null
+    "review": null,
+    "thumb": "thumbs/llm-anbieter/mistral-ai-revolutionaere-modelle-analyse.jpg"
   },
   {
     "file": "llm-anbieter/openai-deep-dive-startups.pdf",
@@ -716,7 +752,8 @@
     ],
     "description": "Überblick für KI-Startups zu OpenAI-Modellen, API-Integration sowie Markt und Strategien.",
     "standHinweis": "Enthält Tool-Namen/Versionen vom Stand 2023/24 (z. B. ChatGPT 1.0, GPT-3.5, DALL·E, Bard), vor Nutzung prüfen.",
-    "review": null
+    "review": null,
+    "thumb": "thumbs/llm-anbieter/openai-deep-dive-startups.jpg"
   },
   {
     "file": "prompt-engineering/fortgeschrittene-coding-prompts-frameworks.pdf",
@@ -736,7 +773,8 @@
     ],
     "description": "Sammlung anspruchsvoller Coding-Prompts für populäre Web-Frameworks, z. B. eine responsive Bootstrap-E-Commerce-Seite.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/prompt-engineering/fortgeschrittene-coding-prompts-frameworks.jpg"
   },
   {
     "file": "prompt-engineering/introduction-ai-prompt-libraries.pdf",
@@ -755,7 +793,8 @@
     ],
     "description": "Einführung in Prompt-Bibliotheken für Aufgabenmanagement, Konsistenz und schnellere Workflows.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/prompt-engineering/introduction-ai-prompt-libraries.jpg"
   },
   {
     "file": "prompt-engineering/mastering-prompt-engineering.pdf",
@@ -774,7 +813,8 @@
     ],
     "description": "Erklärt Prompt Engineering mit Prompt-Struktur: Kontext, Präzision sowie Ton und Stil.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/prompt-engineering/mastering-prompt-engineering.jpg"
   },
   {
     "file": "prompt-engineering/workflow-ai-prompt-libraries.pdf",
@@ -793,7 +833,8 @@
     ],
     "description": "Folien zu Prompt-Bibliotheken als Werkzeug für effizientere Arbeitsabläufe.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/prompt-engineering/workflow-ai-prompt-libraries.jpg"
   },
   {
     "file": "prompt-engineering/webinar-8-ki-coding-prompt-engineering.pdf",
@@ -813,7 +854,8 @@
     ],
     "description": "Hands-on-Webinar zu KI-gestütztem Programmieren und Prompt Engineering mit Beispielen in Python und JavaScript.",
     "standHinweis": "Enthält Tool-Namen/Versionen vom Stand 2023/24 (z. B. ChatGPT 1.0, GPT-3.5, DALL·E, Bard), vor Nutzung prüfen.",
-    "review": null
+    "review": null,
+    "thumb": "thumbs/prompt-engineering/webinar-8-ki-coding-prompt-engineering.jpg"
   },
   {
     "file": "stripe-api/deep-dive-stripe-api.pdf",
@@ -833,7 +875,8 @@
     ],
     "description": "Stripe-API-Quickstart mit Base-URL, Authentifizierung sowie Überblick über Payments, Billing, Connect und weitere Produkte.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/stripe-api/deep-dive-stripe-api.jpg"
   },
   {
     "file": "stripe-api/stripe-api-dokumentation-uebersicht.pdf",
@@ -853,7 +896,8 @@
     ],
     "description": "Referenzübersicht der Stripe-API-Funktionen, Endpunkte und Integrationen für deutschsprachige Entwickler.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/stripe-api/stripe-api-dokumentation-uebersicht.jpg"
   },
   {
     "file": "stripe-api/stripe-api-uebersicht-features-endpunkte.pdf",
@@ -872,7 +916,8 @@
     ],
     "description": "Nach Bereichen sortierte Übersichtstabelle aller Stripe-API-Features, Endpunkte und Vorteile.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/stripe-api/stripe-api-uebersicht-features-endpunkte.jpg"
   },
   {
     "file": "stripe-api/stripe-developer-friendly-payment-platform.pdf",
@@ -892,7 +937,8 @@
     ],
     "description": "Analyse von Stripe mit Entwicklererfahrung, Atlas-Gründungsservice und API-Architektur.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/stripe-api/stripe-developer-friendly-payment-platform.jpg"
   },
   {
     "file": "stripe-api/stripe-api-doc-quickstart.pdf",
@@ -912,7 +958,8 @@
     ],
     "description": "Kompakter Stripe-Quickstart mit Base-URL, Basic-Auth, Connect-Header sowie Billing und Subscriptions.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/stripe-api/stripe-api-doc-quickstart.jpg"
   },
   {
     "file": "webentwicklung-grundlagen/coding-bff.pdf",
@@ -931,7 +978,8 @@
     ],
     "description": "Kompakter Einstieg in Programmiergrundlagen: Python-Basics (Variablen, Kontrollfluss, Funktionen) und JavaScript-DOM.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/webentwicklung-grundlagen/coding-bff.jpg"
   },
   {
     "file": "webentwicklung-grundlagen/css-frameworks-bausteine.pdf",
@@ -950,7 +998,8 @@
     ],
     "description": "Überblick über CSS-Frameworks mit Gridsystemen, Komponenten-Bibliotheken und anpassbarer Struktur.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/webentwicklung-grundlagen/css-frameworks-bausteine.jpg"
   },
   {
     "file": "webentwicklung-grundlagen/html-ueberblick-moderne-webentwicklung.pdf",
@@ -970,7 +1019,8 @@
     ],
     "description": "Überblick über modernes semantisches HTML mit Bedeutung für Struktur, Zugänglichkeit und SEO.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/webentwicklung-grundlagen/html-ueberblick-moderne-webentwicklung.jpg"
   },
   {
     "file": "webentwicklung-grundlagen/html-uebersicht.pdf",
@@ -989,7 +1039,8 @@
     ],
     "description": "Übersicht wichtiger HTML-Funktionen für modernes Webdesign, responsive Layouts, interaktive Elemente und Barrierefreiheit.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/webentwicklung-grundlagen/html-uebersicht.jpg"
   },
   {
     "file": "webentwicklung-grundlagen/javascript-fuer-anfaenger.pdf",
@@ -1008,7 +1059,8 @@
     ],
     "description": "Grundlagen von JavaScript, beginnend mit getElementById() und querySelector() für interaktive Webseiten.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/webentwicklung-grundlagen/javascript-fuer-anfaenger.jpg"
   },
   {
     "file": "webentwicklung-grundlagen/javascript-ueberblick-funktionen.pdf",
@@ -1027,6 +1079,7 @@
     ],
     "description": "Beschreibt grundlegende JavaScript-Funktionen und -Methoden mit Beispielcode und Anwendungsbeispielen.",
     "standHinweis": null,
-    "review": null
+    "review": null,
+    "thumb": "thumbs/webentwicklung-grundlagen/javascript-ueberblick-funktionen.jpg"
   }
 ]

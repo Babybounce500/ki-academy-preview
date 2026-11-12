@@ -154,6 +154,14 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 .card { position: relative; display: flex; flex-direction: column; min-height: 128px; padding: 11px; border: 1px solid var(--line); border-radius: 10px; background: rgba(47, 13, 21, .36); text-align: left; transition: transform .2s, border-color .2s, background .2s; }
 .card:hover { border-color: var(--line-strong); background: rgba(127, 29, 45, .32); transform: translateY(-2px); }
 .card.sel, .row.sel { border-color: var(--gold); background: rgba(127, 29, 45, .5); }
+.card.hasth { padding: 0; overflow: hidden; }
+.card.hasth .cn, .card.hasth .cm, .card.hasth .tags { margin-left: 11px; margin-right: 11px; }
+.card.hasth .tags { padding-bottom: 10px; }
+.card .th { aspect-ratio: 16 / 9; overflow: hidden; background: #0b0b12; border-bottom: 1px solid var(--line); }
+.card .th img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.card.hasth .star { background: rgba(9, 3, 5, .72); }
+.row .th { width: 56px; height: 32px; overflow: hidden; border-radius: 5px; background: #0b0b12; }
+.row .th img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; }
 .card .ci { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 9px; color: var(--accent); background: rgba(127, 29, 45, .45); font-size: 18px; }
 .card .cn { margin-top: 9px; padding-right: 22px; font-size: 12px; font-weight: 600; line-height: 1.25; }
 .card .cm { margin-top: 4px; color: var(--muted); font-size: 10px; line-height: 1.35; }
@@ -164,7 +172,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 .star { position: absolute; top: 6px; right: 6px; display: grid; place-items: center; width: 26px; height: 26px; border: 0; border-radius: 6px; background: transparent; color: var(--dim); }
 .star:hover { color: var(--gold); background: rgba(127, 29, 45, .4); }
 .star[aria-pressed="true"] { color: var(--gold); }
-.row { position: relative; display: grid; grid-template-columns: 30px minmax(0, 1.2fr) minmax(0, 2fr) 120px 30px; align-items: center; gap: 10px; padding: 6px 10px; border: 1px solid transparent; border-radius: 8px; text-align: left; }
+.row { position: relative; display: grid; grid-template-columns: 56px minmax(0, 1.2fr) minmax(0, 2fr) 120px 30px; align-items: center; gap: 10px; padding: 6px 10px; border: 1px solid transparent; border-radius: 8px; text-align: left; }
 .row:hover { background: rgba(127, 29, 45, .25); }
 .row .ci { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 7px; color: var(--accent); background: rgba(127, 29, 45, .45); }
 .row .rn { overflow: hidden; font-size: 12px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
@@ -191,7 +199,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
   .ex-side { display: flex; gap: 5px; overflow-x: auto; padding: 8px; border-right: 0; border-bottom: 1px solid var(--line); }
   .ex-side h3 { display: none; } .fb { width: auto; min-width: max-content; margin: 0; }
   .ex-list.grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
-  .row { grid-template-columns: 30px minmax(0, 1fr) 30px; } .row .rd, .row .rc { display: none; }
+  .row { grid-template-columns: 56px minmax(0, 1fr) 30px; } .row .rd, .row .rc { display: none; }
   .search { flex: 1 1 100px; } .clock small { display: none; } .task span { display: none; } .task { flex: 0 0 40px; justify-content: center; padding: 0; }
   .bbtn.hide-m { display: none; }
 }
@@ -293,7 +301,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
         if (t.level) tags.push([t.level, '']);
         if (t.pages) tags.push([t.pages + ' S.', '']);
         if (t.standHinweis) tags.push(['Stand prüfen', 'warn']);
-        add({ key: rel(url), name: t.title, desc: t.description || '', group: 'pdf:' + (t.categoryLabel || t.category), groupName: t.categoryLabel || t.category, icon: 'fa-file-pdf', url: url, type: 'pdf', tags: tags, size: t.sizeMB ? t.sizeMB + ' MB' : '', sizeNum: (t.sizeMB || 0) * 1024 });
+        add({ key: rel(url), name: t.title, desc: t.description || '', group: 'pdf:' + (t.categoryLabel || t.category), groupName: t.categoryLabel || t.category, icon: 'fa-file-pdf', url: url, type: 'pdf', thumb: t.thumb ? abs('gamma-pdfs/' + t.thumb) : '', tags: tags, size: t.sizeMB ? t.sizeMB + ' MB' : '', sizeNum: (t.sizeMB || 0) * 1024 });
       });
       loadState.pdf = 'ok';
     }).catch(function () { loadState.pdf = 'fehler'; });
@@ -675,8 +683,10 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
       var node = document.createElement('div'); node.setAttribute('role', 'option'); node.className = EX.view === 'grid' ? 'card' : 'row'; node.dataset.i = i;
       var star = '<button class="star" type="button" aria-label="Favorit" aria-pressed="' + isFav(it.key) + '" title="Favorit (F)"><i class="fa-' + (isFav(it.key) ? 'solid' : 'regular') + ' fa-star"></i></button>';
       var tags = it.tags.map(function (g) { return '<span class="tag ' + g[1] + '">' + esc(g[0]) + '</span>'; }).join('');
-      if (EX.view === 'grid') node.innerHTML = star + '<div class="ci"><i class="fa-solid ' + esc(it.icon) + '"></i></div><div class="cn">' + esc(it.name) + '</div><div class="cm">' + esc((it.groupName || '') + (it.size ? ' · ' + it.size : '')) + '</div><div class="tags">' + tags + '</div>';
-      else node.innerHTML = '<div class="ci"><i class="fa-solid ' + esc(it.icon) + '"></i></div><div class="rn">' + esc(it.name) + '</div><div class="rd">' + esc(it.desc) + '</div><div class="rc">' + esc((it.groupName || '') + (it.size ? ' · ' + it.size : '')) + '</div>' + star;
+      var th = it.thumb ? '<div class="th"><img src="' + esc(it.thumb) + '" alt="" loading="lazy" decoding="async" width="600" height="338"></div>' : '';
+      if (th) node.classList.add('hasth');
+      if (EX.view === 'grid') node.innerHTML = star + (th || '<div class="ci"><i class="fa-solid ' + esc(it.icon) + '"></i></div>') + '<div class="cn">' + esc(it.name) + '</div><div class="cm">' + esc((it.groupName || '') + (it.size ? ' · ' + it.size : '')) + '</div><div class="tags">' + tags + '</div>';
+      else node.innerHTML = (th || '<div class="ci"><i class="fa-solid ' + esc(it.icon) + '"></i></div>') + '<div class="rn">' + esc(it.name) + '</div><div class="rd">' + esc(it.desc) + '</div><div class="rc">' + esc((it.groupName || '') + (it.size ? ' · ' + it.size : '')) + '</div>' + star;
       node.title = it.desc || it.name;
       node.addEventListener('click', function (e) { if (e.target.closest('.star')) { toggleFav(it.key); return; } selectIdx(i); list.focus({ preventScroll: true }); if (coarse || e.detail === 0) openItem(it); });
       node.addEventListener('dblclick', function (e) { if (!e.target.closest('.star')) openItem(it); });
