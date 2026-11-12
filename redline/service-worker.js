@@ -1,4 +1,4 @@
-const CACHE_VERSION = "redline-shell-v1";
+const CACHE_VERSION = "redline-shell-v2";
 const RUNTIME_CACHE = "redline-runtime-v1";
 
 const SHELL_FILES = [

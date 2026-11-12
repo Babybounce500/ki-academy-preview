@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ORBITRON VIBE CODING — Redline Desktop</title>
+<meta name="description" content="Redline Desktop: Explorer, Fenster, Chatrooms und alle IDEs des Vibe-Coding-Kurses in einer Oberfläche.">
+<meta name="theme-color" content="#160608">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+:root {
+  --bg: #160608; --bg-deep: #090304;
+  --panel: #1c080d; --panel-soft: rgba(47, 13, 21, .78);
+  --line: rgba(251, 113, 133, .22); --line-strong: rgba(251, 113, 133, .64);
+  --accent: #fb7185; --accent-hot: #ef4444; --accent-deep: #991b1b; --gold: #fbbf24; --ok: #34d399;
+  --text: #fff1f2; --muted: #c597a1; --dim: #7c4b57;
+  --bar: 48px;
+  --font-display: 'Segoe UI Semibold', 'Segoe UI', system-ui, sans-serif;
+  --sab: env(safe-area-inset-bottom, 0px);
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { overflow: hidden; color: var(--text); background: var(--bg-deep); font: 14px/1.4 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+[hidden] { display: none !important; }
+
+.shell { position: relative; width: 100vw; height: 100dvh; overflow: hidden;
+  background: radial-gradient(circle at 66% 13%, rgba(239, 68, 68, .2), transparent 31%), radial-gradient(circle at 9% 88%, rgba(153, 27, 27, .25), transparent 38%), linear-gradient(135deg, var(--bg) 0%, #260b12 50%, var(--bg-deep) 100%); }
+.shell::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .28; background-image: linear-gradient(rgba(251, 113, 133, .08) 1px, transparent 1px), linear-gradient(90deg, rgba(251, 113, 133, .08) 1px, transparent 1px); background-size: 48px 48px; mask-image: linear-gradient(to bottom, black, transparent 90%); }
+.canvas { position: absolute; inset: 0 0 calc(var(--bar) + var(--sab)); overflow: hidden; }
+#fx { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.brand { position: absolute; top: 22px; left: 30px; z-index: 2; pointer-events: none; text-shadow: 0 0 24px rgba(239, 68, 68, .42); }
+.brand h1 { margin: 0; font: 800 clamp(18px, 2vw, 28px)/1 var(--font-display); letter-spacing: .14em; }
+.brand h1 span { color: var(--accent); }
+.brand p { margin: 7px 0 0; color: var(--muted); font-size: 10px; letter-spacing: .22em; text-transform: uppercase; }
+
+.shortcuts { position: absolute; top: 96px; right: 28px; bottom: 12px; left: 28px; z-index: 2; display: grid; align-content: start; grid-auto-rows: min-content; gap: 12px; overflow-y: auto; padding: 2px 2px 18px; scrollbar-width: thin; }
+.sec-title { display: flex; align-items: center; gap: 8px; margin: 3px 0 7px; padding: 5px 8px; border-left: 2px solid var(--accent); color: var(--accent); background: rgba(47, 13, 21, .48); font: 700 10px/1.2 var(--font-display); letter-spacing: .12em; text-transform: uppercase; }
+.sec-title::after { content: ""; height: 1px; flex: 1; background: linear-gradient(90deg, rgba(251, 113, 133, .34), transparent); }
+.sec-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(86px, 1fr)); gap: 9px; }
+.dicon { display: flex; flex-direction: column; align-items: center; width: 100%; min-height: 96px; padding: 7px 5px; border: 1px solid rgba(251, 113, 133, .12); border-radius: 11px; background: rgba(26, 5, 10, .3); text-align: center; text-decoration: none; color: var(--text); transition: transform .25s cubic-bezier(.34, 1.56, .64, 1), background .25s, border-color .25s; }
+.dicon:hover, .dicon:focus-visible { border-color: var(--line-strong); background: rgba(127, 29, 45, .4); transform: translateY(-3px) scale(1.02); }
+.dicon .ic { display: grid; place-items: center; width: 54px; height: 54px; margin-bottom: 6px; border: 1px solid rgba(251, 113, 133, .62); border-radius: 15px; background: linear-gradient(145deg, #be123c, #7f1d1d); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 0 20px rgba(239, 68, 68, .25); font-size: 24px; }
+.dicon span { font-size: 11px; font-weight: 600; line-height: 1.2; word-break: break-word; }
+
+/* Fenster */
+#windows { position: absolute; inset: 0; z-index: 10; pointer-events: none; }
+.win { position: absolute; display: flex; flex-direction: column; min-width: 340px; min-height: 240px; overflow: hidden; pointer-events: auto; border: 1px solid var(--line-strong); border-radius: 13px; background: #1c080d; box-shadow: 0 24px 70px rgba(0, 0, 0, .52), 0 0 35px rgba(239, 68, 68, .14); }
+.win.active { border-color: rgba(254, 205, 211, .86); box-shadow: 0 26px 76px rgba(0, 0, 0, .58), 0 0 38px rgba(239, 68, 68, .25); }
+.win.max { top: 0 !important; left: 0 !important; width: 100% !important; height: 100% !important; border-radius: 0; }
+.win.min { display: none; }
+.win.anim { transition: left .16s, top .16s, width .16s, height .16s; }
+.tb { display: flex; align-items: center; flex: 0 0 auto; gap: 10px; height: 42px; padding: 0 8px 0 13px; border-bottom: 1px solid var(--line); background: linear-gradient(180deg, rgba(58, 17, 27, .98), rgba(29, 8, 14, .98)); cursor: grab; user-select: none; touch-action: none; }
+.tb:active { cursor: grabbing; }
+.tb .wi { color: var(--accent); font-size: 14px; }
+.tb .wt { min-width: 0; max-width: 28%; overflow: hidden; font: 700 11px var(--font-display); letter-spacing: .08em; text-overflow: ellipsis; white-space: nowrap; }
+.addr { display: flex; align-items: center; flex: 1 1 200px; min-width: 0; height: 26px; gap: 8px; padding: 0 9px; overflow: hidden; border: 1px solid var(--line); border-radius: 7px; color: var(--muted); background: rgba(9, 3, 5, .64); font: 10px 'Courier New', monospace; cursor: default; }
+.addr input { width: 100%; min-width: 0; padding: 0; border: 0; outline: 0; color: inherit; background: transparent; text-overflow: ellipsis; font: inherit; }
+.wc { display: flex; align-items: center; gap: 3px; margin-left: auto; }
+.wb { display: grid; place-items: center; width: 30px; height: 28px; border: 1px solid transparent; border-radius: 7px; color: var(--muted); background: transparent; }
+.wb:hover, .wb:focus-visible { border-color: var(--line-strong); color: var(--accent); background: rgba(127, 29, 45, .38); }
+.wb.x:hover { color: #fff; background: rgba(220, 38, 38, .72); }
+.wbody { position: relative; min-height: 0; flex: 1; overflow: hidden; background: #fff; }
+.wbody.dark { background: transparent; }
+.wbody iframe { display: block; width: 100%; height: 100%; border: 0; background: #fff; }
+.loading { position: absolute; inset: 0; display: grid; place-items: center; align-content: center; gap: 10px; color: var(--muted); background: var(--panel); text-align: center; padding: 20px; }
+.loading i { font-size: 22px; color: var(--accent); }
+.loading a { color: var(--gold); }
+.dragging iframe, .resizing iframe { pointer-events: none !important; }
+.rh { position: absolute; z-index: 5; }
+.rh[data-d="n"] { top: -4px; right: 12px; left: 12px; height: 9px; cursor: n-resize; }
+.rh[data-d="s"] { right: 12px; bottom: -4px; left: 12px; height: 9px; cursor: s-resize; }
+.rh[data-d="e"] { top: 12px; right: -4px; bottom: 12px; width: 9px; cursor: e-resize; }
+.rh[data-d="w"] { top: 12px; bottom: 12px; left: -4px; width: 9px; cursor: w-resize; }
+.rh[data-d="ne"] { top: -4px; right: -4px; width: 20px; height: 20px; cursor: ne-resize; }
+.rh[data-d="nw"] { top: -4px; left: -4px; width: 20px; height: 20px; cursor: nw-resize; }
+.rh[data-d="se"] { right: -4px; bottom: -4px; width: 20px; height: 20px; cursor: se-resize; }
+.rh[data-d="sw"] { bottom: -4px; left: -4px; width: 20px; height: 20px; cursor: sw-resize; }
+.win.max .rh { display: none; }
+#snap { position: absolute; z-index: 9; display: none; border: 2px dashed var(--accent); border-radius: 12px; background: rgba(251, 113, 133, .12); pointer-events: none; }
+
+/* Taskleiste */
+.bar { position: absolute; right: 0; bottom: 0; left: 0; z-index: 220; display: flex; align-items: center; gap: 7px; height: calc(var(--bar) + var(--sab)); padding: 0 12px var(--sab); border-top: 1px solid var(--line); background: rgba(18, 4, 8, .94); backdrop-filter: blur(16px); }
+.bbtn { flex: 0 0 34px; display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid transparent; border-radius: 7px; color: var(--muted); background: transparent; font-size: 13px; }
+.bbtn:hover, .bbtn[aria-pressed="true"], .bbtn[aria-expanded="true"] { border-color: var(--line-strong); color: var(--accent); background: rgba(127, 29, 45, .38); }
+.bbtn.start { border-color: var(--line); color: #fff; background: linear-gradient(145deg, #be123c, #7f1d1d); }
+.search { position: relative; flex: 0 1 240px; min-width: 120px; }
+.search i { position: absolute; top: 50%; left: 10px; transform: translateY(-50%); color: var(--dim); font-size: 12px; pointer-events: none; }
+.search input { width: 100%; height: 34px; padding: 0 10px 0 30px; border: 1px solid var(--line); border-radius: 8px; background: rgba(9, 3, 5, .64); outline: 0; font-size: 13px; }
+.search input:focus { border-color: var(--line-strong); }
+.tasks { display: flex; flex: 1; min-width: 0; gap: 5px; overflow-x: auto; scrollbar-width: none; }
+.tasks::-webkit-scrollbar { display: none; }
+.task { flex: 0 1 170px; display: flex; align-items: center; gap: 7px; min-width: 40px; height: 34px; padding: 0 10px; border: 1px solid var(--line); border-radius: 8px; background: rgba(47, 13, 21, .5); font-size: 12px; white-space: nowrap; }
+.task span { overflow: hidden; text-overflow: ellipsis; }
+.task i { color: var(--accent); }
+.task.active { border-color: var(--line-strong); background: rgba(127, 29, 45, .55); box-shadow: inset 0 -2px 0 var(--accent); }
+.task.min { opacity: .6; }
+.clock { display: grid; justify-items: end; padding: 0 4px 0 8px; line-height: 1.2; cursor: default; }
+.clock b { font-size: 12px; letter-spacing: .05em; }
+.clock small { color: var(--muted); font-size: 10px; }
+
+/* Menues */
+.pop { position: absolute; z-index: 300; border: 1px solid var(--line-strong); border-radius: 12px; background: rgba(24, 6, 11, .98); box-shadow: 0 18px 60px rgba(0, 0, 0, .6); }
+#start { left: 10px; bottom: calc(var(--bar) + var(--sab) + 8px); width: min(420px, calc(100vw - 20px)); max-height: min(560px, calc(100dvh - 90px)); display: flex; flex-direction: column; overflow: hidden; }
+#start .sh { padding: 12px 14px 4px; color: var(--muted); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; }
+#start .sg { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 6px 10px 10px; overflow: auto; }
+#start .si { display: grid; justify-items: center; gap: 5px; padding: 9px 4px; border: 1px solid transparent; border-radius: 9px; background: transparent; font-size: 11px; text-align: center; }
+#start .si:hover, #start .si:focus-visible { border-color: var(--line-strong); background: rgba(127, 29, 45, .35); }
+#start .si .ic { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(145deg, #be123c, #7f1d1d); }
+#start .sa { display: grid; gap: 2px; padding: 8px 10px 10px; border-top: 1px solid var(--line); }
+#start .sa button { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border: 0; border-radius: 8px; background: transparent; text-align: left; }
+#start .sa button:hover { background: rgba(127, 29, 45, .35); }
+#start .sa i { width: 18px; color: var(--accent); text-align: center; }
+#results { left: 56px; bottom: calc(var(--bar) + var(--sab) + 8px); width: min(460px, calc(100vw - 70px)); max-height: 56dvh; overflow: auto; padding: 6px; }
+.res { display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px 10px; border: 1px solid transparent; border-radius: 8px; background: transparent; text-align: left; }
+.res[aria-selected="true"], .res:hover { border-color: var(--line-strong); background: rgba(127, 29, 45, .35); }
+.res .ic { display: grid; place-items: center; flex: 0 0 30px; width: 30px; height: 30px; border-radius: 8px; background: rgba(127, 29, 45, .55); color: var(--accent); }
+.res b { display: block; font-size: 13px; }
+.res small { color: var(--muted); font-size: 11px; }
+#ctx { min-width: 200px; padding: 5px; }
+#ctx button { display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px 10px; border: 0; border-radius: 7px; background: transparent; text-align: left; font-size: 13px; }
+#ctx button:hover, #ctx button:focus-visible { background: rgba(127, 29, 45, .45); }
+#ctx i { width: 16px; color: var(--accent); text-align: center; }
+#ctx hr { margin: 4px 0; border: 0; border-top: 1px solid var(--line); }
+#toast { position: absolute; left: 50%; bottom: calc(var(--bar) + var(--sab) + 14px); z-index: 400; transform: translateX(-50%); max-width: 90vw; padding: 9px 14px; border: 1px solid var(--line-strong); border-radius: 10px; background: rgba(24, 6, 11, .98); font-size: 13px; box-shadow: 0 10px 30px rgba(0, 0, 0, .5); }
+
+/* Explorer */
+.ex { display: grid; grid-template-columns: 220px minmax(0, 1fr); height: 100%; min-height: 0; }
+.ex-side { min-width: 0; overflow-y: auto; padding: 10px 8px; border-right: 1px solid var(--line); background: rgba(24, 6, 11, .86); scrollbar-width: thin; }
+.ex-side h3 { margin: 12px 8px 5px; color: var(--muted); font-size: 9px; letter-spacing: .16em; text-transform: uppercase; }
+.ex-side h3:first-child { margin-top: 2px; }
+.fb { display: flex; align-items: center; width: 100%; gap: 8px; margin-bottom: 2px; padding: 7px 8px; border: 1px solid transparent; border-radius: 7px; background: transparent; text-align: left; font-size: 12px; }
+.fb i { flex: 0 0 16px; color: var(--accent); text-align: center; }
+.fb span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fb em { color: var(--dim); font-size: 10px; font-style: normal; }
+.fb:hover { background: rgba(127, 29, 45, .25); }
+.fb[aria-current="true"] { border-color: var(--line); background: rgba(127, 29, 45, .45); }
+.ex-main { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+.ex-bar { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; padding: 8px 10px; border-bottom: 1px solid var(--line); background: rgba(47, 13, 21, .48); }
+.ex-bar .nb { display: grid; place-items: center; width: 30px; height: 30px; border: 1px solid transparent; border-radius: 7px; background: transparent; color: var(--muted); }
+.ex-bar .nb:hover:not(:disabled), .ex-bar .nb[aria-pressed="true"] { border-color: var(--line-strong); color: var(--accent); background: rgba(127, 29, 45, .38); }
+.ex-bar .nb:disabled { opacity: .35; cursor: default; }
+.crumbs { display: flex; flex: 1 1 160px; align-items: center; gap: 4px; min-width: 120px; height: 30px; padding: 0 10px; overflow: hidden; border: 1px solid var(--line); border-radius: 7px; background: rgba(9, 3, 5, .6); font: 600 11px var(--font-display); white-space: nowrap; }
+.crumbs button { padding: 2px 4px; border: 0; border-radius: 4px; background: transparent; color: var(--accent); font: inherit; }
+.crumbs button:hover { background: rgba(127, 29, 45, .4); }
+.crumbs span { color: var(--dim); }
+.ex-bar .q { flex: 0 1 180px; min-width: 110px; height: 30px; padding: 0 10px; border: 1px solid var(--line); border-radius: 7px; background: rgba(9, 3, 5, .6); outline: 0; font-size: 12px; }
+.ex-bar select { height: 30px; padding: 0 6px; border: 1px solid var(--line); border-radius: 7px; background: rgba(9, 3, 5, .8); font-size: 12px; }
+.ex-list { flex: 1; min-height: 0; overflow-y: auto; padding: 12px; outline: none; scrollbar-width: thin; }
+.ex-list.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); align-content: start; gap: 9px; }
+.ex-list.list { display: grid; align-content: start; gap: 4px; }
+.card { position: relative; display: flex; flex-direction: column; min-height: 128px; padding: 11px; border: 1px solid var(--line); border-radius: 10px; background: rgba(47, 13, 21, .36); text-align: left; transition: transform .2s, border-color .2s, background .2s; }
+.card:hover { border-color: var(--line-strong); background: rgba(127, 29, 45, .32); transform: translateY(-2px); }
+.card.sel, .row.sel { border-color: var(--gold); background: rgba(127, 29, 45, .5); }
+.card .ci { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 9px; color: var(--accent); background: rgba(127, 29, 45, .45); font-size: 18px; }
+.card .cn { margin-top: 9px; padding-right: 22px; font-size: 12px; font-weight: 600; line-height: 1.25; }
+.card .cm { margin-top: 4px; color: var(--muted); font-size: 10px; line-height: 1.35; }
+.tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: auto; padding-top: 7px; }
+.tag { padding: 1px 6px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font-size: 9px; }
+.tag.ok { color: var(--ok); border-color: rgba(52, 211, 153, .4); }
+.tag.warn { color: var(--gold); border-color: rgba(251, 191, 36, .4); }
+.star { position: absolute; top: 6px; right: 6px; display: grid; place-items: center; width: 26px; height: 26px; border: 0; border-radius: 6px; background: transparent; color: var(--dim); }
+.star:hover { color: var(--gold); background: rgba(127, 29, 45, .4); }
+.star[aria-pressed="true"] { color: var(--gold); }
+.row { position: relative; display: grid; grid-template-columns: 30px minmax(0, 1.2fr) minmax(0, 2fr) 120px 30px; align-items: center; gap: 10px; padding: 6px 10px; border: 1px solid transparent; border-radius: 8px; text-align: left; }
+.row:hover { background: rgba(127, 29, 45, .25); }
+.row .ci { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 7px; color: var(--accent); background: rgba(127, 29, 45, .45); }
+.row .rn { overflow: hidden; font-size: 12px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.row .rd, .row .rc { overflow: hidden; color: var(--muted); font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+.row .star { position: static; }
+.ex-status { display: flex; align-items: center; gap: 12px; min-height: 34px; padding: 6px 12px; border-top: 1px solid var(--line); background: rgba(24, 6, 11, .86); color: var(--muted); font-size: 11px; }
+.ex-status .grow { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.empty { display: grid; place-items: center; align-content: center; gap: 8px; min-height: 200px; color: var(--muted); text-align: center; grid-column: 1 / -1; }
+.empty i { font-size: 26px; color: var(--dim); }
+.skel { grid-column: 1 / -1; padding: 30px; color: var(--muted); text-align: center; }
+
+@media (max-width: 768px) {
+  .brand { position: relative; top: auto; left: auto; padding: 8px 4px 4px; }
+  .canvas { overflow-y: auto; padding: 12px; }
+  .shortcuts { position: relative; top: auto; right: auto; bottom: auto; left: auto; padding: 0 0 16px; }
+  .sec-row { grid-template-columns: repeat(4, minmax(60px, 1fr)); gap: 6px; }
+  .dicon { min-height: 80px; } .dicon .ic { width: 40px; height: 40px; font-size: 18px; }
+  #windows { position: fixed; inset: 0 0 calc(var(--bar) + var(--sab)); }
+  .win { position: absolute !important; inset: 0 !important; width: 100% !important; height: 100% !important; min-width: 0; min-height: 0; border-radius: 0; }
+  .win:not(.active) { display: none; }
+  .addr, .wb.hide-m, .rh { display: none; }
+  .tb { cursor: default; }
+  .ex { grid-template-columns: 1fr; grid-template-rows: auto minmax(0, 1fr); }
+  .ex-side { display: flex; gap: 5px; overflow-x: auto; padding: 8px; border-right: 0; border-bottom: 1px solid var(--line); }
+  .ex-side h3 { display: none; } .fb { width: auto; min-width: max-content; margin: 0; }
+  .ex-list.grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+  .row { grid-template-columns: 30px minmax(0, 1fr) 30px; } .row .rd, .row .rc { display: none; }
+  .search { flex: 1 1 100px; } .clock small { display: none; } .task span { display: none; } .task { flex: 0 0 40px; justify-content: center; padding: 0; }
+  .bbtn.hide-m { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; } }
+</style>
+</head>
+<body>
+<div class="shell" id="shell">
+  <main class="canvas" id="canvas">
+    <canvas id="fx" aria-hidden="true"></canvas>
+    <div class="brand"><h1>ORBITRON <span>VIBE CODING</span></h1><p>Redline Desktop // Explorer · Fenster · Chatrooms</p></div>
+    <nav class="shortcuts" id="shortcuts" aria-label="Desktop-Verknüpfungen"></nav>
+    <div id="windows"></div>
+    <div id="snap"></div>
+  </main>
+  <div class="pop" id="start" role="dialog" aria-label="Startmenü" hidden></div>
+  <div class="pop" id="results" role="listbox" aria-label="Suchergebnisse" hidden></div>
+  <div class="pop" id="ctx" role="menu" hidden></div>
+  <div id="toast" role="status" aria-live="polite" hidden></div>
+  <footer class="bar">
+    <button class="bbtn start" id="startBtn" type="button" title="Start (Strg+Leertaste)" aria-label="Startmenü" aria-expanded="false"><i class="fa-solid fa-atom"></i></button>
+    <div class="search"><i class="fa-solid fa-magnifying-glass"></i><input id="q" type="search" placeholder="Suchen (Strg+K)" autocomplete="off" spellcheck="false" aria-label="Apps und Dateien suchen"></div>
+    <div class="tasks" id="tasks" aria-label="Offene Fenster"></div>
+    <button class="bbtn hide-m" id="showDesk" type="button" title="Desktop anzeigen" aria-label="Desktop anzeigen"><i class="fa-regular fa-window-minimize"></i></button>
+    <button class="bbtn" id="chatBtn" type="button" title="Chatroom (KI-Mentor)" aria-label="Chatroom öffnen"><i class="fa-solid fa-comments"></i></button>
+    <button class="bbtn" id="exBtn" type="button" title="Explorer" aria-label="Explorer öffnen"><i class="fa-solid fa-folder-tree"></i></button>
+    <div class="clock" title="Lokale Zeit"><b id="tm">--:--</b><small id="dt"></small></div>
+  </footer>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var ABS = 'https://babybounce500.github.io/ki-academy-preview/';
+  var onSite = /github\.io$/.test(location.hostname) || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+  var BASE = onSite ? new URL('../', location.href).href : ABS;
+  function abs(p) { try { return new URL(p, BASE).href; } catch (e) { return ''; } }
+  function rel(u) { return u.indexOf(BASE) === 0 ? u.slice(BASE.length) : u; }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  var store = {
+    get: function (k, d) { try { var v = localStorage.getItem('rld_' + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+    set: function (k, v) { try { localStorage.setItem('rld_' + k, JSON.stringify(v)); } catch (e) {} }
+  };
+  var mobile = function () { return window.matchMedia('(max-width: 768px)').matches; };
+  var coarse = window.matchMedia('(pointer: coarse)').matches;
+
+  /* ================= Daten ================= */
+  var FOLDERS = [
+    { id: 'Hub', name: 'Hub und Workshells', icon: 'fa-atom' },
+    { id: 'Chat', name: 'Chatrooms', icon: 'fa-comments' },
+    { id: 'Coding', name: 'Coding-Tools', icon: 'fa-code' }
+  ];
+  var BASE_APPS = [
+    { n: 'Master Hub', d: 'Startseite mit allen Bereichen', f: 'Hub', i: 'fa-atom', u: '' },
+    { n: 'Academy (Cyan)', d: 'Kurs-Workshell mit allen Modulen', f: 'Hub', i: 'fa-graduation-cap', u: 'academy/' },
+    { n: 'Academy (Redline)', d: 'Rote Workshell als Desktop', f: 'Hub', i: 'fa-fire', u: 'redline/' },
+    { n: 'IDE-Werkbank', d: '33 Editoren und IDEs zum Testen', f: 'Hub', i: 'fa-laptop-code', u: 'ide-lab/' },
+    { n: 'Gamma-Bibliothek', d: 'Alle Folien als PDF', f: 'Hub', i: 'fa-images', u: 'gamma-pdfs/' },
+    { n: 'Produktseite', d: 'Webinar-Reihe und Bundle', f: 'Hub', i: 'fa-store', u: 'product/' },
+    { n: 'Chatroom KI-Mentor', d: 'Fragen zum Kurs, Code-Werkstatt', f: 'Chat', i: 'fa-comments', u: 'chatroom/index.html' },
+    { n: 'Chatroom Experten', d: '14 Fachgebiete mit Live-Editor', f: 'Chat', i: 'fa-user-astronaut', u: 'chatroom/experten.html' },
+    { n: 'Claude IDE', d: 'Agent mit Workspace, Projekte und Chats', f: 'Coding', i: 'fa-brain', u: 'academy/modules/tools/claude-ide.html' },
+    { n: 'LeCODE Studio', d: 'Code-Chat mit Vorschau', f: 'Coding', i: 'fa-terminal', u: 'academy/modules/tools/lecode-studio.html' },
+    { n: 'AI HTML Studio', d: 'Editor mit Live-Vorschau und KI', f: 'Coding', i: 'fa-wand-magic-sparkles', u: 'academy/modules/tools/ai-html-studio.html' },
+    { n: 'HTML Studio Free', d: 'Schlanke Version', f: 'Coding', i: 'fa-feather', u: 'academy/modules/tools/ai-html-studio-free.html' },
+    { n: 'RAG Vector IDE', d: 'IDE mit Vektor-Suche', f: 'Coding', i: 'fa-database', u: 'academy/modules/tools/rag-vector-ide.html' },
+    { n: 'Python IDE', d: 'Python im Browser', f: 'Coding', i: 'fa-snake', u: 'academy/modules/tools/python-ide.html' }
+  ];
+  var ALL = [], byKey = {};
+  function add(it) {
+    if (!it.url || byKey[it.key]) return;
+    ALL.push(it); byKey[it.key] = it;
+  }
+  BASE_APPS.forEach(function (a) {
+    var url = abs(a.u);
+    add({ key: rel(url) || '.', name: a.n, desc: a.d, group: 'app:' + a.f, groupName: (FOLDERS.filter(function (f) { return f.id === a.f; })[0] || {}).name, icon: a.i === 'fa-snake' ? 'fa-terminal' : a.i, url: url, type: 'app', tags: [] });
+  });
+  var loadState = { wb: 'laedt', pdf: 'laedt' };
+
+  function loadManifests() {
+    var p1 = fetch(abs('ide-lab/manifest.json')).then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (m) {
+      m.forEach(function (t) {
+        var url = new URL(t.file, abs('ide-lab/')).href, tags = [];
+        if (t.hasChat) tags.push(['Chat', 'ok']);
+        if (t.hasPreview) tags.push(['Vorschau', '']);
+        if (t.mobileScrollX || t.mobileOk === false) tags.push(['Mobil eingeschränkt', 'warn']);
+        if (t.loads === false) tags.push(['lädt nicht', 'warn']);
+        else if (t.jsErrors > 0) tags.push([t.jsErrors + ' JS-Fehler', 'warn']);
+        var it = byKey[rel(url)];
+        var data = { key: rel(url), name: t.title, desc: t.description, group: 'wb:' + t.category, groupName: t.category, icon: t.hasChat ? 'fa-comment-dots' : 'fa-file-code', url: url, type: 'tool', tags: tags, size: (t.sizeKB || 0) + ' KB', sizeNum: t.sizeKB || 0 };
+        if (it) { it.tags = tags; it.size = data.size; it.sizeNum = data.sizeNum; it.type = 'tool'; it.wbGroup = data.group; it.wbName = data.groupName; } else add(data);
+      });
+      loadState.wb = 'ok';
+    }).catch(function () { loadState.wb = 'fehler'; });
+    var p2 = fetch(abs('gamma-pdfs/manifest.json')).then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (m) {
+      m.forEach(function (t) {
+        var url = abs('gamma-pdfs/' + t.file), tags = [];
+        if (t.level) tags.push([t.level, '']);
+        if (t.pages) tags.push([t.pages + ' S.', '']);
+        if (t.standHinweis) tags.push(['Stand prüfen', 'warn']);
+        add({ key: rel(url), name: t.title, desc: t.description || '', group: 'pdf:' + (t.categoryLabel || t.category), groupName: t.categoryLabel || t.category, icon: 'fa-file-pdf', url: url, type: 'pdf', tags: tags, size: t.sizeMB ? t.sizeMB + ' MB' : '', sizeNum: (t.sizeMB || 0) * 1024 });
+      });
+      loadState.pdf = 'ok';
+    }).catch(function () { loadState.pdf = 'fehler'; });
+    return Promise.all([p1, p2]);
+  }
+
+  /* ================= Favoriten, Zuletzt ================= */
+  var favs = store.get('favs', []), recents = store.get('recents', []);
+  if (!Array.isArray(favs)) favs = []; if (!Array.isArray(recents)) recents = [];
+  function isFav(k) { return favs.indexOf(k) >= 0; }
+  function toggleFav(k) {
+    var i = favs.indexOf(k); if (i >= 0) favs.splice(i, 1); else favs.push(k);
+    store.set('favs', favs); toast(i >= 0 ? 'Aus Favoriten entfernt' : 'Zu Favoriten hinzugefügt'); refreshExplorer(); renderStart();
+  }
+  function pushRecent(k) { recents = [k].concat(recents.filter(function (x) { return x !== k; })).slice(0, 15); store.set('recents', recents); }
+
+  /* ================= Hilfen ================= */
+  var toastTimer;
+  function toast(msg) { var t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.hidden = true; }, 2200); }
+  function copy(text) {
+    var done = function () { toast('Link kopiert'); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, function () { toast(text); });
+    else { var ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); done(); } catch (e) { toast(text); } ta.remove(); }
+  }
+  function openTab(url) { window.open(url, '_blank', 'noopener'); }
+
+  /* ================= Fensterverwaltung ================= */
+  var wins = {}, order = [], activeId = null, zc = 100, counter = 0;
+  var layer = $('windows');
+  var geom = store.get('geom', {});
+  function vw() { return layer.clientWidth || window.innerWidth; }
+  function vh() { return layer.clientHeight || window.innerHeight; }
+  function clamp(w) {
+    var f = w.frame, W = vw(), H = vh();
+    var width = Math.min(Math.max(f.offsetWidth, 340), W), height = Math.min(Math.max(f.offsetHeight, 240), H);
+    f.style.width = width + 'px'; f.style.height = height + 'px';
+    f.style.left = Math.min(Math.max(f.offsetLeft, -width + 120), W - 120) + 'px';
+    f.style.top = Math.min(Math.max(f.offsetTop, 0), H - 42) + 'px';
+  }
+  function saveGeom(w) {
+    if (!w.key || w.max) return;
+    geom[w.key] = { l: w.frame.offsetLeft, t: w.frame.offsetTop, w: w.frame.offsetWidth, h: w.frame.offsetHeight };
+    var keys = Object.keys(geom); if (keys.length > 60) delete geom[keys[0]];
+    store.set('geom', geom);
+  }
+  function openWindow(o) {
+    if (o.key) { for (var k in wins) if (wins[k].key === o.key) { focusWin(k); if (wins[k].min) restore(k); return k; } }
+    if (order.length >= 12) { toast('Maximal 12 Fenster. Bitte erst eines schließen.'); return null; }
+    var id = 'w' + (++counter), W = vw(), H = vh();
+    var g = o.key && geom[o.key];
+    var width = Math.min(o.w || 980, W - 40), height = Math.min(o.h || 640, H - 30);
+    var left = 40 + (counter % 8) * 28, top = 24 + (counter % 8) * 26;
+    if (g) { width = g.w; height = g.h; left = g.l; top = g.t; }
+    var f = document.createElement('div'); f.className = 'win'; f.id = id; f.setAttribute('role', 'dialog'); f.setAttribute('aria-label', o.title);
+    f.style.cssText = 'left:' + left + 'px;top:' + top + 'px;width:' + width + 'px;height:' + height + 'px;z-index:' + (++zc);
+    var tb = document.createElement('div'); tb.className = 'tb';
+    var ic = document.createElement('i'); ic.className = 'wi fa-solid ' + (o.icon || 'fa-window-restore');
+    var tt = document.createElement('span'); tt.className = 'wt'; tt.textContent = o.title;
+    tb.appendChild(ic); tb.appendChild(tt);
+    var body = document.createElement('div'); body.className = 'wbody' + (o.dark ? ' dark' : '');
+    var ctrl = document.createElement('div'); ctrl.className = 'wc';
+    function btn(cls, icon, title, act) { var b = document.createElement('button'); b.type = 'button'; b.className = 'wb ' + cls; b.title = title; b.setAttribute('aria-label', title); b.innerHTML = '<i class="fa-solid ' + icon + '"></i>'; b.addEventListener('click', function (e) { e.stopPropagation(); act(); }); ctrl.appendChild(b); return b; }
+    var w = { id: id, key: o.key || null, title: o.title, icon: o.icon || 'fa-window-restore', url: o.url || '', frame: f, body: body, min: false, max: false, prev: null, kind: o.kind || 'web' };
+    if (o.url) {
+      var ad = document.createElement('div'); ad.className = 'addr'; ad.innerHTML = '<i class="fa-solid fa-link"></i>'; var inp = document.createElement('input'); inp.readOnly = true; inp.value = o.url; inp.setAttribute('aria-label', 'Adresse'); inp.addEventListener('focus', function () { inp.select(); }); ad.appendChild(inp); tb.appendChild(ad);
+      btn('hide-m', 'fa-rotate-right', 'Neu laden', function () { var fr = body.querySelector('iframe'); if (fr) { showLoading(w); fr.src = o.url; } });
+      btn('hide-m', 'fa-arrow-up-right-from-square', 'In neuem Tab öffnen', function () { openTab(o.url); });
+    }
+    btn('', 'fa-window-minimize', 'Minimieren', function () { minimize(id); });
+    btn('hide-m', 'fa-window-maximize', 'Maximieren', function () { toggleMax(id); });
+    btn('x', 'fa-xmark', 'Schließen', function () { closeWin(id); });
+    tb.appendChild(ctrl);
+    f.appendChild(tb); f.appendChild(body);
+    ['n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw'].forEach(function (d) { var h = document.createElement('div'); h.className = 'rh'; h.dataset.d = d; f.appendChild(h); });
+    layer.appendChild(f);
+    wins[id] = w; order.push(id);
+    if (o.url) {
+      var fr = document.createElement('iframe'); fr.title = o.title; fr.setAttribute('allow', 'clipboard-read; clipboard-write; fullscreen; microphone; camera'); fr.referrerPolicy = 'no-referrer-when-downgrade';
+      showLoading(w);
+      fr.addEventListener('load', function () { clearTimeout(w.loadTimer); var l = body.querySelector('.loading'); if (l) l.remove(); });
+      fr.src = o.url; body.appendChild(fr);
+    } else if (o.build) o.build(body, w);
+    wireDrag(w, tb); wireResize(w); f.addEventListener('pointerdown', function () { if (activeId !== id) focusWin(id); }, true);
+    tb.addEventListener('dblclick', function (e) { if (!e.target.closest('.wc') && !e.target.closest('.addr')) toggleMax(id); });
+    if (mobile()) w.max = false;
+    focusWin(id); clamp(w); renderTasks();
+    return id;
+  }
+  function showLoading(w) {
+    var l = w.body.querySelector('.loading'); if (l) l.remove();
+    l = document.createElement('div'); l.className = 'loading'; l.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i><div>Lädt „' + esc(w.title) + '“ …</div>'; w.body.appendChild(l);
+    clearTimeout(w.loadTimer);
+    w.loadTimer = setTimeout(function () { var x = w.body.querySelector('.loading'); if (x) { x.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i><div>Das dauert ungewöhnlich lang.</div><div><a href="' + esc(w.url) + '" target="_blank" rel="noopener">In neuem Tab öffnen</a></div>'; } }, 12000);
+  }
+  function focusWin(id) {
+    if (!wins[id]) return;
+    activeId = id; wins[id].frame.style.zIndex = ++zc;
+    Object.keys(wins).forEach(function (k) { wins[k].frame.classList.toggle('active', k === id); });
+    order = order.filter(function (x) { return x !== id; }); order.push(id);
+    renderTasks(); fxCheck();
+  }
+  function minimize(id) {
+    var w = wins[id]; if (!w) return; w.min = true; w.frame.classList.add('min');
+    if (activeId === id) { activeId = null; var next = order.slice().reverse().filter(function (k) { return k !== id && !wins[k].min; })[0]; if (next) focusWin(next); }
+    renderTasks(); fxCheck();
+  }
+  function restore(id) { var w = wins[id]; if (!w) return; w.min = false; w.frame.classList.remove('min'); focusWin(id); }
+  function toggleMax(id) {
+    var w = wins[id]; if (!w) return;
+    w.max = !w.max; w.frame.classList.toggle('max', w.max);
+    if (!w.max) clamp(w);
+    fxCheck(); saveGeom(w);
+  }
+  function closeWin(id) {
+    var w = wins[id]; if (!w) return;
+    saveGeom(w); clearTimeout(w.loadTimer); w.frame.remove(); delete wins[id]; order = order.filter(function (x) { return x !== id; });
+    if (activeId === id) { activeId = null; var n = order.slice().reverse().filter(function (k) { return !wins[k].min; })[0]; if (n) focusWin(n); }
+    renderTasks(); fxCheck();
+  }
+  function closeAll() { Object.keys(wins).forEach(closeWin); }
+  var deskHidden = [];
+  function showDesktop() {
+    var visible = Object.keys(wins).filter(function (k) { return !wins[k].min; });
+    if (visible.length) { deskHidden = visible; visible.forEach(function (k) { wins[k].min = true; wins[k].frame.classList.add('min'); }); activeId = null; }
+    else { deskHidden.forEach(function (k) { if (wins[k]) { wins[k].min = false; wins[k].frame.classList.remove('min'); } }); if (deskHidden.length) focusWin(deskHidden[deskHidden.length - 1]); deskHidden = []; }
+    renderTasks(); fxCheck();
+  }
+  function snapTo(id, mode) {
+    var w = wins[id]; if (!w || mobile()) return; var f = w.frame, W = vw(), H = vh();
+    if (mode === 'top') { if (!w.max) { w.prev = { l: f.offsetLeft, t: f.offsetTop, w: f.offsetWidth, h: f.offsetHeight }; toggleMax(id); } return; }
+    if (w.max) { w.max = false; f.classList.remove('max'); }
+    f.style.top = '0px'; f.style.height = H + 'px'; f.style.width = Math.floor(W / 2) + 'px'; f.style.left = (mode === 'left' ? 0 : Math.ceil(W / 2)) + 'px';
+    saveGeom(w);
+  }
+  function snapMode(x, y) { if (y < 6) return 'top'; if (x < 6) return 'left'; if (x > vw() - 6) return 'right'; return null; }
+
+  function wireDrag(w, tb) {
+    var st = null, hint = $('snap');
+    tb.addEventListener('pointerdown', function (e) {
+      if (e.button !== 0 || e.target.closest('.wc') || e.target.closest('.addr') || mobile()) return;
+      var f = w.frame, r = f.getBoundingClientRect(), lr = layer.getBoundingClientRect();
+      st = { x: e.clientX, y: e.clientY, l: r.left - lr.left, t: r.top - lr.top, moved: false, wasMax: w.max, w0: r.width };
+      tb.setPointerCapture(e.pointerId); focusWin(w.id);
+    });
+    tb.addEventListener('pointermove', function (e) {
+      if (!st) return;
+      var dx = e.clientX - st.x, dy = e.clientY - st.y, f = w.frame;
+      if (!st.moved && Math.abs(dx) + Math.abs(dy) < 4) return;
+      if (!st.moved) { st.moved = true; layer.classList.add('dragging'); if (w.max) { var pw = (w.prev && w.prev.w) || Math.min(900, vw() - 60); w.max = false; f.classList.remove('max'); f.style.width = pw + 'px'; f.style.height = ((w.prev && w.prev.h) || Math.min(600, vh() - 60)) + 'px'; st.l = e.clientX - layer.getBoundingClientRect().left - pw * (st.x / Math.max(1, st.w0)); st.x = e.clientX; st.y = e.clientY; dx = 0; dy = 0; } }
+      f.style.left = (st.l + dx) + 'px'; f.style.top = Math.max(0, st.t + dy) + 'px';
+      var lr = layer.getBoundingClientRect(), m = snapMode(e.clientX - lr.left, e.clientY - lr.top), W = vw(), H = vh();
+      if (m) { hint.style.display = 'block'; hint.style.top = '4px'; hint.style.height = (H - 8) + 'px'; hint.style.left = m === 'right' ? (W / 2 + 2) + 'px' : '4px'; hint.style.width = (m === 'top' ? W - 8 : W / 2 - 6) + 'px'; hint.dataset.m = m; } else { hint.style.display = 'none'; hint.dataset.m = ''; }
+    });
+    function end(e) {
+      if (!st) return; layer.classList.remove('dragging');
+      var m = hint.dataset.m; hint.style.display = 'none'; hint.dataset.m = '';
+      var moved = st.moved; st = null;
+      if (moved && m) snapTo(w.id, m); else if (moved) { clamp(w); saveGeom(w); }
+    }
+    tb.addEventListener('pointerup', end); tb.addEventListener('pointercancel', end);
+  }
+  function wireResize(w) {
+    w.frame.querySelectorAll('.rh').forEach(function (h) {
+      var st = null;
+      h.addEventListener('pointerdown', function (e) {
+        if (e.button !== 0 || w.max) return; var f = w.frame;
+        st = { x: e.clientX, y: e.clientY, l: f.offsetLeft, t: f.offsetTop, w: f.offsetWidth, h: f.offsetHeight };
+        h.setPointerCapture(e.pointerId); layer.classList.add('resizing'); e.stopPropagation(); focusWin(w.id);
+      });
+      h.addEventListener('pointermove', function (e) {
+        if (!st) return; var d = h.dataset.d, dx = e.clientX - st.x, dy = e.clientY - st.y, f = w.frame, W = vw(), H = vh();
+        if (d.indexOf('e') >= 0) f.style.width = Math.min(Math.max(340, st.w + dx), W - st.l) + 'px';
+        if (d.indexOf('s') >= 0) f.style.height = Math.min(Math.max(240, st.h + dy), H - st.t) + 'px';
+        if (d.indexOf('w') >= 0) { var nw = Math.max(340, st.w - dx); f.style.width = nw + 'px'; f.style.left = (st.l + st.w - nw) + 'px'; }
+        if (d.indexOf('n') >= 0) { var nh = Math.max(240, st.h - dy); f.style.height = nh + 'px'; f.style.top = Math.max(0, st.t + st.h - nh) + 'px'; }
+      });
+      function end() { if (!st) return; st = null; layer.classList.remove('resizing'); saveGeom(w); }
+      h.addEventListener('pointerup', end); h.addEventListener('pointercancel', end);
+    });
+  }
+  function renderTasks() {
+    var box = $('tasks'); box.innerHTML = '';
+    order.forEach(function (id) {
+      var w = wins[id]; var b = document.createElement('button'); b.type = 'button'; b.className = 'task' + (id === activeId && !w.min ? ' active' : '') + (w.min ? ' min' : '');
+      b.title = w.title; b.innerHTML = '<i class="fa-solid ' + esc(w.icon) + '"></i><span></span>'; b.querySelector('span').textContent = w.title;
+      b.addEventListener('click', function () { if (w.min) restore(id); else if (id === activeId) minimize(id); else focusWin(id); });
+      b.addEventListener('auxclick', function (e) { if (e.button === 1) closeWin(id); });
+      b.addEventListener('contextmenu', function (e) { e.preventDefault(); showCtx(e.clientX, e.clientY, [{ i: w.min ? 'fa-window-restore' : 'fa-window-minimize', t: w.min ? 'Wiederherstellen' : 'Minimieren', f: function () { w.min ? restore(id) : minimize(id); } }, { i: 'fa-xmark', t: 'Schließen', f: function () { closeWin(id); } }, '-', { i: 'fa-circle-xmark', t: 'Alle Fenster schließen', f: closeAll }]); });
+      box.appendChild(b);
+    });
+  }
+
+  /* ================= Kontextmenue ================= */
+  function hidePops() { ['start', 'results', 'ctx'].forEach(function (k) { $(k).hidden = true; }); $('startBtn').setAttribute('aria-expanded', 'false'); }
+  function showCtx(x, y, items) {
+    var m = $('ctx'); m.innerHTML = '';
+    items.forEach(function (it) {
+      if (it === '-') { m.appendChild(document.createElement('hr')); return; }
+      var b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'menuitem'); b.innerHTML = '<i class="fa-solid ' + it.i + '"></i><span></span>'; b.querySelector('span').textContent = it.t;
+      b.addEventListener('click', function () { hidePops(); it.f(); }); m.appendChild(b);
+    });
+    hidePops(); m.hidden = false;
+    var W = window.innerWidth, H = window.innerHeight;
+    m.style.left = Math.max(4, Math.min(x, W - m.offsetWidth - 4)) + 'px'; m.style.top = Math.max(4, Math.min(y, H - m.offsetHeight - 4)) + 'px';
+    var f = m.querySelector('button'); if (f) f.focus();
+  }
+  function itemMenu(it, x, y) {
+    showCtx(x, y, [
+      { i: 'fa-window-restore', t: 'Im Fenster öffnen', f: function () { openItem(it); } },
+      { i: 'fa-arrow-up-right-from-square', t: 'In neuem Tab öffnen', f: function () { pushRecent(it.key); openTab(it.url); } },
+      { i: 'fa-link', t: 'Link kopieren', f: function () { copy(it.url); } },
+      '-',
+      { i: isFav(it.key) ? 'fa-star-half-stroke' : 'fa-star', t: isFav(it.key) ? 'Aus Favoriten entfernen' : 'Zu Favoriten', f: function () { toggleFav(it.key); } }
+    ]);
+  }
+  document.addEventListener('pointerdown', function (e) { if (!e.target.closest('.pop') && !e.target.closest('#startBtn') && !e.target.closest('.search')) hidePops(); }, true);
+
+  /* ================= Oeffnen ================= */
+  function openItem(it, forceNew) {
+    pushRecent(it.key);
+    var id = openWindow({ key: forceNew ? null : it.key, title: it.name, icon: it.icon, url: it.url });
+    renderStart(); return id;
+  }
+
+  /* ================= Desktop-Symbole ================= */
+  function renderShortcuts() {
+    var box = $('shortcuts'); box.innerHTML = '';
+    FOLDERS.forEach(function (fo) {
+      var items = ALL.filter(function (a) { return a.group === 'app:' + fo.id; }); if (!items.length) return;
+      var sec = document.createElement('section'); sec.innerHTML = '<h2 class="sec-title"><i class="fa-solid ' + fo.icon + '"></i> ' + esc(fo.name) + '</h2><div class="sec-row"></div>';
+      var row = sec.querySelector('.sec-row');
+      items.forEach(function (it) {
+        var a = document.createElement('a'); a.className = 'dicon'; a.href = it.url; a.title = it.desc; a.rel = 'noopener';
+        a.innerHTML = '<div class="ic"><i class="fa-solid ' + esc(it.icon) + '"></i></div><span></span>'; a.querySelector('span').textContent = it.name;
+        a.addEventListener('click', function (e) { if (e.ctrlKey || e.metaKey || e.shiftKey) return; e.preventDefault(); openItem(it); });
+        a.addEventListener('contextmenu', function (e) { e.preventDefault(); itemMenu(it, e.clientX, e.clientY); });
+        row.appendChild(a);
+      });
+      box.appendChild(sec);
+    });
+    var ex = document.createElement('section'); ex.innerHTML = '<h2 class="sec-title"><i class="fa-solid fa-folder-tree"></i> Dateien</h2><div class="sec-row"></div>';
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'dicon'; b.innerHTML = '<div class="ic"><i class="fa-solid fa-folder-tree"></i></div><span>Explorer</span>'; b.title = 'Alle Tools, PDFs und Favoriten durchsuchen'; b.addEventListener('click', openExplorer);
+    ex.querySelector('.sec-row').appendChild(b); box.appendChild(ex);
+  }
+
+  /* ================= Explorer ================= */
+  var EX = { folder: store.get('ex_folder', 'all'), q: '', view: store.get('ex_view', 'grid'), sort: store.get('ex_sort', 'type'), hist: [], hpos: -1, sel: 0, items: [], el: null, wid: null };
+  if (EX.view !== 'list') EX.view = 'grid';
+  function folderTree() {
+    var t = { app: [], wb: {}, pdf: {} };
+    ALL.forEach(function (it) {
+      if (it.group.indexOf('app:') === 0) { if (t.app.indexOf(it.group) < 0) t.app.push(it.group); }
+      if (it.wbGroup) t.wb[it.wbGroup] = it.wbName; if (it.group.indexOf('wb:') === 0) t.wb[it.group] = it.groupName;
+      if (it.group.indexOf('pdf:') === 0) t.pdf[it.group] = it.groupName;
+    });
+    return t;
+  }
+  function inFolder(it, f) {
+    if (f === 'all') return true;
+    if (f === 'fav') return isFav(it.key);
+    if (f === 'recent') return recents.indexOf(it.key) >= 0;
+    if (f === 'wb:*') return it.type === 'tool';
+    if (f === 'pdf:*') return it.type === 'pdf';
+    return it.group === f || it.wbGroup === f;
+  }
+  function folderLabel(f) {
+    if (f === 'all') return 'Alle Elemente'; if (f === 'fav') return 'Favoriten'; if (f === 'recent') return 'Zuletzt geöffnet';
+    if (f === 'wb:*') return 'IDE-Werkbank'; if (f === 'pdf:*') return 'Gamma-PDFs';
+    var fo = FOLDERS.filter(function (x) { return 'app:' + x.id === f; })[0]; if (fo) return fo.name;
+    var it = ALL.filter(function (x) { return x.group === f || x.wbGroup === f; })[0]; return it ? (it.wbGroup === f ? it.wbName : it.groupName) : f;
+  }
+  function crumbsFor(f) {
+    var c = [['Dieser PC', 'all']];
+    if (f === 'all') return c;
+    if (f === 'fav' || f === 'recent') { c.push([folderLabel(f), f]); return c; }
+    if (f.indexOf('app:') === 0) { c.push([folderLabel(f), f]); return c; }
+    if (f.indexOf('wb:') === 0) { c.push(['IDE-Werkbank', 'wb:*']); if (f !== 'wb:*') c.push([folderLabel(f), f]); return c; }
+    if (f.indexOf('pdf:') === 0) { c.push(['Gamma-PDFs', 'pdf:*']); if (f !== 'pdf:*') c.push([folderLabel(f), f]); return c; }
+    c.push([f, f]); return c;
+  }
+  function visibleItems() {
+    var q = EX.q.trim().toLowerCase(), list;
+    if (q) {
+      var words = q.split(/\s+/);
+      list = ALL.filter(function (it) { var hay = (it.name + ' ' + it.desc + ' ' + (it.groupName || '') + ' ' + it.tags.map(function (t) { return t[0]; }).join(' ')).toLowerCase(); return words.every(function (w) { return hay.indexOf(w) >= 0; }); });
+    } else list = ALL.filter(function (it) { return inFolder(it, EX.folder); });
+    var s = EX.sort;
+    list = list.slice().sort(function (a, b) {
+      if (s === 'type') { var rk = { app: 0, tool: 1, pdf: 2 }, ta = rk[a.type], tb2 = rk[b.type]; if (ta !== tb2) return ta - tb2; var gc = (a.groupName || '').localeCompare(b.groupName || '', 'de'); if (gc) return gc; }
+      if (s === 'recent') { var ra = recents.indexOf(a.key), rb = recents.indexOf(b.key); ra = ra < 0 ? 999 : ra; rb = rb < 0 ? 999 : rb; if (ra !== rb) return ra - rb; }
+      if (s === 'cat') { var c = (a.groupName || '').localeCompare(b.groupName || '', 'de'); if (c) return c; }
+      if (s === 'size') { var d = (b.sizeNum || 0) - (a.sizeNum || 0); if (d) return d; }
+      return a.name.localeCompare(b.name, 'de');
+    });
+    return list;
+  }
+  function navigate(f, noHist) {
+    EX.folder = f; EX.q = ''; EX.sel = 0; store.set('ex_folder', f);
+    if (!noHist) { EX.hist = EX.hist.slice(0, EX.hpos + 1); EX.hist.push(f); EX.hpos = EX.hist.length - 1; }
+    refreshExplorer(true);
+  }
+  function parentFolder(f) { if (f === 'all') return 'all'; if (f.indexOf('wb:') === 0 && f !== 'wb:*') return 'wb:*'; if (f.indexOf('pdf:') === 0 && f !== 'pdf:*') return 'pdf:*'; return 'all'; }
+  function openExplorer() {
+    var id = openWindow({ key: 'explorer', title: 'Explorer', icon: 'fa-folder-tree', dark: true, w: 1040, h: 660, build: buildExplorer });
+    if (id) { EX.wid = id; } return id;
+  }
+  function buildExplorer(body) {
+    body.innerHTML = '<div class="ex"><aside class="ex-side" id="exSide" aria-label="Ordner"></aside><section class="ex-main">' +
+      '<div class="ex-bar"><button class="nb" id="exBack" type="button" title="Zurück" aria-label="Zurück"><i class="fa-solid fa-arrow-left"></i></button><button class="nb" id="exFwd" type="button" title="Vor" aria-label="Vor"><i class="fa-solid fa-arrow-right"></i></button><button class="nb" id="exUp" type="button" title="Eine Ebene höher" aria-label="Eine Ebene höher"><i class="fa-solid fa-arrow-up"></i></button>' +
+      '<nav class="crumbs" id="exCrumbs" aria-label="Pfad"></nav><input class="q" id="exQ" type="search" placeholder="Im Explorer suchen" aria-label="Im Explorer suchen" autocomplete="off">' +
+      '<select id="exSort" aria-label="Sortierung"><option value="type">Typ</option><option value="name">Name</option><option value="cat">Kategorie</option><option value="recent">Zuletzt</option><option value="size">Größe</option></select>' +
+      '<button class="nb" id="exGrid" type="button" title="Kacheln" aria-label="Kacheln" aria-pressed="true"><i class="fa-solid fa-table-cells-large"></i></button><button class="nb" id="exListBtn" type="button" title="Liste" aria-label="Liste" aria-pressed="false"><i class="fa-solid fa-list"></i></button></div>' +
+      '<div class="ex-list grid" id="exList" role="listbox" tabindex="0" aria-label="Elemente"></div><div class="ex-status"><span id="exCount"></span><span class="grow" id="exInfo"></span></div></section></div>';
+    EX.el = body;
+    var q = body.querySelector('#exQ'), t;
+    q.addEventListener('input', function () { clearTimeout(t); t = setTimeout(function () { EX.q = q.value; EX.sel = 0; refreshExplorer(); }, 120); });
+    body.querySelector('#exSort').value = EX.sort;
+    body.querySelector('#exSort').addEventListener('change', function (e) { EX.sort = e.target.value; store.set('ex_sort', EX.sort); refreshExplorer(); });
+    body.querySelector('#exBack').addEventListener('click', function () { if (EX.hpos > 0) { EX.hpos--; navigate(EX.hist[EX.hpos], true); } });
+    body.querySelector('#exFwd').addEventListener('click', function () { if (EX.hpos < EX.hist.length - 1) { EX.hpos++; navigate(EX.hist[EX.hpos], true); } });
+    body.querySelector('#exUp').addEventListener('click', function () { navigate(parentFolder(EX.folder)); });
+    body.querySelector('#exGrid').addEventListener('click', function () { EX.view = 'grid'; store.set('ex_view', 'grid'); refreshExplorer(); });
+    body.querySelector('#exListBtn').addEventListener('click', function () { EX.view = 'list'; store.set('ex_view', 'list'); refreshExplorer(); });
+    var list = body.querySelector('#exList');
+    list.addEventListener('keydown', function (e) {
+      var n = EX.items.length; if (!n) return;
+      var cols = EX.view === 'grid' ? Math.max(1, Math.floor(list.clientWidth / 180)) : 1, k = e.key, s = EX.sel;
+      if (k === 'ArrowRight') s++; else if (k === 'ArrowLeft') s--; else if (k === 'ArrowDown') s += cols; else if (k === 'ArrowUp') s -= cols;
+      else if (k === 'Home') s = 0; else if (k === 'End') s = n - 1;
+      else if (k === 'Enter') { e.preventDefault(); openItem(EX.items[EX.sel], e.shiftKey); return; }
+      else if (k === 'f' || k === 'F') { e.preventDefault(); toggleFav(EX.items[EX.sel].key); return; }
+      else if (k === 'Backspace') { e.preventDefault(); navigate(parentFolder(EX.folder)); return; }
+      else if (k === '/') { e.preventDefault(); q.focus(); return; }
+      else return;
+      e.preventDefault(); selectIdx(Math.max(0, Math.min(n - 1, s)));
+    });
+    if (!EX.hist.length) { EX.hist = [EX.folder]; EX.hpos = 0; }
+    refreshExplorer(true);
+    setTimeout(function () { list.focus(); }, 30);
+  }
+  function selectIdx(i) {
+    EX.sel = i; var list = EX.el && EX.el.querySelector('#exList'); if (!list) return;
+    Array.prototype.forEach.call(list.children, function (c, k) { var on = k === i; c.classList.toggle('sel', on); c.setAttribute('aria-selected', on ? 'true' : 'false'); if (on) { c.scrollIntoView({ block: 'nearest' }); } });
+    var it = EX.items[i]; var info = EX.el.querySelector('#exInfo'); if (it && info) info.textContent = it.name + ' — ' + (it.desc || it.groupName || '') + '  ·  ' + rel(it.url);
+  }
+  function refreshExplorer() {
+    if (!EX.el || !document.body.contains(EX.el)) return;
+    var el = EX.el, t = folderTree();
+    // Seitenleiste
+    var side = el.querySelector('#exSide'); side.innerHTML = '';
+    function sh(txt) { var h = document.createElement('h3'); h.textContent = txt; side.appendChild(h); }
+    function fb(id, icon, name, count) {
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'fb'; b.innerHTML = '<i class="fa-solid ' + icon + '"></i><span></span><em></em>'; b.querySelector('span').textContent = name; b.querySelector('em').textContent = count == null ? '' : count;
+      if (!EX.q && EX.folder === id) b.setAttribute('aria-current', 'true'); b.addEventListener('click', function () { navigate(id); }); side.appendChild(b);
+    }
+    var cnt = function (f) { return ALL.filter(function (it) { return inFolder(it, f); }).length; };
+    sh('Schnellzugriff'); fb('all', 'fa-house', 'Alle Elemente', ALL.length); fb('fav', 'fa-star', 'Favoriten', favs.length); fb('recent', 'fa-clock-rotate-left', 'Zuletzt geöffnet', recents.length);
+    sh('Desktop'); FOLDERS.forEach(function (fo) { fb('app:' + fo.id, fo.icon, fo.name, cnt('app:' + fo.id)); });
+    var wbKeys = Object.keys(t.wb).sort(function (a, b) { return t.wb[a].localeCompare(t.wb[b], 'de'); });
+    sh('IDE-Werkbank'); if (loadState.wb === 'fehler') fb('wb:*', 'fa-triangle-exclamation', 'Nicht ladbar', ''); else { fb('wb:*', 'fa-laptop-code', 'Alle Werkzeuge', cnt('wb:*')); wbKeys.forEach(function (k) { fb(k, 'fa-folder', t.wb[k], cnt(k)); }); }
+    var pdfKeys = Object.keys(t.pdf).sort(function (a, b) { return t.pdf[a].localeCompare(t.pdf[b], 'de'); });
+    sh('Gamma-PDFs'); if (loadState.pdf === 'fehler') fb('pdf:*', 'fa-triangle-exclamation', 'Nicht ladbar', ''); else { fb('pdf:*', 'fa-file-pdf', 'Alle PDFs', cnt('pdf:*')); pdfKeys.forEach(function (k) { fb(k, 'fa-folder', t.pdf[k], cnt(k)); }); }
+    // Leiste
+    var crumbs = el.querySelector('#exCrumbs'); crumbs.innerHTML = '';
+    var parts = EX.q ? [['Dieser PC', 'all'], ['Suche: „' + EX.q + '“', null]] : crumbsFor(EX.folder);
+    parts.forEach(function (p, i) { if (i) { var s = document.createElement('span'); s.textContent = '›'; crumbs.appendChild(s); } var b = document.createElement('button'); b.type = 'button'; b.textContent = p[0]; if (p[1] === null) b.disabled = true; else b.addEventListener('click', function () { navigate(p[1]); }); crumbs.appendChild(b); });
+    el.querySelector('#exBack').disabled = EX.hpos <= 0; el.querySelector('#exFwd').disabled = EX.hpos >= EX.hist.length - 1; el.querySelector('#exUp').disabled = EX.folder === 'all' && !EX.q;
+    el.querySelector('#exGrid').setAttribute('aria-pressed', EX.view === 'grid'); el.querySelector('#exListBtn').setAttribute('aria-pressed', EX.view === 'list');
+    // Inhalt
+    var list = el.querySelector('#exList'); list.className = 'ex-list ' + EX.view; list.innerHTML = '';
+    EX.items = visibleItems(); if (EX.sel >= EX.items.length) EX.sel = Math.max(0, EX.items.length - 1);
+    if (loadState.wb === 'laedt' || loadState.pdf === 'laedt') { var sk = document.createElement('div'); sk.className = 'skel'; sk.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Lade IDE-Werkbank und PDF-Bibliothek …'; list.appendChild(sk); }
+    if (!EX.items.length && !(loadState.wb === 'laedt' || loadState.pdf === 'laedt')) {
+      var em = document.createElement('div'); em.className = 'empty';
+      em.innerHTML = EX.q ? '<i class="fa-solid fa-magnifying-glass"></i><div>Keine Treffer für „' + esc(EX.q) + '“.</div>' : (EX.folder === 'fav' ? '<i class="fa-regular fa-star"></i><div>Noch keine Favoriten.<br>Markiere Elemente mit dem Stern oder drücke F.</div>' : EX.folder === 'recent' ? '<i class="fa-solid fa-clock-rotate-left"></i><div>Noch nichts geöffnet.</div>' : '<i class="fa-regular fa-folder-open"></i><div>Dieser Ordner ist leer.</div>');
+      list.appendChild(em);
+    }
+    EX.items.forEach(function (it, i) {
+      var node = document.createElement('div'); node.setAttribute('role', 'option'); node.className = EX.view === 'grid' ? 'card' : 'row'; node.dataset.i = i;
+      var star = '<button class="star" type="button" aria-label="Favorit" aria-pressed="' + isFav(it.key) + '" title="Favorit (F)"><i class="fa-' + (isFav(it.key) ? 'solid' : 'regular') + ' fa-star"></i></button>';
+      var tags = it.tags.map(function (g) { return '<span class="tag ' + g[1] + '">' + esc(g[0]) + '</span>'; }).join('');
+      if (EX.view === 'grid') node.innerHTML = star + '<div class="ci"><i class="fa-solid ' + esc(it.icon) + '"></i></div><div class="cn">' + esc(it.name) + '</div><div class="cm">' + esc((it.groupName || '') + (it.size ? ' · ' + it.size : '')) + '</div><div class="tags">' + tags + '</div>';
+      else node.innerHTML = '<div class="ci"><i class="fa-solid ' + esc(it.icon) + '"></i></div><div class="rn">' + esc(it.name) + '</div><div class="rd">' + esc(it.desc) + '</div><div class="rc">' + esc((it.groupName || '') + (it.size ? ' · ' + it.size : '')) + '</div>' + star;
+      node.title = it.desc || it.name;
+      node.addEventListener('click', function (e) { if (e.target.closest('.star')) { toggleFav(it.key); return; } selectIdx(i); list.focus({ preventScroll: true }); if (coarse || e.detail === 0) openItem(it); });
+      node.addEventListener('dblclick', function (e) { if (!e.target.closest('.star')) openItem(it); });
+      node.addEventListener('auxclick', function (e) { if (e.button === 1) { e.preventDefault(); pushRecent(it.key); openTab(it.url); } });
+      node.addEventListener('contextmenu', function (e) { e.preventDefault(); selectIdx(i); itemMenu(it, e.clientX, e.clientY); });
+      list.appendChild(node);
+    });
+    el.querySelector('#exCount').textContent = EX.items.length + ' Element' + (EX.items.length === 1 ? '' : 'e');
+    if (EX.items.length) selectIdx(EX.sel);
+    else el.querySelector('#exInfo').textContent = loadState.wb === 'fehler' ? 'Die IDE-Werkbank-Liste konnte nicht geladen werden (offline?).' : '';
+  }
+
+  /* ================= Startmenue, Suche ================= */
+  function renderStart() {
+    var s = $('start'); var pins = favs.map(function (k) { return byKey[k]; }).filter(Boolean);
+    if (pins.length < 8) BASE_APPS.forEach(function (a) { var it = byKey[rel(abs(a.u)) || '.']; if (it && pins.indexOf(it) < 0 && pins.length < 8) pins.push(it); });
+    var rec = recents.map(function (k) { return byKey[k]; }).filter(Boolean).slice(0, 4);
+    s.innerHTML = '<div class="sh">Angeheftet</div><div class="sg" id="sPins"></div>' + (rec.length ? '<div class="sh">Zuletzt geöffnet</div><div class="sg" id="sRec"></div>' : '') +
+      '<div class="sa"><button type="button" data-a="ex"><i class="fa-solid fa-folder-tree"></i> Explorer öffnen</button><button type="button" data-a="chat2"><i class="fa-solid fa-user-astronaut"></i> Chatroom Experten</button><button type="button" data-a="desk"><i class="fa-regular fa-window-minimize"></i> Desktop anzeigen</button><button type="button" data-a="fx"><i class="fa-solid fa-wand-magic-sparkles"></i> Matrix-Effekt <span id="fxState"></span></button><button type="button" data-a="close"><i class="fa-solid fa-circle-xmark"></i> Alle Fenster schließen</button><button type="button" data-a="help"><i class="fa-solid fa-keyboard"></i> Tastenkürzel</button></div>';
+    function fill(id, arr) { var box = s.querySelector(id); if (!box) return; arr.forEach(function (it) { var b = document.createElement('button'); b.type = 'button'; b.className = 'si'; b.innerHTML = '<div class="ic"><i class="fa-solid ' + esc(it.icon) + '"></i></div><span></span>'; b.querySelector('span').textContent = it.name; b.addEventListener('click', function () { hidePops(); openItem(it); }); b.addEventListener('contextmenu', function (e) { e.preventDefault(); itemMenu(it, e.clientX, e.clientY); }); box.appendChild(b); }); }
+    fill('#sPins', pins); fill('#sRec', rec);
+    s.querySelector('#fxState').textContent = fxOn ? '(an)' : '(aus)';
+    s.querySelectorAll('.sa button').forEach(function (b) { b.addEventListener('click', function () {
+      hidePops(); var a = b.dataset.a;
+      if (a === 'ex') openExplorer(); else if (a === 'chat2') openItem(byKey['chatroom/experten.html']); else if (a === 'desk') showDesktop(); else if (a === 'close') closeAll();
+      else if (a === 'fx') { fxOn = !fxOn; store.set('fx', fxOn); fxCheck(); toast('Matrix-Effekt ' + (fxOn ? 'an' : 'aus')); }
+      else if (a === 'help') toast('Strg+K Suche · Strg+Leertaste Start · Esc schließt Menüs · Explorer: Pfeile, Enter, F Favorit, / Suche · Fenster an den Rand ziehen = Snap');
+    }); });
+  }
+  function toggleStart() { var s = $('start'); var open = s.hidden; hidePops(); if (open) { renderStart(); s.hidden = false; $('startBtn').setAttribute('aria-expanded', 'true'); var f = s.querySelector('button'); if (f) f.focus(); } }
+  var sel = -1, hits = [];
+  function runSearch() {
+    var q = $('q').value.trim().toLowerCase(), box = $('results');
+    if (!q) { box.hidden = true; return; }
+    var words = q.split(/\s+/);
+    hits = ALL.map(function (it) { var n = it.name.toLowerCase(), hay = n + ' ' + (it.desc || '').toLowerCase() + ' ' + (it.groupName || '').toLowerCase(); if (!words.every(function (w) { return hay.indexOf(w) >= 0; })) return null; return { it: it, s: (n.indexOf(q) === 0 ? 0 : n.indexOf(q) > 0 ? 1 : 2) + (it.type === 'app' ? 0 : it.type === 'tool' ? 0.3 : 0.6) }; }).filter(Boolean).sort(function (a, b) { return a.s - b.s; }).slice(0, 8).map(function (h) { return h.it; });
+    sel = hits.length ? 0 : -1; box.innerHTML = '';
+    if (!hits.length) { var e = document.createElement('div'); e.className = 'res'; e.textContent = 'Keine Treffer. Im Explorer weitersuchen: Enter.'; box.appendChild(e); hits = []; }
+    hits.forEach(function (it, i) { var b = document.createElement('button'); b.type = 'button'; b.className = 'res'; b.setAttribute('role', 'option'); b.setAttribute('aria-selected', i === sel ? 'true' : 'false'); b.innerHTML = '<div class="ic"><i class="fa-solid ' + esc(it.icon) + '"></i></div><div><b></b><small></small></div>'; b.querySelector('b').textContent = it.name; b.querySelector('small').textContent = (it.groupName || '') + (it.desc ? ' · ' + it.desc : ''); b.addEventListener('click', function () { choose(it); }); b.addEventListener('mouseenter', function () { sel = i; markSel(); }); box.appendChild(b); });
+    box.hidden = false;
+  }
+  function markSel() { $('results').querySelectorAll('.res').forEach(function (b, i) { b.setAttribute('aria-selected', i === sel ? 'true' : 'false'); }); }
+  function choose(it) { $('results').hidden = true; $('q').value = ''; $('q').blur(); openItem(it); }
+  $('q').addEventListener('input', runSearch);
+  $('q').addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowDown') { e.preventDefault(); if (hits.length) { sel = (sel + 1) % hits.length; markSel(); } }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); if (hits.length) { sel = (sel - 1 + hits.length) % hits.length; markSel(); } }
+    else if (e.key === 'Enter') { e.preventDefault(); if (hits[sel]) choose(hits[sel]); else if ($('q').value.trim()) { var qq = $('q').value.trim(); $('q').value = ''; hidePops(); openExplorer(); setTimeout(function () { EX.q = qq; refreshExplorer(); var i = EX.el && EX.el.querySelector('#exQ'); if (i) i.value = qq; }, 60); } }
+    else if (e.key === 'Escape') { $('q').value = ''; $('results').hidden = true; $('q').blur(); }
+  });
+  $('q').addEventListener('focus', runSearch);
+
+  /* ================= Matrix-Effekt ================= */
+  var fxOn = store.get('fx', true), cv = $('fx'), cx = cv.getContext('2d'), drops = [], fxTimer = null, last = 0;
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; if (reduce) fxOn = false;
+  var FS = 14, CH = '01アイウエオカキクケコ';
+  function fxResize() { var r = cv.parentElement.getBoundingClientRect(); cv.width = Math.max(1, r.width); cv.height = Math.max(1, r.height); var n = Math.ceil(cv.width / FS); while (drops.length < n) drops.push(Math.random() * -40); drops.length = n; cx.fillStyle = '#090304'; cx.fillRect(0, 0, cv.width, cv.height); }
+  function fxFrame(t) {
+    fxTimer = requestAnimationFrame(fxFrame);
+    if (t - last < 45) return; last = t;
+    cx.fillStyle = 'rgba(9, 3, 5, 0.06)'; cx.fillRect(0, 0, cv.width, cv.height); cx.fillStyle = 'rgba(251, 113, 133, 0.5)'; cx.font = FS + 'px monospace';
+    for (var i = 0; i < drops.length; i++) { cx.fillText(CH[Math.floor(Math.random() * CH.length)], i * FS, drops[i] * FS); if (drops[i] * FS > cv.height && Math.random() > 0.975) drops[i] = 0; drops[i]++; }
+  }
+  function fxCheck() {
+    var covered = Object.keys(wins).some(function (k) { return wins[k].max && !wins[k].min; }) || mobile();
+    var run = fxOn && !document.hidden && !covered;
+    if (run && !fxTimer) { fxResize(); fxTimer = requestAnimationFrame(fxFrame); }
+    else if (!run && fxTimer) { cancelAnimationFrame(fxTimer); fxTimer = null; if (!fxOn) { cx.clearRect(0, 0, cv.width, cv.height); } }
+  }
+  document.addEventListener('visibilitychange', fxCheck);
+  window.addEventListener('resize', function () { if (fxTimer) fxResize(); Object.keys(wins).forEach(function (k) { if (!wins[k].max) clamp(wins[k]); }); });
+
+  /* ================= Start ================= */
+  function tick() { var n = new Date(); $('tm').textContent = n.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }); $('dt').textContent = n.toLocaleDateString('de-DE'); }
+  tick(); setInterval(tick, 20000);
+  $('startBtn').addEventListener('click', toggleStart);
+  $('exBtn').addEventListener('click', openExplorer);
+  $('chatBtn').addEventListener('click', function () { openItem(byKey['chatroom/index.html']); });
+  $('showDesk').addEventListener('click', showDesktop);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') { hidePops(); return; }
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); $('q').focus(); $('q').select(); }
+    else if (e.ctrlKey && e.code === 'Space') { e.preventDefault(); toggleStart(); }
+  });
+  renderShortcuts(); renderStart(); fxCheck();
+  var params = new URLSearchParams(location.search);
+  loadManifests().then(function () { renderShortcuts(); renderStart(); refreshExplorer(); if (EX.el) refreshExplorer(); }).then(function () {
+    var o = params.get('open'); if (o === 'explorer') openExplorer(); else if (o && byKey[o]) openItem(byKey[o]);
+  });
+  if (params.get('open') === 'explorer') openExplorer();
+  window.__desktop = { openExplorer: openExplorer, openItem: openItem, ALL: ALL, wins: wins, snapTo: snapTo, EX: EX };
+})();
+</script>
+</body>
+</html>

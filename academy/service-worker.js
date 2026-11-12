@@ -1,4 +1,4 @@
-const CACHE_VERSION = "academy-shell-v1";
+const CACHE_VERSION = "academy-shell-v2";
 const RUNTIME_CACHE = "academy-runtime-v1";
 
 const SHELL_FILES = [
