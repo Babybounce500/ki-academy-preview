@@ -187,18 +187,18 @@
   "file": "../academy/modules/tools/python-ide.html",
   "title": "Python-IDE",
   "category": "Python",
-  "description": "Python-Entwicklungsumgebung mit KI-Chat und runCode-Funktion.",
+  "description": "Echtes Python im Browser (Pyodide): Editor, Dateien, Tests, Shell.",
   "sizeKB": 37,
   "source": "E:/0VIBECODING/stack-source/publish/academy/modules/tools/python-ide.html",
   "variantOf": null,
   "hasEditor": true,
   "hasPreview": false,
-  "hasChat": true,
+  "hasChat": false,
   "engine": "monaco",
   "loads": true,
-  "jsErrors": 1,
-  "mobileScrollX": true,
-  "mobileOk": false,
+  "jsErrors": 0,
+  "mobileScrollX": false,
+  "mobileOk": true,
   "endpoints": [
    {
     "host": "cdn.jsdelivr.net",
@@ -211,7 +211,7 @@
   ],
   "brandingFlag": null,
   "sameDomAsStudio": false,
-  "notes": "Schluessel-Muster im Text ist ein Platzhalter (Fehlalarm). 1 JS-Fehler; mobil horizontales Scrollen."
+  "notes": "Echtes Python 3.12 (Pyodide). Erster Start laedt ca. 10 MB."
  },
  {
   "slug": "vision-bot",
