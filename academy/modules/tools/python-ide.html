@@ -61,6 +61,15 @@ button{cursor:pointer}
 .help{position:fixed;inset:0;z-index:50;display:none;place-items:center;padding:16px;background:rgba(0,0,0,.6)}
 .help.on{display:grid}.help>div{width:min(680px,100%);max-height:86dvh;overflow:auto;padding:20px 22px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
 .help h2{margin:0 0 10px;font-size:18px}.help h4{margin:14px 0 4px;color:var(--accent)}.help code{background:#1b1b1b;padding:1px 6px;border-radius:4px}.help pre{background:#1b1b1b;padding:10px;border-radius:6px;overflow:auto}
+.lib>div{width:min(820px,100%)}
+.lib .lq{width:100%;min-height:40px;margin:6px 0 10px;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);outline:none}
+.lib .lq:focus{border-color:var(--accent)}
+.lib h4{margin:16px 0 6px!important}
+.lib .li{display:flex;align-items:center;gap:8px;padding:7px 4px;border-bottom:1px solid #333}
+.lib .li div{flex:1;min-width:0}.lib .li b{color:#9cdcfe;font-family:Consolas,monospace}.lib .li span{display:block;color:var(--dim);font-size:12.5px}
+.lib .li button{flex:0 0 auto;min-height:32px;padding:3px 10px;border:1px solid var(--line);border-radius:6px;background:#333337;font-size:12px}
+.lib .li button:hover{border-color:var(--accent)}
+.lib .lh{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .toast{position:fixed;left:50%;bottom:54px;transform:translateX(-50%);z-index:60;max-width:90vw;padding:8px 14px;border-radius:8px;background:#111;border:1px solid var(--line);font-size:13px}
 .toast[hidden]{display:none}
 .tabs{display:none}
@@ -86,6 +95,7 @@ button{cursor:pointer}
   <button class="b run" id="bRun" type="button" title="Ausführen (F5 oder Strg+Enter)">▶ Ausführen</button>
   <button class="b stop" id="bStop" type="button" hidden>■ Stopp</button>
   <button class="b" id="bTest" type="button" title="Alle Dateien test*.py mit unittest ausführen">🧪 Tests</button>
+  <button class="b" id="bLib" type="button" title="Die vibe-Bibliothek: ca. 70 fertige Funktionen">📚 Bibliothek</button>
   <button class="b" id="bNew" type="button">＋ Datei</button>
   <button class="b" id="bUp" type="button">⬆ Hochladen</button>
   <button class="b" id="bDown" type="button">⬇ Download</button>
@@ -128,10 +138,17 @@ button{cursor:pointer}
  <li><b>Diagramme:</b> <code>plt.show()</code> zeigt matplotlib-Diagramme direkt in der Ausgabe.</li>
  <li><b>Asynchron:</b> <code>await</code> funktioniert auf oberster Ebene, <code>asyncio.run(main())</code> wird automatisch angepasst.</li>
  <li><b>Netzwerk:</b> <code>from pyodide.http import pyfetch</code> mit <code>await pyfetch(url)</code> ruft Webadressen ab (der Server muss Browser-Zugriff erlauben).</li>
+ <li><b>Bibliothek:</b> <code>from vibe import *</code> bringt rund 70 fertige Funktionen (Text, Finanzen, deutsche Feiertage, Datenanalyse, Sudoku, Graphen, KI-Abfrage, Diagramme). Der Knopf „📚 Bibliothek“ zeigt alle mit Beispielen.</li>
  <li><b>Speichern:</b> alles wird automatisch in deinem Browser gespeichert (localStorage), nichts verlässt dein Gerät.</li></ul>
  <h4>Grenzen</h4>
  <ul><li>Keine Server (Flask, FastAPI), keine Sockets und keine Threads (<code>threading</code>, <code>socket</code>, <code>requests</code>): der Browser erlaubt das nicht.</li><li>Endlosschleifen beendest du mit „■ Stopp“.</li><li>Dateien existieren nur in der IDE, nicht auf deiner Festplatte. Mit „Download“ und „Hochladen“ tauschst du sie aus.</li></ul>
  <p><button class="b" id="helpClose" type="button">Schließen</button></p>
+</div></div>
+<div class="help lib" id="lib" role="dialog" aria-modal="true" aria-labelledby="libT"><div>
+ <div class="lh"><h2 id="libT" style="margin:0;flex:1">📚 vibe: die Bibliothek</h2><button class="b" id="libDl" type="button">⬇ vibe.py</button><button class="b" id="libClose" type="button">Schließen</button></div>
+ <p style="margin:8px 0 0">Fertige Funktionen in reinem Python. Mit <code>from vibe import *</code> in jeder Datei nutzbar. „Einfügen“ legt eine Beispieldatei an, „▶ Probieren“ führt sie sofort aus.</p>
+ <input class="lq" id="libQ" type="search" placeholder="Suchen: z. B. Feiertage, Sudoku, IBAN, Diagramm" aria-label="Funktionen suchen" autocomplete="off">
+ <div id="libList"><p class="i" style="color:var(--dim)">Python lädt …</p></div>
 </div></div>
 <div class="toast" id="toast" hidden></div>
 
@@ -248,7 +265,7 @@ async function init() {
     '    sys.argv = [filename]',
     '    try:',
     '        code = _fix_async_run(code, filename)',
-    '        if "matplotlib" in code or "pyplot" in code:',
+    '        if "matplotlib" in code or "pyplot" in code or "linien(" in code or "balken_plot(" in code or "torte_plot(" in code:',
     '            _mpl_prep()',
     '        await eval_code_async(code, g, filename=filename, return_mode="none")',
     '        return 0',
@@ -281,6 +298,7 @@ async function handle(m) {
       var code = m.code;
       post({ t: 'status', s: 'Pakete prüfen …' });
       await py.loadPackagesFromImports(code, { messageCallback: function (s) { post({ t: 'status', s: s }); }, errorCallback: function (s) { emit('e', s + '\n'); } });
+      if (/\b(linien|balken_plot|torte_plot)\s*\(/.test(code)) { post({ t: 'status', s: 'matplotlib laden …' }); await py.loadPackage('matplotlib'); }
       post({ t: 'status', s: 'läuft …' });
       var rc = await py.globals.get('_run_main')(code, m.name);
       py.runPython('import sys; sys.stdout.flush(); sys.stderr.flush()');
@@ -291,6 +309,11 @@ async function handle(m) {
       flush();
       post({ t: 'done', id: m.id, ok: false, ms: Date.now() - t0, err: clean(err && err.message || err) });
     }
+  } else if (m.t === 'lib') {
+    try { py.FS.writeFile('/home/pyodide/' + m.name, m.text); post({ t: 'libok' }); } catch (err) { post({ t: 'libok', err: String(err) }); }
+  } else if (m.t === 'katalog') {
+    try { var j = py.runPython('import json, vibe\njson.dumps(vibe.katalog())'); post({ t: 'katalog', data: j }); }
+    catch (err) { post({ t: 'katalog', err: clean(err && err.message || err) }); }
   } else if (m.t === 'repl') {
     try {
       stdinLines = [];
@@ -317,6 +340,7 @@ onmessage = function (e) {
   var DEFAULTS = {
     'main.py': '# Python IDE: echtes Python im Browser\nfrom utils import fibonacci, is_prime, summary\n\ntry:\n    name = input("Wie heißt du? ")\nexcept EOFError:  # keine Eingabe vorhanden\n    name = ""\nname = name or "Welt"\nprint(f"Hallo, {name}!")\n\nzahlen = list(range(1, 21))\nprint("Primzahlen bis 20:", [n for n in zahlen if is_prime(n)])\nprint("Fibonacci:", fibonacci(12))\nprint(summary(zahlen))\n\n# Fehler ausprobieren: Zeile entkommentieren\n# print(1 / 0)\n',
     'utils.py': '"""Hilfsfunktionen für main.py und die Tests."""\n\n\ndef fibonacci(n):\n    folge = [0, 1]\n    while len(folge) < n:\n        folge.append(folge[-1] + folge[-2])\n    return folge[:n]\n\n\ndef is_prime(n):\n    if n < 2:\n        return False\n    for t in range(2, int(n ** 0.5) + 1):\n        if n % t == 0:\n            return False\n    return True\n\n\ndef summary(werte):\n    return {"anzahl": len(werte), "summe": sum(werte), "mittel": sum(werte) / len(werte)}\n',
+    'demo_vibe.py': '# Die vibe-Bibliothek: ein Blick auf ihre Staerken\nfrom vibe import *\nimport datetime as dt\n\nprint(mandelbrot_ascii(60, 14))\nprint()\nprint(tabelle([[n, zahl_zu_wort(n)] for n in (7, 42, 1999, 1234567)], ["Zahl", "in Worten"]))\nprint()\nprint(balken({"Python": 48, "JavaScript": 40, "Rust": 12}))\nprint("Ostern 2025:", ostern(2025))\nprint("Werktage im Dezember 2024 (NRW):", werktage(dt.date(2024, 12, 1), dt.date(2024, 12, 31), "NW"))\nprint("Sudoku:", sudoku_loesen("530070000600195000098000060800060003400803001700020006060000280000419005000080079")[:27], "...")\nprint("Mehr: vibe.hilfe()  oder oben auf 📚 Bibliothek klicken")\n',
     'test_utils.py': 'import unittest\nfrom utils import fibonacci, is_prime, summary\n\n\nclass TestUtils(unittest.TestCase):\n    def test_fibonacci(self):\n        self.assertEqual(fibonacci(8), [0, 1, 1, 2, 3, 5, 8, 13])\n\n    def test_is_prime(self):\n        self.assertTrue(is_prime(13))\n        self.assertFalse(is_prime(15))\n\n    def test_summary(self):\n        self.assertEqual(summary([2, 4])["mittel"], 3)\n\n\nif __name__ == "__main__":\n    unittest.main()\n'
   };
   var files, cur = 'main.py', ed = null, worker = null, ready = false, running = false, runId = 0, replId = 0, workerUrl = null;
@@ -436,7 +460,9 @@ onmessage = function (e) {
   var pending = {};
   function onWorker(e) {
     var m = e.data;
-    if (m.t === 'ready') { ready = true; setPill('ready', 'Python ' + m.version + ' bereit'); $('pyver').textContent = 'Python ' + m.version + ' (Pyodide ' + m.pyodide + ')'; uiRun(); }
+    if (m.t === 'libok') { if (m.err) { libErr = 'Bibliothek konnte nicht installiert werden: ' + m.err; renderLib(); } }
+    else if (m.t === 'katalog') { if (m.err) { libErr = 'Katalog nicht lesbar: ' + m.err; } else { try { catalog = JSON.parse(m.data); } catch (e) { libErr = 'Katalog nicht lesbar'; } } renderLib(); }
+    else if (m.t === 'ready') { sendLib(); ready = true; setPill('ready', 'Python ' + m.version + ' bereit'); $('pyver').textContent = 'Python ' + m.version + ' (Pyodide ' + m.pyodide + ')'; uiRun(); }
     else if (m.t === 'fatal') { setPill('err', 'Laden fehlgeschlagen'); add(outEl, 'Python konnte nicht geladen werden: ' + m.err + '\nPrüfe die Internetverbindung (Pyodide kommt vom CDN) und lade die Seite neu.\n', 'e'); }
     else if (m.t === 'status') { if (running) setPill('busy', m.s); }
     else if (m.t === 'img') { var im = document.createElement('img'); im.src = URL.createObjectURL(new Blob([m.png], { type: 'image/png' })); im.alt = 'Diagramm'; im.style.cssText = 'display:block;max-width:100%;background:#fff;border-radius:6px;margin:6px 0'; outEl.appendChild(im); outEl.scrollTop = outEl.scrollHeight; }
@@ -449,6 +475,34 @@ onmessage = function (e) {
       pending.shell = false; if (m.err) add(shEl, m.err + '\n', 'e');
       $('prompt').textContent = m.more ? '...' : '>>>'; $('replIn').disabled = false; $('replIn').focus(); setPill('ready', 'Python bereit');
     }
+  }
+  var libText = null, catalog = null, libErr = '';
+  function sendLib() {
+    function go() { worker.postMessage({ t: 'lib', name: 'vibe.py', text: libText }); worker.postMessage({ t: 'katalog' }); }
+    if (libText) { go(); return; }
+    fetch('vibe.py').then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); }).then(function (t) { libText = t; go(); }).catch(function (e) { libErr = 'vibe.py konnte nicht geladen werden (' + e.message + ')'; renderLib(); });
+  }
+  function renderLib() {
+    var box = $('libList'), q = $('libQ').value.trim().toLowerCase(); box.innerHTML = '';
+    if (libErr) { box.innerHTML = '<p style="color:var(--err)"></p>'; box.firstChild.textContent = libErr; return; }
+    if (!catalog) { box.innerHTML = '<p style="color:var(--dim)">Python lädt noch …</p>'; return; }
+    var last = '', n = 0;
+    catalog.forEach(function (e) {
+      if (q && (e.name + ' ' + e.beschreibung + ' ' + e.kategorie).toLowerCase().indexOf(q) < 0) return;
+      if (e.kategorie !== last) { var h = document.createElement('h4'); h.textContent = e.kategorie; box.appendChild(h); last = e.kategorie; }
+      var row = document.createElement('div'); row.className = 'li';
+      var d = document.createElement('div'); var b = document.createElement('b'); b.textContent = e.name; var sp = document.createElement('span'); sp.textContent = e.beschreibung; d.appendChild(b); d.appendChild(sp);
+      var b1 = document.createElement('button'); b1.type = 'button'; b1.textContent = 'Einfügen'; b1.addEventListener('click', function () { insertExample(e, false); });
+      var b2 = document.createElement('button'); b2.type = 'button'; b2.textContent = '▶ Probieren'; b2.addEventListener('click', function () { insertExample(e, true); });
+      row.appendChild(d); row.appendChild(b1); row.appendChild(b2); box.appendChild(row); n++;
+    });
+    if (!n) { box.innerHTML = '<p style="color:var(--dim)">Keine Funktion gefunden.</p>'; }
+  }
+  function insertExample(e, runIt) {
+    var base = 'bsp_' + e.name.toLowerCase().replace(/[^a-z0-9_]/g, '_'), name = base + '.py', i = 2;
+    while (files[name] !== undefined) name = base + '_' + (i++) + '.py';
+    files[name] = 'from vibe import *\n\n' + e.beispiel + '\n'; save(); openFile(name); $('lib').classList.remove('on');
+    if (runIt) { if (!ready) toast('Python lädt noch …'); else run(); }
   }
   function uiRun() { $('bRun').disabled = !ready || running; $('bTest').disabled = !ready || running; $('bStop').hidden = !running; $('bRun').hidden = running; }
   function execute(code, name, label) {
@@ -496,6 +550,11 @@ onmessage = function (e) {
   $('fileIn').addEventListener('change', function () { upload(this.files); this.value = ''; });
   $('bDown').addEventListener('click', download);
   $('bStdin').addEventListener('click', function () { var on = $('stdinBox').classList.toggle('on'); this.setAttribute('aria-pressed', String(on)); if (on) $('stdinTxt').focus(); });
+  $('bLib').addEventListener('click', function () { $('lib').classList.add('on'); renderLib(); $('libQ').focus(); });
+  $('libClose').addEventListener('click', function () { $('lib').classList.remove('on'); });
+  $('lib').addEventListener('click', function (e) { if (e.target === $('lib')) $('lib').classList.remove('on'); });
+  $('libQ').addEventListener('input', renderLib);
+  $('libDl').addEventListener('click', function () { if (!libText) { toast('vibe.py ist noch nicht geladen'); return; } var b = new Blob([libText], { type: 'text/plain;charset=utf-8' }), a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'vibe.py'; document.body.appendChild(a); a.click(); a.remove(); });
   $('bHelp').addEventListener('click', function () { $('help').classList.add('on'); $('helpClose').focus(); });
   $('helpClose').addEventListener('click', function () { $('help').classList.remove('on'); });
   $('help').addEventListener('click', function (e) { if (e.target === $('help')) $('help').classList.remove('on'); });
@@ -504,7 +563,7 @@ onmessage = function (e) {
   $('tabOut').addEventListener('click', function () { $('panOut').classList.add('on'); $('panSh').classList.remove('on'); $('tabOut').setAttribute('aria-selected', 'true'); $('tabSh').setAttribute('aria-selected', 'false'); });
   $('tabSh').addEventListener('click', function () { $('panSh').classList.add('on'); $('panOut').classList.remove('on'); $('tabSh').setAttribute('aria-selected', 'true'); $('tabOut').setAttribute('aria-selected', 'false'); $('replIn').focus(); });
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') $('help').classList.remove('on');
+    if (e.key === 'Escape') { $('help').classList.remove('on'); $('lib').classList.remove('on'); }
     if (e.key === 'F5') { e.preventDefault(); run(); }
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); run(); }
   });
@@ -515,7 +574,7 @@ onmessage = function (e) {
   renderFiles();
   startWorker();
   makeMonaco().then(function () { ed.set(files[cur]); }).catch(function () { makeTextarea(); ed.set(files[cur]); toast('Einfacher Editor aktiv (Monaco nicht erreichbar)'); });
-  window.__pyide = { run: run, tests: tests, stop: stop, files: function () { return files; }, ed: function () { return ed; }, state: function () { return { ready: ready, running: running, cur: cur }; }, repl: replSend };
+  window.__pyide = { katalog: function () { return catalog; }, run: run, tests: tests, stop: stop, files: function () { return files; }, ed: function () { return ed; }, state: function () { return { ready: ready, running: running, cur: cur }; }, repl: replSend };
 })();
 </script>
 </body>
