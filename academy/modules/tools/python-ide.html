@@ -125,19 +125,23 @@ button{cursor:pointer}
  <li><b>Eingaben:</b> <code>input()</code> liest Zeilen aus dem Feld „⌨ Eingaben“.</li>
  <li><b>Shell:</b> eigene Sitzung mit Speicher, Pfeil hoch/runter blättert den Verlauf.</li>
  <li><b>Pakete:</b> bekannte Pakete wie <code>numpy</code> oder <code>pandas</code> werden beim <code>import</code> automatisch nachgeladen. Weitere per <code>import micropip</code> und <code>await micropip.install("paket")</code> (reine Python-Pakete).</li>
+ <li><b>Diagramme:</b> <code>plt.show()</code> zeigt matplotlib-Diagramme direkt in der Ausgabe.</li>
+ <li><b>Asynchron:</b> <code>await</code> funktioniert auf oberster Ebene, <code>asyncio.run(main())</code> wird automatisch angepasst.</li>
+ <li><b>Netzwerk:</b> <code>from pyodide.http import pyfetch</code> mit <code>await pyfetch(url)</code> ruft Webadressen ab (der Server muss Browser-Zugriff erlauben).</li>
  <li><b>Speichern:</b> alles wird automatisch in deinem Browser gespeichert (localStorage), nichts verlässt dein Gerät.</li></ul>
  <h4>Grenzen</h4>
- <ul><li>Keine Server (Flask, FastAPI) und keine Sockets: der Browser erlaubt das nicht.</li><li>Endlosschleifen beendest du mit „■ Stopp“.</li><li>Dateien existieren nur in der IDE, nicht auf deiner Festplatte. Mit „Download“ und „Hochladen“ tauschst du sie aus.</li></ul>
+ <ul><li>Keine Server (Flask, FastAPI), keine Sockets und keine Threads (<code>threading</code>, <code>socket</code>, <code>requests</code>): der Browser erlaubt das nicht.</li><li>Endlosschleifen beendest du mit „■ Stopp“.</li><li>Dateien existieren nur in der IDE, nicht auf deiner Festplatte. Mit „Download“ und „Hochladen“ tauschst du sie aus.</li></ul>
  <p><button class="b" id="helpClose" type="button">Schließen</button></p>
 </div></div>
 <div class="toast" id="toast" hidden></div>
 
 <script type="text/plain" id="workerSrc">
 importScripts('https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js');
-var py = null, stdinLines = [], outBuf = [], outTimer = null, chain = Promise.resolve();
+var py = null, stdinLines = [], outBuf = [], outTimer = null, lastPost = 0, chain = Promise.resolve();
+self.__img = function (bytes) { flush(); postMessage({ t: 'img', png: bytes }); };
 function post(m) { postMessage(m); }
-function flush() { outTimer = null; if (outBuf.length) { post({ t: 'out', items: outBuf }); outBuf = []; } }
-function emit(stream, s) { outBuf.push([stream, s]); if (!outTimer) outTimer = setTimeout(flush, 30); }
+function flush() { if (outTimer) { clearTimeout(outTimer); outTimer = null; } if (outBuf.length) { post({ t: 'out', items: outBuf }); outBuf = []; } lastPost = Date.now(); }
+function emit(stream, s) { outBuf.push([stream, s]); if (Date.now() - lastPost >= 30) flush(); else if (!outTimer) outTimer = setTimeout(flush, 30); }
 function clean(msg) {
   var L = String(msg).split('\n'), out = [], skip = false;
   for (var i = 0; i < L.length; i++) {
@@ -191,10 +195,61 @@ async function init() {
     '    print(v)',
     '    return v',
     'builtins.input = _input',
+    'import warnings',
+    'warnings.filterwarnings("ignore", message="(?s).*Pyarrow will become a required dependency.*")',
+    'def _fix_async_run(code, filename):',
+    '    import ast',
+    '    if "asyncio" not in code:',
+    '        return code',
+    '    try:',
+    '        tree = ast.parse(code, filename)',
+    '    except SyntaxError:',
+    '        return code',
+    '    hits = []',
+    '    def walk(node, depth):',
+    '        for child in ast.iter_child_nodes(node):',
+    '            d = depth + (1 if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda, ast.ClassDef)) else 0)',
+    '            if d == 0 and isinstance(child, ast.Call) and len(child.args) == 1 and not child.keywords:',
+    '                f = child.func',
+    '                if isinstance(f, ast.Attribute) and ((f.attr == "run" and isinstance(f.value, ast.Name) and f.value.id == "asyncio") or f.attr == "run_until_complete"):',
+    '                    hits.append(f)',
+    '            walk(child, d)',
+    '    walk(tree, 0)',
+    '    if not hits:',
+    '        return code',
+    '    lines = code.split("\\n")',
+    '    for f in sorted(hits, key=lambda n: (n.lineno, n.col_offset), reverse=True):',
+    '        if f.end_lineno != f.lineno:',
+    '            continue',
+    '        b = lines[f.lineno - 1].encode("utf-8")',
+    '        lines[f.lineno - 1] = (b[:f.col_offset] + b"await" + b[f.end_col_offset:]).decode("utf-8")',
+    '    return "\\n".join(lines)',
+    'def _mpl_show(*a, **k):',
+    '    import io',
+    '    import matplotlib.pyplot as plt',
+    '    import js',
+    '    from pyodide.ffi import to_js',
+    '    for num in plt.get_fignums():',
+    '        fig = plt.figure(num)',
+    '        buf = io.BytesIO()',
+    '        fig.savefig(buf, format="png", dpi=110, bbox_inches="tight", facecolor="white")',
+    '        js.__img(to_js(buf.getvalue()))',
+    '    plt.close("all")',
+    'def _mpl_prep():',
+    '    import os',
+    '    os.environ["MPLBACKEND"] = "agg"',
+    '    import matplotlib',
+    '    matplotlib.use("agg", force=True)',
+    '    import matplotlib.pyplot as plt',
+    '    plt.show = _mpl_show',
     'async def _run_main(code, filename):',
     '    from pyodide.code import eval_code_async',
     '    g = {"__name__": "__main__", "__file__": filename}',
+    '    sys.argv = [filename]',
     '    try:',
+    '        code = _fix_async_run(code, filename)',
+    '        if "matplotlib" in code or "pyplot" in code:',
+    '            _mpl_prep()',
     '        await eval_code_async(code, g, filename=filename, return_mode="none")',
     '        return 0',
     '    except SystemExit as e:',
@@ -204,7 +259,12 @@ async function init() {
     '        if isinstance(c, int):',
     '            return c',
     '        print(c, file=sys.stderr)',
-    '        return 1'
+    '        return 1',
+    '    finally:',
+    '        if "matplotlib.pyplot" in sys.modules:',
+    '            import matplotlib.pyplot as plt',
+    '            if plt.get_fignums():',
+    '                _mpl_show()'
   ].join('\n'));
   var v = py.runPython('import sys; sys.version.split()[0]');
   post({ t: 'ready', version: v, pyodide: py.version });
@@ -225,7 +285,7 @@ async function handle(m) {
       var rc = await py.globals.get('_run_main')(code, m.name);
       py.runPython('import sys; sys.stdout.flush(); sys.stderr.flush()');
       flush();
-      post({ t: 'done', id: m.id, ok: rc === 0, ms: Date.now() - t0, err: '' });
+      post({ t: 'done', id: m.id, ok: rc === 0, rc: rc, ms: Date.now() - t0, err: '' });
     } catch (err) {
       try { py.runPython('import sys; sys.stdout.flush(); sys.stderr.flush()'); } catch (e2) {}
       flush();
@@ -379,10 +439,11 @@ onmessage = function (e) {
     if (m.t === 'ready') { ready = true; setPill('ready', 'Python ' + m.version + ' bereit'); $('pyver').textContent = 'Python ' + m.version + ' (Pyodide ' + m.pyodide + ')'; uiRun(); }
     else if (m.t === 'fatal') { setPill('err', 'Laden fehlgeschlagen'); add(outEl, 'Python konnte nicht geladen werden: ' + m.err + '\nPrüfe die Internetverbindung (Pyodide kommt vom CDN) und lade die Seite neu.\n', 'e'); }
     else if (m.t === 'status') { if (running) setPill('busy', m.s); }
+    else if (m.t === 'img') { var im = document.createElement('img'); im.src = URL.createObjectURL(new Blob([m.png], { type: 'image/png' })); im.alt = 'Diagramm'; im.style.cssText = 'display:block;max-width:100%;background:#fff;border-radius:6px;margin:6px 0'; outEl.appendChild(im); outEl.scrollTop = outEl.scrollHeight; }
     else if (m.t === 'out') { var target = m.shell ? shEl : (pending.shell ? shEl : outEl); m.items.forEach(function (it) { add(target, it[1], it[0] === 'e' ? 'e' : ''); }); }
     else if (m.t === 'done') {
       running = false; var secs = (m.ms / 1000).toFixed(2);
-      if (m.ok) add(outEl, '✔ Fertig in ' + secs + ' s\n', 'o'); else { if (m.err) add(outEl, m.err + '\n', 'e'); add(outEl, '✖ Mit Fehler beendet nach ' + secs + ' s\n', 'e'); if (/EOFError/.test(m.err || '')) add(outEl, 'Tipp: input() liest Zeilen aus dem Feld „⌨ Eingaben“. Trage dort deine Eingaben ein, eine pro Zeile.\n', 'i'); }
+      if (m.ok) add(outEl, '✔ Fertig in ' + secs + ' s\n', 'o'); else { if (m.err) add(outEl, m.err + '\n', 'e'); add(outEl, '✖ Mit Fehler beendet' + (m.rc ? ' (Exit-Code ' + m.rc + ')' : '') + ' nach ' + secs + ' s\n', 'e'); if (/EOFError/.test(m.err || '')) add(outEl, 'Tipp: input() liest Zeilen aus dem Feld „⌨ Eingaben“. Trage dort deine Eingaben ein, eine pro Zeile.\n', 'i'); }
       setPill('ready', 'Python bereit'); uiRun();
     } else if (m.t === 'repl') {
       pending.shell = false; if (m.err) add(shEl, m.err + '\n', 'e');
