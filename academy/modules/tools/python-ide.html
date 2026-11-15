@@ -70,6 +70,17 @@ button{cursor:pointer}
 .lib .li button{flex:0 0 auto;min-height:32px;padding:3px 10px;border:1px solid var(--line);border-radius:6px;background:#333337;font-size:12px}
 .lib .li button:hover{border-color:var(--accent)}
 .lib .lh{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pk .tabs{display:flex;gap:6px;margin:10px 0;flex-wrap:wrap}
+.pk .tabs button[aria-selected=true]{border-color:var(--accent);background:#094771}
+.pk .li{flex-wrap:wrap}
+.pk .li small{color:var(--dim);font-weight:400;margin-left:6px}
+.pk .li a{color:#4fc1ff}
+.pk .li .dl{word-break:break-all;font-size:12px}
+.pk h4{margin:14px 0 6px!important}
+.pk .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:6px 0}
+.pk .row input[type=text]{flex:1;min-width:180px;min-height:36px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);outline:none}
+.pk .msg{white-space:pre-wrap;color:var(--dim);font-size:12.5px;margin:10px 0 0;min-height:18px}
+.pk .msg.err{color:var(--err)}
 .toast{position:fixed;left:50%;bottom:54px;transform:translateX(-50%);z-index:60;max-width:90vw;padding:8px 14px;border-radius:8px;background:#111;border:1px solid var(--line);font-size:13px}
 .toast[hidden]{display:none}
 .tabs{display:none}
@@ -96,6 +107,7 @@ button{cursor:pointer}
   <button class="b stop" id="bStop" type="button" hidden>■ Stopp</button>
   <button class="b" id="bTest" type="button" title="Alle Dateien test*.py mit unittest ausführen">🧪 Tests</button>
   <button class="b" id="bLib" type="button" title="Die vibe-Bibliothek: ca. 70 fertige Funktionen">📚 Bibliothek</button>
+  <button class="b" id="bPk" type="button" title="Pakete installieren, ZIP oder Wheel hochladen, requirements.txt">📦 Pakete</button>
   <button class="b" id="bNew" type="button">＋ Datei</button>
   <button class="b" id="bUp" type="button">⬆ Hochladen</button>
   <button class="b" id="bDown" type="button">⬇ Download</button>
@@ -139,6 +151,7 @@ button{cursor:pointer}
  <li><b>Asynchron:</b> <code>await</code> funktioniert auf oberster Ebene, <code>asyncio.run(main())</code> wird automatisch angepasst.</li>
  <li><b>Netzwerk:</b> <code>from pyodide.http import pyfetch</code> mit <code>await pyfetch(url)</code> ruft Webadressen ab (der Server muss Browser-Zugriff erlauben).</li>
  <li><b>Bibliothek:</b> <code>from vibe import *</code> bringt rund 70 fertige Funktionen (Text, Finanzen, deutsche Feiertage, Datenanalyse, Sudoku, Graphen, KI-Abfrage, Diagramme). Der Knopf „📚 Bibliothek“ zeigt alle mit Beispielen.</li>
+ <li><b>Pakete:</b> der Knopf „📦 Pakete“ installiert Bibliotheken per Namen, lädt eigene ZIP- oder Wheel-Dateien hoch (bleiben gespeichert) und zeigt einen Katalog mit Download-Pfaden. Mit einer Datei <code>requirements.txt</code> werden Pakete beim Start automatisch installiert.</li>
  <li><b>Speichern:</b> alles wird automatisch in deinem Browser gespeichert (localStorage), nichts verlässt dein Gerät.</li></ul>
  <h4>Grenzen</h4>
  <ul><li>Keine Server (Flask, FastAPI), keine Sockets und keine Threads (<code>threading</code>, <code>socket</code>, <code>requests</code>): der Browser erlaubt das nicht.</li><li>Endlosschleifen beendest du mit „■ Stopp“.</li><li>Dateien existieren nur in der IDE, nicht auf deiner Festplatte. Mit „Download“ und „Hochladen“ tauschst du sie aus.</li></ul>
@@ -149,6 +162,41 @@ button{cursor:pointer}
  <p style="margin:8px 0 0">Fertige Funktionen in reinem Python. Mit <code>from vibe import *</code> in jeder Datei nutzbar. „Einfügen“ legt eine Beispieldatei an, „▶ Probieren“ führt sie sofort aus.</p>
  <input class="lq" id="libQ" type="search" placeholder="Suchen: z. B. Feiertage, Sudoku, IBAN, Diagramm" aria-label="Funktionen suchen" autocomplete="off">
  <div id="libList"><p class="i" style="color:var(--dim)">Python lädt …</p></div>
+</div></div>
+<div class="help lib pk" id="pk" role="dialog" aria-modal="true" aria-labelledby="pkT"><div>
+ <div class="lh"><h2 id="pkT" style="margin:0;flex:1">📦 Pakete und Bibliotheken</h2><button class="b" id="pkClose" type="button">Schließen</button></div>
+ <div class="tabs" role="tablist">
+  <button class="b" id="pkT1" type="button" role="tab" aria-selected="true">Installiert</button>
+  <button class="b" id="pkT2" type="button" role="tab" aria-selected="false">Katalog</button>
+  <button class="b" id="pkT3" type="button" role="tab" aria-selected="false">Hinzufügen</button>
+ </div>
+ <div id="pkP1">
+  <h4>Eigene Bibliotheken (bleiben nach dem Neuladen erhalten)</h4>
+  <div id="pkOwn"></div>
+  <h4>Python-Pakete in dieser Sitzung</h4>
+  <div class="row"><button class="b" id="pkRefresh" type="button">↻ Aktualisieren</button></div>
+  <div id="pkSess"></div>
+ </div>
+ <div id="pkP2" hidden>
+  <p style="margin:0 0 4px">Geprüfte Pakete mit Download-Pfad. „Installieren“ lädt das Paket in diese Sitzung, „+ requirements“ merkt es dauerhaft vor.</p>
+  <input class="lq" id="pkQ" type="search" placeholder="Suchen: z. B. pandas, Excel, PDF, QR" aria-label="Pakete suchen" autocomplete="off">
+  <div id="pkCat"><p style="color:var(--dim)">Katalog lädt …</p></div>
+ </div>
+ <div id="pkP3" hidden>
+  <h4>ZIP oder Wheel hochladen</h4>
+  <p style="margin:0 0 6px">Ein <code>.zip</code> mit deinen Python-Dateien oder Ordnern (z. B. ein Paket mit <code>__init__.py</code>) wird entpackt und sofort importierbar. Ein <code>.whl</code> wird installiert. Beides bleibt gespeichert.</p>
+  <div class="row"><button class="b" id="pkUp" type="button">⬆ .zip oder .whl wählen</button></div>
+  <h4>Paket per Name installieren</h4>
+  <div class="row"><input type="text" id="pkName" placeholder="z. B. tabulate  oder  humanize==4.9.0  oder https://…/paket.whl" autocomplete="off" spellcheck="false" aria-label="Paketname"><button class="b" id="pkInst" type="button">Installieren</button></div>
+  <label class="row" style="gap:6px"><input type="checkbox" id="pkKeep" checked> dauerhaft merken (in requirements.txt)</label>
+  <h4>requirements.txt</h4>
+  <p style="margin:0 0 6px">Steht die Datei <code>requirements.txt</code> im Projekt, werden die Pakete beim Start automatisch installiert.</p>
+  <div class="row"><button class="b" id="pkReq" type="button">Jetzt installieren</button><button class="b" id="pkReqOpen" type="button">Datei öffnen</button></div>
+  <h4>Projekt exportieren</h4>
+  <div class="row"><button class="b" id="pkExp" type="button">⬇ Projekt als ZIP</button></div>
+ </div>
+ <p class="msg" id="pkMsg" role="status" aria-live="polite"></p>
+ <input type="file" id="pkFile" accept=".zip,.whl" hidden>
 </div></div>
 <div class="toast" id="toast" hidden></div>
 
@@ -169,6 +217,7 @@ function clean(msg) {
   }
   return out.join('\n').replace(/\s+$/, '');
 }
+function lastLine(err) { var L = clean(err && err.message || err).split('\n').filter(function (x) { return x.trim(); }); return L.length ? L[L.length - 1] : 'Unbekannter Fehler'; }
 async function init() {
   py = await loadPyodide({ indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/' });
   py.setStdout({ batched: function (s) { emit('o', s + '\n'); } });
@@ -283,6 +332,7 @@ async function init() {
     '            if plt.get_fignums():',
     '                _mpl_show()'
   ].join('\n'));
+  py.runPython("import os, sys, json, shutil, zipfile, importlib, io\n\ndef _install_zip(zpath, name):\n    dest = \"/home/pyodide/userlibs/\" + name\n    if os.path.exists(dest):\n        shutil.rmtree(dest)\n    os.makedirs(dest)\n    root = os.path.realpath(dest)\n    with zipfile.ZipFile(zpath) as z:\n        infos = [i for i in z.infolist() if not i.filename.startswith(\"__MACOSX/\") and not i.filename.endswith(\".DS_Store\")]\n        for i in infos:\n            t = os.path.realpath(os.path.join(dest, i.filename))\n            if os.path.isabs(i.filename) or (t != root and not t.startswith(root + os.sep)):\n                shutil.rmtree(dest)\n                raise ValueError(\"Unsicherer Pfad im ZIP: \" + i.filename)\n        for i in infos:\n            z.extract(i, dest)\n    items = os.listdir(dest)\n    if len(items) == 1 and os.path.isdir(os.path.join(dest, items[0])):\n        top = os.path.join(dest, items[0])\n        if not os.path.exists(os.path.join(top, \"__init__.py\")):\n            tmp = dest + \"/.__wrap\"\n            os.rename(top, tmp)\n            for x in os.listdir(tmp):\n                shutil.move(os.path.join(tmp, x), os.path.join(dest, x))\n            os.rmdir(tmp)\n    paths = [dest]\n    if os.path.isdir(dest + \"/src\"):\n        paths.append(dest + \"/src\")\n    for p in paths:\n        if p not in sys.path:\n            sys.path.append(p)\n    importlib.invalidate_caches()\n    mods = []\n    for p in paths:\n        for x in sorted(os.listdir(p)):\n            fp = os.path.join(p, x)\n            if p == dest and x == \"src\" and len(paths) > 1:\n                continue\n            if x.endswith(\".py\") and x != \"setup.py\" and x[:-3].isidentifier():\n                mods.append(x[:-3])\n            elif os.path.isdir(fp) and x.isidentifier() and not x.startswith(\"_\") and any(f.endswith(\".py\") for _, _, fs in os.walk(fp) for f in fs):\n                mods.append(x)\n    return json.dumps(sorted(set(mods)))\n\ndef _zip_files(d):\n    bio = io.BytesIO()\n    with zipfile.ZipFile(bio, \"w\", zipfile.ZIP_DEFLATED) as z:\n        for k in sorted(d):\n            z.writestr(k, d[k])\n    return bio.getvalue()\n");
   var v = py.runPython('import sys; sys.version.split()[0]');
   post({ t: 'ready', version: v, pyodide: py.version });
 }
@@ -314,6 +364,45 @@ async function handle(m) {
   } else if (m.t === 'katalog') {
     try { var j = py.runPython('import json, vibe\njson.dumps(vibe.katalog())'); post({ t: 'katalog', data: j }); }
     catch (err) { post({ t: 'katalog', err: clean(err && err.message || err) }); }
+  } else if (m.t === 'libzip') {
+    try {
+      py.FS.writeFile('/tmp/_up.zip', new Uint8Array(m.bytes));
+      var mods = JSON.parse(py.globals.get('_install_zip')('/tmp/_up.zip', m.id));
+      post({ t: 'pkres', rid: m.rid, ok: true, mods: mods });
+    } catch (err) { post({ t: 'pkres', rid: m.rid, ok: false, msg: lastLine(err) }); }
+  } else if (m.t === 'libwhl') {
+    try {
+      await py.loadPackage('micropip');
+      py.FS.writeFile('/tmp/' + m.name, new Uint8Array(m.bytes));
+      await py.pyimport('micropip').install('emfs:/tmp/' + m.name);
+      py.runPython('import importlib; importlib.invalidate_caches()');
+      post({ t: 'pkres', rid: m.rid, ok: true });
+    } catch (err) { post({ t: 'pkres', rid: m.rid, ok: false, msg: lastLine(err) }); }
+  } else if (m.t === 'pip') {
+    var res = [];
+    try {
+      await py.loadPackage('micropip');
+      var mp = py.pyimport('micropip');
+      for (var k = 0; k < m.specs.length; k++) {
+        post({ t: 'status', s: 'Installiere ' + m.specs[k] + ' …' });
+        try { await mp.install(m.specs[k]); res.push({ spec: m.specs[k], ok: true }); }
+        catch (err) { res.push({ spec: m.specs[k], ok: false, msg: lastLine(err) }); }
+      }
+      py.runPython('import importlib; importlib.invalidate_caches()');
+      post({ t: 'pkres', rid: m.rid, ok: true, res: res });
+    } catch (err) { post({ t: 'pkres', rid: m.rid, ok: false, msg: lastLine(err) }); }
+  } else if (m.t === 'pkglist') {
+    try {
+      await py.loadPackage('micropip');
+      var lst = py.runPython('import json, micropip\njson.dumps([[p.name, p.version, str(p.source)] for p in micropip.list().values()])');
+      post({ t: 'pkres', rid: m.rid, ok: true, list: JSON.parse(lst) });
+    } catch (err) { post({ t: 'pkres', rid: m.rid, ok: false, msg: lastLine(err) }); }
+  } else if (m.t === 'export') {
+    try {
+      var pr = py.toPy(m.files), zf = py.globals.get('_zip_files'), b = zf(pr), u8 = b.toJs().slice();
+      pr.destroy(); b.destroy();
+      post({ t: 'pkres', rid: m.rid, ok: true, bytes: u8.buffer });
+    } catch (err) { post({ t: 'pkres', rid: m.rid, ok: false, msg: lastLine(err) }); }
   } else if (m.t === 'repl') {
     try {
       stdinLines = [];
@@ -462,9 +551,10 @@ onmessage = function (e) {
     var m = e.data;
     if (m.t === 'libok') { if (m.err) { libErr = 'Bibliothek konnte nicht installiert werden: ' + m.err; renderLib(); } }
     else if (m.t === 'katalog') { if (m.err) { libErr = 'Katalog nicht lesbar: ' + m.err; } else { try { catalog = JSON.parse(m.data); } catch (e) { libErr = 'Katalog nicht lesbar'; } } renderLib(); }
-    else if (m.t === 'ready') { sendLib(); ready = true; setPill('ready', 'Python ' + m.version + ' bereit'); $('pyver').textContent = 'Python ' + m.version + ' (Pyodide ' + m.pyodide + ')'; uiRun(); }
+    else if (m.t === 'ready') { sendLib(); ready = true; pkReplay(); setPill('ready', 'Python ' + m.version + ' bereit'); $('pyver').textContent = 'Python ' + m.version + ' (Pyodide ' + m.pyodide + ')'; uiRun(); }
     else if (m.t === 'fatal') { setPill('err', 'Laden fehlgeschlagen'); add(outEl, 'Python konnte nicht geladen werden: ' + m.err + '\nPrüfe die Internetverbindung (Pyodide kommt vom CDN) und lade die Seite neu.\n', 'e'); }
-    else if (m.t === 'status') { if (running) setPill('busy', m.s); }
+    else if (m.t === 'pkres') { var cb = pkCb[m.rid]; delete pkCb[m.rid]; if (cb) { if (m.ok) cb.res(m); else cb.rej(new Error(m.msg || 'Fehler')); } }
+    else if (m.t === 'status') { if (running) setPill('busy', m.s); if (pkBusy) pkMsg(m.s); }
     else if (m.t === 'img') { var im = document.createElement('img'); im.src = URL.createObjectURL(new Blob([m.png], { type: 'image/png' })); im.alt = 'Diagramm'; im.style.cssText = 'display:block;max-width:100%;background:#fff;border-radius:6px;margin:6px 0'; outEl.appendChild(im); outEl.scrollTop = outEl.scrollHeight; }
     else if (m.t === 'out') { var target = m.shell ? shEl : (pending.shell ? shEl : outEl); m.items.forEach(function (it) { add(target, it[1], it[0] === 'e' ? 'e' : ''); }); }
     else if (m.t === 'done') {
@@ -503,6 +593,141 @@ onmessage = function (e) {
     while (files[name] !== undefined) name = base + '_' + (i++) + '.py';
     files[name] = 'from vibe import *\n\n' + e.beispiel + '\n'; save(); openFile(name); $('lib').classList.remove('on');
     if (runIt) { if (!ready) toast('Python lädt noch …'); else run(); }
+  }
+  /* ---------- Pakete und Bibliotheken ---------- */
+  var pkDb = null, pkLibs = [], pkCb = {}, pkRid = 0, pkCatalog = null, pkLoaded = false, pkBusy = false;
+  function idb() {
+    return new Promise(function (res, rej) {
+      if (pkDb) return res(pkDb);
+      var r; try { r = indexedDB.open('pyide_libs', 1); } catch (e) { return rej(e); }
+      r.onupgradeneeded = function () { r.result.createObjectStore('libs', { keyPath: 'id' }); };
+      r.onsuccess = function () { pkDb = r.result; res(pkDb); };
+      r.onerror = function () { rej(r.error); };
+    });
+  }
+  function idbDo(mode, fn) { return idb().then(function (db) { return new Promise(function (res, rej) { var t = db.transaction('libs', mode), st = t.objectStore('libs'), q = fn(st); t.oncomplete = function () { res(q && q.result); }; t.onerror = t.onabort = function () { rej(t.error); }; }); }); }
+  var pkReady = idbDo('readonly', function (st) { return st.getAll(); }).then(function (all) { pkLibs = all || []; pkLoaded = true; }).catch(function () { pkLoaded = true; });
+  function wcall(m) { return new Promise(function (res, rej) { if (!worker || !ready) return rej(new Error('Python lädt noch …')); var id = ++pkRid; m.rid = id; pkCb[id] = { res: res, rej: rej }; worker.postMessage(m); }); }
+  function pkMsg(t, err) { var el = $('pkMsg'); el.textContent = t || ''; el.className = 'msg' + (err ? ' err' : ''); }
+  function fmtKb(b) { return b >= 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB'; }
+  function el(tag, text, cls) { var e = document.createElement(tag); if (text !== undefined) e.textContent = text; if (cls) e.className = cls; return e; }
+  function btn(text, fn) { var b = el('button', text); b.type = 'button'; b.addEventListener('click', fn); return b; }
+  function parseReq(txt) {
+    var out = []; String(txt || '').split('\n').forEach(function (l) { l = l.replace(/#.*$/, '').trim(); if (l && l[0] !== '-' && out.indexOf(l) < 0) out.push(l); });
+    return out;
+  }
+  var SPEC_OK = /^(https:\/\/\S+\.whl|[A-Za-z0-9][A-Za-z0-9._\-\[\],=<>!~*+]*)$/;
+  function installSpecs(specs, quiet) {
+    if (!specs.length) return Promise.resolve([]);
+    pkBusy = true; if (!quiet) pkMsg('Installiere ' + specs.join(', ') + ' …');
+    return wcall({ t: 'pip', specs: specs }).then(function (m) {
+      pkBusy = false;
+      m.res.forEach(function (r) { if (!r.ok && /Unsupported content type|404|Can't find a pure Python|No package|not found/i.test(r.msg || '')) r.msg = 'nicht gefunden oder kein reines Python-Paket'; });
+      var bad = m.res.filter(function (r) { return !r.ok; }), good = m.res.filter(function (r) { return r.ok; });
+      var txt = (good.length ? '✔ installiert: ' + good.map(function (r) { return r.spec; }).join(', ') : '') + (bad.length ? (good.length ? '\n' : '') + '✖ fehlgeschlagen: ' + bad.map(function (r) { return r.spec + ' (' + r.msg + ')'; }).join('; ') : '');
+      pkMsg(txt, bad.length > 0);
+      if (quiet) add(outEl, '📦 requirements.txt: ' + txt.replace(/\n/g, '\n   ') + '\n', bad.length ? 'e' : 'i');
+      return m.res;
+    }, function (e) { pkBusy = false; pkMsg('✖ ' + e.message, true); if (quiet) add(outEl, '📦 requirements.txt: ' + e.message + '\n', 'e'); return []; });
+  }
+  function installReqs(quiet) { var sp = parseReq(files['requirements.txt']); if (!sp.length) { if (!quiet) pkMsg('requirements.txt ist leer oder fehlt. Lege die Datei an (＋ Datei) und trage je Zeile ein Paket ein.', true); return Promise.resolve([]); } return installSpecs(sp, quiet); }
+  function addReq(spec) {
+    var cur2 = files['requirements.txt'] || '', lines = cur2.split('\n').map(function (l) { return l.replace(/#.*$/, '').trim().toLowerCase(); });
+    if (lines.indexOf(spec.toLowerCase()) >= 0) return false;
+    files['requirements.txt'] = (cur2 && !/\n$/.test(cur2) ? cur2 + '\n' : cur2) + spec + '\n';
+    if (cur === 'requirements.txt' && ed) ed.set(files[cur]);
+    save(); renderFiles(); return true;
+  }
+  function sendLibRec(l) { return wcall(l.kind === 'zip' ? { t: 'libzip', id: l.id, bytes: l.bytes } : { t: 'libwhl', name: l.name, bytes: l.bytes }); }
+  function pkReplay() {
+    pkReady.then(function () {
+      var chain = Promise.resolve();
+      pkLibs.forEach(function (l) { chain = chain.then(function () { return sendLibRec(l).then(function (m) { if (m && m.mods) l.mods = m.mods; }); }).catch(function (e) { add(outEl, '📦 ' + l.name + ' konnte nicht geladen werden: ' + e.message + '\n', 'e'); }); });
+      chain.then(function () { if (pkLibs.length) add(outEl, '📦 ' + pkLibs.length + ' gespeicherte Bibliothek' + (pkLibs.length > 1 ? 'en' : '') + ' geladen: ' + pkLibs.map(function (l) { return l.name; }).join(', ') + '\n', 'i'); return installReqs(true); });
+    });
+  }
+  function pkTab(n) {
+    [1, 2, 3].forEach(function (i) { $('pkP' + i).hidden = i !== n; $('pkT' + i).setAttribute('aria-selected', String(i === n)); });
+    if (n === 1) pkInstalled(); if (n === 2) pkRenderCat();
+  }
+  function pkInstalled() {
+    var box = $('pkOwn'); box.innerHTML = '';
+    if (!pkLibs.length) box.appendChild(el('p', 'Noch keine eigene Bibliothek. Lade im Tab „Hinzufügen“ ein ZIP oder Wheel hoch.')).style.color = 'var(--dim)';
+    pkLibs.forEach(function (l) {
+      var row = el('div', undefined, 'li'), d = el('div'), b = el('b', l.name); b.appendChild(el('small', (l.kind === 'zip' ? 'ZIP' : 'Wheel') + ' · ' + fmtKb(l.size)));
+      d.appendChild(b); d.appendChild(el('span', l.kind === 'zip' ? 'import ' + ((l.mods && l.mods.length) ? l.mods.join(', ') : '…') : 'Wheel: nach dem Namen importieren'));
+      row.appendChild(d); row.appendChild(btn('Löschen', function () { pkDelete(l); })); box.appendChild(row);
+    });
+    var sess = $('pkSess'); sess.innerHTML = '';
+    if (!ready) { sess.appendChild(el('p', 'Python lädt noch …')).style.color = 'var(--dim)'; return; }
+    wcall({ t: 'pkglist' }).then(function (m) {
+      sess.innerHTML = '';
+      var l = m.list.slice().sort(function (a, b) { return a[0].toLowerCase() < b[0].toLowerCase() ? -1 : 1; });
+      if (!l.length) { sess.appendChild(el('p', 'Noch nichts nachgeladen. Pakete wie numpy oder pandas laden sich beim ersten import automatisch.')).style.color = 'var(--dim)'; return; }
+      l.forEach(function (p) { var row = el('div', undefined, 'li'), d = el('div'), b = el('b', p[0]); b.appendChild(el('small', p[1] + ' · ' + (p[2] === 'pyodide' ? 'Pyodide' : /^emfs|\.whl/.test(p[2]) ? 'Wheel' : 'PyPI'))); d.appendChild(b); row.appendChild(d); sess.appendChild(row); });
+    }, function (e) { sess.innerHTML = ''; sess.appendChild(el('p', e.message)).style.color = 'var(--err)'; });
+  }
+  function pkDelete(l) {
+    if (!confirm('„' + l.name + '“ löschen? Python wird dafür neu gestartet.')) return;
+    idbDo('readwrite', function (st) { return st.delete(l.id); }).catch(function () {}).then(function () {
+      pkLibs = pkLibs.filter(function (x) { return x.id !== l.id; });
+      restartPy(); pkMsg('„' + l.name + '“ gelöscht. Python startet neu …'); pkInstalled();
+    });
+  }
+  function restartPy() { Object.keys(pkCb).forEach(function (k) { pkCb[k].rej(new Error('Python wurde neu gestartet')); delete pkCb[k]; }); try { worker.terminate(); } catch (e) {} startWorker(); }
+  function pkCatLoad() {
+    if (pkCatalog) return Promise.resolve(pkCatalog);
+    return fetch('pylibs.json').then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(function (j) { pkCatalog = j; return j; });
+  }
+  function pkRenderCat() {
+    var box = $('pkCat');
+    pkCatLoad().then(function (j) {
+      var q = $('pkQ').value.trim().toLowerCase(); box.innerHTML = ''; var last = '', n = 0;
+      j.pakete.forEach(function (p) {
+        if (q && (p.name + ' ' + p.beschreibung + ' ' + p.kategorie + ' ' + p.import).toLowerCase().indexOf(q) < 0) return;
+        if (p.kategorie !== last) { box.appendChild(el('h4', p.kategorie)); last = p.kategorie; }
+        var row = el('div', undefined, 'li'), d = el('div'), b = el('b', p.name);
+        b.appendChild(el('small', p.version + (p.groesse_kb ? ' · ' + fmtKb(p.groesse_kb * 1024) : '') + ' · ' + (p.route === 'pyodide' ? 'Pyodide' : 'PyPI')));
+        d.appendChild(b); d.appendChild(el('span', p.beschreibung));
+        var dl = el('span', 'Download: ', 'dl'), a = el('a', p.datei); a.href = p.download; a.target = '_blank'; a.rel = 'noopener'; dl.appendChild(a);
+        dl.appendChild(document.createTextNode(' · ')); var a2 = el('a', 'Doku'); a2.href = p.docs; a2.target = '_blank'; a2.rel = 'noopener'; dl.appendChild(a2);
+        dl.appendChild(document.createTextNode(' · ')); var a3 = el('a', 'PyPI'); a3.href = p.pypi; a3.target = '_blank'; a3.rel = 'noopener'; dl.appendChild(a3);
+        d.appendChild(dl); d.appendChild(el('span', 'import ' + p.import));
+        row.appendChild(d);
+        row.appendChild(btn('Installieren', function () { installSpecs([p.name]); }));
+        row.appendChild(btn('+ requirements', function () { pkMsg(addReq(p.name) ? p.name + ' zu requirements.txt hinzugefügt' : p.name + ' steht schon in requirements.txt'); }));
+        row.appendChild(btn('Pfad kopieren', function () { var t = p.download; if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(function () { pkMsg('Pfad kopiert: ' + t); }, function () { pkMsg(t); }); else pkMsg(t); }));
+        box.appendChild(row); n++;
+      });
+      if (!n) box.appendChild(el('p', 'Kein Paket gefunden.')).style.color = 'var(--dim)';
+    }).catch(function (e) { box.innerHTML = ''; box.appendChild(el('p', 'Katalog konnte nicht geladen werden (' + e.message + ')')).style.color = 'var(--err)'; });
+  }
+  function pkUpload(f) {
+    if (!f) return;
+    if (!ready) { pkMsg('Python lädt noch … bitte kurz warten.', true); return; }
+    if (f.size > 26214400) { pkMsg(f.name + ' ist zu groß (max. 25 MB)', true); return; }
+    var isZip = /\.zip$/i.test(f.name), isWhl = /\.whl$/i.test(f.name);
+    if (!isZip && !isWhl) { pkMsg('Nur .zip oder .whl', true); return; }
+    var r = new FileReader();
+    r.onload = function () {
+      var rec = { id: isZip ? f.name.replace(/\.zip$/i, '').replace(/[^A-Za-z0-9_\-]/g, '_') : f.name, kind: isZip ? 'zip' : 'whl', name: f.name, bytes: r.result, size: f.size, added: Date.now() };
+      pkMsg((isZip ? 'Entpacke ' : 'Installiere ') + f.name + ' …'); pkBusy = true;
+      sendLibRec(rec).then(function (m) {
+        pkBusy = false; if (m.mods) rec.mods = m.mods;
+        pkLibs = pkLibs.filter(function (x) { return x.id !== rec.id; }); pkLibs.push(rec);
+        pkMsg('✔ ' + f.name + (rec.mods ? ' ist bereit. Importierbar: ' + (rec.mods.join(', ') || '(keine Python-Module gefunden)') : ' installiert.'));
+        return idbDo('readwrite', function (st) { return st.put(rec); }).catch(function () { pkMsg($('pkMsg').textContent + '\n(Hinweis: Speichern im Browser nicht möglich, gilt nur bis zum Neuladen.)'); });
+      }, function (e) { pkBusy = false; pkMsg('✖ ' + f.name + ': ' + e.message, true); }).then(function () { if (!$('pkP1').hidden) pkInstalled(); });
+    };
+    r.readAsArrayBuffer(f);
+  }
+  function pkExport() {
+    if (!ready) { pkMsg('Python lädt noch …', true); return; }
+    if (ed && cur) files[cur] = ed.get();
+    wcall({ t: 'export', files: files }).then(function (m) {
+      var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([m.bytes], { type: 'application/zip' })); a.download = 'python-projekt.zip'; document.body.appendChild(a); a.click(); a.remove();
+      pkMsg('✔ python-projekt.zip mit ' + Object.keys(files).length + ' Dateien exportiert');
+    }, function (e) { pkMsg('✖ ' + e.message, true); });
   }
   function uiRun() { $('bRun').disabled = !ready || running; $('bTest').disabled = !ready || running; $('bStop').hidden = !running; $('bRun').hidden = running; }
   function execute(code, name, label) {
@@ -551,10 +776,28 @@ onmessage = function (e) {
   $('bDown').addEventListener('click', download);
   $('bStdin').addEventListener('click', function () { var on = $('stdinBox').classList.toggle('on'); this.setAttribute('aria-pressed', String(on)); if (on) $('stdinTxt').focus(); });
   $('bLib').addEventListener('click', function () { $('lib').classList.add('on'); renderLib(); $('libQ').focus(); });
-  $('libClose').addEventListener('click', function () { $('lib').classList.remove('on'); });
+  $('libClose').addEventListener('click', function () { $('lib').classList.remove('on'); $('pk').classList.remove('on'); });
   $('lib').addEventListener('click', function (e) { if (e.target === $('lib')) $('lib').classList.remove('on'); });
   $('libQ').addEventListener('input', renderLib);
   $('libDl').addEventListener('click', function () { if (!libText) { toast('vibe.py ist noch nicht geladen'); return; } var b = new Blob([libText], { type: 'text/plain;charset=utf-8' }), a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'vibe.py'; document.body.appendChild(a); a.click(); a.remove(); });
+  $('bPk').addEventListener('click', function () { $('pk').classList.add('on'); pkTab(1); });
+  $('pkClose').addEventListener('click', function () { $('pk').classList.remove('on'); });
+  $('pk').addEventListener('click', function (e) { if (e.target === $('pk')) $('pk').classList.remove('on'); });
+  [1, 2, 3].forEach(function (i) { $('pkT' + i).addEventListener('click', function () { pkTab(i); }); });
+  $('pkQ').addEventListener('input', pkRenderCat);
+  $('pkRefresh').addEventListener('click', pkInstalled);
+  $('pkUp').addEventListener('click', function () { $('pkFile').click(); });
+  $('pkFile').addEventListener('change', function () { var f = this.files[0]; this.value = ''; pkUpload(f); });
+  $('pkInst').addEventListener('click', function () {
+    var v = $('pkName').value.trim();
+    if (!v) { pkMsg('Bitte einen Paketnamen eintragen.', true); return; }
+    if (!SPEC_OK.test(v)) { pkMsg('Ungültiger Paketname: ' + v, true); return; }
+    installSpecs([v]).then(function (r) { if (r[0] && r[0].ok && $('pkKeep').checked) { addReq(v); pkMsg($('pkMsg').textContent + '\n(in requirements.txt vorgemerkt)'); } });
+  });
+  $('pkName').addEventListener('keydown', function (e) { if (e.key === 'Enter') $('pkInst').click(); });
+  $('pkReq').addEventListener('click', function () { installReqs(false); });
+  $('pkReqOpen').addEventListener('click', function () { if (files['requirements.txt'] === undefined) { files['requirements.txt'] = '# Ein Paket pro Zeile, z. B.:\n# tabulate\n# humanize\n'; save(); renderFiles(); } openFile('requirements.txt'); $('pk').classList.remove('on'); });
+  $('pkExp').addEventListener('click', pkExport);
   $('bHelp').addEventListener('click', function () { $('help').classList.add('on'); $('helpClose').focus(); });
   $('helpClose').addEventListener('click', function () { $('help').classList.remove('on'); });
   $('help').addEventListener('click', function (e) { if (e.target === $('help')) $('help').classList.remove('on'); });
@@ -563,7 +806,7 @@ onmessage = function (e) {
   $('tabOut').addEventListener('click', function () { $('panOut').classList.add('on'); $('panSh').classList.remove('on'); $('tabOut').setAttribute('aria-selected', 'true'); $('tabSh').setAttribute('aria-selected', 'false'); });
   $('tabSh').addEventListener('click', function () { $('panSh').classList.add('on'); $('panOut').classList.remove('on'); $('tabSh').setAttribute('aria-selected', 'true'); $('tabOut').setAttribute('aria-selected', 'false'); $('replIn').focus(); });
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') { $('help').classList.remove('on'); $('lib').classList.remove('on'); }
+    if (e.key === 'Escape') { $('help').classList.remove('on'); $('lib').classList.remove('on'); $('pk').classList.remove('on'); }
     if (e.key === 'F5') { e.preventDefault(); run(); }
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); run(); }
   });
@@ -574,7 +817,7 @@ onmessage = function (e) {
   renderFiles();
   startWorker();
   makeMonaco().then(function () { ed.set(files[cur]); }).catch(function () { makeTextarea(); ed.set(files[cur]); toast('Einfacher Editor aktiv (Monaco nicht erreichbar)'); });
-  window.__pyide = { katalog: function () { return catalog; }, run: run, tests: tests, stop: stop, files: function () { return files; }, ed: function () { return ed; }, state: function () { return { ready: ready, running: running, cur: cur }; }, repl: replSend };
+  window.__pyide = { pk: { libs: function () { return pkLibs; }, install: installSpecs, req: installReqs, upload: pkUpload, loaded: function () { return pkLoaded; }, restart: restartPy }, katalog: function () { return catalog; }, run: run, tests: tests, stop: stop, files: function () { return files; }, ed: function () { return ed; }, state: function () { return { ready: ready, running: running, cur: cur }; }, repl: replSend };
 })();
 </script>
 </body>
