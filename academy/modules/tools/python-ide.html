@@ -81,6 +81,20 @@ button{cursor:pointer}
 .pk .row input[type=text]{flex:1;min-width:180px;min-height:36px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);outline:none}
 .pk .msg{white-space:pre-wrap;color:var(--dim);font-size:12.5px;margin:10px 0 0;min-height:18px}
 .pk .msg.err{color:var(--err)}
+.file.dir{font-weight:600;color:#cfcfcf}
+.prcur{margin:0 8px 6px;padding:5px 8px;border:1px dashed var(--line);border-radius:6px;background:transparent;font-size:12px;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:174px}
+.prcur:hover{border-color:var(--accent)}
+.aibtn{display:inline-block;margin:6px 0;padding:4px 12px;border:1px solid var(--accent);border-radius:6px;background:#094771;color:#fff;font-size:13px}
+.tk .it{border:1px solid var(--line);border-radius:8px;margin:6px 0;overflow:hidden}
+.tk .ih{display:flex;gap:8px;align-items:center;padding:9px 12px;cursor:pointer;background:#2a2a2e}
+.tk .ib{padding:10px 12px;border-top:1px solid var(--line)}
+.tk .okl{color:var(--ok);font-weight:700}.tk .badl{color:var(--err)}
+.tk ul{margin:8px 0 0;padding-left:0;list-style:none}.tk li{padding:2px 0}
+.tk pre,.ai pre{white-space:pre-wrap;word-break:break-word;background:#161618;border:1px solid var(--line);border-radius:6px;padding:8px 10px;margin:8px 0;font:12.5px/1.45 Consolas,monospace}
+.tk .bar2{height:8px;border-radius:5px;background:#3a3a3f;overflow:hidden;margin:6px 0 4px}.tk .bar2 i{display:block;height:100%;background:var(--ok);width:0}
+.ai .ans p{margin:8px 0;white-space:pre-wrap}
+.ai textarea.lq{min-height:56px;resize:vertical}
+.pk .li.cur{border-left:3px solid var(--accent);padding-left:8px}
 .toast{position:fixed;left:50%;bottom:54px;transform:translateX(-50%);z-index:60;max-width:90vw;padding:8px 14px;border-radius:8px;background:#111;border:1px solid var(--line);font-size:13px}
 .toast[hidden]{display:none}
 .tabs{display:none}
@@ -108,16 +122,19 @@ button{cursor:pointer}
   <button class="b" id="bTest" type="button" title="Alle Dateien test*.py mit unittest ausführen">🧪 Tests</button>
   <button class="b" id="bLib" type="button" title="Die vibe-Bibliothek: ca. 70 fertige Funktionen">📚 Bibliothek</button>
   <button class="b" id="bPk" type="button" title="Pakete installieren, ZIP oder Wheel hochladen, requirements.txt">📦 Pakete</button>
+  <button class="b" id="bPr" type="button" title="Projekte, Vorlagen, Snapshots, Teilen">📁 Projekte</button>
+  <button class="b" id="bTk" type="button" title="Übungsaufgaben mit automatischer Prüfung">🎯 Aufgaben</button>
+  <button class="b" id="bAi" type="button" title="KI erklärt Fehler und Code">🤖 KI-Hilfe</button>
   <button class="b" id="bNew" type="button">＋ Datei</button>
   <button class="b" id="bUp" type="button">⬆ Hochladen</button>
   <button class="b" id="bDown" type="button">⬇ Download</button>
   <button class="b" id="bStdin" type="button" aria-pressed="false" title="Eingaben für input()">⌨ Eingaben</button>
   <button class="b" id="bHelp" type="button">? Hilfe</button>
   <button class="b" id="bReset" type="button" title="Beispieldateien wiederherstellen">↺ Zurücksetzen</button>
-  <input type="file" id="fileIn" accept=".py,.txt,.json,.csv,.md" multiple hidden>
+  <input type="file" id="fileIn" accept=".py,.txt,.json,.csv,.md,.zip" multiple hidden>
  </div>
  <div class="main">
-  <aside class="side" aria-label="Dateien"><h3>Dateien</h3><div class="files" id="files" role="listbox"></div></aside>
+  <aside class="side" aria-label="Dateien"><h3>Dateien</h3><button class="prcur" id="prCur" type="button" title="Projekte verwalten">📁 Projekt</button><div class="files" id="files" role="listbox"></div></aside>
   <section class="edwrap">
    <div class="edhead"><span id="curName">main.py</span><small id="curInfo"></small></div>
    <div id="editor" aria-label="Code-Editor"></div>
@@ -146,11 +163,14 @@ button{cursor:pointer}
  <li><b>Tests:</b> der Knopf „Tests“ führt alle Dateien <code>test*.py</code> mit <code>unittest</code> aus. Rot heißt wirklich rot.</li>
  <li><b>Eingaben:</b> <code>input()</code> liest Zeilen aus dem Feld „⌨ Eingaben“.</li>
  <li><b>Shell:</b> eigene Sitzung mit Speicher, Pfeil hoch/runter blättert den Verlauf.</li>
+ <li><b>Projekte:</b> „📁 Projekte“ verwaltet mehrere Projekte, legt Vorlagen an (Daten, Scraper, Spiel, Excel), speichert Snapshots und erzeugt einen Link zum Teilen. Dateien dürfen in Ordnern liegen (<code>ordner/datei.py</code>); ein ZIP über „⬆ Hochladen“ wird entpackt.</li>
+ <li><b>Aufgaben:</b> „🎯 Aufgaben“ bietet zehn Übungen mit automatischer Prüfung. „🤖 KI-Hilfe“ erklärt Fehler und Code in einfachen Worten.</li>
  <li><b>Pakete:</b> bekannte Pakete wie <code>numpy</code> oder <code>pandas</code> werden beim <code>import</code> automatisch nachgeladen. Weitere per <code>import micropip</code> und <code>await micropip.install("paket")</code> (reine Python-Pakete).</li>
  <li><b>Diagramme:</b> <code>plt.show()</code> zeigt matplotlib-Diagramme direkt in der Ausgabe.</li>
  <li><b>Asynchron:</b> <code>await</code> funktioniert auf oberster Ebene, <code>asyncio.run(main())</code> wird automatisch angepasst.</li>
  <li><b>Netzwerk:</b> <code>from pyodide.http import pyfetch</code> mit <code>await pyfetch(url)</code> ruft Webadressen ab (der Server muss Browser-Zugriff erlauben).</li>
  <li><b>Bibliothek:</b> <code>from vibe import *</code> bringt rund 70 fertige Funktionen (Text, Finanzen, deutsche Feiertage, Datenanalyse, Sudoku, Graphen, KI-Abfrage, Diagramme). Der Knopf „📚 Bibliothek“ zeigt alle mit Beispielen.</li>
+ <li><b>Automatisch:</b> importierst du ein Paket aus dem Katalog (z. B. <code>openpyxl</code>), das Python nicht mitbringt, wird es beim Ausführen von PyPI nachinstalliert.</li>
  <li><b>Pakete:</b> der Knopf „📦 Pakete“ installiert Bibliotheken per Namen, lädt eigene ZIP- oder Wheel-Dateien hoch (bleiben gespeichert) und zeigt einen Katalog mit Download-Pfaden. Mit einer Datei <code>requirements.txt</code> werden Pakete beim Start automatisch installiert.</li>
  <li><b>Speichern:</b> alles wird automatisch in deinem Browser gespeichert (localStorage), nichts verlässt dein Gerät.</li></ul>
  <h4>Grenzen</h4>
@@ -198,12 +218,42 @@ button{cursor:pointer}
  <p class="msg" id="pkMsg" role="status" aria-live="polite"></p>
  <input type="file" id="pkFile" accept=".zip,.whl" hidden>
 </div></div>
+<div class="help lib pk" id="pr" role="dialog" aria-modal="true" aria-labelledby="prT"><div>
+ <div class="lh"><h2 id="prT" style="margin:0;flex:1">📁 Projekte</h2><button class="b" id="prClose" type="button">Schließen</button></div>
+ <h4>Aktuelles Projekt</h4>
+ <div class="row"><input type="text" id="prName" aria-label="Projektname" autocomplete="off" maxlength="60"><button class="b" id="prRen" type="button">Umbenennen</button><button class="b" id="prSnap" type="button">📸 Snapshot</button></div>
+ <h4>Meine Projekte</h4><div id="prList"></div>
+ <h4>Neues Projekt aus Vorlage</h4><div id="prTpl"></div>
+ <div class="row"><button class="b" id="prEmpty" type="button">＋ Leeres Projekt</button><button class="b" id="prZip" type="button">⬆ ZIP als neues Projekt</button></div>
+ <h4>Snapshots dieses Projekts</h4><div id="prSnaps"></div>
+ <h4>Teilen</h4>
+ <p style="margin:0 0 6px">Der Link enthält alle Dateien des Projekts. Wer ihn öffnet, bekommt eine Kopie als neues Projekt.</p>
+ <div class="row"><button class="b" id="prShare" type="button">🔗 Link erzeugen</button><button class="b" id="prCopy" type="button" hidden>Kopieren</button></div>
+ <textarea class="lq" id="prLink" rows="3" readonly hidden aria-label="Teilen-Link"></textarea>
+ <p class="msg" id="prMsg" role="status" aria-live="polite"></p>
+ <input type="file" id="prZipIn" accept=".zip" hidden>
+</div></div>
+<div class="help lib tk" id="tk" role="dialog" aria-modal="true" aria-labelledby="tkT"><div>
+ <div class="lh"><h2 id="tkT" style="margin:0;flex:1">🎯 Aufgaben</h2><button class="b" id="tkReset" type="button">Fortschritt zurücksetzen</button><button class="b" id="tkClose" type="button">Schließen</button></div>
+ <p style="margin:8px 0 0">Zehn Übungen vom Einstieg bis zu Klassen und Rekursion. „Datei öffnen“ legt deine Lösungsdatei an, „Prüfen“ testet sie mit versteckten Tests.</p>
+ <div class="bar2"><i id="tkBar"></i></div><div id="tkProg" style="color:var(--dim);font-size:12.5px"></div>
+ <div id="tkList"></div>
+</div></div>
+<div class="help lib ai" id="ai" role="dialog" aria-modal="true" aria-labelledby="aiT"><div>
+ <div class="lh"><h2 id="aiT" style="margin:0;flex:1">🤖 KI-Hilfe</h2><button class="b" id="aiClose" type="button">Schließen</button></div>
+ <p style="margin:8px 0 0">Die KI sieht den Code der geöffneten Datei und, falls vorhanden, die letzte Fehlermeldung. Sie ändert nichts an deinen Dateien.</p>
+ <textarea class="lq" id="aiQ" rows="2" placeholder="Optional: deine Frage, z. B. „Warum ist die Liste leer?“" aria-label="Frage an die KI"></textarea>
+ <div class="row"><button class="b" id="aiErr" type="button">Fehler erklären</button><button class="b" id="aiExp" type="button">Code erklären</button><button class="b" id="aiAsk" type="button">Frage stellen</button></div>
+ <div class="ans" id="aiOut" role="status" aria-live="polite"></div>
+</div></div>
+<script type="application/json" id="proData">{"templates":[{"id":"daten","titel":"Datenanalyse (pandas)","beschreibung":"CSV-Daten auswerten: gruppieren, summieren, Diagramm. Mit Ordnerstruktur.","open":"main.py","files":{"main.py":"# Datenanalyse mit pandas: Umsatz pro Region\nimport io\nimport pandas as pd\nimport matplotlib.pyplot as plt\nfrom daten.umsaetze import CSV\n\ndf = pd.read_csv(io.StringIO(CSV), parse_dates=[\"datum\"])\nprint(df.head())\nprint()\nprint(\"Umsatz gesamt:\", df[\"umsatz\"].sum())\n\npro_region = df.groupby(\"region\")[\"umsatz\"].agg([\"sum\", \"mean\", \"count\"]).round(1)\nprint(pro_region)\nprint()\nprint(\"Bester Monat:\", df.groupby(df[\"datum\"].dt.month)[\"umsatz\"].sum().idxmax())\n\npro_region[\"sum\"].plot(kind=\"bar\", title=\"Umsatz pro Region\")\nplt.tight_layout()\nplt.show()\n\n# Deine Aufgaben: 1) Umsatz pro Produkt  2) Durchschnitt pro Monat  3) Top-3-Verkäufe\n","daten/umsaetze.py":"CSV = \"\"\"datum,region,produkt,umsatz\n2024-01-05,Nord,Laptop,1200\n2024-01-18,Süd,Monitor,340\n2024-02-02,West,Laptop,1150\n2024-02-14,Nord,Maus,25\n2024-02-27,Ost,Monitor,360\n2024-03-03,Süd,Laptop,1300\n2024-03-19,West,Tastatur,80\n2024-03-30,Nord,Monitor,355\n2024-04-08,Ost,Laptop,1250\n2024-04-21,Süd,Maus,30\n2024-05-02,West,Monitor,345\n2024-05-16,Nord,Laptop,1180\n\"\"\"\n","README.md":"# Datenanalyse\n\nIn `daten/umsaetze.py` liegen die Rohdaten als Text. `main.py` liest sie mit pandas.\n\nÜbungen:\n1. Umsatz pro Produkt ausgeben\n2. Durchschnittlicher Umsatz pro Monat\n3. Die drei größten Verkäufe\n"}},{"id":"scraper","titel":"Web-Scraper-Übung (BeautifulSoup)","beschreibung":"HTML auslesen: Namen, Preise, Links. Funktioniert offline mit einer Beispielseite.","open":"main.py","files":{"main.py":"# Scraper-Übung: Produkte aus HTML auslesen\nfrom bs4 import BeautifulSoup\nfrom seite import HTML\n\nsoup = BeautifulSoup(HTML, \"html.parser\")\nsumme = 0.0\nfor karte in soup.select(\".produkt\"):\n    name = karte.select_one(\"h2\").get_text(strip=True)\n    preis = float(karte.select_one(\".preis\").get_text().replace(\"€\", \"\").replace(\",\", \".\").strip())\n    summe += preis\n    print(f\"{name:\u003c22}{preis:>8.2f} €\")\nprint(\"-\" * 32)\nprint(f\"{'Summe':\u003c22}{summe:>8.2f} €\")\n\n# Deine Aufgaben: 1) teuerstes Produkt  2) alle Links (a href) sammeln  3) Preise nach Kategorie\n","seite.py":"HTML = \"\"\"\n\u003chtml>\u003cbody>\n\u003cdiv class=\"produkt\" data-kat=\"buch\">\u003ch2>Python lernen\u003c/h2>\u003cspan class=\"preis\">29,90 €\u003c/span>\u003ca href=\"/buch/python\">Details\u003c/a>\u003c/div>\n\u003cdiv class=\"produkt\" data-kat=\"buch\">\u003ch2>Daten verstehen\u003c/h2>\u003cspan class=\"preis\">34,50 €\u003c/span>\u003ca href=\"/buch/daten\">Details\u003c/a>\u003c/div>\n\u003cdiv class=\"produkt\" data-kat=\"kurs\">\u003ch2>KI-Kurs online\u003c/h2>\u003cspan class=\"preis\">199,00 €\u003c/span>\u003ca href=\"/kurs/ki\">Details\u003c/a>\u003c/div>\n\u003cdiv class=\"produkt\" data-kat=\"kurs\">\u003ch2>Webinar Einstieg\u003c/h2>\u003cspan class=\"preis\">19,00 €\u003c/span>\u003ca href=\"/kurs/webinar\">Details\u003c/a>\u003c/div>\n\u003c/body>\u003c/html>\n\"\"\"\n","README.md":"# Web-Scraper-Übung\n\n`seite.py` enthält eine Beispielseite als Text. So übst du das Auslesen ohne Internet.\nEchte Webseiten lassen sich im Browser oft nicht laden (CORS-Schutz). Mit `holen(url)` aus der vibe-Bibliothek geht es bei Seiten, die das erlauben.\n"}},{"id":"spiel","titel":"Spiel: Zahlenraten","beschreibung":"Ein kleines Spiel mit input(), eigener Logik-Datei und Tests (unittest).","open":"main.py","files":{"main.py":"# Zahlenraten: trage deine Tipps im Feld \"Eingaben\" ein, einen pro Zeile\nimport random\nfrom logik import bewerte\n\nziel = random.randint(1, 100)\nprint(\"Ich denke mir eine Zahl zwischen 1 und 100. Du hast 7 Versuche.\")\nfor versuch in range(1, 8):\n    try:\n        tipp = int(input(f\"Tipp {versuch}: \"))\n    except EOFError:\n        print(\"\\nKeine Eingabe mehr. Die Zahl war\", ziel)\n        break\n    except ValueError:\n        print(\"Bitte eine ganze Zahl eingeben.\")\n        continue\n    antwort = bewerte(tipp, ziel)\n    print(antwort)\n    if antwort == \"richtig\":\n        print(\"Gewonnen in\", versuch, \"Versuchen!\")\n        break\nelse:\n    print(\"Verloren. Die Zahl war\", ziel)\n","logik.py":"def bewerte(tipp, ziel):\n    \"\"\"Vergleicht einen Tipp mit der gesuchten Zahl.\"\"\"\n    if tipp \u003c ziel:\n        return \"zu klein\"\n    if tipp > ziel:\n        return \"zu groß\"\n    return \"richtig\"\n","test_logik.py":"import unittest\nfrom logik import bewerte\n\n\nclass TestLogik(unittest.TestCase):\n    def test_zu_klein(self):\n        self.assertEqual(bewerte(10, 50), \"zu klein\")\n\n    def test_zu_gross(self):\n        self.assertEqual(bewerte(90, 50), \"zu groß\")\n\n    def test_richtig(self):\n        self.assertEqual(bewerte(50, 50), \"richtig\")\n\n\nif __name__ == \"__main__\":\n    unittest.main()\n","README.md":"# Zahlenraten\n\nStarte mit ▶, öffne ⌨ Eingaben und trage Zahlen ein. Mit 🧪 Tests prüfst du die Logik.\nIdee zum Erweitern: Schwierigkeitsgrade, Bestenliste, ein Computer, der selbst rät (Binärsuche).\n"}},{"id":"excel","titel":"Excel-Report (openpyxl)","beschreibung":"Eine echte .xlsx mit Formel, Format und Diagramm erzeugen und herunterladen.","open":"main.py","files":{"main.py":"# Excel-Bericht mit openpyxl erzeugen und herunterladen\nfrom openpyxl import Workbook, load_workbook\nfrom openpyxl.chart import BarChart, Reference\nfrom openpyxl.styles import Font, PatternFill\n\ndaten = [(\"Nord\", 12500), (\"Süd\", 18400), (\"Ost\", 9300), (\"West\", 15100)]\n\nwb = Workbook()\nws = wb.active\nws.title = \"Umsatz\"\nws.append([\"Region\", \"Umsatz in €\"])\nfor zeile in daten:\n    ws.append(zeile)\nws.append([\"Summe\", \"=SUM(B2:B5)\"])\n\nfor zelle in ws[1]:\n    zelle.font = Font(bold=True, color=\"FFFFFF\")\n    zelle.fill = PatternFill(\"solid\", fgColor=\"1F4E78\")\nws.column_dimensions[\"A\"].width = 14\nws.column_dimensions[\"B\"].width = 16\n\ndiagramm = BarChart()\ndiagramm.title = \"Umsatz pro Region\"\ndiagramm.add_data(Reference(ws, min_col=2, min_row=1, max_row=5), titles_from_data=True)\ndiagramm.set_categories(Reference(ws, min_col=1, min_row=2, max_row=5))\nws.add_chart(diagramm, \"D2\")\n\nwb.save(\"report.xlsx\")\n\n# Kontrolle: Datei wieder einlesen\nw2 = load_workbook(\"report.xlsx\")\nprint(\"Blätter:\", w2.sheetnames)\nprint(\"Zeilen:\", [[c.value for c in r] for r in w2[\"Umsatz\"].iter_rows()])\n\nherunterladen(\"report.xlsx\")  # startet den Download im Browser\n","README.md":"# Excel-Report\n\n`herunterladen(\"datei.xlsx\")` schickt eine im Projekt erzeugte Datei an deinen Browser.\nÜbungen: weitere Spalte, bedingte Formatierung, zweites Tabellenblatt.\n"}}],"tasks":[{"id":1,"titel":"Begrüßung","stufe":"Einstieg","text":"Schreibe eine Funktion gruss(name), die den Text \"Hallo, \u003cname>!\" zurückgibt. Beispiel: gruss(\"Anna\") ergibt \"Hallo, Anna!\".","start":"# Aufgabe 1: Begrüßung\n# gruss(\"Anna\") soll \"Hallo, Anna!\" zurückgeben\ndef gruss(name):\n    pass\n","test":"f = ns.get(\"gruss\")\nok(callable(f), \"Definiere eine Funktion mit dem Namen gruss\")\nif callable(f):\n    eq(lambda: f(\"Anna\"), \"Hallo, Anna!\", 'gruss(\"Anna\")')\n    eq(lambda: f(\"Max Müller\"), \"Hallo, Max Müller!\", 'gruss(\"Max Müller\")')\n    ok(f(\"Anna\") is not None, \"Die Funktion muss den Text mit return zurückgeben, nicht nur ausgeben\")","loesung":"def gruss(name):\n    return f\"Hallo, {name}!\"\n"},{"id":2,"titel":"Summe mit Schleife","stufe":"Einstieg","text":"Schreibe summe_bis(n): die Summe aller ganzen Zahlen von 1 bis n. Nutze eine Schleife. summe_bis(10) ergibt 55, summe_bis(0) ergibt 0.","start":"# Aufgabe 2: Summe von 1 bis n\ndef summe_bis(n):\n    pass\n","test":"f = ns.get(\"summe_bis\")\nok(callable(f), \"Definiere eine Funktion summe_bis(n)\")\nif callable(f):\n    eq(lambda: f(10), 55, \"summe_bis(10)\")\n    eq(lambda: f(0), 0, \"summe_bis(0)\")\n    eq(lambda: f(1), 1, \"summe_bis(1)\")\n    eq(lambda: f(100), 5050, \"summe_bis(100)\")","loesung":"def summe_bis(n):\n    summe = 0\n    for i in range(1, n + 1):\n        summe += i\n    return summe\n"},{"id":3,"titel":"Gerade Zahlen filtern","stufe":"Einstieg","text":"Schreibe gerade_zahlen(liste): gibt eine neue Liste mit nur den geraden Zahlen zurück, in derselben Reihenfolge. gerade_zahlen([1, 2, 3, 4]) ergibt [2, 4].","start":"# Aufgabe 3: Nur gerade Zahlen\ndef gerade_zahlen(liste):\n    pass\n","test":"f = ns.get(\"gerade_zahlen\")\nok(callable(f), \"Definiere eine Funktion gerade_zahlen(liste)\")\nif callable(f):\n    eq(lambda: f([1, 2, 3, 4, 6, 7]), [2, 4, 6], \"gerade_zahlen([1, 2, 3, 4, 6, 7])\")\n    eq(lambda: f([]), [], \"gerade_zahlen([])\")\n    eq(lambda: f([1, 3, 5]), [], \"gerade_zahlen([1, 3, 5])\")\n    eq(lambda: f([-2, 5, 0]), [-2, 0], \"gerade_zahlen([-2, 5, 0])\")","loesung":"def gerade_zahlen(liste):\n    return [z for z in liste if z % 2 == 0]\n"},{"id":4,"titel":"Wörter zählen","stufe":"Mittel","text":"Schreibe woerter_zaehlen(text): ein Dictionary, das zählt, wie oft jedes Wort vorkommt. Groß- und Kleinschreibung egal, Satzzeichen . , ! ? ; : am Wortrand ignorieren. \"Das ist das Haus. Das Haus!\" ergibt {\"das\": 3, \"ist\": 1, \"haus\": 2}.","start":"# Aufgabe 4: Wörter zählen\ndef woerter_zaehlen(text):\n    pass\n","test":"f = ns.get(\"woerter_zaehlen\")\nok(callable(f), \"Definiere eine Funktion woerter_zaehlen(text)\")\nif callable(f):\n    eq(lambda: f(\"Das ist das Haus. Das Haus!\"), {\"das\": 3, \"ist\": 1, \"haus\": 2}, 'woerter_zaehlen(\"Das ist das Haus. Das Haus!\")')\n    eq(lambda: f(\"\"), {}, 'woerter_zaehlen(\"\")')\n    eq(lambda: f(\"Ja, ja; JA?\"), {\"ja\": 3}, 'woerter_zaehlen(\"Ja, ja; JA?\")')","loesung":"def woerter_zaehlen(text):\n    zaehler = {}\n    for wort in text.lower().split():\n        wort = wort.strip(\".,!?;:\")\n        if wort:\n            zaehler[wort] = zaehler.get(wort, 0) + 1\n    return zaehler\n"},{"id":5,"titel":"Palindrom","stufe":"Mittel","text":"Schreibe ist_palindrom(s): True, wenn der Text vorwärts und rückwärts gleich ist. Groß-/Kleinschreibung und Leerzeichen zählen nicht. \"Anna\" ist ein Palindrom, \"A man a plan a canal Panama\" auch, \"Hallo\" nicht.","start":"# Aufgabe 5: Palindrom\ndef ist_palindrom(s):\n    pass\n","test":"f = ns.get(\"ist_palindrom\")\nok(callable(f), \"Definiere eine Funktion ist_palindrom(s)\")\nif callable(f):\n    eq(lambda: f(\"Anna\"), True, 'ist_palindrom(\"Anna\")')\n    eq(lambda: f(\"Hallo\"), False, 'ist_palindrom(\"Hallo\")')\n    eq(lambda: f(\"A man a plan a canal Panama\"), True, \"ist_palindrom mit Leerzeichen und Großbuchstaben\")\n    eq(lambda: f(\"\"), True, 'ist_palindrom(\"\")')\n    eq(lambda: f(\"ab\"), False, 'ist_palindrom(\"ab\")')","loesung":"def ist_palindrom(s):\n    t = \"\".join(s.lower().split())\n    return t == t[::-1]\n"},{"id":6,"titel":"FizzBuzz","stufe":"Mittel","text":"Schreibe fizzbuzz(n): eine Liste mit n Texten für die Zahlen 1 bis n. Durch 3 teilbar: \"Fizz\", durch 5: \"Buzz\", durch beide: \"FizzBuzz\", sonst die Zahl als Text. fizzbuzz(5) ergibt [\"1\", \"2\", \"Fizz\", \"4\", \"Buzz\"].","start":"# Aufgabe 6: FizzBuzz\ndef fizzbuzz(n):\n    pass\n","test":"f = ns.get(\"fizzbuzz\")\nok(callable(f), \"Definiere eine Funktion fizzbuzz(n)\")\nif callable(f):\n    eq(lambda: f(5), [\"1\", \"2\", \"Fizz\", \"4\", \"Buzz\"], \"fizzbuzz(5)\")\n    eq(lambda: f(15)[-1], \"FizzBuzz\", \"fizzbuzz(15), letzter Eintrag\")\n    eq(lambda: f(15)[9], \"Buzz\", \"fizzbuzz(15), Eintrag für die Zahl 10\")\n    eq(lambda: len(f(30)), 30, \"Länge von fizzbuzz(30)\")\n    eq(lambda: f(0), [], \"fizzbuzz(0)\")","loesung":"def fizzbuzz(n):\n    ergebnis = []\n    for i in range(1, n + 1):\n        if i % 15 == 0:\n            ergebnis.append(\"FizzBuzz\")\n        elif i % 3 == 0:\n            ergebnis.append(\"Fizz\")\n        elif i % 5 == 0:\n            ergebnis.append(\"Buzz\")\n        else:\n            ergebnis.append(str(i))\n    return ergebnis\n"},{"id":7,"titel":"Klasse Konto","stufe":"Mittel","text":"Schreibe eine Klasse Konto mit Startguthaben (Standard 0), den Methoden einzahlen(betrag) und abheben(betrag) und dem Attribut stand. Wer mehr abhebt als da ist, löst einen ValueError aus; der Stand bleibt dann unverändert.","start":"# Aufgabe 7: Klasse Konto\nclass Konto:\n    pass\n","test":"K = ns.get(\"Konto\")\nok(isinstance(K, type), \"Definiere eine Klasse Konto\")\nif isinstance(K, type):\n    def t1():\n        k = K(100)\n        k.einzahlen(50)\n        k.abheben(30)\n        return k.stand\n    eq(t1, 120, \"Konto(100), einzahlen(50), abheben(30): stand\")\n    eq(lambda: K().stand, 0, \"Konto().stand\")\n    def t3():\n        k = K(10)\n        try:\n            k.abheben(50)\n        except ValueError:\n            return k.stand\n        return \"kein ValueError\"\n    eq(t3, 10, \"abheben(50) bei 10 Euro soll ValueError auslösen, stand bleibt 10\")","loesung":"class Konto:\n    def __init__(self, stand=0):\n        self.stand = stand\n\n    def einzahlen(self, betrag):\n        self.stand += betrag\n\n    def abheben(self, betrag):\n        if betrag > self.stand:\n            raise ValueError(\"Nicht genug Guthaben\")\n        self.stand -= betrag\n"},{"id":8,"titel":"Primzahlen","stufe":"Fortgeschritten","text":"Schreibe primzahlen(n): alle Primzahlen bis einschließlich n als Liste. primzahlen(20) ergibt [2, 3, 5, 7, 11, 13, 17, 19]. Bis 100 gibt es 25 Primzahlen.","start":"# Aufgabe 8: Primzahlen\ndef primzahlen(n):\n    pass\n","test":"f = ns.get(\"primzahlen\")\nok(callable(f), \"Definiere eine Funktion primzahlen(n)\")\nif callable(f):\n    eq(lambda: f(20), [2, 3, 5, 7, 11, 13, 17, 19], \"primzahlen(20)\")\n    eq(lambda: f(1), [], \"primzahlen(1)\")\n    eq(lambda: f(2), [2], \"primzahlen(2)\")\n    eq(lambda: len(f(100)), 25, \"Anzahl der Primzahlen bis 100\")\n    eq(lambda: f(1000)[-1], 997, \"größte Primzahl bis 1000\")","loesung":"def primzahlen(n):\n    ergebnis = []\n    for z in range(2, n + 1):\n        if all(z % t for t in range(2, int(z ** 0.5) + 1)):\n            ergebnis.append(z)\n    return ergebnis\n"},{"id":9,"titel":"Verschachtelte Listen glätten","stufe":"Fortgeschritten","text":"Schreibe flatten(liste): macht aus beliebig tief verschachtelten Listen eine flache Liste. flatten([1, [2, [3, 4]], 5]) ergibt [1, 2, 3, 4, 5]. Tipp: Rekursion.","start":"# Aufgabe 9: Listen glätten (Rekursion)\ndef flatten(liste):\n    pass\n","test":"f = ns.get(\"flatten\")\nok(callable(f), \"Definiere eine Funktion flatten(liste)\")\nif callable(f):\n    eq(lambda: f([1, [2, [3, 4]], 5]), [1, 2, 3, 4, 5], \"flatten([1, [2, [3, 4]], 5])\")\n    eq(lambda: f([]), [], \"flatten([])\")\n    eq(lambda: f([[[]]]), [], \"flatten([[[]]])\")\n    eq(lambda: f([\"a\", [\"b\", [\"c\"]]]), [\"a\", \"b\", \"c\"], 'flatten([\"a\", [\"b\", [\"c\"]]])')","loesung":"def flatten(liste):\n    flach = []\n    for x in liste:\n        if isinstance(x, list):\n            flach.extend(flatten(x))\n        else:\n            flach.append(x)\n    return flach\n"},{"id":10,"titel":"CSV auswerten","stufe":"Fortgeschritten","text":"Schreibe durchschnitt_pro_gruppe(text): Der Text ist eine CSV mit der Kopfzeile \"gruppe,wert\". Gib ein Dictionary zurück: Gruppe → Durchschnitt der Werte (auf 2 Nachkommastellen gerundet). Tipp: das Modul csv und io.StringIO.","start":"# Aufgabe 10: CSV auswerten\nimport csv\nimport io\n\n\ndef durchschnitt_pro_gruppe(text):\n    pass\n","test":"f = ns.get(\"durchschnitt_pro_gruppe\")\nok(callable(f), \"Definiere eine Funktion durchschnitt_pro_gruppe(text)\")\nif callable(f):\n    eq(lambda: f(\"gruppe,wert\\nA,10\\nB,20\\nA,30\\n\"), {\"A\": 20.0, \"B\": 20.0}, \"Gruppen A und B\")\n    eq(lambda: f(\"gruppe,wert\\nx,1\\nx,2\\nx,2\\n\"), {\"x\": 1.67}, \"Rundung auf 2 Stellen (5/3 = 1.67)\")\n    eq(lambda: f(\"gruppe,wert\\n\"), {}, \"nur Kopfzeile\")","loesung":"import csv\nimport io\n\n\ndef durchschnitt_pro_gruppe(text):\n    summen = {}\n    for zeile in csv.DictReader(io.StringIO(text)):\n        summen.setdefault(zeile[\"gruppe\"], []).append(float(zeile[\"wert\"]))\n    return {g: round(sum(w) / len(w), 2) for g, w in summen.items()}\n"}]}</script>
 <div class="toast" id="toast" hidden></div>
 
 <script type="text/plain" id="workerSrc">
 importScripts('https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js');
 var py = null, stdinLines = [], outBuf = [], outTimer = null, lastPost = 0, chain = Promise.resolve();
 self.__img = function (bytes) { flush(); postMessage({ t: 'img', png: bytes }); };
+self.__dl = function (name, bytes) { flush(); postMessage({ t: 'dl', name: name, bytes: bytes }); };
 function post(m) { postMessage(m); }
 function flush() { if (outTimer) { clearTimeout(outTimer); outTimer = null; } if (outBuf.length) { post({ t: 'out', items: outBuf }); outBuf = []; } lastPost = Date.now(); }
 function emit(stream, s) { outBuf.push([stream, s]); if (Date.now() - lastPost >= 30) flush(); else if (!outTimer) outTimer = setTimeout(flush, 30); }
@@ -333,6 +383,8 @@ async function init() {
     '                _mpl_show()'
   ].join('\n'));
   py.runPython("import os, sys, json, shutil, zipfile, importlib, io\n\ndef _install_zip(zpath, name):\n    dest = \"/home/pyodide/userlibs/\" + name\n    if os.path.exists(dest):\n        shutil.rmtree(dest)\n    os.makedirs(dest)\n    root = os.path.realpath(dest)\n    with zipfile.ZipFile(zpath) as z:\n        infos = [i for i in z.infolist() if not i.filename.startswith(\"__MACOSX/\") and not i.filename.endswith(\".DS_Store\")]\n        for i in infos:\n            t = os.path.realpath(os.path.join(dest, i.filename))\n            if os.path.isabs(i.filename) or (t != root and not t.startswith(root + os.sep)):\n                shutil.rmtree(dest)\n                raise ValueError(\"Unsicherer Pfad im ZIP: \" + i.filename)\n        for i in infos:\n            z.extract(i, dest)\n    items = os.listdir(dest)\n    if len(items) == 1 and os.path.isdir(os.path.join(dest, items[0])):\n        top = os.path.join(dest, items[0])\n        if not os.path.exists(os.path.join(top, \"__init__.py\")):\n            tmp = dest + \"/.__wrap\"\n            os.rename(top, tmp)\n            for x in os.listdir(tmp):\n                shutil.move(os.path.join(tmp, x), os.path.join(dest, x))\n            os.rmdir(tmp)\n    paths = [dest]\n    if os.path.isdir(dest + \"/src\"):\n        paths.append(dest + \"/src\")\n    for p in paths:\n        if p not in sys.path:\n            sys.path.append(p)\n    importlib.invalidate_caches()\n    mods = []\n    for p in paths:\n        for x in sorted(os.listdir(p)):\n            fp = os.path.join(p, x)\n            if p == dest and x == \"src\" and len(paths) > 1:\n                continue\n            if x.endswith(\".py\") and x != \"setup.py\" and x[:-3].isidentifier():\n                mods.append(x[:-3])\n            elif os.path.isdir(fp) and x.isidentifier() and not x.startswith(\"_\") and any(f.endswith(\".py\") for _, _, fs in os.walk(fp) for f in fs):\n                mods.append(x)\n    return json.dumps(sorted(set(mods)))\n\ndef _zip_files(d):\n    bio = io.BytesIO()\n    with zipfile.ZipFile(bio, \"w\", zipfile.ZIP_DEFLATED) as z:\n        for k in sorted(d):\n            z.writestr(k, d[k])\n    return bio.getvalue()\n");
+  py.runPython("import os, sys, json, zipfile, io, builtins, posixpath\n\ndef _check(code, test):\n    res = []\n    def ok(cond, msg):\n        res.append([bool(cond), msg])\n    def eq(fn, expected, label):\n        try:\n            got = fn()\n        except BaseException as e:\n            res.append([False, label + \" löst einen Fehler aus: \" + type(e).__name__ + \": \" + str(e)])\n            return\n        good = (got == expected) and (type(got) == type(expected) or isinstance(expected, (int, float)) and isinstance(got, (int, float)) and not isinstance(got, bool) and not isinstance(expected, bool))\n        res.append([good, label + \" soll \" + repr(expected) + \" ergeben\" + (\"\" if good else \", ergibt aber \" + repr(got))])\n    ns = {\"__name__\": \"aufgabe\"}\n    buf = io.StringIO()\n    def _noinput(prompt=\"\"):\n        raise EOFError(\"input() wird in den Aufgaben nicht gebraucht\")\n    old_in, old_out = builtins.input, sys.stdout\n    builtins.input = _noinput\n    sys.stdout = buf\n    try:\n        exec(compile(code, \"aufgabe.py\", \"exec\"), ns)\n    except BaseException as e:\n        sys.stdout = old_out\n        builtins.input = old_in\n        return json.dumps({\"fatal\": type(e).__name__ + \": \" + str(e)})\n    sys.stdout = old_out\n    builtins.input = old_in\n    g = {\"ok\": ok, \"eq\": eq, \"ns\": ns, \"out\": buf.getvalue()}\n    try:\n        exec(compile(test, \"pruefung\", \"exec\"), g)\n    except BaseException as e:\n        res.append([False, \"Beim Prüfen ist ein Fehler aufgetreten: \" + type(e).__name__ + \": \" + str(e)])\n    return json.dumps({\"res\": res})\n\ndef _unzip_text(zpath):\n    exts = (\".py\", \".txt\", \".json\", \".csv\", \".md\")\n    out, skipped = {}, 0\n    with zipfile.ZipFile(zpath) as z:\n        for i in z.infolist():\n            if i.is_dir():\n                continue\n            n = posixpath.normpath(i.filename.replace(\"\\\\\", \"/\"))\n            if n.startswith(\"/\") or n.startswith(\"..\") or \"/../\" in n or n.startswith(\"__MACOSX\") or \"/.\" in \"/\" + n or not n.lower().endswith(exts) or i.file_size > 500000:\n                skipped += 1\n                continue\n            out[n] = z.read(i).decode(\"utf-8\", \"replace\")\n    return json.dumps({\"files\": out, \"skipped\": skipped})\n\ndef herunterladen(pfad):\n    import js\n    from pyodide.ffi import to_js\n    with open(pfad, \"rb\") as f:\n        data = f.read()\n    name = os.path.basename(pfad)\n    js.__dl(name, to_js(data))\n    print(\"⬇ Download gestartet:\", name)\n\nbuiltins.herunterladen = herunterladen\n");
+  py.runPython("def _missing(srcs, local):\n    import importlib.util\n    from pyodide.code import find_imports\n    local = json.loads(local)\n    out = set()\n    for code in json.loads(srcs):\n        try:\n            names = find_imports(code)\n        except Exception:\n            continue\n        for n in names:\n            if n in local:\n                continue\n            try:\n                if importlib.util.find_spec(n) is None:\n                    out.add(n)\n            except Exception:\n                out.add(n)\n    return json.dumps(sorted(out))\n");
   var v = py.runPython('import sys; sys.version.split()[0]');
   post({ t: 'ready', version: v, pyodide: py.version });
 }
@@ -342,12 +394,28 @@ async function handle(m) {
     try {
       stdinLines = String(m.stdin || '').split('\n'); if (stdinLines.length && stdinLines[stdinLines.length - 1] === '' ) stdinLines.pop();
       if (!String(m.stdin || '').trim()) stdinLines = [];
-      var names = Object.keys(m.files);
-      for (var i = 0; i < names.length; i++) py.FS.writeFile('/home/pyodide/' + names[i], m.files[names[i]]);
-      py.globals.get('_forget')(names.map(function (n) { return n.replace(/\.py$/, ''); }));
+      var names = Object.keys(m.files), BASE = '/home/pyodide/';
+      var stale = []; (self.__written || []).forEach(function (old) { if (!(old in m.files)) { stale.push(old); try { py.FS.unlink(BASE + old); } catch (e) {} } });
+      for (var i = 0; i < names.length; i++) { var fp = BASE + names[i], sl = fp.lastIndexOf('/'); if (sl > BASE.length - 1) py.FS.mkdirTree(fp.slice(0, sl)); py.FS.writeFile(fp, m.files[names[i]]); }
+      self.__written = names;
+      var mods = {}; names.concat(stale).forEach(function (n) { var p = n.replace(/\.py$/, '').split('/'); for (var q = 1; q <= p.length; q++) mods[p.slice(0, q).join('.')] = 1; });
+      py.globals.get('_forget')(Object.keys(mods));
       var code = m.code;
       post({ t: 'status', s: 'Pakete prüfen …' });
       await py.loadPackagesFromImports(code, { messageCallback: function (s) { post({ t: 'status', s: s }); }, errorCallback: function (s) { emit('e', s + '\n'); } });
+      if (m.pipmap) {
+        var srcs = [], loc = {}; names.forEach(function (n) { if (/\.py$/.test(n)) srcs.push(m.files[n]); loc[n.split('/')[0].replace(/\.py$/, '')] = 1; });
+        var miss = JSON.parse(py.globals.get('_missing')(JSON.stringify(srcs), JSON.stringify(loc))), need = [];
+        miss.forEach(function (n) { if (m.pipmap[n] && need.indexOf(m.pipmap[n]) < 0) need.push(m.pipmap[n]); });
+        if (need.length) {
+          await py.loadPackage('micropip'); var mp2 = py.pyimport('micropip');
+          for (var q = 0; q < need.length; q++) {
+            post({ t: 'status', s: 'Installiere ' + need[q] + ' …' });
+            try { await mp2.install(need[q]); emit('o', '📦 ' + need[q] + ' wurde automatisch installiert\n'); } catch (err) { emit('e', '📦 ' + need[q] + ' konnte nicht installiert werden: ' + lastLine(err) + '\n'); }
+          }
+          py.runPython('import importlib; importlib.invalidate_caches()');
+        }
+      }
       if (/\b(linien|balken_plot|torte_plot)\s*\(/.test(code)) { post({ t: 'status', s: 'matplotlib laden …' }); await py.loadPackage('matplotlib'); }
       post({ t: 'status', s: 'läuft …' });
       var rc = await py.globals.get('_run_main')(code, m.name);
@@ -403,6 +471,12 @@ async function handle(m) {
       pr.destroy(); b.destroy();
       post({ t: 'pkres', rid: m.rid, ok: true, bytes: u8.buffer });
     } catch (err) { post({ t: 'pkres', rid: m.rid, ok: false, msg: lastLine(err) }); }
+  } else if (m.t === 'check') {
+    try { var cr = JSON.parse(py.globals.get('_check')(m.code, m.test)); flush(); post({ t: 'pkres', rid: m.rid, ok: true, fatal: cr.fatal, res: cr.res }); }
+    catch (err) { post({ t: 'pkres', rid: m.rid, ok: false, msg: lastLine(err) }); }
+  } else if (m.t === 'unzip') {
+    try { py.FS.writeFile('/tmp/_pr.zip', new Uint8Array(m.bytes)); var uz = JSON.parse(py.globals.get('_unzip_text')('/tmp/_pr.zip')); post({ t: 'pkres', rid: m.rid, ok: true, files: uz.files, skipped: uz.skipped }); }
+    catch (err) { post({ t: 'pkres', rid: m.rid, ok: false, msg: lastLine(err) }); }
   } else if (m.t === 'repl') {
     try {
       stdinLines = [];
@@ -444,9 +518,19 @@ onmessage = function (e) {
     if (el.textContent.length > 250000) { while (el.textContent.length > 200000 && el.firstChild) el.removeChild(el.firstChild); }
     el.scrollTop = el.scrollHeight;
   }
-  function load() { try { var j = JSON.parse(localStorage.getItem(LS) || 'null'); if (j && typeof j === 'object' && Object.keys(j).length) return j; } catch (e) {} return JSON.parse(JSON.stringify(DEFAULTS)); }
-  var saveT; function save() { clearTimeout(saveT); saveT = setTimeout(function () { try { localStorage.setItem(LS, JSON.stringify(files)); } catch (e) {} }, 300); }
-  files = load(); if (!files[cur]) cur = Object.keys(files)[0];
+  var LSP = 'pyide_projects_v1', P = null, quotaWarned = false;
+  function uid() { return 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+  function clone(o) { return JSON.parse(JSON.stringify(o)); }
+  function loadProjects() {
+    try { var j = JSON.parse(localStorage.getItem(LSP) || 'null'); if (j && j.list && j.list[j.cur]) return j; } catch (e) {}
+    var old = null; try { old = JSON.parse(localStorage.getItem(LS) || 'null'); } catch (e) {}
+    var id = uid(), o = { cur: id, list: {} };
+    o.list[id] = { name: 'Mein Projekt', files: (old && typeof old === 'object' && Object.keys(old).length) ? old : clone(DEFAULTS), cur: 'main.py', created: Date.now(), updated: Date.now(), snaps: [] };
+    return o;
+  }
+  P = loadProjects(); files = P.list[P.cur].files; cur = P.list[P.cur].cur || 'main.py'; if (files[cur] === undefined) cur = Object.keys(files).sort()[0];
+  function persist() { P.list[P.cur].files = files; P.list[P.cur].cur = cur; P.list[P.cur].updated = Date.now(); try { localStorage.setItem(LSP, JSON.stringify(P)); } catch (e) { if (!quotaWarned) { quotaWarned = true; toast('Speicher voll: lösche Snapshots oder Projekte'); } } }
+  var saveT; function save() { clearTimeout(saveT); saveT = setTimeout(persist, 300); }
 
   /* ---------- Editor (Monaco, Fallback Textarea) ---------- */
   var api = {
@@ -488,46 +572,101 @@ onmessage = function (e) {
   }
 
   /* ---------- Dateien ---------- */
+  var closedDirs = {};
+  function pathCmp(a, b) {
+    var A = a.split('/'), B = b.split('/');
+    for (var i = 0; i < A.length && i < B.length; i++) {
+      if (A[i] === B[i]) continue;
+      var da = i < A.length - 1, db = i < B.length - 1;
+      if (da !== db) return da ? -1 : 1;
+      return A[i].toLowerCase() < B[i].toLowerCase() ? -1 : 1;
+    }
+    return A.length - B.length;
+  }
+  function rowBtn(txt, title, fn) { var b = document.createElement('button'); b.type = 'button'; b.title = title; b.setAttribute('aria-label', title); b.textContent = txt; b.addEventListener('click', function (e) { e.stopPropagation(); fn(); }); return b; }
   function renderFiles() {
-    var box = $('files'); box.innerHTML = '';
-    Object.keys(files).sort().forEach(function (n) {
-      var d = document.createElement('div'); d.className = 'file' + (n === cur ? ' on' : ''); d.setAttribute('role', 'option'); d.setAttribute('aria-selected', n === cur ? 'true' : 'false'); d.tabIndex = 0;
-      var s = document.createElement('span'); s.textContent = '🐍 ' + n; d.appendChild(s);
-      var r = document.createElement('button'); r.type = 'button'; r.title = 'Umbenennen'; r.setAttribute('aria-label', 'Umbenennen: ' + n); r.textContent = '✎';
-      var x = document.createElement('button'); x.type = 'button'; x.title = 'Löschen'; x.setAttribute('aria-label', 'Löschen: ' + n); x.textContent = '✕';
-      r.addEventListener('click', function (e) { e.stopPropagation(); renameFile(n); });
-      x.addEventListener('click', function (e) { e.stopPropagation(); deleteFile(n); });
-      d.appendChild(r); d.appendChild(x);
+    var box = $('files'); box.innerHTML = ''; var seen = {};
+    Object.keys(files).sort(pathCmp).forEach(function (n) {
+      var parts = n.split('/'), hid = false;
+      for (var i = 0; i < parts.length - 1; i++) {
+        var dp = parts.slice(0, i + 1).join('/');
+        if (!seen[dp]) { seen[dp] = 1; if (!hid) box.appendChild(dirRow(dp, i)); }
+        if (closedDirs[dp]) hid = true;
+      }
+      if (hid) return;
+      var d = document.createElement('div'); d.className = 'file' + (n === cur ? ' on' : ''); d.setAttribute('role', 'option'); d.setAttribute('aria-selected', n === cur ? 'true' : 'false'); d.tabIndex = 0; d.title = n; d.dataset.path = n;
+      d.style.paddingLeft = (8 + (parts.length - 1) * 14) + 'px';
+      var sp = document.createElement('span'); sp.textContent = (/\.py$/.test(n) ? '🐍 ' : '📄 ') + parts[parts.length - 1]; d.appendChild(sp);
+      d.appendChild(rowBtn('✎', 'Umbenennen oder verschieben: ' + n, function () { renameFile(n); }));
+      d.appendChild(rowBtn('✕', 'Löschen: ' + n, function () { deleteFile(n); }));
       d.addEventListener('click', function () { openFile(n); });
       d.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openFile(n); } });
       box.appendChild(d);
     });
     $('curName').textContent = cur; $('curInfo').textContent = (files[cur] || '').split('\n').length + ' Zeilen';
   }
+  function dirRow(dp, depth) {
+    var d = document.createElement('div'), name = dp.split('/').pop(); d.className = 'file dir'; d.tabIndex = 0; d.setAttribute('role', 'button'); d.dataset.dir = dp; d.title = dp; d.setAttribute('aria-expanded', String(!closedDirs[dp]));
+    d.style.paddingLeft = (8 + depth * 14) + 'px';
+    var sp = document.createElement('span'); sp.textContent = (closedDirs[dp] ? '▸ 📁 ' : '▾ 📁 ') + name; d.appendChild(sp);
+    d.appendChild(rowBtn('✕', 'Ordner löschen: ' + dp, function () { deleteDir(dp); }));
+    function tog() { closedDirs[dp] = !closedDirs[dp]; renderFiles(); }
+    d.addEventListener('click', tog); d.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tog(); } });
+    return d;
+  }
   function openFile(n) { if (!files[n] && files[n] !== '') return; if (ed && cur) files[cur] = ed.get(); cur = n; ed.set(files[n]); renderFiles(); save(); ed.focus && ed.focus(); }
-  function validName(n) { return /^[A-Za-z_][A-Za-z0-9_\-]*\.(py|txt|json|csv|md)$/.test(n); }
+  function validName(n) { return typeof n === 'string' && n.length <= 90 && n.split('/').length <= 6 && /^([A-Za-z0-9_][A-Za-z0-9_\-.]*\/)*[A-Za-z_][A-Za-z0-9_\-]*\.(py|txt|json|csv|md)$/.test(n); }
+  function clash(n) { var ks = Object.keys(files); for (var i = 0; i < ks.length; i++) { if (ks[i] === n) return 'Die Datei gibt es schon'; if (ks[i].indexOf(n + '/') === 0) return 'Es gibt schon einen Ordner mit diesem Namen'; if (n.indexOf(ks[i] + '/') === 0) return 'Ein Ordnername ist schon eine Datei'; } return ''; }
+  var NAME_HINT = 'Ungültiger Name. Erlaubt: Buchstaben, Ziffern, _ und - plus .py/.txt/.json/.csv/.md, Ordner mit / (z. B. ordner/datei.py)';
   function newFile() {
-    var n = prompt('Name der neuen Datei (z. B. rechner.py):', 'neu.py'); if (n == null) return; n = n.trim();
-    if (!validName(n)) { toast('Ungültiger Name. Erlaubt: Buchstaben, Ziffern, _ und - plus .py/.txt/.json/.csv/.md'); return; }
-    if (files[n] !== undefined) { toast('Die Datei gibt es schon'); return; }
+    var n = prompt('Name der neuen Datei (z. B. rechner.py oder ordner/rechner.py):', 'neu.py'); if (n == null) return; n = n.trim();
+    if (!validName(n)) { toast(NAME_HINT); return; }
+    var c = clash(n); if (c) { toast(c); return; }
     files[n] = /\.py$/.test(n) ? '# ' + n + '\n' : ''; save(); openFile(n);
   }
   function renameFile(n) {
-    var m = prompt('Neuer Name für ' + n + ':', n); if (m == null) return; m = m.trim(); if (m === n) return;
-    if (!validName(m)) { toast('Ungültiger Name'); return; } if (files[m] !== undefined) { toast('Die Datei gibt es schon'); return; }
+    var m = prompt('Neuer Name oder Pfad für ' + n + ':', n); if (m == null) return; m = m.trim(); if (m === n) return;
+    if (!validName(m)) { toast(NAME_HINT); return; } var c = clash(m); if (c) { toast(c); return; }
     if (ed && cur === n) files[n] = ed.get();
     files[m] = files[n]; delete files[n]; if (cur === n) cur = m; save(); renderFiles();
   }
   function deleteFile(n) {
     if (Object.keys(files).length <= 1) { toast('Die letzte Datei bleibt erhalten'); return; }
     if (!confirm('Datei "' + n + '" löschen?')) return;
-    delete files[n]; if (cur === n) { cur = Object.keys(files).sort()[0]; ed.set(files[cur]); } save(); renderFiles();
+    delete files[n]; if (cur === n) { cur = Object.keys(files).sort(pathCmp)[0]; ed.set(files[cur]); } save(); renderFiles();
+  }
+  function deleteDir(d) {
+    var ks = Object.keys(files).filter(function (k) { return k.indexOf(d + '/') === 0; });
+    if (ks.length >= Object.keys(files).length) { toast('Die letzte Datei bleibt erhalten'); return; }
+    if (!confirm('Ordner "' + d + '" mit ' + ks.length + ' Datei' + (ks.length === 1 ? '' : 'en') + ' löschen?')) return;
+    ks.forEach(function (k) { delete files[k]; }); if (files[cur] === undefined) { cur = Object.keys(files).sort(pathCmp)[0]; ed.set(files[cur]); } save(); renderFiles();
+  }
+  function readZipProject(f) {
+    return new Promise(function (res, rej) {
+      if (!ready) return rej(new Error('Python lädt noch … bitte kurz warten.'));
+      if (f.size > 20971520) return rej(new Error('ZIP ist zu groß (max. 20 MB)'));
+      var r = new FileReader(); r.onload = function () { wcall({ t: 'unzip', bytes: r.result }).then(function (m) {
+        var out = {}, n = 0, skipped = m.skipped || 0; Object.keys(m.files).forEach(function (k) { if (validName(k) && n < 200) { out[k] = m.files[k]; n++; } else skipped++; });
+        res({ files: out, skipped: skipped, count: n });
+      }, rej); }; r.readAsArrayBuffer(f);
+    });
+  }
+  function importZipMerge(f) {
+    readZipProject(f).then(function (z) {
+      if (!z.count) { toast('Im ZIP stehen keine passenden Dateien (.py/.txt/.json/.csv/.md)'); return; }
+      var conflicts = Object.keys(z.files).filter(function (k) { return files[k] !== undefined; });
+      if (conflicts.length && !confirm(conflicts.length + ' Datei(en) gibt es schon und werden überschrieben (' + conflicts.slice(0, 4).join(', ') + (conflicts.length > 4 ? ', …' : '') + '). Vorher wird ein Snapshot angelegt. Fortfahren?')) return;
+      if (conflicts.length) snapshot('Vor ZIP-Import');
+      Object.keys(z.files).forEach(function (k) { files[k] = z.files[k]; });
+      if (ed) ed.set(files[cur] !== undefined ? files[cur] : ''); save(); renderFiles(); toast(z.count + ' Dateien aus ' + f.name + ' importiert' + (z.skipped ? ' (' + z.skipped + ' übersprungen)' : ''));
+    }, function (e) { toast(e.message); });
   }
   function upload(list) {
     Array.prototype.forEach.call(list, function (f) {
+      if (/\.zip$/i.test(f.name)) { importZipMerge(f); return; }
       if (f.size > 500000) { toast(f.name + ' ist zu groß (max. 500 KB)'); return; }
       var name = f.name.replace(/[^A-Za-z0-9_.\-]/g, '_');
-      if (!validName(name)) { toast(f.name + ': nur .py/.txt/.json/.csv/.md'); return; }
+      if (!validName(name)) { toast(f.name + ': nur .py/.txt/.json/.csv/.md oder .zip'); return; }
       var r = new FileReader(); r.onload = function () { files[name] = String(r.result); save(); renderFiles(); toast('Hochgeladen: ' + name); }; r.readAsText(f);
     });
   }
@@ -551,13 +690,14 @@ onmessage = function (e) {
     var m = e.data;
     if (m.t === 'libok') { if (m.err) { libErr = 'Bibliothek konnte nicht installiert werden: ' + m.err; renderLib(); } }
     else if (m.t === 'katalog') { if (m.err) { libErr = 'Katalog nicht lesbar: ' + m.err; } else { try { catalog = JSON.parse(m.data); } catch (e) { libErr = 'Katalog nicht lesbar'; } } renderLib(); }
-    else if (m.t === 'ready') { sendLib(); ready = true; pkReplay(); setPill('ready', 'Python ' + m.version + ' bereit'); $('pyver').textContent = 'Python ' + m.version + ' (Pyodide ' + m.pyodide + ')'; uiRun(); }
+    else if (m.t === 'ready') { sendLib(); ready = true; pkReplay(); pkCatLoad().catch(function () {}); setPill('ready', 'Python ' + m.version + ' bereit'); $('pyver').textContent = 'Python ' + m.version + ' (Pyodide ' + m.pyodide + ')'; uiRun(); }
     else if (m.t === 'fatal') { setPill('err', 'Laden fehlgeschlagen'); add(outEl, 'Python konnte nicht geladen werden: ' + m.err + '\nPrüfe die Internetverbindung (Pyodide kommt vom CDN) und lade die Seite neu.\n', 'e'); }
     else if (m.t === 'pkres') { var cb = pkCb[m.rid]; delete pkCb[m.rid]; if (cb) { if (m.ok) cb.res(m); else cb.rej(new Error(m.msg || 'Fehler')); } }
     else if (m.t === 'status') { if (running) setPill('busy', m.s); if (pkBusy) pkMsg(m.s); }
     else if (m.t === 'img') { var im = document.createElement('img'); im.src = URL.createObjectURL(new Blob([m.png], { type: 'image/png' })); im.alt = 'Diagramm'; im.style.cssText = 'display:block;max-width:100%;background:#fff;border-radius:6px;margin:6px 0'; outEl.appendChild(im); outEl.scrollTop = outEl.scrollHeight; }
-    else if (m.t === 'out') { var target = m.shell ? shEl : (pending.shell ? shEl : outEl); m.items.forEach(function (it) { add(target, it[1], it[0] === 'e' ? 'e' : ''); }); }
-    else if (m.t === 'done') {
+    else if (m.t === 'out') { var target = m.shell ? shEl : (pending.shell ? shEl : outEl); m.items.forEach(function (it) { add(target, it[1], it[0] === 'e' ? 'e' : ''); if (target === outEl) runLog = (runLog + it[1]).slice(-3000); }); }
+    else if (m.t === 'dl') { var dla = document.createElement('a'); dla.href = URL.createObjectURL(new Blob([m.bytes])); dla.download = m.name; document.body.appendChild(dla); dla.click(); dla.remove(); setTimeout(function () { URL.revokeObjectURL(dla.href); }, 3000); }
+    else if (m.t === 'done') { lastOk = m.ok; if (m.err) runLog += '\n' + m.err; if (!m.ok) setTimeout(addAiBtn, 0);
       running = false; var secs = (m.ms / 1000).toFixed(2);
       if (m.ok) add(outEl, '✔ Fertig in ' + secs + ' s\n', 'o'); else { if (m.err) add(outEl, m.err + '\n', 'e'); add(outEl, '✖ Mit Fehler beendet' + (m.rc ? ' (Exit-Code ' + m.rc + ')' : '') + ' nach ' + secs + ' s\n', 'e'); if (/EOFError/.test(m.err || '')) add(outEl, 'Tipp: input() liest Zeilen aus dem Feld „⌨ Eingaben“. Trage dort deine Eingaben ein, eine pro Zeile.\n', 'i'); }
       setPill('ready', 'Python bereit'); uiRun();
@@ -674,7 +814,9 @@ onmessage = function (e) {
       restartPy(); pkMsg('„' + l.name + '“ gelöscht. Python startet neu …'); pkInstalled();
     });
   }
-  function restartPy() { Object.keys(pkCb).forEach(function (k) { pkCb[k].rej(new Error('Python wurde neu gestartet')); delete pkCb[k]; }); try { worker.terminate(); } catch (e) {} startWorker(); }
+  function rejectPending() { Object.keys(pkCb).forEach(function (k) { pkCb[k].rej(new Error('Abgebrochen. Python wurde neu gestartet.')); delete pkCb[k]; }); }
+  function restartPy() { rejectPending(); try { worker.terminate(); } catch (e) {} startWorker(); }
+  function pipMap() { var mp = {}; if (pkCatalog) pkCatalog.pakete.forEach(function (p) { if (p.route === 'micropip') mp[p.import] = p.name; }); return mp; }
   function pkCatLoad() {
     if (pkCatalog) return Promise.resolve(pkCatalog);
     return fetch('pylibs.json').then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(function (j) { pkCatalog = j; return j; });
@@ -729,14 +871,194 @@ onmessage = function (e) {
       pkMsg('✔ python-projekt.zip mit ' + Object.keys(files).length + ' Dateien exportiert');
     }, function (e) { pkMsg('✖ ' + e.message, true); });
   }
+  /* ---------- Projekte, Snapshots, Vorlagen ---------- */
+  var PRO = JSON.parse($('proData').textContent), TASKS = PRO.tasks, TEMPLATES = PRO.templates;
+  function syncCur() { if (ed && cur) files[cur] = ed.get(); }
+  function prMsg(t, err) { var e = $('prMsg'); e.textContent = t || ''; e.className = 'msg' + (err ? ' err' : ''); }
+  function updatePrCur() { $('prCur').textContent = '📁 ' + P.list[P.cur].name; }
+  function fmtT(t) { try { return new Date(t).toLocaleString('de-DE', { dateStyle: 'short', timeStyle: 'short' }); } catch (e) { return String(t); } }
+  function switchProject(id) {
+    if (!P.list[id] || id === P.cur) return; syncCur(); persist();
+    P.cur = id; var pj = P.list[id]; files = pj.files; cur = (pj.cur && files[pj.cur] !== undefined) ? pj.cur : Object.keys(files).sort(pathCmp)[0];
+    if (ed) ed.set(files[cur]); renderFiles(); updatePrCur(); persist();
+  }
+  function createProject(name, fl, openName) {
+    syncCur(); persist(); var id = uid();
+    P.list[id] = { name: (name || 'Neues Projekt').slice(0, 60), files: clone(fl), cur: openName && fl[openName] !== undefined ? openName : Object.keys(fl).sort(pathCmp)[0], created: Date.now(), updated: Date.now(), snaps: [] };
+    switchProject(id); return id;
+  }
+  function snapshot(label) { syncCur(); var pj = P.list[P.cur]; pj.snaps.unshift({ t: Date.now(), label: label || 'Snapshot', files: clone(files), cur: cur }); pj.snaps = pj.snaps.slice(0, 10); persist(); }
+  function restoreSnap(i) {
+    var pj = P.list[P.cur], sn = pj.snaps[i]; if (!sn) return; var data = clone(sn.files), c0 = sn.cur;
+    snapshot('Vor Wiederherstellung'); files = data; pj.files = files; cur = files[c0] !== undefined ? c0 : Object.keys(files).sort(pathCmp)[0];
+    if (ed) ed.set(files[cur]); renderFiles(); persist(); prRender(); prMsg('✔ Snapshot vom ' + fmtT(sn.t) + ' wiederhergestellt');
+  }
+  function prRender() {
+    $('prName').value = P.list[P.cur].name;
+    var box = $('prList'); box.innerHTML = '';
+    Object.keys(P.list).sort(function (a, b) { return P.list[b].updated - P.list[a].updated; }).forEach(function (id) {
+      var pj = P.list[id], row = el('div', undefined, 'li' + (id === P.cur ? ' cur' : '')), d = el('div'), b = el('b', pj.name); b.appendChild(el('small', Object.keys(pj.files).length + ' Dateien · ' + fmtT(pj.updated) + (id === P.cur ? ' · aktiv' : '')));
+      d.appendChild(b); row.appendChild(d);
+      if (id !== P.cur) row.appendChild(btn('Öffnen', function () { switchProject(id); prRender(); prMsg('Projekt „' + pj.name + '“ geöffnet'); }));
+      row.appendChild(btn('Duplizieren', function () { createProject(pj.name + ' (Kopie)', id === P.cur ? files : pj.files, pj.cur); prRender(); }));
+      row.appendChild(btn('Löschen', function () {
+        if (Object.keys(P.list).length <= 1) { prMsg('Das letzte Projekt bleibt erhalten.', true); return; }
+        if (!confirm('Projekt „' + pj.name + '“ mit allen Dateien und Snapshots löschen?')) return;
+        if (id === P.cur) switchProject(Object.keys(P.list).filter(function (k) { return k !== id; })[0]);
+        delete P.list[id]; persist(); prRender(); prMsg('Projekt gelöscht');
+      }));
+      box.appendChild(row);
+    });
+    var tb = $('prTpl'); tb.innerHTML = '';
+    TEMPLATES.forEach(function (t) {
+      var row = el('div', undefined, 'li'), d = el('div'); d.appendChild(el('b', t.titel)); d.appendChild(el('span', t.beschreibung));
+      row.appendChild(d); row.appendChild(btn('Anlegen', function () { createProject(t.titel, t.files, t.open); $('pr').classList.remove('on'); toast('Projekt „' + t.titel + '“ angelegt'); })); tb.appendChild(row);
+    });
+    var sb = $('prSnaps'); sb.innerHTML = ''; var pj2 = P.list[P.cur];
+    if (!pj2.snaps.length) sb.appendChild(el('p', 'Noch keine Snapshots. „📸 Snapshot“ speichert den Stand aller Dateien.')).style.color = 'var(--dim)';
+    pj2.snaps.forEach(function (sn, i) {
+      var row = el('div', undefined, 'li'), d = el('div'), b = el('b', sn.label); b.appendChild(el('small', fmtT(sn.t) + ' · ' + Object.keys(sn.files).length + ' Dateien')); d.appendChild(b); row.appendChild(d);
+      row.appendChild(btn('Wiederherstellen', function () { if (confirm('Dateien auf diesen Snapshot zurücksetzen? Der aktuelle Stand wird vorher als Snapshot gesichert.')) restoreSnap(i); }));
+      row.appendChild(btn('Löschen', function () { pj2.snaps.splice(i, 1); persist(); prRender(); }));
+      sb.appendChild(row);
+    });
+  }
+  /* ---------- Teilen per Link ---------- */
+  function b64enc(u8) { var s2 = ''; for (var i = 0; i < u8.length; i += 8192) s2 += String.fromCharCode.apply(null, u8.subarray(i, i + 8192)); return btoa(s2).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+  function b64dec(t) { t = t.replace(/-/g, '+').replace(/_/g, '/'); while (t.length % 4) t += '='; var b = atob(t), u = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; }
+  function packProject() {
+    syncCur(); var json = JSON.stringify({ v: 1, n: P.list[P.cur].name, f: files }), bytes = new TextEncoder().encode(json);
+    if (window.CompressionStream) return new Response(new Blob([bytes]).stream().pipeThrough(new CompressionStream('deflate-raw'))).arrayBuffer().then(function (ab) { return 'p=' + b64enc(new Uint8Array(ab)); });
+    return Promise.resolve('r=' + b64enc(bytes));
+  }
+  function unpackProject(str) {
+    var mt = /^([pr])=([A-Za-z0-9_\-]+)$/.exec(str); if (!mt) return Promise.reject(new Error('Der Link ist nicht lesbar.'));
+    var u8; try { u8 = b64dec(mt[2]); } catch (e) { return Promise.reject(new Error('Der Link ist beschädigt.')); }
+    var p;
+    if (mt[1] === 'p') {
+      if (!window.DecompressionStream) return Promise.reject(new Error('Dieser Browser kann den Link nicht entpacken. Bitte ein aktuelles Chrome, Edge, Firefox oder Safari nutzen.'));
+      p = new Promise(function (res, rej) {
+        var rd = new Blob([u8]).stream().pipeThrough(new DecompressionStream('deflate-raw')).getReader(), parts = [], tot = 0;
+        (function pump() { rd.read().then(function (r) { if (r.done) { var all = new Uint8Array(tot), o = 0; parts.forEach(function (x) { all.set(x, o); o += x.length; }); return res(all); } tot += r.value.length; if (tot > 2097152) { rd.cancel(); return rej(new Error('Der Link enthält zu viele Daten.')); } parts.push(r.value); pump(); }, function () { rej(new Error('Der Link ist beschädigt.')); }); })();
+      });
+    } else p = Promise.resolve(u8);
+    return p.then(function (bytes) {
+      var j; try { j = JSON.parse(new TextDecoder().decode(bytes)); } catch (e) { throw new Error('Der Link ist beschädigt.'); }
+      if (!j || j.v !== 1 || !j.f || typeof j.f !== 'object') throw new Error('Das ist kein Projekt-Link.');
+      var ks = Object.keys(j.f); if (!ks.length || ks.length > 60) throw new Error('Ungültige Dateianzahl im Link.');
+      var tot = 0; ks.forEach(function (k) { if (!validName(k) || typeof j.f[k] !== 'string') throw new Error('Ungültiger Dateiname im Link: ' + k); tot += j.f[k].length; });
+      if (tot > 1048576) throw new Error('Der Link enthält zu viel Text.');
+      return { name: String(j.n || 'Geteiltes Projekt').slice(0, 60), files: j.f };
+    });
+  }
+  function checkHash() {
+    var h = location.hash.replace(/^#/, ''); if (!/^[pr]=/.test(h)) return;
+    unpackProject(h).then(function (pj) {
+      var ks = Object.keys(pj.files);
+      if (confirm('Geteiltes Projekt „' + pj.name + '“ mit ' + ks.length + ' Dateien öffnen?\n\n' + ks.slice(0, 10).join('\n') + (ks.length > 10 ? '\n…' : '') + '\n\nEs wird als NEUES Projekt angelegt, dein bisheriges bleibt erhalten. Der Code läuft nur im Browser, wenn du ihn ausführst.')) { createProject(pj.name, pj.files, pj.files['main.py'] !== undefined ? 'main.py' : ks[0]); toast('Projekt „' + pj.name + '“ geöffnet'); }
+      history.replaceState(null, '', location.pathname + location.search);
+    }, function (e) { toast(e.message); history.replaceState(null, '', location.pathname + location.search); });
+  }
+  /* ---------- KI-Hilfe ---------- */
+  var FENCE = String.fromCharCode(96, 96, 96), runLog = '', lastOk = null, aiBusy = false;
+  var AI_SYS = 'Du bist ein geduldiger Python-Tutor für Anfänger in einem deutschen Kurs. Antworte auf Deutsch, freundlich und kurz. Bei einem Fehler: erkläre die Ursache in 2 bis 4 einfachen Sätzen ohne Fachjargon, zeige danach die korrigierte Stelle als kleinen Codeblock und gib einen Tipp, wie man so etwas künftig selbst findet. Erfinde nichts. Ist der Code in Ordnung, sag das.';
+  function aiCall(userText) {
+    var url = 'https://glow-up-gemini.replit.app/gemini/models/gemini-3.5-flash-lite/generateContent';
+    var body = { systemInstruction: { parts: [{ text: AI_SYS }] }, contents: [{ role: 'user', parts: [{ text: userText }] }], generationConfig: { maxOutputTokens: 1200, temperature: 0.3 } };
+    function once() {
+      return fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).then(function (r) {
+        return r.text().then(function (t) {
+          if (!r.ok) { var e = new Error(/BUDGET/.test(t) ? 'Das KI-Kontingent des Kurs-Zugangs ist gerade aufgebraucht. Bitte später erneut versuchen.' : /INPUT_TOKEN_LIMIT/.test(t) ? 'Der Code ist zu lang für den Kurs-Zugang. Kürze ihn oder nutze eine kleinere Datei.' : 'KI-Abruf fehlgeschlagen (HTTP ' + r.status + ')'); e.final = true; throw e; }
+          var j = JSON.parse(t), parts = (j.candidates && j.candidates[0] && j.candidates[0].content && j.candidates[0].content.parts) || [];
+          var txt = parts.filter(function (p) { return !p.thought; }).map(function (p) { return p.text || ''; }).join('').trim();
+          if (!txt) { var e2 = new Error('Die KI hat nichts geantwortet. Bitte noch einmal versuchen.'); e2.final = true; throw e2; }
+          return txt;
+        });
+      });
+    }
+    return once().catch(function (e) { if (e.final) throw e; return new Promise(function (r) { setTimeout(r, 1500); }).then(once); })
+      .catch(function (e) { if (e.final) throw e; throw new Error('Keine Verbindung zur KI (' + e.message + '). Bitte noch einmal versuchen.'); });
+  }
+  function aiShow(text, err) {
+    var box = $('aiOut'); box.innerHTML = '';
+    if (err) { var p0 = el('p', text); p0.style.color = 'var(--err)'; box.appendChild(p0); return; }
+    text.split(FENCE).forEach(function (part, i) {
+      if (i % 2 === 0) { if (part.trim()) box.appendChild(el('p', part.trim())); return; }
+      var code = part.replace(/^[a-zA-Z]*\n/, '').replace(/\n$/, ''), pre = el('pre', code); box.appendChild(pre);
+      var cb = btn('Code kopieren', function () { if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(code).then(function () { toast('Code kopiert'); }, function () { toast('Kopieren nicht möglich'); }); }); box.appendChild(cb);
+    });
+  }
+  function aiAsk(kind) {
+    if (aiBusy) return; syncCur();
+    var code = String(files[cur] || '').slice(0, 6000), q = $('aiQ').value.trim().slice(0, 500), msg = 'Datei: ' + cur + '\n' + FENCE + 'python\n' + code + '\n' + FENCE + '\n';
+    if (kind === 'err') {
+      if (lastOk !== false || !runLog.trim()) { aiShow('Es gibt gerade keinen Fehler zum Erklären. Führe das Programm aus (▶) oder wähle „Code erklären“ bzw. stelle eine Frage.', true); return; }
+      msg += '\nDas Programm hat mit einem Fehler geendet. Ausgabe:\n' + FENCE + '\n' + runLog.slice(-2000) + '\n' + FENCE + '\nErkläre mir den Fehler und wie ich ihn behebe.';
+    } else if (kind === 'exp') msg += '\nErkläre mir diesen Code Schritt für Schritt für Anfänger, in kurzen Absätzen.';
+    else { if (!q) { aiShow('Bitte schreibe oben deine Frage.', true); return; } }
+    if (q) msg += '\nMeine Frage: ' + q;
+    aiBusy = true; ['aiErr', 'aiExp', 'aiAsk'].forEach(function (i) { $(i).disabled = true; }); aiShow('Die KI denkt nach …'); $('aiOut').firstChild.style.color = 'var(--dim)';
+    aiCall(msg).then(function (t) { aiShow(t); }, function (e) { aiShow(e.message, true); }).then(function () { aiBusy = false; ['aiErr', 'aiExp', 'aiAsk'].forEach(function (i) { $(i).disabled = false; }); });
+  }
+  function openAi(kind) { $('ai').classList.add('on'); if (kind === 'err') aiAsk('err'); }
+  function addAiBtn() { var b = document.createElement('button'); b.type = 'button'; b.className = 'aibtn'; b.textContent = '🤖 Fehler erklären'; b.addEventListener('click', function () { openAi('err'); }); outEl.appendChild(b); outEl.appendChild(document.createTextNode('\n')); outEl.scrollTop = outEl.scrollHeight; }
+  /* ---------- Aufgaben ---------- */
+  var TK = { done: {} }, tkOpenId = null, tkRes = {}, tkSol = {};
+  try { TK.done = JSON.parse(localStorage.getItem('pyide_tasks_v1') || '{}') || {}; } catch (e) {}
+  function tkSave() { try { localStorage.setItem('pyide_tasks_v1', JSON.stringify(TK.done)); } catch (e) {} }
+  function tkPath(t) { return 'aufgaben/aufgabe_' + (t.id < 10 ? '0' : '') + t.id + '.py'; }
+  function tkEnsure(t) { var p = tkPath(t); if (files[p] === undefined) { files[p] = t.start; save(); } return p; }
+  function tkRender() {
+    var n = TASKS.filter(function (t) { return TK.done[t.id]; }).length;
+    $('tkProg').textContent = n + ' von ' + TASKS.length + ' gelöst'; $('tkBar').style.width = Math.round(100 * n / TASKS.length) + '%';
+    var box = $('tkList'); box.innerHTML = '';
+    TASKS.forEach(function (t) {
+      var it = el('div', undefined, 'it'), h = el('div', undefined, 'ih'); h.tabIndex = 0; h.setAttribute('role', 'button'); h.setAttribute('aria-expanded', String(tkOpenId === t.id)); h.dataset.task = t.id;
+      h.appendChild(el('span', TK.done[t.id] ? '✔' : '○', TK.done[t.id] ? 'okl' : '')); var b = el('b', 'Aufgabe ' + t.id + ': ' + t.titel); b.style.flex = '1'; h.appendChild(b); h.appendChild(el('small', t.stufe));
+      function tog() { tkOpenId = tkOpenId === t.id ? null : t.id; tkRender(); }
+      h.addEventListener('click', tog); h.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tog(); } });
+      it.appendChild(h);
+      if (tkOpenId === t.id) {
+        var body = el('div', undefined, 'ib'); body.appendChild(el('p', t.text)).style.margin = '0 0 8px';
+        var row = el('div', undefined, 'row');
+        var bo = btn('Datei öffnen', function () { var p = tkEnsure(t); $('tk').classList.remove('on'); openFile(p); }); bo.classList.add('tk-open');
+        var bc = btn('✔ Prüfen', function () { tkCheck(t); }); bc.classList.add('tk-check');
+        var bs = btn('Lösung zeigen', function () { if (tkSol[t.id] || confirm('Erst selbst versuchen? Lösung wirklich anzeigen?')) { tkSol[t.id] = !tkSol[t.id]; tkRender(); } }); bs.classList.add('tk-sol');
+        [bo, bc, bs].forEach(function (x) { x.className = 'b ' + x.className; row.appendChild(x); }); body.appendChild(row);
+        var rs = tkRes[t.id];
+        if (rs) {
+          var ul = el('ul', undefined, 'tk-res');
+          if (rs.fatal) { var li0 = el('li', '✖ Dein Code lässt sich nicht ausführen: ' + rs.fatal, 'badl'); ul.appendChild(li0); }
+          else if (rs.msg) ul.appendChild(el('li', rs.msg, 'badl'));
+          else { rs.res.forEach(function (r) { ul.appendChild(el('li', (r[0] ? '✔ ' : '✖ ') + r[1], r[0] ? 'okl' : 'badl')); }); }
+          body.appendChild(ul);
+          if (rs.all) { var w = el('p', '🎉 Aufgabe gelöst!', 'okl'); body.appendChild(w); }
+        }
+        if (tkSol[t.id]) body.appendChild(el('pre', t.loesung));
+        it.appendChild(body);
+      }
+      box.appendChild(it);
+    });
+  }
+  function tkCheck(t) {
+    if (!ready) { toast('Python lädt noch …'); return; } if (running) { toast('Es läuft bereits ein Programm'); return; }
+    var p = tkEnsure(t); syncCur(); var code = files[p];
+    running = true; uiRun(); setPill('busy', 'prüft …'); tkRes[t.id] = { msg: 'Prüfe …', res: [] }; tkRender();
+    wcall({ t: 'check', code: code, test: t.test }).then(function (m) {
+      var all = !m.fatal && m.res.length > 0 && m.res.every(function (r) { return r[0]; });
+      tkRes[t.id] = { fatal: m.fatal, res: m.res || [], all: all }; if (all) { TK.done[t.id] = true; tkSave(); }
+    }, function (e) { tkRes[t.id] = { msg: '✖ ' + e.message }; }).then(function () { running = false; setPill('ready', 'Python bereit'); uiRun(); tkRender(); });
+  }
   function uiRun() { $('bRun').disabled = !ready || running; $('bTest').disabled = !ready || running; $('bStop').hidden = !running; $('bRun').hidden = running; }
   function execute(code, name, label) {
     if (!ready || running) { toast(ready ? 'Es läuft bereits ein Programm' : 'Python lädt noch …'); return; }
     if (ed) files[cur] = ed.get(); save();
-    running = true; uiRun(); setPill('busy', 'läuft …'); pending.shell = false;
+    running = true; uiRun(); setPill('busy', 'läuft …'); pending.shell = false; runLog = ''; lastOk = null;
     add(outEl, '▶ ' + label + '\n', 'c');
     $('tabOut').click();
-    worker.postMessage({ t: 'run', id: ++runId, code: code, name: name, files: files, stdin: $('stdinTxt').value });
+    var rid = ++runId, stdinV = $('stdinTxt').value, w0 = worker;
+    function go() { if (worker !== w0) return; worker.postMessage({ t: 'run', id: rid, code: code, name: name, files: files, stdin: stdinV, pipmap: pipMap() }); }
+    if (pkCatalog) go(); else pkCatLoad().then(go, go);
   }
   function run() {
     if (!/\.py$/.test(cur)) { toast('Nur .py-Dateien lassen sich ausführen'); return; }
@@ -752,7 +1074,7 @@ onmessage = function (e) {
   function stop() {
     if (!running) return;
     try { worker.terminate(); } catch (e) {}
-    add(outEl, '■ Abgebrochen. Python wird neu gestartet …\n', 'i'); startWorker();
+    add(outEl, '■ Abgebrochen. Python wird neu gestartet …\n', 'i'); rejectPending(); startWorker();
   }
 
   /* ---------- Shell ---------- */
@@ -798,6 +1120,28 @@ onmessage = function (e) {
   $('pkReq').addEventListener('click', function () { installReqs(false); });
   $('pkReqOpen').addEventListener('click', function () { if (files['requirements.txt'] === undefined) { files['requirements.txt'] = '# Ein Paket pro Zeile, z. B.:\n# tabulate\n# humanize\n'; save(); renderFiles(); } openFile('requirements.txt'); $('pk').classList.remove('on'); });
   $('pkExp').addEventListener('click', pkExport);
+  $('bPr').addEventListener('click', function () { prMsg(''); prRender(); $('prLink').hidden = true; $('prCopy').hidden = true; $('pr').classList.add('on'); });
+  $('prCur').addEventListener('click', function () { $('bPr').click(); });
+  $('prClose').addEventListener('click', function () { $('pr').classList.remove('on'); });
+  $('pr').addEventListener('click', function (e) { if (e.target === $('pr')) $('pr').classList.remove('on'); });
+  $('prRen').addEventListener('click', function () { var v = $('prName').value.trim(); if (!v) { prMsg('Bitte einen Namen eintragen.', true); return; } P.list[P.cur].name = v.slice(0, 60); persist(); updatePrCur(); prRender(); prMsg('✔ Umbenannt'); });
+  $('prSnap').addEventListener('click', function () { snapshot('Snapshot'); prRender(); prMsg('✔ Snapshot gespeichert (' + P.list[P.cur].snaps.length + ' von max. 10)'); });
+  $('prEmpty').addEventListener('click', function () { var n = prompt('Name des neuen Projekts:', 'Neues Projekt'); if (n == null) return; createProject(n.trim() || 'Neues Projekt', { 'main.py': '# ' + (n.trim() || 'Neues Projekt') + '\nprint("Hallo!")\n' }, 'main.py'); prRender(); $('pr').classList.remove('on'); });
+  $('prZip').addEventListener('click', function () { $('prZipIn').click(); });
+  $('prZipIn').addEventListener('change', function () { var f = this.files[0]; this.value = ''; if (!f) return; readZipProject(f).then(function (z) { if (!z.count) { prMsg('Im ZIP stehen keine passenden Dateien (.py/.txt/.json/.csv/.md).', true); return; } createProject(f.name.replace(/\.zip$/i, ''), z.files, z.files['main.py'] !== undefined ? 'main.py' : null); prRender(); prMsg('✔ ' + z.count + ' Dateien importiert' + (z.skipped ? ' (' + z.skipped + ' übersprungen)' : '')); }, function (e) { prMsg('✖ ' + e.message, true); }); });
+  $('prShare').addEventListener('click', function () {
+    packProject().then(function (t) { var link = location.origin + location.pathname + '#' + t, ta = $('prLink'); ta.value = link; ta.hidden = false; $('prCopy').hidden = false; prMsg('✔ Link erzeugt (' + link.length + ' Zeichen)' + (link.length > 8000 ? '. Achtung: lang, manche Chat-Programme kürzen so etwas. Besser als ZIP teilen (📦 Pakete → Projekt als ZIP).' : '')); }, function (e) { prMsg('✖ ' + e.message, true); });
+  });
+  $('prCopy').addEventListener('click', function () { var v = $('prLink').value; if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(v).then(function () { prMsg('✔ Link kopiert'); }, function () { $('prLink').select(); prMsg('Markiert: bitte mit Strg+C kopieren'); }); else { $('prLink').select(); prMsg('Markiert: bitte mit Strg+C kopieren'); } });
+  window.addEventListener('hashchange', checkHash);
+  $('bTk').addEventListener('click', function () { tkRender(); $('tk').classList.add('on'); });
+  $('tkClose').addEventListener('click', function () { $('tk').classList.remove('on'); });
+  $('tk').addEventListener('click', function (e) { if (e.target === $('tk')) $('tk').classList.remove('on'); });
+  $('tkReset').addEventListener('click', function () { if (!confirm('Alle Häkchen zurücksetzen? Deine Lösungsdateien bleiben erhalten.')) return; TK.done = {}; tkRes = {}; tkSave(); tkRender(); });
+  $('bAi').addEventListener('click', function () { openAi(); });
+  $('aiClose').addEventListener('click', function () { $('ai').classList.remove('on'); });
+  $('ai').addEventListener('click', function (e) { if (e.target === $('ai')) $('ai').classList.remove('on'); });
+  $('aiErr').addEventListener('click', function () { aiAsk('err'); }); $('aiExp').addEventListener('click', function () { aiAsk('exp'); }); $('aiAsk').addEventListener('click', function () { aiAsk('q'); });
   $('bHelp').addEventListener('click', function () { $('help').classList.add('on'); $('helpClose').focus(); });
   $('helpClose').addEventListener('click', function () { $('help').classList.remove('on'); });
   $('help').addEventListener('click', function (e) { if (e.target === $('help')) $('help').classList.remove('on'); });
@@ -806,7 +1150,7 @@ onmessage = function (e) {
   $('tabOut').addEventListener('click', function () { $('panOut').classList.add('on'); $('panSh').classList.remove('on'); $('tabOut').setAttribute('aria-selected', 'true'); $('tabSh').setAttribute('aria-selected', 'false'); });
   $('tabSh').addEventListener('click', function () { $('panSh').classList.add('on'); $('panOut').classList.remove('on'); $('tabSh').setAttribute('aria-selected', 'true'); $('tabOut').setAttribute('aria-selected', 'false'); $('replIn').focus(); });
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') { $('help').classList.remove('on'); $('lib').classList.remove('on'); $('pk').classList.remove('on'); }
+    if (e.key === 'Escape') { $('help').classList.remove('on'); $('lib').classList.remove('on'); $('pk').classList.remove('on'); $('pr').classList.remove('on'); $('tk').classList.remove('on'); $('ai').classList.remove('on'); }
     if (e.key === 'F5') { e.preventDefault(); run(); }
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); run(); }
   });
@@ -816,8 +1160,9 @@ onmessage = function (e) {
   /* ---------- Start ---------- */
   renderFiles();
   startWorker();
-  makeMonaco().then(function () { ed.set(files[cur]); }).catch(function () { makeTextarea(); ed.set(files[cur]); toast('Einfacher Editor aktiv (Monaco nicht erreichbar)'); });
-  window.__pyide = { pk: { libs: function () { return pkLibs; }, install: installSpecs, req: installReqs, upload: pkUpload, loaded: function () { return pkLoaded; }, restart: restartPy }, katalog: function () { return catalog; }, run: run, tests: tests, stop: stop, files: function () { return files; }, ed: function () { return ed; }, state: function () { return { ready: ready, running: running, cur: cur }; }, repl: replSend };
+  updatePrCur();
+  makeMonaco().then(function () { ed.set(files[cur]); checkHash(); }).catch(function () { makeTextarea(); ed.set(files[cur]); toast('Einfacher Editor aktiv (Monaco nicht erreichbar)'); checkHash(); });
+  window.__pyide = { pro: { projects: function () { return P; }, tasks: TASKS, done: function () { return TK.done; }, tkCheck: tkCheck, validName: validName }, pk: { libs: function () { return pkLibs; }, install: installSpecs, req: installReqs, upload: pkUpload, loaded: function () { return pkLoaded; }, restart: restartPy }, katalog: function () { return catalog; }, run: run, tests: tests, stop: stop, files: function () { return files; }, ed: function () { return ed; }, state: function () { return { ready: ready, running: running, cur: cur }; }, repl: replSend };
 })();
 </script>
 </body>
