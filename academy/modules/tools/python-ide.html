@@ -115,6 +115,36 @@ button{cursor:pointer}
 .nbmd p{margin:.4em 0}.nbmd code{background:#161618;padding:1px 5px;border-radius:4px;font:12.5px Consolas,monospace}.nbmd a{color:#4fc1ff}
 .nbmd pre{background:#161618;border:1px solid var(--line);border-radius:6px;padding:8px 10px;white-space:pre-wrap}
 .nbmd .nbe{color:var(--dim);font-style:italic}
+#vibe{flex:1;min-width:0;min-height:0;display:none;flex-direction:column;background:var(--bg)}
+.ide.vm .side,.ide.vm .edwrap{display:none}
+.ide.vm #vibe{display:flex}
+.ide.vm .bottom{height:40%}
+.b.vib{background:#6d28d9;border-color:#6d28d9;color:#fff;font-weight:600}
+.b.vib[aria-pressed=true]{outline:2px solid #c4b5fd}
+.vmtop{display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:8px 12px;border-bottom:1px solid var(--line);background:var(--panel)}
+.vmtop b{margin-right:auto}.vmtop .b{min-height:30px;padding:3px 10px;font-size:12.5px}
+#vmFiles{padding:4px 12px;font-size:12px;color:var(--dim);border-bottom:1px solid #2c2c2e}
+#vmLog{flex:1;min-height:0;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:10px}
+.vmb{max-width:min(780px,96%);padding:9px 13px;border-radius:12px;white-space:pre-wrap;word-break:break-word;line-height:1.5}
+.vmb.u{align-self:flex-end;background:#0e639c;color:#fff;border-bottom-right-radius:3px}
+.vmb.a{align-self:flex-start;background:#2d2d33;border-bottom-left-radius:3px}
+.vmb.s{align-self:center;background:transparent;color:var(--dim);font-size:12.5px;padding:2px 8px;text-align:center}.vmb.s.err{color:var(--err)}.vmb.s.good{color:var(--ok)}
+.vmb details{margin-top:8px}.vmb summary{cursor:pointer;color:#a78bfa;font-size:12.5px}
+.vmb pre{white-space:pre-wrap;word-break:break-word;background:#161618;border:1px solid var(--line);border-radius:6px;padding:8px 10px;margin:6px 0 0;font:12.5px/1.45 Consolas,monospace}
+.vmhint{align-self:center;max-width:620px;text-align:center;color:var(--dim);margin:auto 0}
+.vmhint h2{color:var(--text);margin:0 0 6px;font-size:20px}
+.vmchips{display:flex;flex-wrap:wrap;gap:6px;padding:0 12px 8px}
+.vmchips button{padding:5px 11px;border:1px solid #5b3fa8;border-radius:999px;background:#2a2140;color:#e9ddff;font-size:12.5px}
+.vmchips button:hover:not(:disabled){border-color:#a78bfa}.vmchips button:disabled{opacity:.5}
+.vmin{display:flex;gap:8px;padding:8px 12px;border-top:1px solid var(--line);background:var(--panel)}
+.vmin textarea{flex:1;min-width:0;min-height:46px;max-height:140px;resize:vertical;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);outline:none}
+.vmin textarea:focus{border-color:#a78bfa}
+.vmin .b{align-self:flex-end;min-height:46px}
+.ms .it{border:1px solid var(--line);border-radius:8px;margin:6px 0;overflow:hidden}
+.ms .ih{display:flex;gap:8px;align-items:center;padding:9px 12px;cursor:pointer;background:#2a2230}
+.ms .ib{padding:10px 12px;border-top:1px solid var(--line)}
+.ms .pr{margin:6px 0;padding:6px 10px;border-left:3px solid #a78bfa;background:#161618;color:#d8ccf5;font-style:italic}
+.ms .okl{color:var(--ok);font-weight:700}.ms .badl{color:var(--err)}.ms ul{margin:8px 0 0;padding-left:0;list-style:none}.ms li{padding:2px 0}
 .toast{position:fixed;left:50%;bottom:54px;transform:translateX(-50%);z-index:60;max-width:90vw;padding:8px 14px;border-radius:8px;background:#111;border:1px solid var(--line);font-size:13px}
 .toast[hidden]{display:none}
 .tabs{display:none}
@@ -144,6 +174,7 @@ button{cursor:pointer}
   <button class="b" id="bPk" type="button" title="Pakete installieren, ZIP oder Wheel hochladen, requirements.txt">📦 Pakete</button>
   <button class="b" id="bPr" type="button" title="Projekte, Vorlagen, Snapshots, Teilen">📁 Projekte</button>
   <button class="b" id="bTk" type="button" title="Übungsaufgaben mit automatischer Prüfung">🎯 Aufgaben</button>
+  <button class="b vib" id="bVm" type="button" aria-pressed="false" title="Chat-Modus: beschreiben statt programmieren">✨ Vibe-Modus</button>
   <button class="b" id="bAi" type="button" title="KI erklärt Fehler und Code">🤖 KI-Hilfe</button>
   <button class="b" id="bNb" type="button" title="Neues Notebook mit Zellen (Jupyter-Stil)">📓 Notebook</button>
   <button class="b" id="bNew" type="button">＋ Datei</button>
@@ -171,6 +202,25 @@ button{cursor:pointer}
     <div id="nbCells"></div>
    </div>
   </section>
+  <section id="vibe" aria-label="Vibe-Modus">
+   <div class="vmtop">
+    <b>✨ Vibe-Modus: sag, was du willst. Code schreibt die KI.</b>
+    <button class="b" id="vmUp" type="button" title="Eigene Datei (z. B. CSV) ins Projekt laden">📎 Datei</button>
+    <button class="b" id="vmUndo" type="button" title="Zur vorherigen Version zurück">↶ Version zurück</button>
+    <button class="b" id="vmSaveAs" type="button" title="Das Ergebnis als eigene Datei sichern">💾 Sichern als …</button>
+    <button class="b" id="vmEd" type="button" title="Den erzeugten Code im Editor ansehen">&lt;/&gt; Code ansehen</button>
+    <button class="b" id="vmNew" type="button" title="Chat leeren und neu beginnen">＋ Neu beginnen</button>
+    <button class="b" id="vmMs" type="button" title="Aufträge mit automatischer Prüfung">🎯 Aufträge</button>
+    <button class="b" id="vmExit" type="button" title="Zur normalen Ansicht mit Editor">Normale Ansicht</button>
+   </div>
+   <div id="vmFiles"></div>
+   <div id="vmLog" role="log" aria-live="polite" aria-label="Verlauf"></div>
+   <div class="vmchips" id="vmChips"></div>
+   <div class="vmin">
+    <textarea id="vmIn" rows="2" placeholder="Beschreibe, was du willst, z. B. „Zeige mir die Quadratzahlen bis 10“. Enter sendet, Umschalt+Enter macht eine neue Zeile." aria-label="Deine Anweisung an die KI"></textarea>
+    <button class="b run" id="vmSend" type="button">Senden</button>
+   </div>
+  </section>
  </div>
  <div class="tabs" role="tablist"><button role="tab" id="tabOut" aria-selected="true">Ausgabe</button><button role="tab" id="tabSh" aria-selected="false">Shell</button></div>
  <div class="bottom">
@@ -196,6 +246,7 @@ button{cursor:pointer}
  <li><b>Eingaben:</b> <code>input()</code> liest Zeilen aus dem Feld „⌨ Eingaben“.</li>
  <li><b>Shell:</b> eigene Sitzung mit Speicher, Pfeil hoch/runter blättert den Verlauf.</li>
  <li><b>Projekte:</b> „📁 Projekte“ verwaltet mehrere Projekte, legt Vorlagen an (Daten, Scraper, Spiel, Excel), speichert Snapshots und erzeugt einen Link zum Teilen. Dateien dürfen in Ordnern liegen (<code>ordner/datei.py</code>); ein ZIP über „⬆ Hochladen“ wird entpackt.</li>
+ <li><b>Vibe-Modus:</b> „✨ Vibe-Modus“ ist ein Chat: Du beschreibst, was du willst, die KI schreibt das Programm, startet es und zeigt das Ergebnis. Bei Fehlern repariert sie bis zu zweimal selbst. Mit „🎯 Aufträge“ prüfst du dein Ergebnis automatisch, ohne Code zu schreiben. Direktlink: <code>python-ide.html?modus=vibe</code>.</li>
  <li><b>Notebook:</b> „📓 Notebook“ legt eine <code>.ipynb</code>-Datei mit Zellen an (Code und Text). Umschalt+Enter führt eine Zelle aus, alle Zellen teilen sich dieselben Variablen. Tabellen (pandas) und Diagramme erscheinen unter der Zelle. Import und Export als <code>.ipynb</code>, auch für Jupyter und Colab.</li>
  <li><b>KI-Code:</b> „🤖 KI-Hilfe → ✨ Code erzeugen“ schreibt Code zu deiner Beschreibung und prüft die Syntax. Lies ihn immer, bevor du ihn startest.</li>
  <li><b>Aufgaben:</b> „🎯 Aufgaben“ bietet zehn Übungen mit automatischer Prüfung. „🤖 KI-Hilfe“ erklärt Fehler und Code in einfachen Worten.</li>
@@ -269,6 +320,10 @@ button{cursor:pointer}
 </div></div>
 <div class="help lib tk" id="tk" role="dialog" aria-modal="true" aria-labelledby="tkT"><div>
  <div class="lh"><h2 id="tkT" style="margin:0;flex:1">🎯 Aufgaben</h2><button class="b" id="tkReset" type="button">Fortschritt zurücksetzen</button><button class="b" id="tkClose" type="button">Schließen</button></div>
+ <div class="ms" id="ms"><h3 style="margin:12px 0 4px">✨ Aufträge für Vibe Coder (kein Code nötig)</h3>
+ <p style="margin:0 0 4px;color:var(--dim)">Du beschreibst im Vibe-Modus, was herauskommen soll. Die Prüfung schaut nur auf das <b>Ergebnis</b> (Ausgabe, Diagramm, Datei), nicht auf den Code.</p>
+ <div id="msProg" style="color:var(--dim);font-size:12.5px"></div><div id="msList"></div></div>
+ <h3 style="margin:18px 0 4px">Für Fortgeschrittene: selbst programmieren</h3>
  <p style="margin:8px 0 0">Zehn Übungen vom Einstieg bis zu Klassen und Rekursion. „Datei öffnen“ legt deine Lösungsdatei an, „Prüfen“ testet sie mit versteckten Tests.</p>
  <div class="bar2"><i id="tkBar"></i></div><div id="tkProg" style="color:var(--dim);font-size:12.5px"></div>
  <div id="tkList"></div>
@@ -304,6 +359,25 @@ function clean(msg) {
   return out.join('\n').replace(/\s+$/, '');
 }
 function lastLine(err) { var L = clean(err && err.message || err).split('\n').filter(function (x) { return x.trim(); }); return L.length ? L[L.length - 1] : 'Unbekannter Fehler'; }
+async function prepFor(code, files, pipmap) {
+  var B0 = '/home/pyodide/', nn = Object.keys(files || {}), st = [];
+  (self.__written || []).forEach(function (old) { if (!(old in files)) { st.push(old); try { py.FS.unlink(B0 + old); } catch (e) {} } });
+  nn.forEach(function (n) { var fp = B0 + n, sl = fp.lastIndexOf('/'); if (sl > B0.length - 1) py.FS.mkdirTree(fp.slice(0, sl)); py.FS.writeFile(fp, files[n]); });
+  self.__written = nn;
+  if (st.length) py.globals.get('_forget')(st.map(function (n) { return n.replace(/\.py$/, '').replace(/\//g, '.'); }));
+  post({ t: 'status', s: 'Pakete prüfen …' });
+  await py.loadPackagesFromImports(code, { messageCallback: function (s) { post({ t: 'status', s: s }); }, errorCallback: function () {} });
+  if (pipmap) {
+    var loc = {}; nn.forEach(function (n) { loc[n.split('/')[0].replace(/\.py$/, '')] = 1; });
+    var miss = JSON.parse(py.globals.get('_missing')(JSON.stringify([code]), JSON.stringify(loc))), need = [];
+    miss.forEach(function (n) { if (pipmap[n] && need.indexOf(pipmap[n]) < 0) need.push(pipmap[n]); });
+    if (need.length) {
+      await py.loadPackage('micropip'); var mp = py.pyimport('micropip');
+      for (var q = 0; q < need.length; q++) { post({ t: 'status', s: 'Installiere ' + need[q] + ' …' }); try { await mp.install(need[q]); } catch (err) {} }
+      py.runPython('import importlib; importlib.invalidate_caches()');
+    }
+  }
+}
 async function init() {
   py = await loadPyodide({ indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/' });
   py.setStdout({ batched: function (s) { emit('o', s + '\n'); } });
@@ -422,6 +496,7 @@ async function init() {
   py.runPython("import os, sys, json, zipfile, io, builtins, posixpath\n\ndef _check(code, test):\n    res = []\n    def ok(cond, msg):\n        res.append([bool(cond), msg])\n    def eq(fn, expected, label):\n        try:\n            got = fn()\n        except BaseException as e:\n            res.append([False, label + \" löst einen Fehler aus: \" + type(e).__name__ + \": \" + str(e)])\n            return\n        good = (got == expected) and (type(got) == type(expected) or isinstance(expected, (int, float)) and isinstance(got, (int, float)) and not isinstance(got, bool) and not isinstance(expected, bool))\n        res.append([good, label + \" soll \" + repr(expected) + \" ergeben\" + (\"\" if good else \", ergibt aber \" + repr(got))])\n    ns = {\"__name__\": \"aufgabe\"}\n    buf = io.StringIO()\n    def _noinput(prompt=\"\"):\n        raise EOFError(\"input() wird in den Aufgaben nicht gebraucht\")\n    old_in, old_out = builtins.input, sys.stdout\n    builtins.input = _noinput\n    sys.stdout = buf\n    try:\n        exec(compile(code, \"aufgabe.py\", \"exec\"), ns)\n    except BaseException as e:\n        sys.stdout = old_out\n        builtins.input = old_in\n        return json.dumps({\"fatal\": type(e).__name__ + \": \" + str(e)})\n    sys.stdout = old_out\n    builtins.input = old_in\n    g = {\"ok\": ok, \"eq\": eq, \"ns\": ns, \"out\": buf.getvalue()}\n    try:\n        exec(compile(test, \"pruefung\", \"exec\"), g)\n    except BaseException as e:\n        res.append([False, \"Beim Prüfen ist ein Fehler aufgetreten: \" + type(e).__name__ + \": \" + str(e)])\n    return json.dumps({\"res\": res})\n\ndef _unzip_text(zpath):\n    exts = (\".py\", \".txt\", \".json\", \".csv\", \".md\", \".ipynb\")\n    out, skipped = {}, 0\n    with zipfile.ZipFile(zpath) as z:\n        for i in z.infolist():\n            if i.is_dir():\n                continue\n            n = posixpath.normpath(i.filename.replace(\"\\\\\", \"/\"))\n            if n.startswith(\"/\") or n.startswith(\"..\") or \"/../\" in n or n.startswith(\"__MACOSX\") or \"/.\" in \"/\" + n or not n.lower().endswith(exts) or i.file_size > 500000:\n                skipped += 1\n                continue\n            out[n] = z.read(i).decode(\"utf-8\", \"replace\")\n    return json.dumps({\"files\": out, \"skipped\": skipped})\n\ndef herunterladen(pfad):\n    import js\n    from pyodide.ffi import to_js\n    with open(pfad, \"rb\") as f:\n        data = f.read()\n    name = os.path.basename(pfad)\n    js.__dl(name, to_js(data))\n    print(\"⬇ Download gestartet:\", name)\n\nbuiltins.herunterladen = herunterladen\n");
   py.runPython("def _missing(srcs, local):\n    import importlib.util\n    from pyodide.code import find_imports\n    local = json.loads(local)\n    out = set()\n    for code in json.loads(srcs):\n        try:\n            names = find_imports(code)\n        except Exception:\n            continue\n        for n in names:\n            if n in local:\n                continue\n            try:\n                if importlib.util.find_spec(n) is None:\n                    out.add(n)\n            except Exception:\n                out.add(n)\n    return json.dumps(sorted(out))\n");
   py.runPython("_nb_ns = {\"__name__\": \"__main__\"}\n_nb_items = []\n\ndef _nb_fmt(o):\n    if o is None:\n        return None\n    try:\n        h = o._repr_html_() if hasattr(o, \"_repr_html_\") else None\n    except Exception:\n        h = None\n    if h:\n        return {\"t\": \"html\", \"v\": h}\n    return {\"t\": \"text\", \"v\": repr(o)}\n\ndef display(*objs):\n    for o in objs:\n        r = _nb_fmt(o)\n        if r:\n            _nb_items.append(r)\n\n_nb_ns[\"display\"] = display\n\nasync def _nb_run(code):\n    import traceback, linecache\n    from pyodide.code import eval_code_async\n    del _nb_items[:]\n    err = \"\"\n    linecache.cache[\"<zelle>\"] = (len(code), None, code.splitlines(True), \"<zelle>\")\n    try:\n        code2 = _fix_async_run(code, \"<zelle>\")\n        if \"matplotlib\" in code or \"pyplot\" in code:\n            _mpl_prep()\n        v = await eval_code_async(code2, _nb_ns, filename=\"<zelle>\")\n        r = _nb_fmt(v)\n        if r:\n            _nb_items.append(r)\n    except SystemExit:\n        err = \"SystemExit: exit() beendet hier nur die Zelle.\"\n    except BaseException:\n        err = traceback.format_exc()\n    if \"matplotlib.pyplot\" in sys.modules:\n        import matplotlib.pyplot as plt\n        if plt.get_fignums():\n            _mpl_show()\n    return json.dumps({\"items\": _nb_items, \"err\": err})\n\ndef _syntax(code):\n    import ast\n    try:\n        compile(code, \"<ki>\", \"exec\", flags=ast.PyCF_ALLOW_TOP_LEVEL_AWAIT)\n        return json.dumps({\"ok\": True})\n    except SyntaxError as e:\n        return json.dumps({\"ok\": False, \"err\": \"Zeile \" + str(e.lineno) + \": \" + str(e.msg)})\n");
+  py.runPython("def _check2(code, test):\n    import os\n    res = []\n    def ok(cond, msg):\n        res.append([bool(cond), msg])\n    def eq(fn, expected, label):\n        try:\n            got = fn()\n        except BaseException as e:\n            res.append([False, label + \" löst einen Fehler aus: \" + type(e).__name__ + \": \" + str(e)])\n            return\n        good = (got == expected) and (type(got) == type(expected) or isinstance(expected, (int, float)) and isinstance(got, (int, float)) and not isinstance(got, bool) and not isinstance(expected, bool))\n        res.append([good, label + \" soll \" + repr(expected) + \" ergeben\" + (\"\" if good else \", ergibt aber \" + repr(got))])\n    ns = {\"__name__\": \"aufgabe\"}\n    buf = io.StringIO()\n    def _noinput(prompt=\"\"):\n        raise EOFError(\"input() wird hier nicht gebraucht\")\n    old_in, old_out, old_dl = builtins.input, sys.stdout, getattr(builtins, \"herunterladen\", None)\n    os.environ[\"MPLBACKEND\"] = \"agg\"\n    mod = sys.modules.get(\"matplotlib.pyplot\")\n    old_show = None\n    if mod is not None:\n        try:\n            import matplotlib\n            matplotlib.use(\"agg\", force=True)\n            old_show = mod.show\n            mod.show = lambda *a, **k: None\n            mod.close(\"all\")\n        except Exception:\n            pass\n    builtins.input = _noinput\n    builtins.herunterladen = lambda *a, **k: None\n    sys.stdout = buf\n    def restore():\n        sys.stdout = old_out\n        builtins.input = old_in\n        if old_dl is not None:\n            builtins.herunterladen = old_dl\n    try:\n        exec(compile(code, \"aufgabe.py\", \"exec\"), ns)\n    except BaseException as e:\n        restore()\n        return json.dumps({\"fatal\": type(e).__name__ + \": \" + str(e)})\n    restore()\n    plt = sys.modules.get(\"matplotlib.pyplot\")\n    if plt is not None:\n        try:\n            plt.show = lambda *a, **k: None\n        except Exception:\n            pass\n    g = {\"ok\": ok, \"eq\": eq, \"ns\": ns, \"out\": buf.getvalue(), \"plt\": plt}\n    try:\n        exec(compile(test, \"pruefung\", \"exec\"), g)\n    except BaseException as e:\n        res.append([False, \"Beim Prüfen ist ein Fehler aufgetreten: \" + type(e).__name__ + \": \" + str(e)])\n    finally:\n        if plt is not None:\n            try:\n                plt.close(\"all\")\n                if old_show is not None:\n                    plt.show = old_show\n            except Exception:\n                pass\n    return json.dumps({\"res\": res})\n");
   var v = py.runPython('import sys; sys.version.split()[0]');
   post({ t: 'ready', version: v, pyodide: py.version });
 }
@@ -509,7 +584,7 @@ async function handle(m) {
       post({ t: 'pkres', rid: m.rid, ok: true, bytes: u8.buffer });
     } catch (err) { post({ t: 'pkres', rid: m.rid, ok: false, msg: lastLine(err) }); }
   } else if (m.t === 'check') {
-    try { var cr = JSON.parse(py.globals.get('_check')(m.code, m.test)); flush(); post({ t: 'pkres', rid: m.rid, ok: true, fatal: cr.fatal, res: cr.res }); }
+    try { await prepFor(m.code, m.files, m.pipmap); post({ t: 'status', s: 'Prüfe …' }); var cr = JSON.parse(py.globals.get('_check2')(m.code, m.test)); flush(); post({ t: 'pkres', rid: m.rid, ok: true, fatal: cr.fatal, res: cr.res }); }
     catch (err) { post({ t: 'pkres', rid: m.rid, ok: false, msg: lastLine(err) }); }
   } else if (m.t === 'unzip') {
     try { py.FS.writeFile('/tmp/_pr.zip', new Uint8Array(m.bytes)); var uz = JSON.parse(py.globals.get('_unzip_text')('/tmp/_pr.zip')); post({ t: 'pkres', rid: m.rid, ok: true, files: uz.files, skipped: uz.skipped }); }
@@ -677,7 +752,7 @@ onmessage = function (e) {
       d.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openFile(n); } });
       box.appendChild(d);
     });
-    $('curName').textContent = cur; $('curInfo').textContent = (files[cur] || '').split('\n').length + ' Zeilen';
+    $('curName').textContent = cur; $('curInfo').textContent = (files[cur] || '').split('\n').length + ' Zeilen'; if (window.__vmFiles) window.__vmFiles();
   }
   function dirRow(dp, depth) {
     var d = document.createElement('div'), name = dp.split('/').pop(); d.className = 'file dir'; d.tabIndex = 0; d.setAttribute('role', 'button'); d.dataset.dir = dp; d.title = dp; d.setAttribute('aria-expanded', String(!closedDirs[dp]));
@@ -773,7 +848,7 @@ onmessage = function (e) {
     else if (m.t === 'out' && nbTarget) { nbStream(m.items); }
     else if (m.t === 'out') { var target = m.shell ? shEl : (pending.shell ? shEl : outEl); m.items.forEach(function (it) { add(target, it[1], it[0] === 'e' ? 'e' : ''); if (target === outEl) runLog = (runLog + it[1]).slice(-3000); }); }
     else if (m.t === 'dl') { var dla = document.createElement('a'); dla.href = URL.createObjectURL(new Blob([m.bytes])); dla.download = m.name; document.body.appendChild(dla); dla.click(); dla.remove(); setTimeout(function () { URL.revokeObjectURL(dla.href); }, 3000); }
-    else if (m.t === 'done') { lastOk = m.ok; if (m.err) runLog += '\n' + m.err; if (!m.ok) setTimeout(addAiBtn, 0);
+    else if (m.t === 'done') { lastOk = m.ok; if (m.err) runLog += '\n' + m.err; if (VMW) { var vcb = VMW; VMW = null; setTimeout(function () { vcb(m); }, 0); } if (!m.ok) setTimeout(addAiBtn, 0);
       running = false; var secs = (m.ms / 1000).toFixed(2);
       if (m.ok) add(outEl, '✔ Fertig in ' + secs + ' s\n', 'o'); else { if (m.err) add(outEl, m.err + '\n', 'e'); add(outEl, '✖ Mit Fehler beendet' + (m.rc ? ' (Exit-Code ' + m.rc + ')' : '') + ' nach ' + secs + ' s\n', 'e'); if (/EOFError/.test(m.err || '')) add(outEl, 'Tipp: input() liest Zeilen aus dem Feld „⌨ Eingaben“. Trage dort deine Eingaben ein, eine pro Zeile.\n', 'i'); }
       setPill('ready', 'Python bereit'); uiRun();
@@ -956,7 +1031,7 @@ onmessage = function (e) {
   function switchProject(id) {
     if (!P.list[id] || id === P.cur) return; syncCur(); persist();
     P.cur = id; var pj = P.list[id]; files = pj.files; cur = (pj.cur && files[pj.cur] !== undefined) ? pj.cur : Object.keys(files).sort(pathCmp)[0];
-    if (ed) loadCur(); renderFiles(); updatePrCur(); persist();
+    if (ed) loadCur(); renderFiles(); updatePrCur(); persist(); if (window.__vmRefresh) window.__vmRefresh();
   }
   function createProject(name, fl, openName) {
     syncCur(); persist(); var id = uid();
@@ -1039,9 +1114,9 @@ onmessage = function (e) {
   var FENCE = String.fromCharCode(96, 96, 96), runLog = '', lastOk = null, aiBusy = false;
   var AI_SYS = 'Du bist ein geduldiger Python-Tutor für Anfänger in einem deutschen Kurs. Antworte auf Deutsch, freundlich und kurz. Bei einem Fehler: erkläre die Ursache in 2 bis 4 einfachen Sätzen ohne Fachjargon, zeige danach die korrigierte Stelle als kleinen Codeblock und gib einen Tipp, wie man so etwas künftig selbst findet. Erfinde nichts. Ist der Code in Ordnung, sag das. Entsteht der Fehler durch ungültige Eingaben oder Daten, zeige zusätzlich kurz, wie man das Programm robust macht (zum Beispiel mit try/except oder einer Prüfung vorher). Ändere am Code nur das Nötigste.';
   var aiFinish = '';
-  function aiCall(userText, sys, maxTok) {
+  function aiCall(userText, sys, maxTok, hist) {
     var url = 'https://glow-up-gemini.replit.app/gemini/models/gemini-3.5-flash-lite/generateContent';
-    var body = { systemInstruction: { parts: [{ text: sys || AI_SYS }] }, contents: [{ role: 'user', parts: [{ text: userText }] }], generationConfig: { maxOutputTokens: maxTok || 1200, temperature: 0.3 } };
+    var body = { systemInstruction: { parts: [{ text: sys || AI_SYS }] }, contents: (hist || []).concat([{ role: 'user', parts: [{ text: userText }] }]), generationConfig: { maxOutputTokens: maxTok || 1200, temperature: 0.3 } };
     function once() {
       return fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).then(function (r) {
         return r.text().then(function (t) {
@@ -1141,6 +1216,7 @@ onmessage = function (e) {
   function tkPath(t) { return 'aufgaben/aufgabe_' + (t.id < 10 ? '0' : '') + t.id + '.py'; }
   function tkEnsure(t) { var p = tkPath(t); if (files[p] === undefined) { files[p] = t.start; save(); } return p; }
   function tkRender() {
+    msRender();
     var n = TASKS.filter(function (t) { return TK.done[t.id]; }).length;
     $('tkProg').textContent = n + ' von ' + TASKS.length + ' gelöst'; $('tkBar').style.width = Math.round(100 * n / TASKS.length) + '%';
     var box = $('tkList'); box.innerHTML = '';
@@ -1176,7 +1252,7 @@ onmessage = function (e) {
     if (!ready) { toast('Python lädt noch …'); return; } if (running) { toast('Es läuft bereits ein Programm'); return; }
     var p = tkEnsure(t); syncCur(); var code = files[p];
     running = true; uiRun(); setPill('busy', 'prüft …'); tkRes[t.id] = { msg: 'Prüfe …', res: [] }; tkRender();
-    wcall({ t: 'check', code: code, test: t.test }).then(function (m) {
+    wcall({ t: 'check', code: code, test: t.test, files: files, pipmap: pipMap() }).then(function (m) {
       var all = !m.fatal && m.res.length > 0 && m.res.every(function (r) { return r[0]; });
       tkRes[t.id] = { fatal: m.fatal, res: m.res || [], all: all }; if (all) { TK.done[t.id] = true; tkSave(); }
     }, function (e) { tkRes[t.id] = { msg: '✖ ' + e.message }; }).then(function () { running = false; setPill('ready', 'Python bereit'); uiRun(); tkRender(); });
@@ -1382,6 +1458,136 @@ onmessage = function (e) {
     var base = cur.replace(/\.ipynb$/, ''), n = base + '.py', i = 2; while (files[n] !== undefined) n = base + '_' + (i++) + '.py';
     files[n] = py2; save(); renderFiles(); toast('Gespeichert als ' + n);
   }
+  /* ---------- Vibe-Modus ---------- */
+  var VMW = null, vmActive = false, vmBusy = false, vmMission = null, MISSIONS = [{"id":1,"titel":"Quadratzahlen","auftrag":"Lass dir die Quadratzahlen von 1 bis 10 anzeigen (1, 4, 9 … 100).","prompt":"Zeige die Quadratzahlen von 1 bis 10, jede in einer Zeile.","files":{},"test":"import re\nnums = [int(x) for x in re.findall(r\"\\d+\", out)]\nsq = [i * i for i in range(1, 11)]\nok(len(out.strip()) > 0, \"Das Programm hat nichts ausgegeben (die Ausgabe fehlt).\")\nok(all(n in nums for n in sq), \"Es fehlen Quadratzahlen. Erwartet: \" + \", \".join(map(str, sq)))"},{"id":2,"titel":"Rabatt und Mehrwertsteuer","auftrag":"Ein Artikel kostet 80 €. Erst 15 % Rabatt abziehen, danach 19 % Mehrwertsteuer addieren. Lass dir den Endpreis anzeigen.","prompt":"Ein Artikel kostet 80 €. Ziehe 15 % Rabatt ab und addiere danach 19 % Mehrwertsteuer. Zeige den Endpreis.","files":{},"test":"import re\nok(re.search(r\"80[.,]92\", out), \"Der Endpreis müsste 80,92 € sein (80 − 15 % = 68, dazu 19 % = 80,92). Ausgabe war: \" + out.strip()[:80])"},{"id":3,"titel":"Primzahlen","auftrag":"Lass dir alle Primzahlen bis 50 anzeigen.","prompt":"Zeige alle Primzahlen bis 50.","files":{},"test":"import re\nnums = [int(x) for x in re.findall(r\"\\d+\", out)]\nprimes = [p for p in range(2, 51) if all(p % d for d in range(2, int(p ** 0.5) + 1))]\nok(all(p in nums for p in primes), \"Es fehlen Primzahlen. Erwartet: \" + \", \".join(map(str, primes)))\nbad = sorted(set(n for n in nums if 2 <= n < 50 and n not in primes))\nok(not bad, \"Ausgegeben wurden auch Zahlen, die keine Primzahlen sind: \" + \", \".join(map(str, bad[:8])))"},{"id":4,"titel":"Wörter zählen","auftrag":"Zähle, wie oft jedes Wort im Satz „Der Hund jagt den Hund und die Katze“ vorkommt. „Hund“ muss zweimal erscheinen.","prompt":"Zähle, wie oft jedes Wort im Satz \"Der Hund jagt den Hund und die Katze\" vorkommt.","files":{},"test":"import re\nlines = [l.lower() for l in out.splitlines()]\nok(any(\"hund\" in l and re.search(r\"\\b2\\b\", l) for l in lines), \"Das Wort „Hund“ kommt zweimal vor. Das sollte in der Ausgabe stehen, z. B. „hund: 2“.\")\nok(any(\"katze\" in l and re.search(r\"\\b1\\b\", l) for l in lines), \"„Katze“ kommt einmal vor. Das fehlt in der Ausgabe.\")"},{"id":5,"titel":"Umsatz aus Datei auswerten","auftrag":"Die Datei umsaetze.csv liegt im Projekt. Lass dir den Gesamtumsatz und die Region mit dem höchsten Umsatz anzeigen.","prompt":"Lies die Datei umsaetze.csv und zeige den Gesamtumsatz und die Region mit dem höchsten Umsatz.","files":{"umsaetze.csv":"datum,region,produkt,umsatz\n2024-01-05,Nord,Laptop,1200\n2024-01-18,Süd,Monitor,340\n2024-02-02,West,Laptop,1150\n2024-02-14,Nord,Maus,25\n2024-02-27,Ost,Monitor,360\n2024-03-03,Süd,Laptop,1300\n2024-03-19,West,Tastatur,80\n2024-03-30,Nord,Monitor,355\n2024-04-08,Ost,Laptop,1250\n2024-04-21,Süd,Maus,30\n2024-05-02,West,Monitor,345\n2024-05-16,Nord,Laptop,1180\n"},"test":"import csv, re\nrows = list(csv.DictReader(open(\"umsaetze.csv\", encoding=\"utf-8\")))\ntot = sum(float(r[\"umsatz\"]) for r in rows)\nreg = {}\nfor r in rows:\n    reg[r[\"region\"]] = reg.get(r[\"region\"], 0) + float(r[\"umsatz\"])\nbest = max(reg, key=reg.get)\nt = str(int(tot))\nok(re.search(t[0] + r\"[.,]?\" + t[1:] + r\"(?![0-9])\", out), \"Der Gesamtumsatz ist \" + t + \" €. Das steht nicht in der Ausgabe.\")\nok(best in out, \"Die Region mit dem höchsten Umsatz ist \" + best + \". Das steht nicht in der Ausgabe.\")"},{"id":6,"titel":"Diagramm zeichnen","auftrag":"Zeichne aus umsaetze.csv ein Balkendiagramm mit dem Umsatz pro Region. Es soll einen Titel haben.","prompt":"Zeichne aus umsaetze.csv ein Balkendiagramm mit dem Umsatz pro Region und gib ihm einen Titel.","files":{"umsaetze.csv":"datum,region,produkt,umsatz\n2024-01-05,Nord,Laptop,1200\n2024-01-18,Süd,Monitor,340\n2024-02-02,West,Laptop,1150\n2024-02-14,Nord,Maus,25\n2024-02-27,Ost,Monitor,360\n2024-03-03,Süd,Laptop,1300\n2024-03-19,West,Tastatur,80\n2024-03-30,Nord,Monitor,355\n2024-04-08,Ost,Laptop,1250\n2024-04-21,Süd,Maus,30\n2024-05-02,West,Monitor,345\n2024-05-16,Nord,Laptop,1180\n"},"test":"ok(plt is not None and len(plt.get_fignums()) > 0, \"Es wurde kein Diagramm gezeichnet.\")\nif plt is not None and plt.get_fignums():\n    ax = plt.figure(plt.get_fignums()[-1]).axes[0]\n    ok(len(ax.patches) >= 4, \"Ein Balkendiagramm mit 4 Regionen braucht 4 Balken, gefunden wurden \" + str(len(ax.patches)) + \".\")\n    ok(ax.get_title().strip() != \"\", \"Das Diagramm hat noch keinen Titel.\")"},{"id":7,"titel":"Excel-Bericht","auftrag":"Erstelle aus umsaetze.csv eine Excel-Datei report.xlsx mit dem Gesamtumsatz pro Region (nur Zahlen, keine Formeln) und lade sie herunter.","prompt":"Erstelle aus umsaetze.csv eine Excel-Datei report.xlsx mit dem Gesamtumsatz pro Region (nur Zahlen, keine Formeln) und lade sie herunter.","files":{"umsaetze.csv":"datum,region,produkt,umsatz\n2024-01-05,Nord,Laptop,1200\n2024-01-18,Süd,Monitor,340\n2024-02-02,West,Laptop,1150\n2024-02-14,Nord,Maus,25\n2024-02-27,Ost,Monitor,360\n2024-03-03,Süd,Laptop,1300\n2024-03-19,West,Tastatur,80\n2024-03-30,Nord,Monitor,355\n2024-04-08,Ost,Laptop,1250\n2024-04-21,Süd,Maus,30\n2024-05-02,West,Monitor,345\n2024-05-16,Nord,Laptop,1180\n"},"test":"import os\nok(os.path.exists(\"report.xlsx\"), \"Die Datei report.xlsx wurde nicht erstellt.\")\nif os.path.exists(\"report.xlsx\"):\n    from openpyxl import load_workbook\n    wb = load_workbook(\"report.xlsx\")\n    vals = [c.value for ws in wb.worksheets for row in ws.iter_rows() for c in row if c.value is not None]\n    txt = \" \".join(str(v) for v in vals)\n    for r in [\"Nord\", \"Süd\", \"Ost\", \"West\"]:\n        ok(r in txt, \"Die Region \" + r + \" fehlt in der Excel-Datei.\")\n    nums = [float(v) for v in vals if isinstance(v, (int, float)) and not isinstance(v, bool)]\n    ok(all(x in nums for x in (2760, 1670, 1610, 1575)), \"Die Summen pro Region (Nord 2760, Süd 1670, Ost 1610, West 1575) stehen nicht als Zahlen in der Datei.\")"},{"id":8,"titel":"Sicheres Passwort","auftrag":"Lass ein Passwort mit genau 16 Zeichen erzeugen: Groß- und Kleinbuchstaben, eine Ziffer und ein Sonderzeichen.","prompt":"Erzeuge ein Passwort mit genau 16 Zeichen aus Groß- und Kleinbuchstaben, Ziffern und Sonderzeichen und zeige es an.","files":{},"test":"import re\ntoks = re.findall(r\"[^\\s'\\\"]+\", out)\ngood = [c for c in toks if len(c) == 16 and re.search(r\"[a-z]\", c) and re.search(r\"[A-Z]\", c) and re.search(r\"\\d\", c) and re.search(r\"[^A-Za-z0-9]\", c)]\nok(len(good) > 0, \"Gesucht ist ein Passwort mit genau 16 Zeichen mit Groß- und Kleinbuchstaben, Ziffer und Sonderzeichen. Es wurde keins gefunden.\")"},{"id":9,"titel":"Zinseszins","auftrag":"5000 € werden 10 Jahre lang mit 3,5 % pro Jahr verzinst (Zinseszins). Wie hoch ist das Guthaben am Ende?","prompt":"Ich lege 5000 € zu 3,5 % Zinsen pro Jahr an. Wie viel habe ich nach 10 Jahren mit Zinseszins?","files":{},"test":"def num(s):\n    s = s.strip(\".,\")\n    if \",\" in s and \".\" in s:\n        s = s.replace(\".\", \"\").replace(\",\", \".\") if s.rfind(\",\") > s.rfind(\".\") else s.replace(\",\", \"\")\n    elif \",\" in s:\n        s = s.replace(\",\", \".\")\n    try:\n        return float(s)\n    except ValueError:\n        return None\nimport re\nexp = 5000 * 1.035 ** 10\nnums = [num(x) for x in re.findall(r\"\\d[\\d.,]*\", out)]\nok(any(n is not None and abs(n - exp) < 0.02 for n in nums), \"Nach 10 Jahren müssten es etwa \" + format(exp, \".2f\") + \" € sein. In der Ausgabe steht das nicht.\")"},{"id":10,"titel":"Fehler reparieren lassen","auftrag":"Die Datei mittelwert.py rechnet falsch: Der Mittelwert der Zahlen müsste 12 sein. Lass die KI das Programm reparieren.","prompt":"Die Datei mittelwert.py rechnet falsch. Der Mittelwert müsste 12 sein. Repariere das Programm.","files":{"mittelwert.py":"zahlen = [12, 15, 9, 20, 4]\nsumme = 0\nfor z in zahlen:\n    summe = z\nprint(\"Mittelwert:\", summe / len(zahlen))\n"},"test":"import re\nok(re.search(r\"(?<![\\d.,])12(?:[.,]0+)?(?![\\d.,])\", out), \"Der Mittelwert von 12, 15, 9, 20 und 4 ist 12. Das steht nicht in der Ausgabe. Ausgabe war: \" + out.strip()[:80])"}];
+  var VM_SYS = GEN_SYS + ' Du arbeitest mit einer Person, die selbst nie Code schreibt und keinen Code lesen will. Antworte deshalb immer so: Zuerst ein bis drei kurze Sätze in einfachem Deutsch ohne Fachbegriffe, was du gebaut oder geändert hast. Danach den VOLLSTÄNDIGEN aktuellen Programmcode in einem einzigen Codeblock (bei Änderungen immer die komplette neue Datei, nie nur Ausschnitte). Das Ergebnis muss man sofort sehen: nutze print() oder Diagramme mit plt.show(). Ist etwas unklar, triff eine vernünftige Annahme und nenne sie in einem Satz, statt nachzufragen. Dateien aus dem Projekt liest du mit open("dateiname", encoding="utf-8") oder pandas. Für Excel immer ausdrücklich import openpyxl verwenden, auch wenn du pandas nutzt. Dein Code wird sofort automatisch ausgeführt; du siehst danach das Ergebnis oder die Fehlermeldung im Kontext.';
+  var VM_CHIPS = ['Zeige mir die Quadratzahlen von 1 bis 10', 'Berechne den Endpreis von 80 € nach 15 % Rabatt und 19 % Mehrwertsteuer', 'Zeichne ein Balkendiagramm mit Beispielumsätzen für vier Regionen', 'Erstelle eine Excel-Datei mit einer Kostenübersicht und lade sie herunter', 'Würfle 1000-mal mit zwei Würfeln und zeige, wie oft jede Summe vorkommt', 'Erzeuge ein sicheres Passwort mit 16 Zeichen'];
+  function vmState() { var pj = P.list[P.cur]; if (!pj.vibe) pj.vibe = { msgs: [], code: '', versions: [], lastRun: null }; return pj.vibe; }
+  function vmSave() { var v = vmState(); v.msgs = v.msgs.slice(-40); v.versions = v.versions.slice(-10); persist(); }
+  function vmPush(role, text, extra) { var m = { role: role, text: text }; if (extra) Object.keys(extra).forEach(function (k) { m[k] = extra[k]; }); vmState().msgs.push(m); return m; }
+  function vmFilesLine() { var ks = Object.keys(files).filter(function (k) { return k !== 'ki_projekt.py' && !/^aufgaben\//.test(k); }); $('vmFiles').textContent = ks.length ? 'Dateien im Projekt: ' + ks.slice(0, 12).join(', ') + (ks.length > 12 ? ' …' : '') : 'Noch keine eigenen Dateien. Mit „📎 Datei“ kannst du z. B. eine CSV hochladen.'; }
+  window.__vmFiles = function () { if (vmActive) vmFilesLine(); };
+  window.__vmRefresh = function () { if (vmActive) { vmRender(); vmFilesLine(); } };
+  function vmUI() {
+    $('vmSend').disabled = vmBusy; $('vmIn').disabled = vmBusy; ['vmUndo', 'vmNew'].forEach(function (i) { $(i).disabled = vmBusy; });
+    Array.prototype.forEach.call($('vmChips').children, function (b) { b.disabled = vmBusy; });
+  }
+  function vmRender() {
+    var v = vmState(), box = $('vmLog'); box.innerHTML = '';
+    var shown = v.msgs.filter(function (m) { return !m.hidden; });
+    if (!shown.length) {
+      var h = el('div', undefined, 'vmhint'); h.appendChild(el('h2', 'Was soll entstehen?')); h.appendChild(el('div', 'Beschreibe es in normalen Worten. Die KI schreibt das Programm, startet es und zeigt unten das Ergebnis. Du musst keinen Code lesen oder tippen. Passt etwas nicht, sag einfach, was anders sein soll.'));
+      box.appendChild(h);
+    }
+    shown.forEach(function (m) {
+      var b = el('div', undefined, 'vmb ' + (m.role === 'user' ? 'u' : m.role === 'ai' ? 'a' : 's' + (m.err ? ' err' : '') + (m.good ? ' good' : ''))); b.appendChild(document.createTextNode(m.text));
+      if (m.role === 'ai' && m.code) { var d = document.createElement('details'); d.appendChild(el('summary', 'Code ansehen (optional)')); d.appendChild(el('pre', m.code)); b.appendChild(d); }
+      box.appendChild(b);
+    });
+    if (vmBusy) { var t = el('div', 'Die KI arbeitet …', 'vmb s'); t.id = 'vmThink'; box.appendChild(t); }
+    box.scrollTop = box.scrollHeight;
+    var ch = $('vmChips'); ch.innerHTML = ''; ch.hidden = shown.length > 0;
+    if (!shown.length) VM_CHIPS.forEach(function (c) { var b = el('button', c); b.type = 'button'; b.addEventListener('click', function () { vmSend(c); }); ch.appendChild(b); });
+    vmUI(); $('vmUndo').disabled = vmBusy || !v.versions.length;
+  }
+  function vmOpen() { vmActive = true; document.querySelector('.ide').classList.add('vm'); $('vibe').hidden = false; $('bVm').setAttribute('aria-pressed', 'true'); vmRender(); vmFilesLine(); try { localStorage.setItem('pyide_mode', 'vibe'); } catch (e) {} setTimeout(function () { $('vmIn').focus(); }, 60); }
+  function vmClose() { vmActive = false; document.querySelector('.ide').classList.remove('vm'); $('bVm').setAttribute('aria-pressed', 'false'); try { localStorage.setItem('pyide_mode', 'normal'); } catch (e) {} }
+  function vmInit() { var want = /[?&]modus=vibe\b/.test(location.search); if (!want) { try { want = localStorage.getItem('pyide_mode') === 'vibe' && !/[?&]modus=normal\b/.test(location.search); } catch (e) {} } if (want) vmOpen(); }
+  function vmContext() {
+    var v = vmState(), parts = [];
+    if (v.code) parts.push('Aktueller Code (Datei ki_projekt.py):\n' + FENCE + 'python\n' + v.code.slice(0, 6000) + '\n' + FENCE);
+    var fl = []; Object.keys(files).forEach(function (k) {
+      if (k === 'ki_projekt.py' || /^aufgaben\//.test(k) || /\.ipynb$/.test(k) || fl.join('').length > 3200) return;
+      var txt = String(files[k]); var line = '- ' + k + ' (' + txt.split('\n').length + ' Zeilen)';
+      if (/\.(csv|txt|json|md)$/.test(k)) line += ', Anfang:\n' + FENCE + '\n' + txt.slice(0, 350) + '\n' + FENCE;
+      else if (/\.py$/.test(k) && txt.length <= 1200) line += ', Inhalt:\n' + FENCE + 'python\n' + txt + '\n' + FENCE;
+      fl.push(line);
+    });
+    parts.push(fl.length ? 'Dateien im Projekt:\n' + fl.join('\n') : 'Es gibt keine eigenen Dateien im Projekt.');
+    if (v.lastRun) parts.push('Letztes Ergebnis: ' + (v.lastRun.ok ? 'lief fehlerfrei' : 'FEHLER') + '\n' + FENCE + '\n' + (v.lastRun.tail || '(keine Ausgabe)') + '\n' + FENCE + (v.lastRun.hints ? '\nAutomatische Prüfung des Auftrags: ' + v.lastRun.hints : ''));
+    return parts.join('\n\n');
+  }
+  function vmHistory() {
+    var msgs = vmState().msgs.slice(0, -1).filter(function (m) { return m.role === 'user' || m.role === 'ai'; }).slice(-8), out = [];
+    msgs.forEach(function (m) { var role = m.role === 'user' ? 'user' : 'model', txt = m.text + (m.code ? '\n(Der vollständige Code dazu steht im aktuellen Stand.)' : ''); if (out.length && out[out.length - 1].role === role) out[out.length - 1].parts[0].text += '\n' + txt; else out.push({ role: role, parts: [{ text: txt }] }); });
+    while (out.length && out[0].role !== 'user') out.shift(); return out;
+  }
+  function vmSend(text) {
+    text = String(text !== undefined ? text : $('vmIn').value).trim().slice(0, 1200); if (!text || vmBusy) return;
+    $('vmIn').value = ''; vmPush('user', text); vmSave(); vmTurn(0);
+  }
+  function vmTurn(fixN) {
+    var v = vmState(), last = v.msgs[v.msgs.length - 1].text; vmBusy = true; vmRender();
+    var hist = vmHistory(), msg = last + '\n\n--- Kontext (nur für dich, nicht wiederholen) ---\n' + vmContext();
+    aiCall(msg, VM_SYS, 3500, hist).then(function (t) {
+      var ex = extractCode(t); if (!ex) { vmPush('ai', t); return { kind: 'text' }; }
+      return checkSyntax(ex.code).then(function (syn) {
+        if (syn.ok !== false) return { kind: 'code', ex: ex, syn: syn };
+        return aiCall(msg + '\n\nDein Code hatte einen Syntaxfehler (' + syn.err + '). Gib den korrigierten, vollständigen Code zurück.', VM_SYS, 3500, hist).then(function (t2) { var e2 = extractCode(t2) || ex; return checkSyntax(e2.code).then(function (s2) { return { kind: 'code', ex: e2, syn: s2 }; }); });
+      });
+    }).then(function (r) {
+      if (r.kind === 'code') { if (v.code) v.versions.push(v.code); v.code = r.ex.code; files['ki_projekt.py'] = r.ex.code + '\n'; save(); renderFiles(); vmPush('ai', r.ex.expl || 'Fertig.', { code: r.ex.code }); if (r.syn.ok === false) vmPush('sys', '⚠ Der Code hat noch einen Syntaxfehler: ' + r.syn.err, { err: true }); }
+      return r;
+    }, function (e) { vmPush('sys', '⚠ ' + e.message, { err: true }); return { kind: 'err' }; }).then(function (r) {
+      vmSave(); if (r.kind === 'code') { vmRender(); vmRun(fixN); } else { vmBusy = false; vmRender(); }
+    });
+  }
+  function vmRun(fixN) {
+    var v = vmState(), t0 = Date.now();
+    (function go() {
+      if (!ready || running) { if (Date.now() - t0 > 90000) { vmPush('sys', '⚠ Python ist noch nicht bereit. Drücke ▶ Ausführen, sobald es bereit ist.', { err: true }); vmBusy = false; vmSave(); vmRender(); return; } setTimeout(go, 400); return; }
+      VMW = function (m) { vmAfterRun(m, fixN); }; execute(v.code + '\n', 'ki_projekt.py', 'ki_projekt.py gestartet');
+    })();
+  }
+  function vmAfterRun(m, fixN) {
+    var v = vmState(); v.lastRun = { ok: !!m.ok, tail: (runLog || '').slice(-1200) };
+    function end() { vmBusy = false; vmSave(); vmRender(); }
+    if (m.stopped) { vmPush('sys', '■ Abgebrochen.'); end(); return; }
+    if (m.ok) {
+      vmPush('sys', '✔ Fertig in ' + (m.ms / 1000).toFixed(1) + ' s. Das Ergebnis siehst du unten.', { good: true });
+      var mi = MISSIONS.filter(function (x) { return x.id === vmMission; })[0];
+      if (mi) { var done2 = false; setTimeout(function () { if (!done2) { done2 = true; end(); } }, 120000); try { msCheck(mi, true).then(function (r) { v.lastRun.hints = r.all ? '' : r.res.filter(function (x) { return !x[0]; }).map(function (x) { return x[1]; }).join(' | '); if (!done2) { done2 = true; end(); } }, function () { if (!done2) { done2 = true; end(); } }); } catch (e) { if (!done2) { done2 = true; end(); } } return; }
+      end(); return;
+    }
+    if (fixN < 2) { vmPush('sys', '✖ Fehler beim Ausführen. Ich bitte die KI um eine Reparatur (Versuch ' + (fixN + 1) + ' von 2) …'); vmPush('user', 'Das Programm hat beim Ausführen einen Fehler gemeldet (siehe „Letztes Ergebnis“). Repariere ihn und gib den vollständigen Code zurück.', { hidden: true }); vmSave(); vmTurn(fixN + 1); return; }
+    vmPush('sys', '✖ Es klappt noch nicht. Beschreibe, was du sehen willst, oder gehe mit „↶ Version zurück“ einen Schritt zurück.', { err: true }); end();
+  }
+  function vmNew(silent) { if (!silent && !confirm('Chat leeren und neu beginnen? Der bisherige Code wird verworfen (mit „💾 Sichern als …“ kannst du ihn vorher behalten).')) return; var v = vmState(); v.msgs = []; v.code = ''; v.versions = []; v.lastRun = null; vmMission = null; delete files['ki_projekt.py']; save(); renderFiles(); vmSave(); vmRender(); }
+  /* ---------- Auftraege ---------- */
+  var MS = { done: {} }, msRes = {}, msOpenId = null;
+  try { MS.done = JSON.parse(localStorage.getItem('pyide_missions_v1') || '{}') || {}; } catch (e) {}
+  function msSave() { try { localStorage.setItem('pyide_missions_v1', JSON.stringify(MS.done)); } catch (e) {} }
+  function msEnsure(m) { Object.keys(m.files).forEach(function (k) { if (files[k] === undefined) files[k] = m.files[k]; }); save(); renderFiles(); }
+  function msRender() {
+    var n = MISSIONS.filter(function (m) { return MS.done[m.id]; }).length; $('msProg').textContent = n + ' von ' + MISSIONS.length + ' Aufträgen geschafft';
+    var box = $('msList'); box.innerHTML = '';
+    MISSIONS.forEach(function (m) {
+      var it = el('div', undefined, 'it'), h = el('div', undefined, 'ih'); h.tabIndex = 0; h.setAttribute('role', 'button'); h.setAttribute('aria-expanded', String(msOpenId === m.id)); h.dataset.mission = m.id;
+      h.appendChild(el('span', MS.done[m.id] ? '✔' : '○', MS.done[m.id] ? 'okl' : '')); var b = el('b', 'Auftrag ' + m.id + ': ' + m.titel); b.style.flex = '1'; h.appendChild(b);
+      function tog() { msOpenId = msOpenId === m.id ? null : m.id; msRender(); }
+      h.addEventListener('click', tog); h.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tog(); } }); it.appendChild(h);
+      if (msOpenId === m.id) {
+        var body = el('div', undefined, 'ib'); body.appendChild(el('p', m.auftrag)).style.margin = '0 0 6px'; body.appendChild(el('div', 'Beispiel-Anweisung: „' + m.prompt + '“', 'pr'));
+        var row = el('div', undefined, 'row'); var bs = btn('✨ Im Vibe-Modus starten', function () { msStart(m); }); bs.className = 'b ms-start'; var bc = btn('✔ Ergebnis prüfen', function () { msCheck(m, false); }); bc.className = 'b ms-check'; row.appendChild(bs); row.appendChild(bc); body.appendChild(row);
+        var rs = msRes[m.id];
+        if (rs) { var ul = el('ul', undefined, 'ms-res'); if (rs.msg) ul.appendChild(el('li', rs.msg, 'badl')); else if (rs.fatal) ul.appendChild(el('li', '✖ Das Programm lässt sich nicht ausführen: ' + rs.fatal, 'badl')); else rs.res.forEach(function (r) { ul.appendChild(el('li', (r[0] ? '✔ ' : '✖ ') + r[1], r[0] ? 'okl' : 'badl')); }); body.appendChild(ul); if (rs.all) body.appendChild(el('p', '🎉 Auftrag geschafft!', 'okl')); }
+        it.appendChild(body);
+      }
+      box.appendChild(it);
+    });
+  }
+  function msStart(m) { msEnsure(m); vmNew(true); vmMission = m.id; vmPush('sys', '🎯 Auftrag ' + m.id + ': ' + m.titel + '. ' + m.auftrag + ' Drücke unten auf „Senden“ oder formuliere es selbst.'); vmSave(); $('tk').classList.remove('on'); if (!vmActive) vmOpen(); else vmRender(); $('vmIn').value = m.prompt; $('vmIn').focus(); }
+  function msCheck(m, fromChat) {
+    var code = files['ki_projekt.py'];
+    if (!code || !code.trim()) { msRes[m.id] = { msg: 'Noch kein Ergebnis. Starte den Auftrag im Vibe-Modus und lass die KI etwas erzeugen.' }; msRender(); return Promise.resolve({ all: false, res: [] }); }
+    if (!ready || (running && !fromChat)) { toast(ready ? 'Es läuft bereits ein Programm' : 'Python lädt noch …'); return Promise.resolve({ all: false, res: [] }); }
+    msEnsure(m); var wasRunning = running; running = true; uiRun(); setPill('busy', 'prüft …'); msRes[m.id] = { msg: 'Prüfe …' }; msRender();
+    return wcall({ t: 'check', code: code, test: m.test, files: files, pipmap: pipMap() }).then(function (r) {
+      var all = !r.fatal && r.res.length > 0 && r.res.every(function (x) { return x[0]; }); msRes[m.id] = { fatal: r.fatal, res: r.res || [], all: all }; if (all) { MS.done[m.id] = true; msSave(); }
+      if (fromChat) { if (all) vmPush('sys', '🎯 Auftrag geschafft! Die automatische Prüfung ist bestanden.', { good: true }); else vmPush('sys', '🎯 Fast: ' + (r.fatal ? r.fatal : r.res.filter(function (x) { return !x[0]; }).map(function (x) { return x[1]; }).join(' · ')) + ' Sag der KI, was anders sein soll.', { err: true }); }
+      return { all: all, res: r.res || [] };
+    }, function (e) { msRes[m.id] = { msg: '✖ ' + e.message }; return { all: false, res: [] }; }).then(function (r) { running = wasRunning; setPill('ready', 'Python bereit'); uiRun(); msRender(); return r; });
+  }
   function uiRun() { $('bRun').disabled = !ready || running; $('bTest').disabled = !ready || running; $('bStop').hidden = !running; $('bRun').hidden = running; }
   function execute(code, name, label) {
     if (!ready || running) { toast(ready ? 'Es läuft bereits ein Programm' : 'Python lädt noch …'); return; }
@@ -1408,7 +1614,7 @@ onmessage = function (e) {
   function stop() {
     if (!running) return;
     try { worker.terminate(); } catch (e) {}
-    add(outEl, '■ Abgebrochen. Python wird neu gestartet …\n', 'i'); rejectPending(); startWorker();
+    add(outEl, '■ Abgebrochen. Python wird neu gestartet …\n', 'i'); rejectPending(); startWorker(); if (VMW) { var vcb2 = VMW; VMW = null; vcb2({ ok: false, stopped: true }); }
   }
 
   /* ---------- Shell ---------- */
@@ -1508,6 +1714,16 @@ onmessage = function (e) {
     if (e.shiftKey && (!inside || act === f[0])) { e.preventDefault(); f[f.length - 1].focus(); }
     else if (!e.shiftKey && (!inside || act === f[f.length - 1])) { e.preventDefault(); f[0].focus(); }
   });
+  $('bVm').addEventListener('click', function () { if (vmActive) vmClose(); else vmOpen(); });
+  $('vmExit').addEventListener('click', vmClose);
+  $('vmSend').addEventListener('click', function () { vmSend(); });
+  $('vmIn').addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); vmSend(); } });
+  $('vmNew').addEventListener('click', function () { vmNew(false); });
+  $('vmUndo').addEventListener('click', function () { var v = vmState(); if (!v.versions.length || vmBusy) return; v.code = v.versions.pop(); files['ki_projekt.py'] = v.code + '\n'; save(); renderFiles(); vmPush('sys', '↶ Zurück auf die vorherige Version. Ich führe sie neu aus.'); vmSave(); vmBusy = true; vmRender(); vmRun(2); });
+  $('vmUp').addEventListener('click', function () { $('fileIn').click(); });
+  $('vmEd').addEventListener('click', function () { if (files['ki_projekt.py'] === undefined) { toast('Es gibt noch keinen Code. Beschreibe zuerst, was du willst.'); return; } vmClose(); openFile('ki_projekt.py'); });
+  $('vmSaveAs').addEventListener('click', function () { var v = vmState(); if (!v.code) { toast('Es gibt noch nichts zu sichern.'); return; } var n = prompt('Unter welchem Namen sichern? (z. B. auswertung.py)', 'mein_programm.py'); if (n == null) return; n = n.trim(); if (!/\.py$/.test(n)) n += '.py'; if (!validName(n)) { toast(NAME_HINT); return; } var c = clash(n); if (c) { toast(c); return; } files[n] = v.code + '\n'; save(); renderFiles(); toast('Gesichert als ' + n); });
+  $('vmMs').addEventListener('click', function () { tkRender(); $('tk').classList.add('on'); });
   $('bHelp').addEventListener('click', function () { $('help').classList.add('on'); $('helpClose').focus(); });
   $('helpClose').addEventListener('click', function () { $('help').classList.remove('on'); });
   $('help').addEventListener('click', function (e) { if (e.target === $('help')) $('help').classList.remove('on'); });
@@ -1527,8 +1743,8 @@ onmessage = function (e) {
   renderFiles();
   startWorker();
   updatePrCur();
-  makeMonaco().then(function () { hookEd(); loadCur(); checkHash(); }).catch(function () { makeTextarea(); hookEd(); loadCur(); toast('Einfacher Editor aktiv (Monaco nicht erreichbar)'); checkHash(); });
-  window.__pyide = { nb: { active: function () { return nbActive; }, cells: function () { return NB.cells; }, json: function () { return nbJson(); }, runCell: function (i) { return nbRunCell(NB.cells[i]); }, runAll: nbRunAll, parse: nbParse, count: function () { return NB.count; } }, pro: { projects: function () { return P; }, tasks: TASKS, done: function () { return TK.done; }, tkCheck: tkCheck, validName: validName }, pk: { libs: function () { return pkLibs; }, install: installSpecs, req: installReqs, upload: pkUpload, loaded: function () { return pkLoaded; }, restart: restartPy }, katalog: function () { return catalog; }, run: run, tests: tests, stop: stop, files: function () { return files; }, ed: function () { return ed; }, state: function () { return { ready: ready, running: running, cur: cur }; }, repl: replSend };
+  makeMonaco().then(function () { hookEd(); loadCur(); checkHash(); vmInit(); }).catch(function () { makeTextarea(); hookEd(); loadCur(); toast('Einfacher Editor aktiv (Monaco nicht erreichbar)'); checkHash(); vmInit(); });
+  window.__pyide = { vm: { open: vmOpen, close: vmClose, send: vmSend, state: vmState, active: function () { return vmActive; }, busy: function () { return vmBusy; }, missions: MISSIONS, mission: function () { return vmMission; }, done: function () { return MS.done; } }, nb: { active: function () { return nbActive; }, cells: function () { return NB.cells; }, json: function () { return nbJson(); }, runCell: function (i) { return nbRunCell(NB.cells[i]); }, runAll: nbRunAll, parse: nbParse, count: function () { return NB.count; } }, pro: { projects: function () { return P; }, tasks: TASKS, done: function () { return TK.done; }, tkCheck: tkCheck, validName: validName }, pk: { libs: function () { return pkLibs; }, install: installSpecs, req: installReqs, upload: pkUpload, loaded: function () { return pkLoaded; }, restart: restartPy }, katalog: function () { return catalog; }, run: run, tests: tests, stop: stop, files: function () { return files; }, ed: function () { return ed; }, state: function () { return { ready: ready, running: running, cur: cur }; }, repl: replSend };
 })();
 </script>
 </body>
