@@ -57,7 +57,7 @@ footer{border-top:1px solid var(--line);padding:18px max(16px,4vw);color:var(--d
 <main>
 
 <section id="kurz"><h2>Zusammenfassung</h2>
-<div class="grid"><div class="card"><b>28 / 29</b><span>Testgruppen im vollständigen Runner bestanden</span></div><div class="card"><b>882</b><span>Einzelprüfungen in diesem Lauf (je nach Gruppe; einige Gruppen melden sich ohne Zählung)</span></div><div class="card"><b>28 / 28</b><span>Dateiformate erzeugt, heruntergeladen und als echte Datei erkannt</span></div><div class="card"><b>12 / 12</b><span>typische Anfängerfehler von der KI plausibel erklärt (Stichprobe)</span></div><div class="card"><b>5 / 5</b><span>Aufträge, die die echte KI nur per Chat gelöst hat (2, 5, 10, 11, 12)</span></div><div class="card"><b>0</b><span>Geheimnisse, Tracker oder tote Ressourcen im veröffentlichten Verzeichnis (Seitenaudit)</span></div></div>
+<div class="grid"><div class="card"><b>28 / 29</b><span>Testgruppen im vollständigen Runner bestanden</span></div><div class="card"><b>882</b><span>Einzelprüfungen in diesem Lauf (je nach Gruppe; einige Gruppen melden sich ohne Zählung)</span></div><div class="card"><b>28 / 28</b><span>Dateiformate erzeugt, heruntergeladen und als echte Datei erkannt</span></div><div class="card"><b>12 / 12</b><span>typische Anfängerfehler von der KI plausibel erklärt (Stichprobe)</span></div><div class="card"><b>10 / 10</b><span>Aufträge, die die echte KI nur per Chat gelöst hat (2, 5, 10 bis 17)</span></div><div class="card"><b>0</b><span>Geheimnisse und Tracker im veröffentlichten Verzeichnis (Seitenaudit)</span></div></div>
 <h3>Bewertung</h3>
 <table><tr><th>Bereich</th><th>Stand</th><th>Anmerkung</th></tr>
 <tr><td>Funktion (Python, Chat, Notebook, Projekte, Pakete)</td><td class="ok">stabil</td><td>Automatisiert getestet, lokal und auf der Live-Seite.</td></tr>
@@ -73,7 +73,8 @@ footer{border-top:1px solid var(--line);padding:18px max(16px,4vw);color:var(--d
 <table><tr><th>Baustein</th><th>Inhalt</th></tr>
 <tr><td>Python-Laufzeit</td><td>Echtes CPython 3.12 im Browser (Pyodide 0.26.4) in einem Web Worker: Stopp, <code>input()</code>, Top-Level-<code>await</code>, <code>asyncio.run</code>, matplotlib-Bilder, Live-Ausgabe.</td></tr>
 <tr><td>✨ Vibe-Modus</td><td>Chat ohne Code: Beschreibung → Code → Auto-Lauf → Ergebnis. Verlauf, Selbstreparatur (max. 2), Versionen zurück, Datei-Upload, Code kopieren und als .py laden.</td></tr>
-<tr><td>🎯 Aufträge</td><td>12 Aufträge, geprüft am Ergebnis (Ausgabe, Diagramm, Datei, Excel-Formatierung, PDF-Inhalt) plus 10 klassische Programmieraufgaben.</td></tr>
+<tr><td>🎯 Aufträge</td><td>17 Aufträge, geprüft am Ergebnis (Ausgabe, Diagramm, Datei, Excel-Formatierung, PDF-, Word-Inhalt, mehrere Dateien) plus 10 klassische Programmieraufgaben.</td></tr>
+<tr><td>🧭 Kurspfad</td><td>4 Wochen (Richtwert 2 bis 3 Stunden je Woche): Lernziel, Lektion, Aufträge, Quiz mit 3 Fragen und Abschlussprojekt je Woche, Fortschritt im Browser, „Weiter“-Knopf. Dazu eine Übersichtsseite für die Kursleitung.</td></tr>
 <tr><td>📓 Notebook</td><td>Zellen, gemeinsamer Kernel, Tabellen und Diagramme, .ipynb-Import und -Export, .py-Export.</td></tr>
 <tr><td>📁 Projekte</td><td>Mehrere Projekte, Ordner, 5 Vorlagen, Snapshots, Teilen per Link, ZIP-Import und -Export.</td></tr>
 <tr><td>📦 Pakete</td><td>Katalog mit 66 Paketen und Download-Pfaden (44 Pyodide, 22 PyPI), ZIP/Wheel-Upload, requirements.txt, automatische Nachinstallation.</td></tr>
@@ -94,7 +95,8 @@ footer{border-top:1px solid var(--line);padding:18px max(16px,4vw);color:var(--d
 <tr><td>test-python-libs.js</td><td>ZIP- und Wheel-Pakete, ZIP-Slip-Abwehr, Persistenz, requirements.txt, Katalog (alle Download-Pfade HTTP 200).</td></tr>
 <tr><td>test-python-pro.js</td><td>Ordner, Projekte, Snapshots, Vorlagen, Teilen per Link, KI-Hilfe (Attrappe), alle 10 Programmieraufgaben (Muster- und Fehlversuche).</td></tr>
 <tr><td>test-python-nb.js</td><td>Notebook und KI-Generator: Zellen, Ausgaben, Import/Export, Markdown-Sicherheit, Stopp, Kernel.</td></tr>
-<tr><td>test-python-vibe.js</td><td>Vibe-Modus und alle 12 Aufträge, je mit richtiger und falscher Lösung; Selbstreparatur mit Obergrenze; Stopp; Speicherung.</td></tr>
+<tr><td>test-python-vibe.js</td><td>Vibe-Modus und alle 17 Aufträge, je mit richtiger und falscher Lösung; Selbstreparatur mit Obergrenze; Stopp; Speicherung.</td></tr>
+<tr><td>test-python-kurspfad.js</td><td>Kurspfad: Datenquelle (17 Aufträge genau einmal, Quiz gültig), Dialog, „Weiter“, Quiz mit Rückmeldung, Fortschritt, Zurücksetzen, Speicherung, Mobil.</td></tr>
 <tr><td>test-python-formate.js</td><td>28 Dateiformate erzeugen, herunterladen, an der Dateikennung erkennen.</td></tr>
 <tr><td>test-python-hardening.js</td><td>Gesperrter oder voller Browser-Speicher, CDN-Ausfall, Angriffsversuche, Tastatur, Kontrast, Leistung.</td></tr>
 <tr><td>audit-site.js</td><td>Links, Geheimnisse, CDN-Pinning, Meta-Angaben, Live-Fehler auf allen Seiten (Desktop und Handy).</td></tr></table>
@@ -103,7 +105,7 @@ footer{border-top:1px solid var(--line);padding:18px max(16px,4vw);color:var(--d
 
 <section id="ki"><h2>KI-Qualität</h2>
 <ul><li><b>12 typische Anfängerfehler</b> (NameError, ZeroDivisionError, IndexError, KeyError, Einrückung, fehlender Doppelpunkt, <code>int("abc")</code>, Import-Tippfehler, Logikfehler ohne Meldung, Rekursion u. a.) gegen die echte KI geprüft, Antworten gelesen. Zuerst 11 von 12 brauchbar. Der Fall <code>int("abc")</code> war schwach (nur „schreib eine Zahl“). Der Prompt verlangt jetzt zusätzlich eine robuste Lösung mit <code>try/except</code>. Danach <b>12 von 12</b>.</li>
-<li><b>Echte KI im Vibe-Chat:</b> die Aufträge 2 (Rabatt), 5 (Datei auswerten), 10 (Fehler reparieren), 11 (Excel formatieren) und 12 (PDF) wurden ohne selbst getippten Code gelöst; jeweils prüfte die automatische Prüfung das Ergebnis.</li>
+<li><b>Echte KI im Vibe-Chat:</b> die Aufträge 2 (Rabatt), 5 (Datei auswerten), 10 (Fehler reparieren), 11 (Excel formatieren), 12 (PDF), 13 (Preisrechner), 14 (Diagramm und Top 3), 15 (Word), 16 (stillen Fehler finden) und 17 (Jahresbericht mit drei Dateien) wurden ohne selbst getippten Code gelöst; jeweils prüfte die automatische Prüfung das Ergebnis. Je Auftrag ein Versuch, keine Wiederholungsstatistik.</li>
 <li><b>Nicht abgedeckt:</b> beliebige Anweisungen, sehr lange Gespräche, Fachgebiete außerhalb der Beispiele, das Aussehen erzeugter Dokumente.</li></ul>
 <div class="box warn"><b>KI-Kontingent</b>Alle Teilnehmer teilen sich einen Kurs-Zugang. Pro Chat-Nachricht fällt eine Anfrage an (bei Fehlern bis zu zwei weitere). Bei vielen gleichzeitigen Nutzern ist ein Limit pro Teilnehmer nötig.</div>
 </section>
@@ -185,7 +187,7 @@ footer{border-top:1px solid var(--line);padding:18px max(16px,4vw);color:var(--d
 <h3>Vor dem kommerziellen Einsatz</h3>
 <ol><li><b>Zugangsschutz und Bezahlung</b> serverseitig lösen (der Browser-Login ersetzt nur eine Sichtprüfung).</li><li><b>Rechtliches:</b> Impressum und Datenschutzerklärung, Aussagen im Exposé (Zertifikat, Jobchance, Förderung/AZAV, Fernunterrichtsschutz) von einer fachkundigen Stelle prüfen lassen.</li><li><b>Echte Geräte testen:</b> iPhone, Android, Safari, Firefox; dazu ein kurzer Durchgang mit einem Screenreader.</li><li><b>KI-Kontingent schützen:</b> Limit pro Teilnehmer, eigener Zugang oder Warteschlange, bevor viele gleichzeitig arbeiten.</li><li><b>Toter Link</b> im Exposé (<code>genitus-coding-ai.replit.app</code>, HTTP 404) richtigstellen.</li></ol>
 <h3>Sinnvolle nächste Ausbaustufen</h3>
-<ul><li>Die 12 Aufträge zu einem <b>geordneten Kurspfad</b> mit Wochen, Abschlussprojekten und eigenen Beispieldaten ausbauen.</li><li>Weitere Aufträge zu Word, PowerPoint und Datenbereinigung; automatische Prüfung der Gestaltung wo möglich.</li><li>Syntax-Hervorhebung in Notebook-Zellen; Lasttest mit vielen gleichzeitigen Nutzern.</li><li>SRI-Hashes oder eigene Auslieferung (Self-Hosting) der Bibliotheken.</li></ul>
+<ul><li>Den <b>Kurspfad</b> mit echten Teilnehmern erproben (Dauer, Schwierigkeit, Quizfragen) und mit eigenen Beispieldaten aus eurem Kurs füllen.</li><li>Weitere Aufträge zu PowerPoint und Datenbereinigung; automatische Prüfung der Gestaltung wo möglich.</li><li>Syntax-Hervorhebung in Notebook-Zellen; Lasttest mit vielen gleichzeitigen Nutzern.</li><li>SRI-Hashes oder eigene Auslieferung (Self-Hosting) der Bibliotheken.</li></ul>
 </section>
 </main>
 </div>
