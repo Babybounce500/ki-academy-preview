@@ -1,5 +1,5 @@
 {
- "stand": "2026-11-15",
+ "stand": "2026-11-16",
  "pyodide": "0.26.4",
  "python": "3.12.1",
  "pyodide_cdn": "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/",
@@ -450,6 +450,20 @@
    "download": "https://files.pythonhosted.org/packages/d0/00/1e03a4989fa5795da308cd774f05b704ace555a70f9bf9d3be057b680bcf/python_docx-1.2.0-py3-none-any.whl",
    "datei": "python_docx-1.2.0-py3-none-any.whl",
    "groesse_kb": 247,
+   "hinweis": "Reines Python-Paket von PyPI: Installation per micropip."
+  },
+  {
+   "name": "python-pptx",
+   "import": "pptx",
+   "kategorie": "Dateien und Formate",
+   "beschreibung": "PowerPoint-Praesentationen (pptx) erzeugen und lesen",
+   "docs": "https://python-pptx.readthedocs.io/",
+   "pypi": "https://pypi.org/project/python-pptx/",
+   "route": "micropip",
+   "version": "1.0.2",
+   "download": "https://files.pythonhosted.org/packages/d9/4f/00be2196329ebbff56ce564aa94efb0fbc828d00de250b1980de1a34ab49/python_pptx-1.0.2-py3-none-any.whl",
+   "datei": "python_pptx-1.0.2-py3-none-any.whl",
+   "groesse_kb": 462,
    "hinweis": "Reines Python-Paket von PyPI: Installation per micropip."
   },
   {
