@@ -787,7 +787,8 @@ onmessage = function (e) {
       var timer = setTimeout(function () { reject(new Error('Zeitüberschreitung')); }, 12000);
       s.onerror = function () { clearTimeout(timer); reject(new Error('Monaco nicht ladbar')); };
       s.onload = function () {
-        require.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs' } });
+        if (typeof require !== 'function' || typeof require.config !== 'function') { clearTimeout(timer); reject(new Error('Monaco-Lader unbrauchbar')); return; }
+        try { require.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs' } }); } catch (e) { clearTimeout(timer); reject(e); return; }
         require(['vs/editor/editor.main'], function () {
           clearTimeout(timer);
           var m = monaco.editor.create($('editor'), { value: files[cur], language: 'python', theme: 'vs-dark', fontSize: window.innerWidth < 820 ? 14 : 13, automaticLayout: true, minimap: { enabled: false }, scrollBeyondLastLine: false, tabSize: 4, insertSpaces: true, wordWrap: 'off' });
