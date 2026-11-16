@@ -584,9 +584,13 @@ onmessage = function (e) {
   function toast(m) { var t = $('toast'); t.textContent = m; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(function () { t.hidden = true; }, 2200); }
   function setPill(kind, text) { pill.className = 'pill ' + (kind || ''); pillText.textContent = text; }
   function add(el, text, cls) {
-    var s = document.createElement('span'); if (cls) s.className = cls; s.textContent = text; el.appendChild(s);
-    if (el.textContent.length > 250000) { while (el.textContent.length > 200000 && el.firstChild) el.removeChild(el.firstChild); }
-    el.scrollTop = el.scrollHeight;
+    if (!el.firstChild) el.__n = 0;
+    var last = el.lastChild, c = cls || '';
+    if (last && last.nodeType === 1 && last.tagName === 'SPAN' && last.className === c && last.firstChild && last.firstChild.nodeType === 3) last.firstChild.appendData(text);
+    else { var s = document.createElement('span'); if (c) s.className = c; s.textContent = text; el.appendChild(s); }
+    el.__n = (el.__n || 0) + text.length;
+    if (el.__n > 250000) { while (el.__n > 200000 && el.firstChild) { el.__n -= el.firstChild.textContent.length; el.removeChild(el.firstChild); } if (el.__n < 0) el.__n = 0; }
+    if (!el.__raf) el.__raf = requestAnimationFrame(function () { el.__raf = 0; el.scrollTop = el.scrollHeight; });
   }
   var LSP = 'pyide_projects_v1', P = null, quotaWarned = false;
   function uid() { return 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
@@ -1478,6 +1482,32 @@ onmessage = function (e) {
   $('nbAddM').addEventListener('click', function () { var i = NB.cells.length; NB.cells.push(mkCell('markdown')); nbRender(i); nbChanged(); });
   $('nbKernel').addEventListener('click', function () { if (!confirm('Kernel neu starten? Alle Variablen und importierten Module sind danach weg. Die Zellen und ihre Ausgaben bleiben.')) return; NB.count = 0; if (running) { stop(); } else restartPy(); toast('Kernel startet neu …'); });
   $('nbPy').addEventListener('click', nbToPy);
+  /* Dialog-Fokus: hinein, Falle, zurück zum Auslöser */
+  var prevOutside = null, dlgOpener = {};
+  function dlgFocusables(d) { return Array.prototype.filter.call(d.querySelectorAll('button, input:not([type=hidden]):not([type=file]), textarea, select, a[href], [tabindex="0"]'), function (x) { return !x.disabled && !x.hidden && x.offsetParent !== null && !x.closest('[hidden]'); }); }
+  document.addEventListener('focusin', function (e) { if (!e.target.closest || !e.target.closest('.help')) prevOutside = e.target; });
+  document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('button'); if (b && !b.closest('.help')) prevOutside = b; }, true);
+  var dlgObs = new MutationObserver(function (muts) {
+    muts.forEach(function (m) {
+      var d = m.target, was = (m.oldValue || '').split(/\s+/).indexOf('on') >= 0, now = d.classList.contains('on');
+      if (now && !was) {
+        dlgOpener[d.id] = prevOutside;
+        if (!d.contains(document.activeElement)) { var f = dlgFocusables(d); if (f.length) f[0].focus(); }
+      } else if (!now && was) {
+        var o = dlgOpener[d.id]; dlgOpener[d.id] = null;
+        if (o && document.body.contains(o) && !document.querySelector('.help.on')) o.focus();
+      }
+    });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('.help'), function (d) { dlgObs.observe(d, { attributes: true, attributeFilter: ['class'], attributeOldValue: true }); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Tab') return;
+    var open = document.querySelectorAll('.help.on'); if (!open.length) return;
+    var d = open[open.length - 1], f = dlgFocusables(d); if (!f.length) { e.preventDefault(); return; }
+    var act = document.activeElement, inside = d.contains(act);
+    if (e.shiftKey && (!inside || act === f[0])) { e.preventDefault(); f[f.length - 1].focus(); }
+    else if (!e.shiftKey && (!inside || act === f[f.length - 1])) { e.preventDefault(); f[0].focus(); }
+  });
   $('bHelp').addEventListener('click', function () { $('help').classList.add('on'); $('helpClose').focus(); });
   $('helpClose').addEventListener('click', function () { $('help').classList.remove('on'); });
   $('help').addEventListener('click', function (e) { if (e.target === $('help')) $('help').classList.remove('on'); });

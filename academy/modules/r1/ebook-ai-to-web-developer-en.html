@@ -897,7 +897,7 @@
   const mobileNav = document.getElementById("mobileNav");
 
   // 2. Click event on the burger button
-  burgerButton.addEventListener("click", () => {
+  if (burgerButton && mobileNav) burgerButton.addEventListener("click", () => {
     // Toggles the CSS display (using Tailwind or your own .hidden class)
     // Here you can toggle between "block" or "none"; we use Tailwind's "hidden"
     if (mobileNav.style.display === "block") {

@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vollbild HTML Editor mit Toolbar und Ausgabefenster</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
@@ -240,10 +239,10 @@
     <div id="toolbar">
         <button onclick="downloadAsText()" title="Als Textdatei herunterladen"><i class="fa fa-download"></i></button>
         <button onclick="document.getElementById('fileInput').click()" title="Datei hochladen"><i class="fa fa-upload"></i></button>
-        <button onclick="runCode()" title="Code ausf«ähren"><i class="fa fa-play"></i></button>
+        <button onclick="runCode()" title="Code ausfï¿½ï¿½ï¿½hren"><i class="fa fa-play"></i></button>
         <button onclick="selectAll()" title="Alles markieren"><i class="fa fa-grip-lines"></i></button>
         <button onclick="copyText()" title="Kopieren"><i class="fa fa-copy"></i></button>
-        <button onclick="pasteText()" title="Einf«ägen"><i class="fa fa-paste"></i></button>
+        <button onclick="pasteText()" title="Einfï¿½ï¿½ï¿½gen"><i class="fa fa-paste"></i></button>
         <input type="file" id="fileInput" onchange="uploadFile(this)">
     </div>
     <div id="main">
@@ -259,7 +258,7 @@
         editor.setOptions({
             enableBasicAutocompletion: true,
             enableSnippets: true,
-            enableLiveAutocompletion: true, // Aktiviert Live-Autovervollst«£ndigung
+            enableLiveAutocompletion: true, // Aktiviert Live-Autovervollstï¿½ï¿½ï¿½ndigung
             showPrintMargin: false,
             fontSize: "14px",
             vScrollBarAlwaysVisible: true,
@@ -312,7 +311,7 @@
             navigator.clipboard.readText().then(text => {
                 editor.session.insert(editor.getCursorPosition(), text);
             }).catch(err => {
-                console.error('Fehler beim Einf«ägen des Texts: ', err);
+                console.error('Fehler beim Einfï¿½ï¿½ï¿½gen des Texts: ', err);
             });
         }
 

@@ -7,7 +7,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI HTML Studio - Professioneller HTML Editor</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
@@ -6090,17 +6089,14 @@ function fmt(t){
   // Bold/Italic
   t=t.replace(/\*\*\*(.+?)\*\*\*/gs,'<strong><em>$1</em></strong>');
   t=t.replace(/\*\*(.+?)\*\*/gs,'<strong>$1</strong>');
-  t=t.replace(/\*([^*
-]+?)\*/g,'<em>$1</em>');
+  t=t.replace(/\*([^*\n]+?)\*/g,'<em>$1</em>');
   // Headers
   t=t.replace(/^#### (.+)$/gm,'<h5 class="ai-h4" style="color:#f9a8d4;margin:9px 0 4px">$1</h5>');
   t=t.replace(/^### (.+)$/gm,'<h4 class="ai-h4">$1</h4>');
   t=t.replace(/^## (.+)$/gm,'<h3 class="ai-h3">$1</h3>');
   t=t.replace(/^# (.+)$/gm,'<h2 class="ai-h2">$1</h2>');
   // Markdown tables
-  t=t.replace(/(?:(?:\|[^
-]+\|
-?)+)/g,function(tbl){
+  t=t.replace(/(?:(?:\|[^\n]+\|\n?)+)/g,function(tbl){
     var rows=tbl.trim().split('\n').filter(function(r){return r.trim()&&!r.match(/^\|[-: |]+\|$/)});
     if(!rows.length)return tbl;
     return '<table class="ai-table">'+rows.map(function(row,ri){
