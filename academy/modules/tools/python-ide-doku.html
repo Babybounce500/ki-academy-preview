@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python-IDE: Dokumentation</title>
+<meta name="description" content="Dokumentation der Python-IDE: Vibe-Modus, Aufträge, Dateien erzeugen, Ansichten, Datenschutz und Grenzen.">
+<style>
+:root{--bg:#14161a;--panel:#1c1f26;--line:#2d323c;--text:#e4e6eb;--dim:#9aa3b2;--accent:#6aa9ff;--vio:#a78bfa;--ok:#4ec9b0;--warn:#e5c07b;--err:#f48771;--code:#0f1115}
+@media (prefers-color-scheme:light){:root{--bg:#f6f7f9;--panel:#fff;--line:#d9dde4;--text:#1d2129;--dim:#5a6372;--accent:#1456c8;--vio:#6d28d9;--ok:#0f7a63;--warn:#8a5a00;--err:#b3361f;--code:#eef0f4}}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+a{color:var(--accent)}a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--warn);outline-offset:2px}
+header.top{padding:28px max(16px,4vw) 18px;border-bottom:1px solid var(--line);background:linear-gradient(135deg,rgba(109,40,217,.25),rgba(20,86,200,.12))}
+header.top h1{margin:0 0 6px;font-size:clamp(24px,4vw,36px);line-height:1.2}
+header.top p{margin:0;color:var(--dim);max-width:70ch}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chip{display:inline-block;padding:3px 11px;border:1px solid var(--line);border-radius:999px;font-size:13px;color:var(--dim);background:var(--panel)}
+.btn{display:inline-block;padding:8px 16px;border-radius:8px;background:var(--vio);color:#fff;text-decoration:none;font-weight:600;margin:4px 8px 4px 0}
+.btn.alt{background:transparent;border:1px solid var(--accent);color:var(--accent)}
+.wrap{display:grid;grid-template-columns:240px minmax(0,1fr);gap:32px;max-width:1180px;margin:0 auto;padding:24px max(16px,3vw) 80px}
+nav.toc{position:sticky;top:12px;align-self:start;max-height:calc(100vh - 24px);overflow:auto;font-size:14px;padding-right:6px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--dim);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+nav.toc a{display:block;padding:4px 8px;border-radius:6px;color:var(--text);text-decoration:none}
+nav.toc a:hover{background:var(--panel)}
+main{min-width:0}
+section{margin:0 0 44px;scroll-margin-top:12px}
+h2{font-size:26px;margin:0 0 12px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+h3{font-size:19px;margin:26px 0 8px}h4{font-size:16px;margin:18px 0 6px}
+p,li{max-width:78ch}li{margin:4px 0}
+code{background:var(--code);padding:1px 6px;border-radius:5px;font:13.5px Consolas,"Courier New",monospace}
+pre{background:var(--code);border:1px solid var(--line);border-radius:8px;padding:12px 14px;overflow:auto;font:13.5px/1.5 Consolas,"Courier New",monospace}
+kbd{background:var(--panel);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 7px;font:12.5px Consolas,monospace}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14.5px;display:block;overflow-x:auto}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--panel);white-space:nowrap}
+.box{border-left:4px solid var(--accent);background:var(--panel);padding:10px 16px;border-radius:0 8px 8px 0;margin:14px 0}
+.box.tip{border-color:var(--ok)}.box.warn{border-color:var(--warn)}.box.err{border-color:var(--err)}
+.box b:first-child{display:block;margin-bottom:2px}
+.ok{color:var(--ok);font-weight:600}.bad{color:var(--err);font-weight:600}.warn{color:var(--warn);font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:14px 0}
+.card{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:12px 14px}
+.card b{display:block;font-size:22px;color:var(--vio)}.card span{color:var(--dim);font-size:14px}
+.steps{counter-reset:s;list-style:none;padding:0}
+.steps li{counter-increment:s;position:relative;padding:6px 0 6px 44px;margin:8px 0}
+.steps li::before{content:counter(s);position:absolute;left:0;top:4px;width:30px;height:30px;border-radius:50%;background:var(--vio);color:#fff;font-weight:700;display:grid;place-items:center}
+details{border:1px solid var(--line);border-radius:8px;background:var(--panel);margin:8px 0;padding:2px 14px}
+summary{cursor:pointer;padding:8px 0;font-weight:600}
+footer{border-top:1px solid var(--line);padding:18px max(16px,4vw);color:var(--dim);font-size:13.5px}
+@media(max-width:860px){.wrap{display:block}nav.toc{position:static;max-height:none;margin-bottom:20px;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--panel)}nav.toc a{display:inline-block}}
+@media print{nav.toc,.btn{display:none}.wrap{display:block}body{background:#fff;color:#000}details{border:0}}
+</style>
+</head>
+<body>
+<header class="top"><h1>Python-IDE: Dokumentation</h1><p>Für Kursteilnehmer. Du brauchst keine Installation und keine Programmierkenntnisse: Beschreibe, was du willst, und die KI baut es.</p><div class="meta"><span class="chip">Läuft im Browser</span><span class="chip">Kein Code tippen nötig</span><span class="chip">Python 3.12</span><span class="chip">Stand 16. November 2026</span></div><p style="margin-top:14px"><a class="btn" href="python-ide.html?modus=vibe">✨ Vibe-Modus öffnen</a><a class="btn alt" href="python-ide.html?modus=normal">Normale Ansicht</a><a class="btn alt" href="python-ide-bericht.html">Bericht lesen</a></p></header><div class="wrap">
+<nav class="toc" aria-label="Inhalt"><b>Inhalt</b><a href="#start">Schnellstart</a><a href="#vibe">Vibe-Modus (Chat)</a><a href="#prompten">Gute Anweisungen</a><a href="#auftraege">Aufträge</a><a href="#dateien">Dateien erzeugen</a><a href="#ansichten">Alle Ansichten</a><a href="#pakete">Pakete und Bibliotheken</a><a href="#daten">Datenschutz</a><a href="#grenzen">Grenzen</a><a href="#faq">Häufige Fragen</a><a href="#tasten">Tastenkürzel</a></nav>
+<main>
+
+<section id="start"><h2>Schnellstart</h2>
+<ol class="steps">
+<li><b>Öffnen.</b> Klicke auf „✨ Vibe-Modus öffnen“. Beim ersten Mal lädt Python rund 10 MB nach (ca. 10 bis 15 Sekunden), danach geht es schnell. Oben rechts steht „Python bereit“.</li>
+<li><b>Beschreiben.</b> Schreibe in normalen Worten, was entstehen soll, oder klicke eines der Beispiele an, z. B. „Zeige mir die Quadratzahlen von 1 bis 10“.</li>
+<li><b>Ergebnis ansehen.</b> Die KI baut das Programm und startet es von allein. Das Ergebnis (Text, Tabelle, Diagramm, Datei zum Download) erscheint unten.</li>
+<li><b>Nachsteuern.</b> Passt etwas nicht, schreibe einfach, was anders sein soll: „Mach das Diagramm blau und füge einen Titel hinzu“.</li>
+</ol>
+<div class="box tip"><b>Wichtig zu wissen</b>Du musst nie Code lesen oder tippen. Der Code ist in jeder Antwort unter „Code ansehen (optional)“ eingeklappt, falls du neugierig bist.</div>
+</section>
+
+<section id="vibe"><h2>Vibe-Modus (Chat)</h2>
+<p>Der Vibe-Modus ist ein Chat. Du schreibst, die KI antwortet mit einer kurzen Erklärung in einfachem Deutsch, baut das Programm und führt es sofort aus.</p>
+<h3>Was die Knöpfe oben tun</h3>
+<table><tr><th>Knopf</th><th>Funktion</th></tr>
+<tr><td>📎 Datei</td><td>Eigene Datei (z. B. CSV) ins Projekt laden. Die KI sieht den Dateinamen und die ersten Zeilen und kann die Datei lesen.</td></tr>
+<tr><td>↶ Version zurück</td><td>Geht zur vorherigen Fassung des Programms zurück und führt sie erneut aus (bis zu 10 Versionen).</td></tr>
+<tr><td>💾 Sichern als …</td><td>Behält das aktuelle Programm unter einem eigenen Namen im Projekt, z. B. <code>auswertung.py</code>.</td></tr>
+<tr><td>Code im Chat zeigen</td><td>Klappt in jeder Antwort den Python-Code auf. An jeder Antwort gibt es außerdem „Code kopieren“ und „⬇ .py“.</td></tr>
+<tr><td>&lt;/&gt; Code ansehen</td><td>Wechselt in die normale Ansicht und öffnet das Programm im Editor.</td></tr>
+<tr><td>＋ Neu beginnen</td><td>Leert den Chat und verwirft das aktuelle Programm. Vorher mit „Sichern als …“ behalten, falls nötig.</td></tr>
+<tr><td>🎯 Aufträge</td><td>Öffnet die Aufträge mit automatischer Prüfung (siehe unten).</td></tr>
+<tr><td>Normale Ansicht</td><td>Zurück zu Dateiliste und Editor.</td></tr></table>
+<h3>Wenn etwas schiefgeht: Selbstreparatur</h3>
+<p>Meldet das Programm beim Ausführen einen Fehler, schickt der Chat die Fehlermeldung automatisch an die KI und bittet um eine Reparatur („Versuch 1 von 2“). Nach <b>höchstens zwei</b> Versuchen hört er auf und sagt es ehrlich. Dann beschreibst du neu, was du sehen willst, oder gehst mit „↶ Version zurück“ einen Schritt zurück.</p>
+<h3>Der Chat merkt sich den Verlauf</h3>
+<p>Die KI kennt deine letzten Anweisungen, das aktuelle Programm, das letzte Ergebnis und die Dateien im Projekt. Du kannst also sagen „Nein, ich wollte nur die Posten unter 50 Euro“. Sehr lange Gespräche vergessen den Anfang (es zählen die letzten rund 8 Beiträge).</p>
+<h3>Direktlinks</h3>
+<ul><li><code>python-ide.html?modus=vibe</code> öffnet den Vibe-Modus.</li><li><code>python-ide.html?modus=normal</code> öffnet die normale Ansicht. Der zuletzt benutzte Modus wird gemerkt.</li></ul>
+</section>
+
+<section id="prompten"><h2>Gute Anweisungen schreiben</h2>
+<p>Je genauer du das <b>Ergebnis</b> beschreibst, desto besser das Programm. Hilfreich sind vier Dinge: <b>Ziel</b>, <b>Daten</b>, <b>Aussehen</b>, <b>Beispiel</b>.</p>
+<table><tr><th>Eher schwach</th><th>Besser</th></tr>
+<tr><td>„Mach eine Auswertung.“</td><td>„Lies die Datei kosten.csv und zeige die Summe und den teuersten Posten. Zeichne dazu ein Tortendiagramm mit Titel.“</td></tr>
+<tr><td>„Mach eine Excel.“</td><td>„Erstelle kostenuebersicht.xlsx mit Blatt „Kostenübersicht“, fetter Kopfzeile mit Farbe, Beträgen im Euro-Format und einer fetten Summenzeile. Lade sie herunter.“</td></tr>
+<tr><td>„Rechne den Preis aus.“</td><td>„Ein Artikel kostet 80 €. Ziehe erst 15 % Rabatt ab, addiere danach 19 % Mehrwertsteuer und zeige den Endpreis.“</td></tr></table>
+<h3>Nachsteuern</h3>
+<ul><li>„Mach die Balken blau und beschrifte die Achsen.“</li><li>„Zeige nur die Posten unter 50 Euro als eigene Liste.“</li><li>„Das Ergebnis stimmt nicht: Es müssten 1100 sein. Prüfe die Rechnung.“</li><li>„Erkläre mir in zwei Sätzen, was das Programm macht.“</li></ul>
+<div class="box warn"><b>Rechne immer mindestens eine Zahl selbst nach</b>Die KI kann überzeugend falsche Ergebnisse liefern. Vergleiche die Ausgabe mit dem, was du erwartest: Stimmt die Summe? Ist die Anzahl plausibel? Wenn nicht, sag es der KI und nenne den erwarteten Wert.</div>
+</section>
+
+<section id="auftraege"><h2>Aufträge mit automatischer Prüfung</h2>
+<p>Die 12 Aufträge üben genau diesen Ablauf: Du beschreibst das Ziel im Vibe-Modus, die KI baut es, und die Prüfung schaut nur auf das <b>Ergebnis</b> (Ausgabe, Diagramm oder Datei), nicht auf den Code.</p>
+<ol class="steps"><li>Öffne „🎯 Aufträge“ und klappe einen Auftrag auf.</li><li>Klicke „✨ Im Vibe-Modus starten“. Der Chat beginnt neu, nötige Dateien (z. B. <code>umsaetze.csv</code>) werden angelegt, die Beispiel-Anweisung steht im Eingabefeld. Du kannst sie senden oder selbst formulieren.</li><li>Nach dem Lauf prüft sich der Auftrag selbst. Du siehst „🎯 Auftrag geschafft!“ oder konkrete Hinweise, was noch fehlt. Diese Hinweise bekommt die KI beim nächsten „Nein, noch nicht“ mit.</li></ol>
+<table><tr><th>Nr.</th><th>Auftrag</th><th>Ziel</th><th>Was geprüft wird</th></tr><tr><td>1</td><td>Quadratzahlen</td><td>Die Zahlen 1, 4, 9 … 100 werden angezeigt</td><td>Alle 10 Quadratzahlen stehen in der Ausgabe</td></tr><tr><td>2</td><td>Rabatt und Mehrwertsteuer</td><td>Endpreis von 80 € nach 15 % Rabatt und 19 % MwSt</td><td>Ergebnis 80,92 steht in der Ausgabe</td></tr><tr><td>3</td><td>Primzahlen</td><td>Alle Primzahlen bis 50</td><td>Alle 15 Primzahlen, keine anderen Zahlen unter 50</td></tr><tr><td>4</td><td>Wörter zählen</td><td>Wie oft kommt jedes Wort in einem Satz vor</td><td>„Hund“ zweimal, „Katze“ einmal</td></tr><tr><td>5</td><td>Umsatz aus Datei auswerten</td><td>Gesamtumsatz und beste Region aus umsaetze.csv</td><td>Summe und Region stimmen mit der Datei überein</td></tr><tr><td>6</td><td>Diagramm zeichnen</td><td>Balkendiagramm Umsatz pro Region mit Titel</td><td>Diagramm vorhanden, 4 Balken, Titel gesetzt</td></tr><tr><td>7</td><td>Excel-Bericht</td><td>report.xlsx mit Summen pro Region (nur Zahlen)</td><td>Datei vorhanden, 4 Regionen, richtige Summen</td></tr><tr><td>8</td><td>Sicheres Passwort</td><td>Passwort mit genau 16 Zeichen</td><td>Groß, klein, Ziffer und Sonderzeichen</td></tr><tr><td>9</td><td>Zinseszins</td><td>5000 € zu 3,5 % über 10 Jahre</td><td>Ergebnis um 7052,99 € in der Ausgabe</td></tr><tr><td>10</td><td>Fehler reparieren lassen</td><td>Die Datei mittelwert.py rechnet falsch</td><td>Mittelwert 12 in der Ausgabe</td></tr><tr><td>11</td><td>Excel schön formatieren</td><td>kostenuebersicht.xlsx mit Kopfzeile, Euro, Prozent, Summe</td><td>Blattname, fette Kopfzeile mit Farbe, Euro- und Prozentformat, Summenzeile, Spaltenbreiten</td></tr><tr><td>12</td><td>PDF-Bericht</td><td>kostenuebersicht.pdf mit Überschrift, Posten, Gesamtbetrag</td><td>Gültiges PDF, genau 1 Seite, Überschrift, Posten, Summe 1100</td></tr></table>
+<p>Darunter gibt es zehn klassische <b>Programmieraufgaben</b> „Für Fortgeschrittene“ (Funktionen, Schleifen, Klassen, Rekursion), die du selbst in Code löst.</p>
+<div class="box"><b>Ehrlich gesagt</b>Die Prüfung sieht nur das Ergebnis. Auch ein „zufällig richtiges“ Ergebnis besteht. Das Ziel ist, dass du lernst, Ergebnisse zu <b>beurteilen</b>.</div>
+</section>
+
+<section id="dateien"><h2>Dateien erzeugen und herunterladen</h2>
+<p>Ein Programm kann Dateien erzeugen und mit <code>herunterladen("name.endung")</code> an deinen Browser schicken. Die KI weiß das; du kannst einfach schreiben „… und lade die Datei herunter“. Getestet sind 28 Formate:</p>
+<table><tr><th>Bereich</th><th>Formate</th></tr><tr><td>Büro</td><td>Excel (.xlsx, mit openpyxl, xlsxwriter oder pandas), Word (.docx), PowerPoint (.pptx), PDF (.pdf; auch Diagramme als PDF, PDFs lesen und zusammenfügen)</td></tr><tr><td>Daten</td><td>CSV, JSON, YAML, SQLite-Datenbank (.db), ZIP-Archiv</td></tr><tr><td>Web und Text</td><td>HTML-Seiten (auch aus pandas-Tabellen, Jinja-Vorlagen, Markdown), Markdown (.md), Text (.txt), Kalender (.ics)</td></tr><tr><td>Bilder</td><td>PNG, JPG, animiertes GIF (Pillow), Diagramme als PNG, SVG oder PDF (matplotlib), QR-Codes als PNG oder SVG</td></tr><tr><td>Audio</td><td>WAV (z. B. erzeugte Töne)</td></tr></table>
+<div class="box"><b>Gut zu wissen</b>Die Technik ist getestet. Wie <i>schön</i> ein Word-Dokument oder PDF wird, hängt von deiner Anweisung ab: Verlange Aussehen ausdrücklich (Überschriften, Farben, Schriftgrößen, Seitenzahl) und steuere nach.</div>
+<div class="box warn"><b>Nicht möglich</b>Alte Formate <code>.doc</code> und <code>.xls</code>, Video (<code>.mp4</code>), MP3 sowie E-Mail-Versand und Veröffentlichen im Internet.</div>
+</section>
+
+<section id="ansichten"><h2>Alle Ansichten</h2>
+<h3>Normale Ansicht</h3>
+<p>Dateiliste links (mit Ordnern zum Ein- und Ausklappen), Editor in der Mitte, darunter Ausgabe und Python-Shell. <kbd>F5</kbd> oder <kbd>Strg</kbd>+<kbd>Enter</kbd> führt die geöffnete Datei aus. Mit „⌨ Eingaben“ gibst du Antworten für <code>input()</code> vor, eine pro Zeile. „🧪 Tests“ führt alle Dateien <code>test*.py</code> aus.</p>
+<h3>Python-Shell</h3>
+<p>Probiere einzelne Zeilen aus: <code>2 ** 10</code>, <code>import math</code>. Variablen bleiben erhalten, mehrzeilige Blöcke (<code>for</code>, <code>def</code>) endet eine leere Zeile, mit <kbd>↑</kbd> <kbd>↓</kbd> holst du frühere Eingaben zurück. Pakete wie pandas laden sich beim ersten <code>import</code> selbst. Die Shell hat eigene Variablen, getrennt vom Programm und vom Notebook. <code>exit()</code>, <code>input()</code> und <code>await</code> funktionieren dort nicht.</p>
+<h3>📓 Notebook</h3>
+<p>Ein Notebook besteht aus Zellen (Code und Text). <kbd>Umschalt</kbd>+<kbd>Enter</kbd> führt eine Zelle aus und springt zur nächsten, alle Zellen teilen sich dieselben Variablen. Tabellen (pandas) und Diagramme erscheinen direkt unter der Zelle. „⟲ Kernel neu starten“ löscht alle Variablen. Notebooks werden als <code>.ipynb</code> gespeichert (auch für Jupyter und Colab) und lassen sich hochladen oder als <code>.py</code> exportieren. Die Vorlage „Daten-Notebook“ zeigt den Ablauf.</p>
+<h3>📁 Projekte, Vorlagen, Snapshots, Teilen</h3>
+<ul><li><b>Mehrere Projekte</b> anlegen, umbenennen, duplizieren, löschen. Jedes hat eigene Dateien und einen eigenen Chat.</li><li><b>Vorlagen:</b> Datenanalyse (pandas), Web-Scraper-Übung (BeautifulSoup, offline), Spiel (Zahlenraten mit Tests), Excel-Report, Daten-Notebook.</li><li><b>Snapshots:</b> bis zu 10 Sicherungsstände je Projekt wiederherstellen. Vor jeder Wiederherstellung wird der aktuelle Stand automatisch gesichert.</li><li><b>Teilen:</b> „🔗 Link erzeugen“ packt alle Dateien in einen Link. Wer ihn öffnet, bekommt nach Rückfrage eine Kopie als neues Projekt. Sehr große Projekte besser als ZIP weitergeben (📦 Pakete → Projekt als ZIP).</li><li><b>Ordner und ZIP:</b> Dateien dürfen in Ordnern liegen (<code>ordner/datei.py</code>). Ein ZIP über „⬆ Hochladen“ wird entpackt.</li></ul>
+<h3>🤖 KI-Hilfe (normale Ansicht)</h3>
+<p>Erklärt Fehler und Code in einfachen Worten („Fehler erklären“, „Code erklären“, „Frage stellen“) und kann mit „✨ Code erzeugen“ Code zu einer Beschreibung schreiben, mit Prüfung auf Syntaxfehler vor dem Einfügen. Die KI verändert deine Dateien nie von selbst.</p>
+<h3>📚 Bibliothek „vibe“</h3>
+<p><code>from vibe import *</code> bringt 75 fertige Funktionen in 7 Kategorien: Text, Zahlen und Finanzen, Datum (Deutschland, z. B. Feiertage je Bundesland), Daten und Analyse, Algorithmen und Puzzle, Werkzeuge, Web und KI. Der Knopf „📚 Bibliothek“ zeigt alle mit Beispielen zum Einfügen oder Ausprobieren.</p>
+</section>
+
+<section id="pakete"><h2>Pakete und Bibliotheken</h2>
+<p>Der Knopf „📦 Pakete“ hat drei Reiter:</p>
+<ul><li><b>Installiert:</b> deine eigenen Bibliotheken (bleiben nach dem Neuladen erhalten) und die Pakete dieser Sitzung.</li><li><b>Katalog:</b> 66 geprüfte Pakete (u. a. pandas, numpy, scikit-learn, matplotlib, openpyxl, Pillow, python-docx, fpdf2) mit Version, Größe, <b>Download-Pfad</b> und Links zu Doku und PyPI. „Installieren“ lädt das Paket in diese Sitzung, „+ requirements“ merkt es vor.</li><li><b>Hinzufügen:</b> eigenes <code>.zip</code> (mit Ordnern) oder <code>.whl</code> hochladen, Paket per Namen installieren, <code>requirements.txt</code> anlegen (wird beim Start automatisch installiert), Projekt als ZIP exportieren.</li></ul>
+<div class="box tip"><b>Automatisch</b>Importiert ein Programm ein Paket aus dem Katalog, das Python nicht mitbringt (z. B. <code>openpyxl</code>), wird es beim Ausführen von PyPI nachinstalliert. Ein Hinweis erscheint in der Ausgabe.</div>
+</section>
+
+<section id="daten"><h2>Datenschutz: was wohin geht</h2>
+<p>Dein Programm läuft <b>in deinem Browser</b>, nicht auf einem Server. Dateien und Projekte bleiben in deinem Browser (localStorage und IndexedDB) und werden von uns nicht gesammelt. Es gibt kein Konto und keine Tracker.</p>
+<h3>Was bei KI-Funktionen an die KI gesendet wird</h3>
+<ul><li>deine Anweisung und der Chatverlauf (die letzten rund 8 Beiträge),</li><li>der aktuelle Programmcode (bis 6000 Zeichen),</li><li>das letzte Ergebnis bzw. die Fehlermeldung (die letzten rund 1200 Zeichen),</li><li>die Namen deiner Projektdateien und bei <code>.csv</code>, <code>.txt</code>, <code>.json</code>, <code>.md</code> die <b>ersten rund 350 Zeichen</b> sowie kleine <code>.py</code>-Dateien (bis 1200 Zeichen).</li></ul>
+<p>Die Anfragen gehen über einen Kurs-Proxy an ein Gemini-Modell. Das ist ein Drittanbieter-Dienst.</p>
+<div class="box err"><b>Lade keine sensiblen Daten hoch</b>Keine Kundendaten, Passwörter, Gesundheits- oder Finanzdaten echter Personen. Nutze für Übungen erfundene oder anonymisierte Daten.</div>
+<h3>Weitere Dienste, die die Seite nutzt</h3>
+<p>Python (Pyodide) und der Editor werden von öffentlichen Auslieferungsnetzen geladen (jsDelivr, cdnjs); Zusatzpakete kommen von PyPI. Dabei ist deine IP-Adresse für diese Dienste sichtbar. Das ist keine Rechtsberatung: Für den gewerblichen Einsatz bitte Datenschutzerklärung und Auftragsverarbeitung prüfen lassen.</p>
+</section>
+
+<section id="grenzen"><h2>Was nicht geht</h2>
+<ul><li><b>Keine Installation von Programmen</b>, keine Webserver oder Websites betreiben. Es läuft nur im Browser.</li><li><b>Kein Zugriff auf deinen Computer</b> (Ordner, Programme, Excel am Rechner steuern).</li><li><b>Kaum Zugriff auf fremde Webseiten und Schnittstellen.</b> Der Browser blockiert viele (CORS).</li><li><b>Keine Threads, Sockets oder Datenbank-Server.</b> Eine SQLite-Datei geht.</li><li><b>Speicher nur im Browser</b> (ca. 5 MB für Dateien). Wichtige Projekte als ZIP oder <code>.ipynb</code> sichern.</li><li><b>Das erste Laden großer Pakete</b> (pandas, scikit-learn) kann Sekunden bis Minuten dauern.</li><li><b>Das KI-Kontingent</b> ist für den Kurs geteilt. Ist es aufgebraucht, kommt eine Meldung. Dann später erneut versuchen.</li></ul>
+<p>Wer später echte Python-Programme betreiben will, installiert Python am eigenen Rechner. Das ersetzt die IDE nicht, sie ist ein Lern- und Prototypen-Werkzeug.</p>
+</section>
+
+<section id="faq"><h2>Häufige Fragen</h2>
+<details><summary>Python lädt ewig oder „Laden fehlgeschlagen“.</summary><p>Python kommt aus dem Internet (ca. 10 MB). Prüfe die Verbindung und lade die Seite mit <kbd>Strg</kbd>+<kbd>F5</kbd> neu. Beim zweiten Mal geht es schnell, weil der Browser es zwischenspeichert.</p></details>
+<details><summary>Die KI antwortet nicht oder meldet „Kontingent aufgebraucht“.</summary><p>Der Kurs-Zugang ist geteilt. Warte etwas und versuche es erneut. Kurze Netzfehler werden einmal automatisch wiederholt.</p></details>
+<details><summary>Das Ergebnis ist falsch, obwohl „Fertig“ dasteht.</summary><p>„Fertig“ heißt nur: das Programm lief ohne Fehler. Ob das Ergebnis stimmt, musst du prüfen. Nenne der KI die erwartete Zahl und bitte um Korrektur.</p></details>
+<details><summary>Mein Programm hängt (Endlosschleife).</summary><p>Klicke auf „■ Stopp“. Python startet neu, deine Dateien bleiben erhalten, nur Variablen sind weg.</p></details>
+<details><summary>Ich habe etwas verloren oder zerstört.</summary><p>Im Vibe-Modus hilft „↶ Version zurück“. In der normalen Ansicht stellst du unter 📁 Projekte einen Snapshot wieder her.</p></details>
+<details><summary>Wie bekomme ich mein Ergebnis aus der IDE heraus?</summary><p>Dateien lädst du per <code>herunterladen(...)</code> herunter (sag der KI „lade die Datei herunter“). Programme: „Code kopieren“ oder „⬇ .py“. Ganze Projekte: 📦 Pakete → „Projekt als ZIP“ oder 📁 Projekte → „Link erzeugen“.</p></details>
+<details><summary>Warum steht in der Excel-Summenzeile in der Vorschau nichts?</summary><p>Summenformeln werden erst beim Öffnen in Excel oder LibreOffice berechnet. Einfache Vorschauen (Mail-App, Handy) zeigen sie eventuell leer.</p></details>
+</section>
+
+<section id="tasten"><h2>Tastenkürzel</h2>
+<table><tr><th>Wo</th><th>Taste</th><th>Wirkung</th></tr>
+<tr><td>Editor</td><td><kbd>F5</kbd> oder <kbd>Strg</kbd>+<kbd>Enter</kbd></td><td>Programm ausführen</td></tr>
+<tr><td>Editor</td><td><kbd>Strg</kbd>+<kbd>S</kbd></td><td>Speichern (geschieht auch automatisch)</td></tr>
+<tr><td>Vibe-Chat</td><td><kbd>Enter</kbd> / <kbd>Umschalt</kbd>+<kbd>Enter</kbd></td><td>Senden / neue Zeile</td></tr>
+<tr><td>Notebook-Zelle</td><td><kbd>Umschalt</kbd>+<kbd>Enter</kbd> / <kbd>Strg</kbd>+<kbd>Enter</kbd></td><td>Ausführen und weiter / ausführen und bleiben</td></tr>
+<tr><td>Notebook-Zelle</td><td><kbd>Tab</kbd></td><td>Vier Leerzeichen einfügen</td></tr>
+<tr><td>Shell</td><td><kbd>↑</kbd> <kbd>↓</kbd></td><td>Frühere Eingaben</td></tr>
+<tr><td>Dialoge</td><td><kbd>Esc</kbd>, <kbd>Tab</kbd></td><td>Schließen, Fokus bleibt im Dialog</td></tr></table>
+</section>
+</main>
+</div>
+<footer>Stand: 16. November 2026 · Python-IDE der Vibe-Coding-Akademie · Läuft komplett im Browser (Pyodide, Python 3.12).</footer>
+</body>
+</html>

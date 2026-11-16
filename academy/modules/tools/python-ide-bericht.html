@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python-IDE: Bericht</title>
+<meta name="description" content="Bericht zur Python-IDE: Funktionsumfang, Testergebnisse, Audit, Leistung, Sicherheit und offene Punkte.">
+<style>
+:root{--bg:#14161a;--panel:#1c1f26;--line:#2d323c;--text:#e4e6eb;--dim:#9aa3b2;--accent:#6aa9ff;--vio:#a78bfa;--ok:#4ec9b0;--warn:#e5c07b;--err:#f48771;--code:#0f1115}
+@media (prefers-color-scheme:light){:root{--bg:#f6f7f9;--panel:#fff;--line:#d9dde4;--text:#1d2129;--dim:#5a6372;--accent:#1456c8;--vio:#6d28d9;--ok:#0f7a63;--warn:#8a5a00;--err:#b3361f;--code:#eef0f4}}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+a{color:var(--accent)}a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--warn);outline-offset:2px}
+header.top{padding:28px max(16px,4vw) 18px;border-bottom:1px solid var(--line);background:linear-gradient(135deg,rgba(109,40,217,.25),rgba(20,86,200,.12))}
+header.top h1{margin:0 0 6px;font-size:clamp(24px,4vw,36px);line-height:1.2}
+header.top p{margin:0;color:var(--dim);max-width:70ch}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chip{display:inline-block;padding:3px 11px;border:1px solid var(--line);border-radius:999px;font-size:13px;color:var(--dim);background:var(--panel)}
+.btn{display:inline-block;padding:8px 16px;border-radius:8px;background:var(--vio);color:#fff;text-decoration:none;font-weight:600;margin:4px 8px 4px 0}
+.btn.alt{background:transparent;border:1px solid var(--accent);color:var(--accent)}
+.wrap{display:grid;grid-template-columns:240px minmax(0,1fr);gap:32px;max-width:1180px;margin:0 auto;padding:24px max(16px,3vw) 80px}
+nav.toc{position:sticky;top:12px;align-self:start;max-height:calc(100vh - 24px);overflow:auto;font-size:14px;padding-right:6px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--dim);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+nav.toc a{display:block;padding:4px 8px;border-radius:6px;color:var(--text);text-decoration:none}
+nav.toc a:hover{background:var(--panel)}
+main{min-width:0}
+section{margin:0 0 44px;scroll-margin-top:12px}
+h2{font-size:26px;margin:0 0 12px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+h3{font-size:19px;margin:26px 0 8px}h4{font-size:16px;margin:18px 0 6px}
+p,li{max-width:78ch}li{margin:4px 0}
+code{background:var(--code);padding:1px 6px;border-radius:5px;font:13.5px Consolas,"Courier New",monospace}
+pre{background:var(--code);border:1px solid var(--line);border-radius:8px;padding:12px 14px;overflow:auto;font:13.5px/1.5 Consolas,"Courier New",monospace}
+kbd{background:var(--panel);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 7px;font:12.5px Consolas,monospace}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14.5px;display:block;overflow-x:auto}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--panel);white-space:nowrap}
+.box{border-left:4px solid var(--accent);background:var(--panel);padding:10px 16px;border-radius:0 8px 8px 0;margin:14px 0}
+.box.tip{border-color:var(--ok)}.box.warn{border-color:var(--warn)}.box.err{border-color:var(--err)}
+.box b:first-child{display:block;margin-bottom:2px}
+.ok{color:var(--ok);font-weight:600}.bad{color:var(--err);font-weight:600}.warn{color:var(--warn);font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:14px 0}
+.card{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:12px 14px}
+.card b{display:block;font-size:22px;color:var(--vio)}.card span{color:var(--dim);font-size:14px}
+.steps{counter-reset:s;list-style:none;padding:0}
+.steps li{counter-increment:s;position:relative;padding:6px 0 6px 44px;margin:8px 0}
+.steps li::before{content:counter(s);position:absolute;left:0;top:4px;width:30px;height:30px;border-radius:50%;background:var(--vio);color:#fff;font-weight:700;display:grid;place-items:center}
+details{border:1px solid var(--line);border-radius:8px;background:var(--panel);margin:8px 0;padding:2px 14px}
+summary{cursor:pointer;padding:8px 0;font-weight:600}
+footer{border-top:1px solid var(--line);padding:18px max(16px,4vw);color:var(--dim);font-size:13.5px}
+@media(max-width:860px){.wrap{display:block}nav.toc{position:static;max-height:none;margin-bottom:20px;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--panel)}nav.toc a{display:inline-block}}
+@media print{nav.toc,.btn{display:none}.wrap{display:block}body{background:#fff;color:#000}details{border:0}}
+</style>
+</head>
+<body>
+<header class="top"><h1>Python-IDE: Bericht</h1><p>Stand, Testergebnisse, Audit und offene Punkte. Für den Kursanbieter und alle, die den Zustand der Python-IDE vor einem kommerziellen Einsatz beurteilen wollen.</p><div class="meta"><span class="chip">Stand 16. November 2026</span><span class="chip">Pyodide 0.26.4 · Python 3.12.1</span><span class="chip">28 von 29 Testgruppen bestanden</span></div><p style="margin-top:14px"><a class="btn" href="python-ide.html?modus=vibe">IDE öffnen</a><a class="btn alt" href="python-ide-doku.html">Dokumentation lesen</a></p></header><div class="wrap">
+<nav class="toc" aria-label="Inhalt"><b>Inhalt</b><a href="#kurz">Zusammenfassung</a><a href="#umfang">Funktionsumfang</a><a href="#tests">Testergebnisse</a><a href="#ki">KI-Qualität</a><a href="#audit">Audit: Funde und Behebungen</a><a href="#formate">Dateiformate</a><a href="#leistung">Leistung</a><a href="#a11y">Barrierefreiheit</a><a href="#sicher">Sicherheit und Datenschutz</a><a href="#grenzen">Grenzen und Risiken</a><a href="#offen">Offene Punkte und Empfehlung</a></nav>
+<main>
+
+<section id="kurz"><h2>Zusammenfassung</h2>
+<div class="grid"><div class="card"><b>28 / 29</b><span>Testgruppen im vollständigen Runner bestanden</span></div><div class="card"><b>882</b><span>Einzelprüfungen in diesem Lauf (je nach Gruppe; einige Gruppen melden sich ohne Zählung)</span></div><div class="card"><b>28 / 28</b><span>Dateiformate erzeugt, heruntergeladen und als echte Datei erkannt</span></div><div class="card"><b>12 / 12</b><span>typische Anfängerfehler von der KI plausibel erklärt (Stichprobe)</span></div><div class="card"><b>5 / 5</b><span>Aufträge, die die echte KI nur per Chat gelöst hat (2, 5, 10, 11, 12)</span></div><div class="card"><b>0</b><span>Geheimnisse, Tracker oder tote Ressourcen im veröffentlichten Verzeichnis (Seitenaudit)</span></div></div>
+<h3>Bewertung</h3>
+<table><tr><th>Bereich</th><th>Stand</th><th>Anmerkung</th></tr>
+<tr><td>Funktion (Python, Chat, Notebook, Projekte, Pakete)</td><td class="ok">stabil</td><td>Automatisiert getestet, lokal und auf der Live-Seite.</td></tr>
+<tr><td>KI-Qualität</td><td class="warn">gut, stichprobenartig</td><td>12 Fehlerfälle und 5 Aufträge geprüft. Keine Aussage über beliebige Eingaben.</td></tr>
+<tr><td>Sicherheit im Browser</td><td class="ok">geprüft</td><td>HTML und Skripte in KI-Antworten, Notebooks, Namen, ZIP und Links werden nicht ausgeführt.</td></tr>
+<tr><td>Barrierefreiheit</td><td class="warn">Grundlagen erfüllt</td><td>Tastatur, Fokus, Kontraste automatisch geprüft. Kein Test mit Screenreader.</td></tr>
+<tr><td>Echte Geräte (iPhone, Android, Safari)</td><td class="bad">nicht getestet</td><td>Nur Chromium mit Handy-Emulation (390 px und 320 px).</td></tr>
+<tr><td>Zugangsschutz und Bezahlung</td><td class="bad">offen</td><td>Der Login im Browser ist für jeden einsehbar und kein echter Schutz. Siehe „Offene Punkte“.</td></tr>
+<tr><td>Rechtliches (Impressum, Datenschutz, Aussagen im Exposé)</td><td class="bad">offen</td><td>Muss vor dem Verkauf geprüft werden.</td></tr></table>
+</section>
+
+<section id="umfang"><h2>Funktionsumfang</h2>
+<table><tr><th>Baustein</th><th>Inhalt</th></tr>
+<tr><td>Python-Laufzeit</td><td>Echtes CPython 3.12 im Browser (Pyodide 0.26.4) in einem Web Worker: Stopp, <code>input()</code>, Top-Level-<code>await</code>, <code>asyncio.run</code>, matplotlib-Bilder, Live-Ausgabe.</td></tr>
+<tr><td>✨ Vibe-Modus</td><td>Chat ohne Code: Beschreibung → Code → Auto-Lauf → Ergebnis. Verlauf, Selbstreparatur (max. 2), Versionen zurück, Datei-Upload, Code kopieren und als .py laden.</td></tr>
+<tr><td>🎯 Aufträge</td><td>12 Aufträge, geprüft am Ergebnis (Ausgabe, Diagramm, Datei, Excel-Formatierung, PDF-Inhalt) plus 10 klassische Programmieraufgaben.</td></tr>
+<tr><td>📓 Notebook</td><td>Zellen, gemeinsamer Kernel, Tabellen und Diagramme, .ipynb-Import und -Export, .py-Export.</td></tr>
+<tr><td>📁 Projekte</td><td>Mehrere Projekte, Ordner, 5 Vorlagen, Snapshots, Teilen per Link, ZIP-Import und -Export.</td></tr>
+<tr><td>📦 Pakete</td><td>Katalog mit 66 Paketen und Download-Pfaden (44 Pyodide, 22 PyPI), ZIP/Wheel-Upload, requirements.txt, automatische Nachinstallation.</td></tr>
+<tr><td>🤖 KI-Hilfe</td><td>Fehler und Code erklären, Code erzeugen mit Syntaxprüfung.</td></tr>
+<tr><td>📚 Bibliothek vibe</td><td>75 Funktionen in 7 Kategorien, nur Standardbibliothek.</td></tr>
+<tr><td>Dateiformate</td><td>28 getestete Ausgabeformate (Excel, Word, PowerPoint, PDF, Bilder, QR, CSV, ZIP, SQLite …).</td></tr></table>
+</section>
+
+<section id="tests"><h2>Testergebnisse</h2>
+<p>Vollständiger Lauf von <code>run-claude-tests.js</code> am 16. November 2026: <b>28 von 29</b> Testgruppen bestanden. Die Tests laufen in einem echten Chromium (Puppeteer) gegen die echte Seite, Python wird tatsächlich geladen. Wo „0 Prüfungen“ steht, meldet die Gruppe ihre Zahl nicht in diesem Format, sie ist aber bestanden.</p>
+<table><tr><th>Status</th><th>Testgruppe</th><th>Prüfungen</th></tr><tr><td class="ok">bestanden</td><td>Grosse Dateien in Abschnitten, Suche, Edit, Append, Fehlermeldung</td><td>11</td></tr><tr><td class="ok">bestanden</td><td>Abgeschnittene Tool-Aufrufe und Verlaufs-Reparatur</td><td>0</td></tr><tr><td class="ok">bestanden</td><td>Reparatur eines bereits defekten gespeicherten Verlaufs</td><td>0</td></tr><tr><td class="ok">bestanden</td><td>PDF-Import (Testdateien: Text, 25 Seiten, Scan, kaputt, grosse HTML)</td><td>8</td></tr><tr><td class="ok">bestanden</td><td>Echte 26-MB-PDF (HTML5Foundations)</td><td>0</td></tr><tr><td class="ok">bestanden</td><td>Projekte (Anlegen, Wechseln, Reset, Loeschen)</td><td>14</td></tr><tr><td class="ok">bestanden</td><td>Mehrere Chats je Projekt (Desktop und Mobil)</td><td>42</td></tr><tr><td class="ok">bestanden</td><td>edit_file tolerant gegen Einrueckung (Unit-Test)</td><td>6</td></tr><tr><td class="ok">bestanden</td><td>Auto-Fortsetzen bei langen Generierungen (Text und Dateien)</td><td>19</td></tr><tr><td class="ok">bestanden</td><td>LeCODE Studio stabil (Stream, Auto-Fortsetzen, Fehler, Stopp, Autosave)</td><td>31</td></tr><tr><td class="ok">bestanden</td><td>LeCODE und Claude IDE UI (Mobil, Vorschau, Snippets)</td><td>24</td></tr><tr><td class="ok">bestanden</td><td>Verbindungsfehler: automatische Wiederholung (Claude IDE)</td><td>5</td></tr><tr><td class="ok">bestanden</td><td>Datei-Bloecke: grosse Dateien im Text, Fortsetzen, Ueberschreib-Rueckfrage</td><td>19</td></tr><tr><td class="ok">bestanden</td><td>Redline Desktop (Explorer, Fenster, Snap, Suche, Favoriten, Mobil)</td><td>35</td></tr><tr><td class="ok">bestanden</td><td>Integration Hub, Cyan- und Rot-Workshell</td><td>18</td></tr><tr><td class="ok">bestanden</td><td>Gamma-Bibliothek und Explorer: Cover-Thumbnails</td><td>13</td></tr><tr><td class="ok">bestanden</td><td>Webinar-Seiten DE/EN, Video, Desktop-Shortcuts</td><td>65</td></tr><tr><td class="ok">bestanden</td><td>Python-IDE: echtes Python (Smoke-Test, braucht Internet, ca. 5 Min.)</td><td>48</td></tr><tr><td class="ok">bestanden</td><td>Python-Pakete: ZIP, Wheel, requirements, Katalog (braucht Internet)</td><td>51</td></tr><tr><td class="ok">bestanden</td><td>Python Pro: Ordner, Projekte, Teilen, KI-Hilfe, Aufgaben (braucht Internet)</td><td>102</td></tr><tr><td class="ok">bestanden</td><td>Python Dateiformate: 28 Formate erzeugen und herunterladen (braucht Internet)</td><td>28</td></tr><tr><td class="ok">bestanden</td><td>Python Vibe-Modus und Aufträge (Chat ohne Code, braucht Internet)</td><td>76</td></tr><tr><td class="ok">bestanden</td><td>Python Notebook und KI-Generator (braucht Internet)</td><td>86</td></tr><tr><td class="ok">bestanden</td><td>Python-IDE Härtetest: Speicher, Angriffe, Tastatur, Kontrast, Leistung</td><td>71</td></tr><tr><td class="bad">FEHLER</td><td>Seitenaudit: Links, Geheimnisse, CDN, Meta, Live-Fehler</td><td>8</td></tr><tr><td class="ok">bestanden</td><td>Python-Funktionen: 53 Skripte</td><td>53</td></tr><tr><td class="ok">bestanden</td><td>vibe-Bibliothek: 75 Funktionen</td><td>49</td></tr><tr><td class="ok">bestanden</td><td>Chatbreite Desktop und Mobil</td><td>0</td></tr><tr><td class="ok">bestanden</td><td>IDE-Werkbank (33 Werkzeuge, Desktop und Mobil)</td><td>0</td></tr></table>
+<div class="box warn"><b>Zur roten Zeile „Seitenaudit“</b>Der Seitenaudit meldet einen einzigen Fund: Der Link <code>genitus-coding-ai.replit.app</code> im Exposé liefert HTTP 404 (bekannt, siehe „Audit“ und „Offene Punkte“). Alle übrigen Prüfungen dieser Gruppe sind bestanden. Die Gruppe bleibt rot, bis der Link korrigiert ist.</div>
+<h3>Python-spezifische Tests im Überblick</h3>
+<table><tr><th>Test</th><th>Inhalt</th></tr>
+<tr><td>test-python-ide.js</td><td>Smoke-Test: Start, Ausführen, Fehlermeldungen, input(), Stopp, Dateien, Shell, Mobil, Monaco-Ausfall.</td></tr>
+<tr><td>test-python-features.js</td><td>53 echte Skripte (Sprache, Standardbibliothek, pandas, numpy, matplotlib, SQLite, asyncio …) mit unabhängig berechneten Erwartungswerten.</td></tr>
+<tr><td>test-vibe-lib.js</td><td>75 Funktionen der Bibliothek vibe inkl. Beispiele.</td></tr>
+<tr><td>test-python-libs.js</td><td>ZIP- und Wheel-Pakete, ZIP-Slip-Abwehr, Persistenz, requirements.txt, Katalog (alle Download-Pfade HTTP 200).</td></tr>
+<tr><td>test-python-pro.js</td><td>Ordner, Projekte, Snapshots, Vorlagen, Teilen per Link, KI-Hilfe (Attrappe), alle 10 Programmieraufgaben (Muster- und Fehlversuche).</td></tr>
+<tr><td>test-python-nb.js</td><td>Notebook und KI-Generator: Zellen, Ausgaben, Import/Export, Markdown-Sicherheit, Stopp, Kernel.</td></tr>
+<tr><td>test-python-vibe.js</td><td>Vibe-Modus und alle 12 Aufträge, je mit richtiger und falscher Lösung; Selbstreparatur mit Obergrenze; Stopp; Speicherung.</td></tr>
+<tr><td>test-python-formate.js</td><td>28 Dateiformate erzeugen, herunterladen, an der Dateikennung erkennen.</td></tr>
+<tr><td>test-python-hardening.js</td><td>Gesperrter oder voller Browser-Speicher, CDN-Ausfall, Angriffsversuche, Tastatur, Kontrast, Leistung.</td></tr>
+<tr><td>audit-site.js</td><td>Links, Geheimnisse, CDN-Pinning, Meta-Angaben, Live-Fehler auf allen Seiten (Desktop und Handy).</td></tr></table>
+<div class="box"><b>Hinweis zu den Zahlen</b>Das sind automatisierte Prüfungen. Sie zeigen, dass die geprüften Abläufe funktionieren, nicht, dass keine Fehler existieren. KI-Aufrufe sind in den Läufen durch Attrappen ersetzt, bis auf wenige gezielte Stichproben (siehe unten).</div>
+</section>
+
+<section id="ki"><h2>KI-Qualität</h2>
+<ul><li><b>12 typische Anfängerfehler</b> (NameError, ZeroDivisionError, IndexError, KeyError, Einrückung, fehlender Doppelpunkt, <code>int("abc")</code>, Import-Tippfehler, Logikfehler ohne Meldung, Rekursion u. a.) gegen die echte KI geprüft, Antworten gelesen. Zuerst 11 von 12 brauchbar. Der Fall <code>int("abc")</code> war schwach (nur „schreib eine Zahl“). Der Prompt verlangt jetzt zusätzlich eine robuste Lösung mit <code>try/except</code>. Danach <b>12 von 12</b>.</li>
+<li><b>Echte KI im Vibe-Chat:</b> die Aufträge 2 (Rabatt), 5 (Datei auswerten), 10 (Fehler reparieren), 11 (Excel formatieren) und 12 (PDF) wurden ohne selbst getippten Code gelöst; jeweils prüfte die automatische Prüfung das Ergebnis.</li>
+<li><b>Nicht abgedeckt:</b> beliebige Anweisungen, sehr lange Gespräche, Fachgebiete außerhalb der Beispiele, das Aussehen erzeugter Dokumente.</li></ul>
+<div class="box warn"><b>KI-Kontingent</b>Alle Teilnehmer teilen sich einen Kurs-Zugang. Pro Chat-Nachricht fällt eine Anfrage an (bei Fehlern bis zu zwei weitere). Bei vielen gleichzeitigen Nutzern ist ein Limit pro Teilnehmer nötig.</div>
+</section>
+
+<section id="audit"><h2>Audit: Funde und Behebungen</h2>
+<p>Ein breiter Audit (Python-IDE-Härtetest und Seitenaudit über alle 80 HTML-Seiten) hat Folgendes gefunden. Alles Aufgeführte ist behoben, sofern nicht anders vermerkt.</p>
+<table><tr><th>Fund</th><th>Auswirkung</th><th>Status</th></tr>
+<tr><td>Bei sehr langen Ausgaben (200 000 <code>print</code>-Zeilen) fror die Seite ein (quadratischer Aufwand beim Anhängen).</td><td>Hoch: Browser-Tab hängt</td><td class="ok">behoben, Ausgabe fließt und bleibt begrenzt</td></tr>
+<tr><td>Dialoge verwalteten den Tastaturfokus nicht (kein Fokus hinein, keine Falle, kein Zurück).</td><td>Mittel: Bedienung per Tastatur und Screenreader</td><td class="ok">behoben</td></tr>
+<tr><td>Nach Verschieben oder Umbenennen einer Datei blieb das alte Modul importierbar.</td><td>Mittel: verwirrende Ergebnisse</td><td class="ok">behoben</td></tr>
+<tr><td>PDF mit fpdf2 und pypdf scheiterte (fehlendes ssl-Paket, auch nach früherem Nachinstallieren).</td><td>Hoch für den Kursinhalt „PDF“</td><td class="ok">behoben</td></tr>
+<tr><td><code>herunterladen()</code> lieferte leere Dateien, wenn das Programm die Datei nicht schloss.</td><td>Mittel</td><td class="ok">behoben</td></tr>
+<tr><td>Beim automatischen Prüfen im Chat wurde die Auftrags-Nummer statt des Auftrags übergeben, der Chat hing danach.</td><td>Hoch</td><td class="ok">behoben, zusätzlich mit Zeitgrenze</td></tr>
+<tr><td>Prüfanzeige zeigte bei bestandenen Punkten ihren Fehlertext.</td><td>Niedrig, verwirrend</td><td class="ok">behoben</td></tr>
+<tr><td>Eine Seite der IDE-Werkbank hatte durch beschädigte reguläre Ausdrücke einen Syntaxfehler und lief nicht.</td><td>Hoch für diese Seite</td><td class="ok">behoben</td></tr>
+<tr><td>JavaScript-Fehler auf vier weiteren Seiten (fehlende Elemente, falsche Bibliothek).</td><td>Mittel</td><td class="ok">behoben</td></tr>
+<tr><td>Drei tote CDN-Pfade (ace.css, prism-html, Quill-Markdown) in 20 Seiten.</td><td>Mittel</td><td class="ok">behoben</td></tr>
+<tr><td>Vier CDN-Adressen ohne feste Version. Bei <code>marked</code> lieferte die Adresse still eine alte Version.</td><td>Mittel: Gefahr bei Updates</td><td class="ok">festgepinnt (ohne Verhaltensänderung)</td></tr>
+<tr><td>17 Folienseiten ohne Viewport-Angabe (auf dem Handy als 980-px-Seite).</td><td>Mittel</td><td class="ok">behoben</td></tr>
+<tr><td>Tote Navigationslinks (zeigten auf die Domain-Wurzel) in drei Seiten.</td><td>Niedrig</td><td class="ok">ausgeblendet</td></tr>
+<tr><td>Link <code>genitus-coding-ai.replit.app</code> im Exposé liefert HTTP 404.</td><td>Mittel</td><td class="bad">offen: richtige Adresse nötig</td></tr></table>
+<p>Bei der Entwicklung selbst fielen außerdem mehrere veraltete oder zu strenge Testerwartungen auf. Sie sind korrigiert und zählen nicht als Fehler der Anwendung.</p>
+</section>
+
+<section id="formate"><h2>Dateiformate</h2>
+<p>Getestet wurde, dass die IDE jede Datei <b>erzeugt, per <code>herunterladen()</code> ausliefert und an ihrer Kennung als echte Datei erkennt</b> (z. B. ZIP-Struktur mit <code>xl/workbook.xml</code> für Excel, <code>%PDF</code>, PNG-Signatur). Ergebnis: <b>28 von 28</b>.</p>
+<table><tr><th>Bereich</th><th>Formate</th></tr><tr><td>Büro</td><td>Excel (.xlsx, mit openpyxl, xlsxwriter oder pandas), Word (.docx), PowerPoint (.pptx), PDF (.pdf; auch Diagramme als PDF, PDFs lesen und zusammenfügen)</td></tr><tr><td>Daten</td><td>CSV, JSON, YAML, SQLite-Datenbank (.db), ZIP-Archiv</td></tr><tr><td>Web und Text</td><td>HTML-Seiten (auch aus pandas-Tabellen, Jinja-Vorlagen, Markdown), Markdown (.md), Text (.txt), Kalender (.ics)</td></tr><tr><td>Bilder</td><td>PNG, JPG, animiertes GIF (Pillow), Diagramme als PNG, SVG oder PDF (matplotlib), QR-Codes als PNG oder SVG</td></tr><tr><td>Audio</td><td>WAV (z. B. erzeugte Töne)</td></tr></table>
+<p>Eine vom Nutzer erzeugte Excel-Datei wurde zusätzlich von Hand geprüft: Inhalt, Rechnung (Summe 1100, Anteile 100 %), Blattname, fette Kopfzeile mit Farbe, Euro- und Prozentformat, Summenzeile fett und als Formel, Spaltenbreiten. Hinweis: Formeln haben in der Datei noch keinen gespeicherten Wert, Excel berechnet sie beim Öffnen.</p>
+</section>
+
+<section id="leistung"><h2>Leistung</h2>
+<table><tr><th>Messung</th><th>Wert</th></tr>
+<tr><td>Seite geladen</td><td>ca. 2,9 bis 3,6 s (lokal)</td></tr>
+<tr><td>Python bereit (Kaltstart, ohne Cache)</td><td>ca. 9 bis 14 s</td></tr>
+<tr><td>Dateibaum mit 300 Dateien zeichnen</td><td>27 bis 175 ms</td></tr>
+<tr><td>Tippen in einer Notebook-Zelle</td><td>0,2 bis 0,6 ms pro Eingabe</td></tr>
+<tr><td>JavaScript-Heap nach allen Tests</td><td>ca. 31 MB</td></tr>
+<tr><td>200 000 Ausgabezeilen</td><td>fertig, Seite bleibt bedienbar, Ausgabe begrenzt</td></tr>
+<tr><td>5 Millionen Zeichen im Speicher, pandas mit 100 000 Zeilen</td><td>ohne Absturz</td></tr>
+<tr><td>Notebook mit 100 Zellen laden</td><td>unter 500 ms</td></tr></table>
+<p>Messungen auf einem Entwicklungsrechner mit Chromium, nicht auf Handys oder schwacher Hardware. Das Laden großer Pakete (pandas, scikit-learn) dauert beim ersten Mal deutlich länger.</p>
+</section>
+
+<section id="a11y"><h2>Barrierefreiheit</h2>
+<ul><li>Alle sichtbaren Knöpfe haben einen Namen, alle Eingabefelder eine Beschriftung, alle Dialoge <code>role="dialog"</code>, <code>aria-modal</code> und <code>aria-labelledby</code>.</li><li>Fokus: Dialoge nehmen den Fokus mit hinein, halten die Tab-Taste im Dialog und geben den Fokus nach Esc zurück (für alle 6 Hauptdialoge geprüft).</li><li>Ausgabe und Chat melden Änderungen (<code>aria-live</code> bzw. <code>role="log"</code>). Seitensprache <code>de</code>, kein Zoom-Verbot, bei 320 px Breite kein horizontales Scrollen. Toolbar-Knöpfe mindestens 24 × 24 px.</li></ul>
+<h3>Kontraste (WCAG AA verlangt mindestens 4,5 : 1)</h3>
+<table><tr><th>Paar</th><th>Vordergrund</th><th>Hintergrund</th><th>Verhältnis</th></tr><tr><td>Text</td><td>#d4d4d4</td><td>#1e1e1e</td><td class="ok">11.25 : 1</td></tr><tr><td>Gedämpfter Text</td><td>#9a9a9a</td><td>#1e1e1e</td><td class="ok">5.92 : 1</td></tr><tr><td>Gedämpft auf Seitenleiste</td><td>#9a9a9a</td><td>#2d2d30</td><td class="ok">4.88 : 1</td></tr><tr><td>Fehlerrot</td><td>#f48771</td><td>#1e1e1e</td><td class="ok">6.79 : 1</td></tr><tr><td>Akzent-Link</td><td>#4fc1ff</td><td>#1e1e1e</td><td class="ok">8.26 : 1</td></tr><tr><td>OK-Grün</td><td>#4ec9b0</td><td>#1e1e1e</td><td class="ok">8.18 : 1</td></tr><tr><td>Knopftext</td><td>#d4d4d4</td><td>#333337</td><td class="ok">8.49 : 1</td></tr><tr><td>Warnung</td><td>#cca700</td><td>#1e1e1e</td><td class="ok">7.22 : 1</td></tr><tr><td>Weiß auf Ausführen-Knopf</td><td>#ffffff</td><td>#0e639c</td><td class="ok">6.40 : 1</td></tr><tr><td>Weiß auf Stopp-Knopf</td><td>#ffffff</td><td>#a1260d</td><td class="ok">7.50 : 1</td></tr></table>
+<div class="box warn"><b>Nicht geprüft</b>Screenreader (NVDA, VoiceOver), Bedienung mit Sprachsteuerung, Windows-Kontrastmodus. Die Notebook-Zellen sind einfache Textfelder ohne Syntaxfarben.</div>
+</section>
+
+<section id="sicher"><h2>Sicherheit und Datenschutz</h2>
+<h3>Geprüfte Angriffe</h3>
+<table><tr><th>Versuch</th><th>Ergebnis</th></tr>
+<tr><td>HTML, <code>&lt;script&gt;</code> oder <code>onerror</code> in Projektnamen, KI-Antworten, Chat, Notebook-Markdown, Fehlertexten</td><td class="ok">wird als Text angezeigt, nichts ausgeführt</td></tr>
+<tr><td>HTML-Ausgabe eines Notebooks mit Skript und Weiterleitung</td><td class="ok">läuft in einem Sandbox-Frame ohne Skripte; der Browser blockiert nachweislich</td></tr>
+<tr><td>ZIP mit Pfad <code>../../evil.py</code> (ZIP-Slip), kaputtes ZIP, 250 Dateien</td><td class="ok">abgelehnt bzw. auf 200 Dateien begrenzt</td></tr>
+<tr><td>Teilen-Link mit ungültigem Namen oder als Dekompressionsbombe (5 MB in wenigen KB)</td><td class="ok">abgelehnt, kein neues Projekt</td></tr>
+<tr><td>Python-Code greift auf <code>window</code>, <code>localStorage</code> oder echte Host-Dateien zu</td><td class="ok">nicht möglich (Worker-Isolation, virtuelles Dateisystem)</td></tr></table>
+<h3>Veröffentlichte Dateien</h3>
+<ul><li>Keine API-Schlüssel, Tokens oder privaten Schlüssel im veröffentlichten Verzeichnis (Muster-Scan).</li><li>Keine Tracker (keine Analyse- oder Werbe-Skripte eingebunden).</li><li>82 CDN-Adressen mit fester Version, alle abrufbar. Keine Subresource-Integrity (SRI): ein manipuliertes CDN wäre ein Restrisiko.</li><li>Das Tailwind-Entwicklungs-CDN wird auf fünf Seiten genutzt und ist für Produktivbetrieb nicht vorgesehen.</li></ul>
+<div class="box err"><b>Zugangsschutz</b>Der Login der Webinar- und Studio-Seiten steckt im Seitencode und ist damit für jeden lesbar. Das war eine bewusste, vorübergehende Entscheidung. Für den Verkauf braucht es einen serverseitigen Schutz.</div>
+<h3>Datenschutz</h3>
+<p>Kein Konto, keine Tracker, Projekte bleiben im Browser. Bei KI-Funktionen werden Anweisung, Code, Ergebnistext und Dateianfänge an einen Kurs-Proxy (Gemini) gesendet. Python, Editor und Zusatzpakete kommen von CDN und PyPI (IP-Adresse sichtbar). Details und Hinweis „keine sensiblen Daten hochladen“ stehen in der Dokumentation. Eine Rechtsprüfung (Datenschutzerklärung, Auftragsverarbeitung, Drittlandübermittlung) ist <b>nicht</b> erfolgt.</p>
+</section>
+
+<section id="grenzen"><h2>Grenzen und Risiken</h2>
+<table><tr><th>Thema</th><th>Beschreibung</th><th>Maßnahme</th></tr>
+<tr><td>Browser-only</td><td>Keine Programme zum Installieren, keine Server, kaum Fremd-Schnittstellen (CORS), keine Threads/Sockets.</td><td>In Doku erklärt.</td></tr>
+<tr><td>Speicher</td><td>Projekte im Browser (ca. 5 MB). Verlust bei Löschen der Browserdaten.</td><td>ZIP- und .ipynb-Export, Teilen-Link.</td></tr>
+<tr><td>Start dauert</td><td>Erster Start ca. 10 MB und 10 bis 15 s, große Pakete länger.</td><td>Browser-Cache; Hinweis in der IDE.</td></tr>
+<tr><td>KI-Kontingent und -Qualität</td><td>Geteilter Zugang; Ergebnisse können falsch sein.</td><td>Aufträge trainieren das Nachrechnen; Limit pro Teilnehmer empfohlen.</td></tr>
+<tr><td>Prüfungen am Ergebnis</td><td>Ein zufällig richtiges Ergebnis besteht; Prüfcode steht im Seitencode.</td><td>Für Übung geeignet, nicht für Prüfungen.</td></tr>
+<tr><td>Chat-Gedächtnis</td><td>Etwa die letzten 8 Beiträge.</td><td>„Neu beginnen“ bei langen Sitzungen.</td></tr>
+<tr><td>Notebook</td><td>Ein Kernel für alle Notebooks; keine Syntaxfarben; Bilder über 200 KB werden beim Speichern weggelassen.</td><td>In Doku erklärt.</td></tr>
+<tr><td>Geräte</td><td>Nur Chromium getestet.</td><td>Test auf iPhone, Android, Safari und Firefox vor dem Start.</td></tr></table>
+</section>
+
+<section id="offen"><h2>Offene Punkte und Empfehlung</h2>
+<h3>Vor dem kommerziellen Einsatz</h3>
+<ol><li><b>Zugangsschutz und Bezahlung</b> serverseitig lösen (der Browser-Login ersetzt nur eine Sichtprüfung).</li><li><b>Rechtliches:</b> Impressum und Datenschutzerklärung, Aussagen im Exposé (Zertifikat, Jobchance, Förderung/AZAV, Fernunterrichtsschutz) von einer fachkundigen Stelle prüfen lassen.</li><li><b>Echte Geräte testen:</b> iPhone, Android, Safari, Firefox; dazu ein kurzer Durchgang mit einem Screenreader.</li><li><b>KI-Kontingent schützen:</b> Limit pro Teilnehmer, eigener Zugang oder Warteschlange, bevor viele gleichzeitig arbeiten.</li><li><b>Toter Link</b> im Exposé (<code>genitus-coding-ai.replit.app</code>, HTTP 404) richtigstellen.</li></ol>
+<h3>Sinnvolle nächste Ausbaustufen</h3>
+<ul><li>Die 12 Aufträge zu einem <b>geordneten Kurspfad</b> mit Wochen, Abschlussprojekten und eigenen Beispieldaten ausbauen.</li><li>Weitere Aufträge zu Word, PowerPoint und Datenbereinigung; automatische Prüfung der Gestaltung wo möglich.</li><li>Syntax-Hervorhebung in Notebook-Zellen; Lasttest mit vielen gleichzeitigen Nutzern.</li><li>SRI-Hashes oder eigene Auslieferung (Self-Hosting) der Bibliotheken.</li></ul>
+</section>
+</main>
+</div>
+<footer>Stand: 16. November 2026 · Python-IDE der Vibe-Coding-Akademie · Läuft komplett im Browser (Pyodide, Python 3.12).</footer>
+</body>
+</html>
